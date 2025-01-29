@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2020-10-23">
+<meta name="description" content="Extract features from text into numerical vectors, then build a binary classifier for tweets using logistic regression!">
+
+<title>Sentiment Analysis with Logistic Regression</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-eefa51cfd4367a2c2ab6a47af1b603aa.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed slimcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/c1w1/index.html">Classification &amp; Vector Spaces</a></li><li class="breadcrumb-item"><a href="../../posts/c1w1/index.html">Logistic Regression</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/c1w1/index.html">Classification &amp; Vector Spaces</a></li><li class="breadcrumb-item"><a href="../../posts/c1w1/index.html">Logistic Regression</a></li></ol></nav>
+      <h1 class="title">Sentiment Analysis with Logistic Regression</h1>
+            <p class="subtitle lead">Classification &amp; Vector Spaces</p>
+                  <div>
+        <div class="description">
+          Extract features from text into numerical vectors, then build a binary classifier for tweets using logistic regression!
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">NLP</div>
+                <div class="quarto-category">Coursera</div>
+                <div class="quarto-category">notes</div>
+                <div class="quarto-category">Logistic regression</div>
+                <div class="quarto-category">Sentiment analysis task</div>
+                <div class="quarto-category">Classification &amp; Vector Spaces</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-body">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">October 23, 2020</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Classification &amp; Vector Spaces</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w1/index.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Logistic Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Probability and Bayes Rule</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Vector Space Models and PCA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Machine Translation and Document Search via KNN</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1lab0/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab on preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1lab1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Assignment 1 Logistic Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1lab2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab on Building and Visualizing word frequencies</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1lab3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab on visualizing tweets and the Logistic Regression model</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Probabilistic Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Autocorrect and Dynamic Programming</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part of Speech Tagging and Hidden Markov Models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Autocomplete and Language Models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Word embeddings with neural networks</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Sequence Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Neural Machine Translation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Text Summarization</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Question Answering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Chat Bots</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">NLP with Attention Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Neural Machine Translation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Text Summarization</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Question Answering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Chat Bots</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#sec-week1-logistic-regression" id="toc-sec-week1-logistic-regression" class="nav-link active" data-scroll-target="#sec-week1-logistic-regression">Week1: Logistic Regression</a>
+  <ul class="collapse">
+  <li><a href="#sec-supervised-ml-sentiment-analysis" id="toc-sec-supervised-ml-sentiment-analysis" class="nav-link" data-scroll-target="#sec-supervised-ml-sentiment-analysis">Supervised ML &amp; Sentiment Analysis</a></li>
+  <li><a href="#sec-sentiment-analysis" id="toc-sec-sentiment-analysis" class="nav-link" data-scroll-target="#sec-sentiment-analysis">Sentiment Analysis</a></li>
+  <li><a href="#sec-supervised-ml-sentiment-analysis" id="toc-sec-supervised-ml-sentiment-analysis" class="nav-link" data-scroll-target="#sec-supervised-ml-sentiment-analysis">Supervised ML &amp; Sentiment Analysis</a></li>
+  <li><a href="#sec-vocabulary-feature-extraction" id="toc-sec-vocabulary-feature-extraction" class="nav-link" data-scroll-target="#sec-vocabulary-feature-extraction">Vocabulary &amp; Feature Extraction</a>
+  <ul class="collapse">
+  <li><a href="#sec-sparse-representation" id="toc-sec-sparse-representation" class="nav-link" data-scroll-target="#sec-sparse-representation">Sparse Representation</a></li>
+  <li><a href="#sec-feature-extraction-class-frequencies" id="toc-sec-feature-extraction-class-frequencies" class="nav-link" data-scroll-target="#sec-feature-extraction-class-frequencies">Feature Extraction based on class frequencies</a></li>
+  </ul></li>
+  <li><a href="#sec-preprocessing" id="toc-sec-preprocessing" class="nav-link" data-scroll-target="#sec-preprocessing">Preprocessing</a></li>
+  <li><a href="#sec-training-logistic-regression" id="toc-sec-training-logistic-regression" class="nav-link" data-scroll-target="#sec-training-logistic-regression">Training Logistic Regression</a></li>
+  <li><a href="#sec-testing-logistic-regression" id="toc-sec-testing-logistic-regression" class="nav-link" data-scroll-target="#sec-testing-logistic-regression">Testing Logistic Regression</a></li>
+  <li><a href="#sec-logistic-regression-cost-function" id="toc-sec-logistic-regression-cost-function" class="nav-link" data-scroll-target="#sec-logistic-regression-cost-function">Logistic Regression: Cost Function</a>
+  <ul class="collapse">
+  <li><a href="#sec-mathematical-derivation" id="toc-sec-mathematical-derivation" class="nav-link" data-scroll-target="#sec-mathematical-derivation">Mathematical Derivation</a></li>
+  </ul></li>
+  <li><a href="#logistic-regression-gradient" id="toc-logistic-regression-gradient" class="nav-link" data-scroll-target="#logistic-regression-gradient">Logistic Regression: Gradient</a>
+  <ul class="collapse">
+  <li><a href="#sec-partial-derivative" id="toc-sec-partial-derivative" class="nav-link" data-scroll-target="#sec-partial-derivative">Partial derivative of <span class="math inline">J(\theta)</span></a></li>
+  </ul></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">resources:</a>
+  <ul class="collapse">
+  <li><a href="#slides" id="toc-slides" class="nav-link" data-scroll-target="#slides">Slides</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c1w1/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
+
+
+
+
+
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/course-banner.jpg" class="img-fluid figure-img"></p>
+<figcaption>course banner</figcaption>
+</figure>
+</div></div><section id="sec-week1-logistic-regression" class="level1 page-columns page-full">
+<h1>Week1: Logistic Regression</h1>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Flatten learning curve of Logistic Regression with StatQuest
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>It’s possible to do <strong>sentiment analysis</strong> in a much simpler way than shown in this course. <strong>Logistic regression</strong> isn’t as simple as <strong>OLS regression</strong> due to having categorical features. Finally <strong>Stochastic Gradient Descent</strong> isn’t the standard way of solving logistic regression, <strong>Maximum Likelihood Estimation</strong> is. I think they use SGD so it’s more familiar later in the specialization. However if we want to flatten our learning curve consider the following videos which will help us get more confident with logistic regression by building from the more familiar OLS regression.</p>
+
+
+
+</div>
+</div>
+</div><div class="no-row-height column-margin column-container"><div id="fig-sq1" class="quarto-float quarto-figure quarto-figure-center anchored callout-1-contents callout-collapse collapse callout-margin-content callout-margin-content-simple">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sq1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/yIYKR4sgzI8" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sq1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: StatQuest: Logistic Regression
+</figcaption>
+</figure>
+</div><div id="fig-sq3" class="quarto-float quarto-figure quarto-figure-center anchored callout-1-contents callout-collapse collapse callout-margin-content callout-margin-content-simple">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sq3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/vN5cNN2-HWE" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sq3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Logistic Regression Details Pt1: Coefficients
+</figcaption>
+</figure>
+</div><div id="fig-sq3" class="quarto-float quarto-figure quarto-figure-center anchored callout-1-contents callout-collapse collapse callout-margin-content callout-margin-content-simple">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sq3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/BfKanl1aSG0" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sq3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Logistic Regression Details Pt 2: Maximum Likelihood|
+</figcaption>
+</figure>
+</div></div>
+<section id="sec-supervised-ml-sentiment-analysis" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-supervised-ml-sentiment-analysis">Supervised ML &amp; Sentiment Analysis</h2>
+
+<div class="no-row-height column-margin column-container"><div id="fig-slide1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="img/slide_001.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: classification overview
+</figcaption>
+</figure>
+</div></div><ul>
+<li>In <strong>supervised ML</strong> we get a dataframe with input features <span class="math inline">X</span> and their corresponding ground truth label <span class="math inline">Y</span>.</li>
+<li>The goal is to minimize <strong>prediction error rates</strong>, AKA <strong>cost</strong>.</li>
+<li>To do this, one runs the prediction function which takes in parameters and map the features of an input to an output label <span class="math inline">\hat{Y}</span>.</li>
+<li>The optimal mapping from features to labels is when the difference between the expected values <span class="math inline">Y</span> and the predicted values <span class="math inline">\hat{Y}</span> is minimized.</li>
+<li>The cost function F does this by comparing how closely the output <span class="math inline">\hat{Y}</span> is to the label <span class="math inline">Y</span>.</li>
+<li>Update the parameters and repeat the whole process until the cost is minimized.</li>
+<li>We use the sigmoid cost function:</li>
+</ul>
+
+<div class="no-row-height column-margin column-container"><div id="fig-slide2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="img/slide_002.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: the sigmoid cost function
+</figcaption>
+</figure>
+</div></div></section>
+<section id="sec-sentiment-analysis" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-sentiment-analysis">Sentiment Analysis</h2>
+
+<div class="no-row-height column-margin column-container"><div id="fig-slide3" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="img/slide_003.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: Sentiment Analysis
+</figcaption>
+</figure>
+</div></div><div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Sentiment Analysis - Motivation
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>If we are passionate about NLP here is a gem to get we started. This is a popular science with many ideas for additional classifiers using pronouns.</p>
+<table class="caption-top table">
+<caption>Table of logistic regression tutorials</caption>
+<colgroup>
+<col style="width: 66%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>video</th>
+<th>subject</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/PGsQwAu3PzU" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div></td>
+<td>The Secret Life of Pronouns: James Pennebaker at TEDxAustin</td>
+</tr>
+<tr class="even">
+<td><div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/Vc073RIC7_M" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div></td>
+<td>Language of Truth and Lies: I-words</td>
+</tr>
+<tr class="odd">
+<td><div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/IGBI8LnYGNs" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div></td>
+<td>LIWC-22 2022 Tutorial 1: Getting started with LIWC-22</td>
+</tr>
+<tr class="even">
+<td>Likelihood</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-supervised-ml-sentiment-analysis" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-supervised-ml-sentiment-analysis">Supervised ML &amp; Sentiment Analysis</h2>
+
+<div class="no-row-height column-margin column-container"><div id="fig-slide4" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="img/slide_005.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7: classification overview
+</figcaption>
+</figure>
+</div></div><ul>
+<li>One example of a Supervised machine learning classification task for <code>sentiment analysis</code></li>
+<li>The objective is to predict whether a tweet has a positive or negative sentiment. (If it is positive/optimistic or negative/pessimistic).</li>
+</ul>
+<p>To perform sentiment analysis on a tweet, we need to:</p>
+<ol type="1">
+<li>represent the text for example “I am happy because I am learning NLP” as features,</li>
+<li>train a logistic regression classifier</li>
+</ol>
+<ul>
+<li>1 for a positive sentiment</li>
+<li>0 for negative sentiment.</li>
+</ul>
+<ol start="3" type="1">
+<li>and then we use it to classify the text.</li>
+</ol>
+</section>
+<section id="sec-vocabulary-feature-extraction" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-vocabulary-feature-extraction">Vocabulary &amp; Feature Extraction</h2>
+<section id="sec-sparse-representation" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="sec-sparse-representation">Sparse Representation</h3>
+
+<div class="no-row-height column-margin column-container"><div id="fig-slide4" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="img/slide_004.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8: Problems with sparse representation
+</figcaption>
+</figure>
+</div></div><p>Given a tweet, or some text, one can represent it as a vector. The vector has a dimension <span class="math inline">|V|</span>, where V corresponds to the size of the vocabulary size. If we had the tweet “I am happy because I am learning NLP,” then we would put a 1 in the corresponding index for any word in the tweet, and a 0 otherwise.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-slide5" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="img/slide_005.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9: A sparse representation
+</figcaption>
+</figure>
+</div></div><p>As <span class="math inline">V</span> gets larger, the vector becomes more sparse. Furthermore, we end up having many more features and end up training  <span class="math inline">\theta_0 \ldots \theta_n</span>  parameters. This results in a larger training time. And the inference time increases as well.</p>
+</section>
+<section id="sec-feature-extraction-class-frequencies" class="level3">
+<h3 class="anchored" data-anchor-id="sec-feature-extraction-class-frequencies">Feature Extraction based on class frequencies</h3>
+<div id="tbl-tweets" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-tweets-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Table of tweets
+</figcaption>
+<div aria-describedby="tbl-tweets-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Positive tweets</th>
+<th>Negative tweets</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>I am happy because I am learning NLP</td>
+<td>I am sad, I am not learning NLP</td>
+</tr>
+<tr class="even">
+<td>I am happy</td>
+<td>I am sad</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Given a corpus with positive and negative tweets we can represent it as follows:</p>
+<div id="tbl-vocab" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-vocab-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2: Word class table
+</figcaption>
+<div aria-describedby="tbl-vocab-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Vocabulary</th>
+<th style="text-align: center;">PosFreq (1)</th>
+<th>NegFreq (O)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>I</td>
+<td style="text-align: center;">3</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>am</td>
+<td style="text-align: center;">3</td>
+<td>3</td>
+</tr>
+<tr class="odd">
+<td>happy</td>
+<td style="text-align: center;">2</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>because</td>
+<td style="text-align: center;">1</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>learning</td>
+<td style="text-align: center;">1</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>NLP</td>
+<td style="text-align: center;">1</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>sad</td>
+<td style="text-align: center;">0</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td>not</td>
+<td style="text-align: center;">0</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>freqs: dictionary mapping from (word, class) to frequency :</p>
+<p><span id="eq-feature-vector"><span class="math display">
+\underbrace{X_m}_{\textcolor{#7200ac}{\text{Features of tweet M}}} =\left[ \underbrace{1}_{\textcolor{#126ed5}{\text{bias}}}
+,\sum_w \underbrace{\textcolor{#da7801}{freqs}(w,\textcolor{#2db15d}{1})}_{\textcolor{#931e18}{\text{Sum Pos.frequencies}}} ,\sum_w \underbrace{\textcolor{#da7801}{freqs}(w,\textcolor{#931e18}{0})}_{\textcolor{#2db15d}{\text{Sum Neg. frequencies}}}
+\right]
+\tag{1}</span></span></p>
+<p>we have to encode each tweet as a vector. Previously, this vector was of dimension VV. Now, as we’ll see in the upcoming videos, we’ll represent it with a vector of dimension 33. We create a dictionary to map the word, it class, either positive or negative, to the number of times that word appeared in its corresponding class.</p>
+</section>
+</section>
+<section id="sec-preprocessing" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-preprocessing">Preprocessing</h2>
+
+<div class="no-row-height column-margin column-container"><div id="fig-slide6" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="img/slide_006.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10: preprocessing - feature extraction
+</figcaption>
+</figure>
+</div><div id="fig-slide7" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="img/slide_007.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;11: preprocessing - stemming
+</figcaption>
+</figure>
+</div></div>
+<p>When preprocessing, we have to perform the following:</p>
+<ol type="1">
+<li>Eliminate handles and URLs</li>
+<li>Tokenize the string into words.</li>
+<li>Remove stop words like “and, is, a, on, etc.”</li>
+<li>Stemming - converting each word to its stem. For example dancer, dancing, danced, becomes ‘danc’. We can use porter’s stemmer to take care of this.</li>
+<li>Convert all our words to lower case.</li>
+</ol>
+</section>
+<section id="sec-training-logistic-regression" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-training-logistic-regression">Training Logistic Regression</h2>
+<div class="page-columns page-full"><p>{}</p><div class="no-row-height column-margin column-container"><img src="img/slide_008.png" id="fig-slide8" class="img-fluid" alt="training algorithm - flow chart"></div></div>
+<p>To train our logistic regression function, we’ll do the following: we initialize our parameter <span class="math inline">\theta</span> , that we can use in you sigmoid, we then compute the gradient that we’ll use to update , and then calculate the cost. we keep doing so until good enough</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-slide9" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="img/slide_009.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12: triaining
+</figcaption>
+</figure>
+</div></div><p>Usually we keep training until the cost converges. If we were to plot the number of iterations versus the cost, we should see something like this:</p>
+</section>
+<section id="sec-testing-logistic-regression" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-testing-logistic-regression">Testing Logistic Regression</h2>
+
+<div class="no-row-height column-margin column-container"><div id="fig-slide10" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="img/slide_010.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;13: triaining
+</figcaption>
+</figure>
+</div></div><p>To test our model, we would run a subset of our data, known as the validation set, on our model to get predictions. The predictions are the outputs of the sigmoid function. If the output is ≥=0.5, we would assign it to a positive class. Otherwise, we would assign it to a negative class. To compute accuracy, we solve the following equation:</p>
+<p><span class="math display">
+\text{accuracy} = \sum_i \frac{\hat{y}^{(i)}= y^{(i)}_{val}}{m}
+</span></p>
+<p><strong>Cross validation</strong> note:</p>
+<ul>
+<li>In reality, given your X data we would usually split it into three components. <span class="math inline">X_{train}, X_{val}, X_{test}</span>.</li>
+<li>The distribution usually varies depending on the size of our data set. However, a 80%, 10%, 10% split usually works.</li>
+</ul>
+<p>In other words, we go over all our training examples, m of them, and then for every prediction, if it was wright we add a one. we then divide by m.</p>
+</section>
+<section id="sec-logistic-regression-cost-function" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-logistic-regression-cost-function">Logistic Regression: Cost Function</h2>
+
+<div class="no-row-height column-margin column-container"><div id="fig-slide11" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="img/slide_011.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;14: training intuitions
+</figcaption>
+</figure>
+</div></div><div class="callout callout-style-simple callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Sigmoid
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We should start by developing intuition about how the cost function is designed the way it is. This is <strong>important</strong> because we’ll meet the <code>sigmoid</code> in <em>Neural Networks</em>, <em>job interviews</em> and so best make a friend of it. In<span class="citation" data-cites="GefforyHinton2013MOOC">(<a href="#ref-GefforyHinton2013MOOC" role="doc-biblioref">Hinton 2012</a>)</span> there is the full derivation of Sigmoid cost function. Also the sigmoid and Logistic regression are intimately related - we can’t have one without the other.</p>
+</div>
+</div>
+<p>In plain english: “The cost function is mean log loss across all training examples”</p>
+<p><span class="math display">
+J( \theta)=−\frac{1}{m} \sum^m_{i=1}[y^{(i)}\log h(x^{(i)}, \theta)+(1 −y^{(i)}) \log (1−h(x^{(i)}, \theta))]
+</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">m</span> is the count of rows of our training set.</li>
+<li><span class="math inline">i</span> indexes a single row in the dataset.</li>
+<li><span class="math inline">x^{(i)}</span> is the data for row i.</li>
+<li><span class="math inline">y^{(i)}</span> is the <code>gound truth</code> AKA <code>label</code> for rows i.</li>
+<li><span class="math inline">h(x^{(i)},\theta)</span> is the model’s prediction for row i<sup>th</sup> row.</li>
+</ul>
+<p>We’ll derive the logistic regression cost function to get the gradients.</p>
+<p>we can see in the figure:</p>
+<ul>
+<li>If y = 1 and our prediction is close to 0, we get a cost close to  ∞.</li>
+<li>The same applies when y=0 and we predict ion is close to 1.</li>
+<li>On the other hand if we get a prediction equal to the label, we get a cost of 0.<br>
+</li>
+<li>In either, case we are trying to minimize  <span class="math inline">J(\theta)</span></li>
+</ul>
+<section id="sec-mathematical-derivation" class="level3">
+<h3 class="anchored" data-anchor-id="sec-mathematical-derivation">Mathematical Derivation</h3>
+<p>To see why the cost function is designed that way, let’s take a step back and write up a function that compresses the two cases into one case. If</p>
+<p><span class="math display">
+  P(y|x(i), \theta) =h(x^{(i)}, \theta)^{y^{(i)}}1−h(x^{(i)}, \theta)^{1−y^{(i)}}
+</span></p>
+<p>From the preceding, we can see that when <span class="math inline">y = 1</span>, we get <span class="math inline">h(x^{(i)}, \theta)^{y^{(i)}}</span> and when <span class="math inline">y≈0</span> we ther term <span class="math inline">1 − h(x^{(i)}, \theta)^{(1−y^{(i)})}</span>, which makes sense, since the two probabilities equal to 1. In either case, we want to maximize the function $ h(x^{(i)}, )^{y(i)}$ by making it as close to  1 as possible.<br>
+When <span class="math inline">y ≈ 0</span> , we want the term <span class="math inline">1-h(x^{(i)}, \theta)^{1−y^{(i)}} ≈ 0</span> which then <span class="math inline">\implies  h(x^{(i)}, \theta)^{y^{(i)}} ≈ 1</span> When <span class="math inline">y=1</span>, we want <span class="math inline">h(x^{(i)}, \theta)^{y^{(i)}} = 1</span> Now we want to find a way to model the entire data set and not just one example. To do so, we’ll define the likelihood as follows:</p>
+<p><span class="math display">
+  L(\theta) = \prod^m_{i=1} h(\theta, x^{(i)})^{y^{(i)}} (1−h(\theta, x^{(i)}))^{(1−y^{(i)})}
+</span></p>
+<p>Note that if we mess up the classification of one example, we end up messing up the overall likelihood score, which is exactly what we intended. We want to fit a model to the entire dataset where all data points are related. to</p>
+<p><span class="math display">
+\lim_{m \to \infty} L(\theta) = 0
+</span></p>
+<p>It goes close to zero, because both <span class="math inline">h(\theta, x^{(i)})^{y^{(i)}}</span> and <span class="math inline">(1−h(\theta, x^{(i)}))^{(1−y^{(i)})}</span>  are bounded by <span class="math inline">[0,1]</span>. Since we are trying to maximize  <span class="math inline">h(\theta, x^{(i)})</span> in <span class="math inline">L(\theta)</span>, we can introduce the log and just maximize the log of the function.</p>
+<p>Introducing the log, allows us to write the log of a product as the sum of each log. Here are two identities that will come in handy:</p>
+<p><span class="math display">
+  \log(a*b*c) = \log(a) + \log(b) + \log(c)  
+</span></p>
+<p>and</p>
+<p><span class="math display">
+  \log(a^b) = b \times \log(a)
+</span></p>
+<p>Given the two preceding identities, we can rewrite the equation as follows: <span class="math display">  
+  \begin{align*}  
+    \max_{ h(x^{(i)},\theta)}\log L(\theta) &amp;= \log \prod^m_{i=1}h(x^{(i)}, \theta)^{y^{(i)}}(1−h(x^{(i)} ,\theta))^{1−y^{(i)}} \\
+    &amp;= \sum^m_{i=1} \log h(x^{(i)}, \theta)^{y^{(i)}} (1−h(x^{(i)}, \theta)^{1−y^{(i)}})            \\
+    &amp;= \sum^m_{i=1} \log h(x^{(i)}, \theta)^{y^{(i)}} + \log(1−h(x^{(i)}, \theta)^{1−y^{(i)}} \\
+    &amp;= \sum^m_{i=1} y^{(i)}\log h(x^{(i)}, \theta) + (1−y^{(i)}) \log(1−h(x^{(i)}, \theta))
+  \end{align*}
+</span> Hence, we now divide by m, because we want to see the average cost. <span class="math display">  
+  \begin{align*}  
+    \frac{1}{m} \sum^m_{i=1} y^{(i)}\log h(x^{(i)}, \theta) + (1−y^{(i)}) \log(1−h(x^{(i)}, \theta))  
+  \end{align*}
+</span></p>
+<p>Remember that we were maximizing <span class="math inline">h(\theta, x(i))</span>  in the preceding equation. It turns out that maximizing an equation is the same as minimizing its negative. Think of <span class="math inline">x^2</span>, feel free to plot it to see that for we yourself. Hence we add a negative sign and we end up minimizing the cost function as follows.</p>
+<p><span class="math display">  
+  \begin{align*}  
+    J(\theta)= − \frac{1}{m} \sum^m_{i=1} [y^{(i)} \log h(x^{(i)}, \theta) + ( 1 − y^{(i)}) \log ( 1 − h(x^{(i)}, \theta))]  
+  \end{align*}
+</span></p>
+<p>A vectorized implementation is:</p>
+<p><span class="math display">
+\begin{align*} &amp; h = g(X\theta)\newline &amp; J(\theta)  = \frac{1}{m} \cdot \left(-y^{T}\log(h)-(1-y)^{T}\log(1-h)\right) \end{align*}
+</span></p>
+</section>
+</section>
+<section id="logistic-regression-gradient" class="level2">
+<h2 class="anchored" data-anchor-id="logistic-regression-gradient">Logistic Regression: Gradient</h2>
+<p><span class="math display">
+\mathbf{w}(t+1) = \mathbf{w}(t) - \eta\nabla E_{in}
+</span></p>
+<p>For the case of logistic regression, the gradient of the error measure with respect to the weights, is calculated as:</p>
+<p><span class="math display">
+\nabla E_{in}\left(\mathbf{w}\right) = -\frac{1}{N}\sum\limits_{n=1}^N \frac{y_n\mathbf{x_N}}{1 + \exp\left(y_n \mathbf{w^T}(t)\mathbf{x_n}\right)}
+</span></p>
+<p>Let’s look into the gradient descent in more detail, as the gradient update rule is given without an explicitly derivation.</p>
+<p>The general form Of gradient descent is defined</p>
+<p><span class="math display">
+  \begin{align*} &amp;
+    Repeat \; \lbrace \newline &amp; \; \theta_j := \theta_j - \alpha \dfrac{\partial}{\partial \theta_j}J(\theta) \newline &amp; \rbrace
+  \end{align*}
+</span></p>
+<p>We can work out the derivative part using Calculus to get:</p>
+<p><span class="math display">
+  \begin{align*} &amp;
+    Repeat \; \lbrace  \theta_j := \theta_j - \frac{\alpha}{m} \sum_{i=1}^m ( h(x^{(i)}, \theta) - y^{(i)}) x_j^{(i)} \rbrace
+  \end{align*}
+</span></p>
+<p>A vectorized formulation <span class="math display">
+\theta_j := \theta_j - \frac{\alpha}{m} X^T ( H(X, \theta) -Y)
+</span></p>
+<section id="sec-partial-derivative" class="level3">
+<h3 class="anchored" data-anchor-id="sec-partial-derivative">Partial derivative of <span class="math inline">J(\theta)</span></h3>
+<p><span class="math display">
+\begin{align*}
+  h(x)'&amp;=\left(\frac{1}{1+e^{-x}}\right)'=\frac{-(1+e^{-x})'}{(1+e^{-x})^2}=\frac{-1'-(e^{-x})'}{(1+e^{-x})^2}=\frac{0-(-x)'(e^{-x})}{(1+e^{-x})^2}=\frac{-(-1)(e^{-x})}{(1+e^{-x})^2}=\frac{e^{-x}}{(1+e^{-x})^2} \newline &amp;=\left(\frac{1}{1+e^{-x}}\right)\left(\frac{e^{-x}}{1+e^{-x}}\right)=h(x)\left(\frac{+1-1 + e^{-x}}{1+e^{-x}}\right)=h(x)\left(\frac{1 + e^{-x}}{1+e^{-x}} - \frac{1}{1+e^{-x}}\right)=h(x)(1 - h(x))
+\end{align*}
+</span></p>
+<p><span id="eq-partial-derivative-derivation"><span class="math display">
+\begin{align*}
+\frac{\partial}{\partial \theta_j} J(\theta) &amp;= \frac{\partial}{\partial \theta_j} \frac{-1}{m}\sum_{i=1}^m \left [ y^{(i)} log ( h(x^{(i)}, \theta) ) + (1-y^{(i)}) log (1 -  h(x^{(i)}, \theta)) \right ] \newline
+&amp;= - \frac{1}{m}\sum_{i=1}^m \left [     y^{(i)} \frac{\partial}{\partial \theta_j} log ( h(x^{(i)}, \theta))   + (1-y^{(i)}) \frac{\partial}{\partial \theta_j} log (1 -  h(x^{(i)}, \theta))\right ] \newline
+&amp;= - \frac{1}{m}\sum_{i=1}^m \left [ \frac{y^{(i)} \frac{\partial}{\partial \theta_j}  h(x^{(i)}, \theta)}{ h(x^{(i)}, \theta)} + \frac{(1-y^{(i)})\frac{\partial}{\partial \theta_j} (1 -  h(x^{(i)}, \theta))}{1 -  h(x^{(i)}, \theta)}\right ] \newline
+&amp;= - \frac{1}{m}\sum_{i=1}^m \left [ \frac{y^{(i)} \frac{\partial}{\partial \theta_j}  h(x^{(i)}, \theta)}{ h(x^{(i)}, \theta)} + \frac{(1-y^{(i)})\frac{\partial}{\partial \theta_j} (1 -  h(x^{(i)}, \theta))}{1 -  h(x^{(i)}, \theta)}\right ] \newline
+&amp;= - \frac{1}{m}\sum_{i=1}^m \left [ \frac{y^{(i)}  h(x^{(i)}, \theta) (1 -  h(x^{(i)}, \theta)) \frac{\partial}{\partial \theta_j} \theta^T x^{(i)}}{ h(x^{(i)}, \theta)}   + \frac{- (1-y^{(i)})  h(x^{(i)}, \theta)(1 -  h(x^{(i)}, \theta)) \frac{\partial}{\partial \theta_j} \theta^T x^{(i)}}{1 -  h(x^{(i)}, \theta)}\right ] \newline
+&amp;= - \frac{1}{m}\sum_{i=1}^m \left [ \frac{y^{(i)}  h(x^{(i)}, \theta) (1 -  h(x^{(i)}, \theta)) \frac{\partial}{\partial \theta_j} \theta^T x^{(i)}}{ h(x^{(i)}, \theta)} - \frac{(1-y^{(i)}) h(x^{(i)}, \theta) (1 -  h(x^{(i)}, \theta)) \frac{\partial}{\partial \theta_j} \theta^T x^{(i)}}{1 -  h(x^{(i)}, \theta)}\right ] \newline
+&amp;= - \frac{1}{m}\sum_{i=1}^m \left [ y^{(i)} (1 -  h(x^{(i)}, \theta)) x^{(i)}_j - (1-y^{(i)})  h(x^{(i)}, \theta) x^{(i)}_j\right ] \newline
+&amp;= - \frac{1}{m}\sum_{i=1}^m \left [ y^{(i)} (1 -  h(x^{(i)}, \theta)) - (1-y^{(i)})  h(x^{(i)}, \theta) \right ] x^{(i)}_j \newline
+&amp;= - \frac{1}{m}\sum_{i=1}^m \left [ y^{(i)} - y^{(i)}  h(x^{(i)}, \theta) -  h(x^{(i)}, \theta) + y^{(i)}  h(x^{(i)}, \theta) \right ] x^{(i)}_j \newline
+&amp;= - \frac{1}{m}\sum_{i=1}^m \left [ y^{(i)} -  h(x^{(i)}, \theta) \right ] x^{(i)}_j \newline
+&amp;= \frac{1}{m}\sum_{i=1}^m \left [ h(x^{(i)}, \theta) - y^{(i)} \right ] x^{(i)}_j
+\end{align*}
+\tag{2}</span></span></p>
+<p>First calculate derivative Of Sigmoid function (it be useful while finding partial derivative Of Note that we computed the partial derivative Of the Sigmoid function If We Were to derive , 9) with respect to <span class="math inline">O_j</span>, we would get —</p>
+<p>Note that used the chain rule there. We multiply by the derivative Of with respect to Now we are ready to find out resulting partial derivative</p>
+<p>The Vectorized Version:</p>
+<p><span id="eq-vectorized-gradient"><span class="math display">
+\nabla J(\theta) = \frac{1}{m} X^T \cdot (H(X,\theta)-Y)
+\tag{3}</span></span></p>
+</section>
+</section>
+<section id="resources" class="level2">
+<h2 class="anchored" data-anchor-id="resources">resources:</h2>
+<ul>
+<li><a href="https://math.stackexchange.com/questions/477207/derivative-of-cost-function-for-logistic-regression">derivative of cost function for Logistic Regression</a> Congratulations. we now know the full derivation Of logistic regression.</li>
+<li><a href="https://betterexplained.com/articles/an-intuitive-and-short-explanation-of-bayes-theorem/">An Intuitive Explanation of Bayes’ Theorem</a></li>
+<li><span class="citation" data-cites="Chadha2020DistilledNotesCourseraDLSpec">(<a href="#ref-Chadha2020DistilledNotesCourseraDLSpec" role="doc-biblioref">Chadha 2020</a>)</span> <a href="https://aman.ai/coursera-nlp/logistic-regression/">Aman Chadha’s Notes</a></li>
+<li><a href="https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization/tree/master/1%20-%20Natural%20Language%20Processing%20with%20Classification%20and%20Vector%20Spaces#testing-logistic-regression">Ibrahim Jelliti’s Notes</a></li>
+</ul>
+<section id="slides" class="level3">
+<h3 class="anchored" data-anchor-id="slides">Slides</h3>
+<p><embed src="slides.pdf" class="img-fluid"></p>
+
+
+
+</section>
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-Chadha2020DistilledNotesCourseraDLSpec" class="csl-entry" role="listitem">
+Chadha, Aman. 2020. <span>“Distilled Notes for the Natural Language Processing Specialization on Coursera (Offered by Deeplearning.ai).”</span> <a href="https://www.aman.ai" class="uri">https://www.aman.ai</a>. <a href="https://www.aman.ai">www.aman.ai</a>.
+</div>
+<div id="ref-GefforyHinton2013MOOC" class="csl-entry" role="listitem">
+Hinton, Geffory. 2012. <span>“Neural Networks for Machine Learning [MOOC].”</span> <a href="https://www.coursera.org/learn/neural-networks" class="uri">https://www.coursera.org/learn/neural-networks</a>; Coursera. November 2012.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{2020,
+  author = {},
+  title = {Sentiment {Analysis} with {Logistic} {Regression}},
+  date = {2020-10-23},
+  url = {https://orenbochman.github.io/notes-nlp/posts/c1w1/},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-2020" class="csl-entry quarto-appendix-citeas" role="listitem">
+<span>“Sentiment Analysis with Logistic Regression.”</span> 2020.
+October 23, 2020. <a href="https://orenbochman.github.io/notes-nlp/posts/c1w1/">https://orenbochman.github.io/notes-nlp/posts/c1w1/</a>.
+</div></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("^(?:http:|https:)\/\/www\.quarto\.org\/custom");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+          // default icon
+          link.classList.add("external");
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© Copyright 2023-2025, Oren Bochman</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c1w1/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This page is built with 💛 and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

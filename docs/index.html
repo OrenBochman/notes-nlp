@@ -1,0 +1,1982 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>notes-nlp</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-listing/list.min.js"></script>
+<script src="site_libs/quarto-listing/quarto-listing.js"></script>
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-eefa51cfd4367a2c2ab6a47af1b603aa.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    const listingTargetEl = window.document.querySelector('#listing-listing .list');
+    if (!listingTargetEl) {
+      // No listing discovered, do not attach.
+      return; 
+    }
+
+    const options = {
+      valueNames: ['listing-date','listing-title','listing-author','listing-subtitle','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      
+      searchColumns: ["listing-date","listing-title","listing-author","listing-subtitle","listing-image","listing-description","listing-categories"],
+    };
+
+    window['quarto-listings'] = window['quarto-listings'] || {};
+    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
+
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  });
+
+  window.addEventListener('hashchange',() => {
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  })
+  </script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="./index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="./index.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">notes-nlp</li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">notes-nlp</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-body">
+
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Classification &amp; Vector Spaces</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./posts/c1w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Logistic Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./posts/c1w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Probability and Bayes Rule</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./posts/c1w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Vector Space Models and PCA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./posts/c1w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Machine Translation and Document Search via KNN</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./posts/c1lab0/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab on preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./posts/c1lab1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Assignment 1 Logistic Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./posts/c1lab2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab on Building and Visualizing word frequencies</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./posts/c1lab3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab on visualizing tweets and the Logistic Regression model</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Probabilistic Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./posts/c2w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Autocorrect and Dynamic Programming</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./posts/c2w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part of Speech Tagging and Hidden Markov Models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./posts/c2w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Autocomplete and Language Models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./posts/c2w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Word embeddings with neural networks</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Sequence Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./posts/c3w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Neural Machine Translation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./posts/c3w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Text Summarization</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./posts/c3w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Question Answering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./posts/c3w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Chat Bots</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">NLP with Attention Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./posts/c4w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Neural Machine Translation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./posts/c4w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Text Summarization</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./posts/c4w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Question Answering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./posts/c4w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Chat Bots</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(25)</span></div><div class="category" data-category="QkVSVA==">BERT <span class="quarto-category-count">(1)</span></div><div class="category" data-category="QkxFVQ==">BLEU <span class="quarto-category-count">(1)</span></div><div class="category" data-category="QmF5ZXMlMjBydWxl">Bayes rule <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Q2xhc3NpZmljYXRpb24lMjAlMjYlMjBWZWN0b3IlMjBTcGFjZXM=">Classification &amp; Vector Spaces <span class="quarto-category-count">(4)</span></div><div class="category" data-category="Q29uZGl0aW9uYWwlMjBQcm9iYWJpbGl0eQ==">Conditional Probability <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Q291cnNlcmE=">Coursera <span class="quarto-category-count">(14)</span></div><div class="category" data-category="RGVlcCUyMExlYXJuaW5nJTIwQWxnb3JpdGhtcw==">Deep Learning Algorithms <span class="quarto-category-count">(3)</span></div><div class="category" data-category="RGVlcExlYXJuaW5nQWxnb3JpdGhtcw==">DeepLearningAlgorithms <span class="quarto-category-count">(1)</span></div><div class="category" data-category="R1BUMg==">GPT2 <span class="quarto-category-count">(1)</span></div><div class="category" data-category="R1BUMw==">GPT3 <span class="quarto-category-count">(1)</span></div><div class="category" data-category="TFNIJTIwQXR0ZW50aW9u">LSH Attention <span class="quarto-category-count">(1)</span></div><div class="category" data-category="TGFwbGFjZSUyMHNtb290aGluZw==">Laplace smoothing <span class="quarto-category-count">(3)</span></div><div class="category" data-category="TG9nLWxpa2VsaWhvb2Q=">Log-likelihood <span class="quarto-category-count">(3)</span></div><div class="category" data-category="TG9naXN0aWMlMjByZWdyZXNzaW9u">Logistic regression <span class="quarto-category-count">(1)</span></div><div class="category" data-category="TUJS">MBR <span class="quarto-category-count">(1)</span></div><div class="category" data-category="TkxQ">NLP <span class="quarto-category-count">(18)</span></div><div class="category" data-category="TkxQJTIwU3BlY2lhbGl6YXRpb24=">NLP Specialization <span class="quarto-category-count">(1)</span></div><div class="category" data-category="TkxQJTIwd2l0aCUyMEF0dGVudGlvbiUyME1vZGVscw==">NLP with Attention Models <span class="quarto-category-count">(1)</span></div><div class="category" data-category="TmF0dXJhbCUyMExhbmd1YWdlJTIwUHJvY2Vzc2luZyUyMFNwZWNpYWxpemF0aW9u">Natural Language Processing Specialization <span class="quarto-category-count">(3)</span></div><div class="category" data-category="TmF0dXJhbCUyMExhbmd1YWdlJTIwUHJvY2Vzc2luZyUyMHdpdGglMjBBdHRlbnRpb24lMjBNb2RlbHM=">Natural Language Processing with Attention Models <span class="quarto-category-count">(3)</span></div><div class="category" data-category="TmElQzMlQUZ2ZSUyMEJheWVz">Naïve Bayes <span class="quarto-category-count">(2)</span></div><div class="category" data-category="TmV1cmFsJTIwTWFjaGluZSUyMFRyYW5zbGF0aW9u">Neural Machine Translation <span class="quarto-category-count">(4)</span></div><div class="category" data-category="UENT">PCS <span class="quarto-category-count">(1)</span></div><div class="category" data-category="UHJvYmFiaWxpc3RpYyUyME1vZGVscw==">Probabilistic Models <span class="quarto-category-count">(8)</span></div><div class="category" data-category="Uk9VR0U=">ROUGE <span class="quarto-category-count">(1)</span></div><div class="category" data-category="U2VudGltZW50JTIwYW5hbHlzaXMlMjB0YXNr">Sentiment analysis task <span class="quarto-category-count">(2)</span></div><div class="category" data-category="VDU=">T5 <span class="quarto-category-count">(1)</span></div><div class="category" data-category="V29yZCUyMEVtYmVkZGluZ3M=">Word Embeddings <span class="quarto-category-count">(1)</span></div><div class="category" data-category="YXR0ZW50aW9u">attention <span class="quarto-category-count">(4)</span></div><div class="category" data-category="YmVhbSUyMHNlYXJjaA==">beam search <span class="quarto-category-count">(1)</span></div><div class="category" data-category="YmlibGlvZ3JhcGh5">bibliography <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Y2F1c2FsJTIwYXR0ZW50aW9u">causal attention <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Y2hhdCUyMGJvdCUyMGRldmVsb3BtZW50">chat bot development <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Y2xhc3NpZmljYXRpb24=">classification <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Y291cnNlJTIwbm90ZXM=">course notes <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Y291cnNlcmE=">coursera <span class="quarto-category-count">(3)</span></div><div class="category" data-category="ZGVlcGxlYXJuaW5nLmFp">deeplearning.ai <span class="quarto-category-count">(2)</span></div><div class="category" data-category="ZG90JTIwcHJvZHVjdCUyMGF0dGVudGlvbg==">dot product attention <span class="quarto-category-count">(4)</span></div><div class="category" data-category="aW50ZWxsaWdlbnQlMjBhZ2VudHM=">intelligent agents <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bG9jYWxpdHklMjBzZW5zaXRpdmUlMjBoYXNoaW5n">locality sensitive hashing <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bXVsdGktaGVhZCUyMGF0dGVudGlvbg==">multi-head attention <span class="quarto-category-count">(2)</span></div><div class="category" data-category="bm90ZXM=">notes <span class="quarto-category-count">(17)</span></div><div class="category" data-category="cG9zaXRpb25hbCUyMGVuY29kaW5n">positional encoding <span class="quarto-category-count">(4)</span></div><div class="category" data-category="cXVlc3Rpb24lMjBhbnN3ZXJpbmclMjB0YXNr">question answering task <span class="quarto-category-count">(2)</span></div><div class="category" data-category="cmVmb3JtZXI=">reformer <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cmV2ZXJzaWJsZSUyMGxheWVycw==">reversible layers <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cmV2ZXJzaWJsZSUyMHRyYW5zZm9ybWVy">reversible transformer <span class="quarto-category-count">(1)</span></div><div class="category" data-category="c2VsZiUyMGF0dGVudGlvbg==">self attention <span class="quarto-category-count">(2)</span></div><div class="category" data-category="c2VudGltZW50JTIwYW5hbHlzaXMlMjB0YXNr">sentiment analysis task <span class="quarto-category-count">(2)</span></div><div class="category" data-category="c2VxMnNlcQ==">seq2seq <span class="quarto-category-count">(1)</span></div><div class="category" data-category="c3VtbWFyaXphdGlvbiUyMHRhc2s=">summarization task <span class="quarto-category-count">(1)</span></div><div class="category" data-category="dGVhY2hlciUyMGZvcmNpbmc=">teacher forcing <span class="quarto-category-count">(4)</span></div><div class="category" data-category="dHJhbnNmb3JtZXI=">transformer <span class="quarto-category-count">(4)</span></div><div class="category" data-category="dHJhbnNmb3JtZXIlMjBkZWNvZGVy">transformer decoder <span class="quarto-category-count">(2)</span></div><div class="category" data-category="dHJhbnNsYXRpb24lMjB0YXNr">translation task <span class="quarto-category-count">(1)</span></div><div class="category" data-category="d29yZCUyMGFsaWdubWVudA==">word alignment <span class="quarto-category-count">(1)</span></div></div></div>
+<!-- main -->
+<main class="content quarto-banner-title-block column-body" id="quarto-document-content">
+
+
+
+
+
+
+
+
+
+<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
+<div class="list quarto-listing-default">
+<div class="quarto-post image-right" data-index="0" data-listing-file-modified-sort="1738167812610" data-listing-reading-time-sort="6" data-listing-word-count-sort="1015">
+<div class="thumbnail">
+<p><a href="./posts/c1w3/Linear-algebra-in-Python-with-Numpy.html" class="no-external"></a></p><a href="./posts/c1w3/Linear-algebra-in-Python-with-Numpy.html" class="no-external">
+<p class="card-img-top"><img src="posts/c1w3/img/course-banner.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/c1w3/Linear-algebra-in-Python-with-Numpy.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c1w3/Linear-algebra-in-Python-with-Numpy.html" class="no-external">Linear algebra in Python with NumPy</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c1w3/Linear-algebra-in-Python-with-Numpy.html" class="no-external"></a>
+</div>
+<div class="listing-description">
+<a href="./posts/c1w3/Linear-algebra-in-Python-with-Numpy.html" class="no-external"> In this lab, you will have the opportunity to remember some basic concepts about linear algebra and how to use them in Python.</a>
+</div>
+</div>
+<div class="metadata">
+<p><a href="./posts/c1w3/Linear-algebra-in-Python-with-Numpy.html" class="no-external"></a></p><a href="./posts/c1w3/Linear-algebra-in-Python-with-Numpy.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-listing-file-modified-sort="1738167823901" data-listing-reading-time-sort="4" data-listing-word-count-sort="648">
+<div class="thumbnail">
+<p><a href="./posts/c1w3/Manipulating-word-embeddings.html" class="no-external"></a></p><a href="./posts/c1w3/Manipulating-word-embeddings.html" class="no-external">
+<p class="card-img-top"><img src="posts/c1w3/img/course-banner.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/c1w3/Manipulating-word-embeddings.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c1w3/Manipulating-word-embeddings.html" class="no-external">Manipulating word embeddings</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c1w3/Manipulating-word-embeddings.html" class="no-external"></a>
+</div>
+<div class="listing-description">
+<a href="./posts/c1w3/Manipulating-word-embeddings.html" class="no-external">In this week’s assignment, you are going to use a pre-trained word embedding for finding word analogies and equivalence. This exercise can be used as an Intrinsic Evaluation…</a>
+</div>
+</div>
+<div class="metadata">
+<p><a href="./posts/c1w3/Manipulating-word-embeddings.html" class="no-external"></a></p><a href="./posts/c1w3/Manipulating-word-embeddings.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="2" data-listing-file-modified-sort="1738167044375" data-listing-reading-time-sort="12" data-listing-word-count-sort="2270">
+<div class="thumbnail">
+<p><a href="./posts/c1w3/C1_W3_Assignment.html" class="no-external"></a></p><a href="./posts/c1w3/C1_W3_Assignment.html" class="no-external">
+<p class="card-img-top"><img src="posts/c1w3/img/map.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/c1w3/C1_W3_Assignment.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c1w3/C1_W3_Assignment.html" class="no-external">Assignment 3: Hello Vectors</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c1w3/C1_W3_Assignment.html" class="no-external"></a>
+</div>
+<div class="listing-description">
+<a href="./posts/c1w3/C1_W3_Assignment.html" class="no-external">Welcome to this week’s programming assignment on exploring word vectors. In natural language processing, we represent each word as a vector consisting of numbers. The vector…</a>
+</div>
+</div>
+<div class="metadata">
+<p><a href="./posts/c1w3/C1_W3_Assignment.html" class="no-external"></a></p><a href="./posts/c1w3/C1_W3_Assignment.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="3" data-listing-file-modified-sort="1738167841346" data-listing-reading-time-sort="5" data-listing-word-count-sort="816">
+<div class="thumbnail">
+<p><a href="./posts/c1w3/Another-explanation-about-PCA.html" class="no-external"></a></p><a href="./posts/c1w3/Another-explanation-about-PCA.html" class="no-external">
+<p class="card-img-top"><img src="posts/c1w3/img/course-banner.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/c1w3/Another-explanation-about-PCA.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c1w3/Another-explanation-about-PCA.html" class="no-external">Another explanation about PCA</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c1w3/Another-explanation-about-PCA.html" class="no-external"></a>
+</div>
+<div class="listing-description">
+<a href="./posts/c1w3/Another-explanation-about-PCA.html" class="no-external"> <sub>photo credit: Raunak Joshi</sub></a>
+</div>
+</div>
+<div class="metadata">
+<p><a href="./posts/c1w3/Another-explanation-about-PCA.html" class="no-external"></a></p><a href="./posts/c1w3/Another-explanation-about-PCA.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="4" data-categories="TmF0dXJhbCUyMExhbmd1YWdlJTIwUHJvY2Vzc2luZyUyMFNwZWNpYWxpemF0aW9uJTJDTmF0dXJhbCUyMExhbmd1YWdlJTIwUHJvY2Vzc2luZyUyMHdpdGglMjBBdHRlbnRpb24lMjBNb2RlbHMlMkNOZXVyYWwlMjBNYWNoaW5lJTIwVHJhbnNsYXRpb24lMkNjb3Vyc2VyYSUyQ25vdGVzJTJDTkxQJTJDRGVlcCUyMExlYXJuaW5nJTIwQWxnb3JpdGhtcyUyQ3RyYW5zZm9ybWVyJTJDcmV2ZXJzaWJsZSUyMHRyYW5zZm9ybWVyJTJDdGVhY2hlciUyMGZvcmNpbmclMkNwb3NpdGlvbmFsJTIwZW5jb2RpbmclMkNsb2NhbGl0eSUyMHNlbnNpdGl2ZSUyMGhhc2hpbmclMkNhdHRlbnRpb24lMkNkb3QlMjBwcm9kdWN0JTIwYXR0ZW50aW9uJTJDTFNIJTIwQXR0ZW50aW9uJTJDR1BUMyUyQ3JlZm9ybWVyJTJDcmV2ZXJzaWJsZSUyMGxheWVycyUyQ2NoYXQlMjBib3QlMjBkZXZlbG9wbWVudCUyQ2ludGVsbGlnZW50JTIwYWdlbnRzJTJDTkxQJTJDcXVlc3Rpb24lMjBhbnN3ZXJpbmclMjB0YXNr" data-listing-date-sort="1619470800000" data-listing-file-modified-sort="1738122264529" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1634">
+<div class="thumbnail">
+<p><a href="./posts/c4w4/index.html" class="no-external"></a></p><a href="./posts/c4w4/index.html" class="no-external">
+<p class="card-img-top"><img src="posts/c4w4/img/course-banner.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/c4w4/index.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c4w4/index.html" class="no-external">Week 4 Chat Bots</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c4w4/index.html" class="no-external">NLP with Attention Models</a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('TmF0dXJhbCUyMExhbmd1YWdlJTIwUHJvY2Vzc2luZyUyMFNwZWNpYWxpemF0aW9u'); return false;">
+Natural Language Processing Specialization
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TmF0dXJhbCUyMExhbmd1YWdlJTIwUHJvY2Vzc2luZyUyMHdpdGglMjBBdHRlbnRpb24lMjBNb2RlbHM='); return false;">
+Natural Language Processing with Attention Models
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TmV1cmFsJTIwTWFjaGluZSUyMFRyYW5zbGF0aW9u'); return false;">
+Neural Machine Translation
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Y291cnNlcmE='); return false;">
+coursera
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('bm90ZXM='); return false;">
+notes
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TkxQ'); return false;">
+NLP
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('RGVlcCUyMExlYXJuaW5nJTIwQWxnb3JpdGhtcw=='); return false;">
+Deep Learning Algorithms
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('dHJhbnNmb3JtZXI='); return false;">
+transformer
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('cmV2ZXJzaWJsZSUyMHRyYW5zZm9ybWVy'); return false;">
+reversible transformer
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('dGVhY2hlciUyMGZvcmNpbmc='); return false;">
+teacher forcing
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('cG9zaXRpb25hbCUyMGVuY29kaW5n'); return false;">
+positional encoding
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('bG9jYWxpdHklMjBzZW5zaXRpdmUlMjBoYXNoaW5n'); return false;">
+locality sensitive hashing
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('YXR0ZW50aW9u'); return false;">
+attention
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('ZG90JTIwcHJvZHVjdCUyMGF0dGVudGlvbg=='); return false;">
+dot product attention
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TFNIJTIwQXR0ZW50aW9u'); return false;">
+LSH Attention
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('R1BUMw=='); return false;">
+GPT3
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('cmVmb3JtZXI='); return false;">
+reformer
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('cmV2ZXJzaWJsZSUyMGxheWVycw=='); return false;">
+reversible layers
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Y2hhdCUyMGJvdCUyMGRldmVsb3BtZW50'); return false;">
+chat bot development
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('aW50ZWxsaWdlbnQlMjBhZ2VudHM='); return false;">
+intelligent agents
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TkxQ'); return false;">
+NLP
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('cXVlc3Rpb24lMjBhbnN3ZXJpbmclMjB0YXNr'); return false;">
+question answering task
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/c4w4/index.html" class="no-external">This week of the NLP Specialization, we explore the world of Chatbots. We will be building Reformer model, an efficent transformer to create intelligent conversational agents.We will learn how to train this model on dialogue datasets and generate responses that mimic human-like conversations. Through hands-on exercises using JAX, we will gain practical experience in building chatbots that can understand and respond to user queries. We will master the skills to develop sophisticated chatbot applications using state-of-the-art NLP techniques</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/c4w4/index.html" class="no-external">
+<div class="listing-date">
+Apr 27, 2021
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="5" data-categories="TkxQJTIwU3BlY2lhbGl6YXRpb24lMkNOTFAlMjB3aXRoJTIwQXR0ZW50aW9uJTIwTW9kZWxzJTJDTmV1cmFsJTIwTWFjaGluZSUyMFRyYW5zbGF0aW9uJTJDY291cnNlcmElMkNub3RlcyUyQ05MUCUyQ0RlZXAlMjBMZWFybmluZyUyMEFsZ29yaXRobXMlMkN0cmFuc2Zvcm1lciUyQ3RlYWNoZXIlMjBmb3JjaW5nJTJDcG9zaXRpb25hbCUyMGVuY29kaW5nJTJDQkVSVCUyQ1Q1JTJDdHJhbnNmb3JtZXIlMjBkZWNvZGVyJTJDYXR0ZW50aW9uJTJDZG90JTIwcHJvZHVjdCUyMGF0dGVudGlvbiUyQ3NlbGYlMjBhdHRlbnRpb24lMkNjYXVzYWwlMjBhdHRlbnRpb24lMkNtdWx0aS1oZWFkJTIwYXR0ZW50aW9uJTJDcXVlc3Rpb24lMjBhbnN3ZXJpbmclMjB0YXNr" data-listing-date-sort="1618347600000" data-listing-file-modified-sort="1738122241377" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="15" data-listing-word-count-sort="2808">
+<div class="thumbnail">
+<p><a href="./posts/c4w3/index.html" class="no-external"></a></p><a href="./posts/c4w3/index.html" class="no-external">
+<p class="card-img-top"><img src="posts/c4w3/img/V2-012-tl-features-vs-fine-tuning.png"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/c4w3/index.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c4w3/index.html" class="no-external">Week 3 Question Answering</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c4w3/index.html" class="no-external">NLP with Attention Models</a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('TkxQJTIwU3BlY2lhbGl6YXRpb24='); return false;">
+NLP Specialization
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TkxQJTIwd2l0aCUyMEF0dGVudGlvbiUyME1vZGVscw=='); return false;">
+NLP with Attention Models
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TmV1cmFsJTIwTWFjaGluZSUyMFRyYW5zbGF0aW9u'); return false;">
+Neural Machine Translation
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Y291cnNlcmE='); return false;">
+coursera
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('bm90ZXM='); return false;">
+notes
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TkxQ'); return false;">
+NLP
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('RGVlcCUyMExlYXJuaW5nJTIwQWxnb3JpdGhtcw=='); return false;">
+Deep Learning Algorithms
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('dHJhbnNmb3JtZXI='); return false;">
+transformer
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('dGVhY2hlciUyMGZvcmNpbmc='); return false;">
+teacher forcing
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('cG9zaXRpb25hbCUyMGVuY29kaW5n'); return false;">
+positional encoding
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('QkVSVA=='); return false;">
+BERT
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('VDU='); return false;">
+T5
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('dHJhbnNmb3JtZXIlMjBkZWNvZGVy'); return false;">
+transformer decoder
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('YXR0ZW50aW9u'); return false;">
+attention
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('ZG90JTIwcHJvZHVjdCUyMGF0dGVudGlvbg=='); return false;">
+dot product attention
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('c2VsZiUyMGF0dGVudGlvbg=='); return false;">
+self attention
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Y2F1c2FsJTIwYXR0ZW50aW9u'); return false;">
+causal attention
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('bXVsdGktaGVhZCUyMGF0dGVudGlvbg=='); return false;">
+multi-head attention
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('cXVlc3Rpb24lMjBhbnN3ZXJpbmclMjB0YXNr'); return false;">
+question answering task
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/c4w3/index.html" class="no-external">This week of the NLP Specialization, we will uncover the field of Neural Question Answering. We will build advanced models like T5 and BERT to accurately answer questions based on given contexts. We will fine-tune these models to optimize their performance. We will gain practical experience in building question-answering systems. By the end of this week, we will have the skills to develop state-of-the-art NLP models to provide accurate answers to a wide range of questions.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/c4w3/index.html" class="no-external">
+<div class="listing-date">
+Apr 14, 2021
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="6" data-categories="TmF0dXJhbCUyMExhbmd1YWdlJTIwUHJvY2Vzc2luZyUyMFNwZWNpYWxpemF0aW9uJTJDTmF0dXJhbCUyMExhbmd1YWdlJTIwUHJvY2Vzc2luZyUyMHdpdGglMjBBdHRlbnRpb24lMjBNb2RlbHMlMkNOZXVyYWwlMjBNYWNoaW5lJTIwVHJhbnNsYXRpb24lMkNDb3Vyc2VyYSUyQ25vdGVzJTJDTkxQJTJDRGVlcCUyMExlYXJuaW5nJTIwQWxnb3JpdGhtcyUyQ3RyYW5zZm9ybWVyJTJDdGVhY2hlciUyMGZvcmNpbmclMkNwb3NpdGlvbmFsJTIwZW5jb2RpbmclMkNHUFQyJTJDdHJhbnNmb3JtZXIlMjBkZWNvZGVyJTJDYXR0ZW50aW9uJTJDZG90JTIwcHJvZHVjdCUyMGF0dGVudGlvbiUyQ3NlbGYlMjBhdHRlbnRpb24lMkNjYXVzYWwlMjBhdHRlbnRpb24lMkNtdWx0aS1oZWFkJTIwYXR0ZW50aW9uJTJDc3VtbWFyaXphdGlvbiUyMHRhc2s=" data-listing-date-sort="1617138000000" data-listing-file-modified-sort="1738122227872" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="28" data-listing-word-count-sort="5546">
+<div class="thumbnail">
+<p><a href="./posts/c4w2/index.html" class="no-external"></a></p><a href="./posts/c4w2/index.html" class="no-external">
+<p><img loading="lazy" src="./posts/c4w2/img/notes-formulas.jpg" class="thumbnail-image"></p>
+</a><p><a href="./posts/c4w2/index.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c4w2/index.html" class="no-external">Week 2 Text Summarization</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c4w2/index.html" class="no-external">NLP with Attention Models</a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('TmF0dXJhbCUyMExhbmd1YWdlJTIwUHJvY2Vzc2luZyUyMFNwZWNpYWxpemF0aW9u'); return false;">
+Natural Language Processing Specialization
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TmF0dXJhbCUyMExhbmd1YWdlJTIwUHJvY2Vzc2luZyUyMHdpdGglMjBBdHRlbnRpb24lMjBNb2RlbHM='); return false;">
+Natural Language Processing with Attention Models
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TmV1cmFsJTIwTWFjaGluZSUyMFRyYW5zbGF0aW9u'); return false;">
+Neural Machine Translation
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Q291cnNlcmE='); return false;">
+Coursera
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('bm90ZXM='); return false;">
+notes
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TkxQ'); return false;">
+NLP
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('RGVlcCUyMExlYXJuaW5nJTIwQWxnb3JpdGhtcw=='); return false;">
+Deep Learning Algorithms
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('dHJhbnNmb3JtZXI='); return false;">
+transformer
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('dGVhY2hlciUyMGZvcmNpbmc='); return false;">
+teacher forcing
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('cG9zaXRpb25hbCUyMGVuY29kaW5n'); return false;">
+positional encoding
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('R1BUMg=='); return false;">
+GPT2
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('dHJhbnNmb3JtZXIlMjBkZWNvZGVy'); return false;">
+transformer decoder
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('YXR0ZW50aW9u'); return false;">
+attention
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('ZG90JTIwcHJvZHVjdCUyMGF0dGVudGlvbg=='); return false;">
+dot product attention
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('c2VsZiUyMGF0dGVudGlvbg=='); return false;">
+self attention
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Y2F1c2FsJTIwYXR0ZW50aW9u'); return false;">
+causal attention
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('bXVsdGktaGVhZCUyMGF0dGVudGlvbg=='); return false;">
+multi-head attention
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('c3VtbWFyaXphdGlvbiUyMHRhc2s='); return false;">
+summarization task
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/c4w2/index.html" class="no-external">This week of the NLP Specialization, we unlock the secrets of Neural Text Summarization. We will building a powerful Transformer model to extract crucial information and create concise summaries. Through hands-on exercises using JAX, we will learn techniques like beam search and length normalization to enhance the quality of our summaries. Through hands-on exercises we will train our model on a dataset of articles. We will master the skills to create effective text summaries using state-of-the-art NLP techniques.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/c4w2/index.html" class="no-external">
+<div class="listing-date">
+Mar 31, 2021
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="7" data-categories="TmF0dXJhbCUyMExhbmd1YWdlJTIwUHJvY2Vzc2luZyUyMFNwZWNpYWxpemF0aW9uJTJDTmF0dXJhbCUyMExhbmd1YWdlJTIwUHJvY2Vzc2luZyUyMHdpdGglMjBBdHRlbnRpb24lMjBNb2RlbHMlMkNOZXVyYWwlMjBNYWNoaW5lJTIwVHJhbnNsYXRpb24lMkNjb3Vyc2VyYSUyQ25vdGVzJTJDTkxQJTJDRGVlcExlYXJuaW5nQWxnb3JpdGhtcyUyQ3RyYW5zZm9ybWVyJTJDdGVhY2hlciUyMGZvcmNpbmclMkNwb3NpdGlvbmFsJTIwZW5jb2RpbmclMkNzZXEyc2VxJTJDd29yZCUyMGFsaWdubWVudCUyQ2F0dGVudGlvbiUyQ2RvdCUyMHByb2R1Y3QlMjBhdHRlbnRpb24lMkN0cmFuc2xhdGlvbiUyMHRhc2slMkNiZWFtJTIwc2VhcmNoJTJDTUJSJTJDQkxFVSUyQ1JPVUdF" data-listing-date-sort="1616191200000" data-listing-file-modified-sort="1738122215080" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="14" data-listing-word-count-sort="2742">
+<div class="thumbnail">
+<p><a href="./posts/c4w1/index.html" class="no-external"></a></p><a href="./posts/c4w1/index.html" class="no-external">
+<p><img loading="lazy" src="./posts/c4w1/img/notes-formulas.jpg" class="thumbnail-image"></p>
+</a><p><a href="./posts/c4w1/index.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c4w1/index.html" class="no-external">Week 1 Neural Machine Translation</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c4w1/index.html" class="no-external">NLP with Attention Models</a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('TmF0dXJhbCUyMExhbmd1YWdlJTIwUHJvY2Vzc2luZyUyMFNwZWNpYWxpemF0aW9u'); return false;">
+Natural Language Processing Specialization
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TmF0dXJhbCUyMExhbmd1YWdlJTIwUHJvY2Vzc2luZyUyMHdpdGglMjBBdHRlbnRpb24lMjBNb2RlbHM='); return false;">
+Natural Language Processing with Attention Models
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TmV1cmFsJTIwTWFjaGluZSUyMFRyYW5zbGF0aW9u'); return false;">
+Neural Machine Translation
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Y291cnNlcmE='); return false;">
+coursera
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('bm90ZXM='); return false;">
+notes
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TkxQ'); return false;">
+NLP
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('RGVlcExlYXJuaW5nQWxnb3JpdGhtcw=='); return false;">
+DeepLearningAlgorithms
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('dHJhbnNmb3JtZXI='); return false;">
+transformer
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('dGVhY2hlciUyMGZvcmNpbmc='); return false;">
+teacher forcing
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('cG9zaXRpb25hbCUyMGVuY29kaW5n'); return false;">
+positional encoding
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('c2VxMnNlcQ=='); return false;">
+seq2seq
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('d29yZCUyMGFsaWdubWVudA=='); return false;">
+word alignment
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('YXR0ZW50aW9u'); return false;">
+attention
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('ZG90JTIwcHJvZHVjdCUyMGF0dGVudGlvbg=='); return false;">
+dot product attention
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('dHJhbnNsYXRpb24lMjB0YXNr'); return false;">
+translation task
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('YmVhbSUyMHNlYXJjaA=='); return false;">
+beam search
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TUJS'); return false;">
+MBR
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('QkxFVQ=='); return false;">
+BLEU
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Uk9VR0U='); return false;">
+ROUGE
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/c4w1/index.html" class="no-external">This week of the Specialization, we’ll dive into the fundamentals of Neural Machine Translation (NMT). We’ll learn about the encoder-decoder architecture, which forms the basis of NMT models, and explore attention mechanisms that enable the model to focus on different parts of the input sequence during translation. Through hands-on exercises, we’ll implement an attention model for English to German translation using TensorFlow, train it on a dataset of sentence pairs, and evaluate its performance. By the end of this week, we’ll have gained a solid understanding of NMT and its applications in language translation.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/c4w1/index.html" class="no-external">
+<div class="listing-date">
+Mar 20, 2021
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="8" data-categories="TkxQJTJDQ291cnNlcmElMkNub3RlcyUyQ1Byb2JhYmlsaXN0aWMlMjBNb2RlbHM=" data-listing-date-sort="1603400400000" data-listing-file-modified-sort="1738118932096" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="9">
+<div class="thumbnail">
+<p><a href="./posts/c2w1/index.html" class="no-external"></a></p><a href="./posts/c2w1/index.html" class="no-external">
+<p class="card-img-top"><img src="posts/c2w1/img/course-banner.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/c2w1/index.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c2w1/index.html" class="no-external">Autocorrect</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c2w1/index.html" class="no-external">Probabilistic Models</a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('TkxQ'); return false;">
+NLP
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Q291cnNlcmE='); return false;">
+Coursera
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('bm90ZXM='); return false;">
+notes
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('UHJvYmFiaWxpc3RpYyUyME1vZGVscw=='); return false;">
+Probabilistic Models
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/c2w1/index.html" class="no-external">Extract features from text into numerical vectors, then build a binary classifier for tweets using logistic regression!</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/c2w1/index.html" class="no-external">
+<div class="listing-date">
+Oct 23, 2020
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="9" data-categories="TkxQJTJDQ291cnNlcmElMkNub3RlcyUyQ1Byb2JhYmlsaXN0aWMlMjBNb2RlbHM=" data-listing-date-sort="1603400400000" data-listing-file-modified-sort="1738143081464" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="9">
+<div class="thumbnail">
+<p><a href="./posts/c3w3/index.html" class="no-external"></a></p><a href="./posts/c3w3/index.html" class="no-external">
+<p class="card-img-top"><img src="posts/c3w3/img/course-banner.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/c3w3/index.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c3w3/index.html" class="no-external">Neural Networks for Sentiment Analysis</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c3w3/index.html" class="no-external">Sequence Models</a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('TkxQ'); return false;">
+NLP
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Q291cnNlcmE='); return false;">
+Coursera
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('bm90ZXM='); return false;">
+notes
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('UHJvYmFiaWxpc3RpYyUyME1vZGVscw=='); return false;">
+Probabilistic Models
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/c3w3/index.html" class="no-external">we cover Neural networks for deep learning, then build a tweet classifier that places tweets into positive or negative sentiment categories, using a DNN.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/c3w3/index.html" class="no-external">
+<div class="listing-date">
+Oct 23, 2020
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="10" data-categories="TkxQJTJDQ291cnNlcmElMkNub3RlcyUyQ2RlZXBsZWFybmluZy5haSUyQ2NvdXJzZSUyMG5vdGVzJTJDV29yZCUyMEVtYmVkZGluZ3MlMkNQQ1MlMkNMYXBsYWNlJTIwc21vb3RoaW5nJTJDTG9nLWxpa2VsaWhvb2QlMkNjbGFzc2lmaWNhdGlvbiUyQ3NlbnRpbWVudCUyMGFuYWx5c2lzJTIwdGFzayUyQ0NsYXNzaWZpY2F0aW9uJTIwJTI2JTIwVmVjdG9yJTIwU3BhY2Vz" data-listing-date-sort="1603400400000" data-listing-file-modified-sort="1738172741681" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1393">
+<div class="thumbnail">
+<p><a href="./posts/c1w4/index.html" class="no-external"></a></p><a href="./posts/c1w4/index.html" class="no-external">
+<p class="card-img-top"><img src="posts/c1w4/img/course-banner.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/c1w4/index.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c1w4/index.html" class="no-external">Machine Translation and Document Search</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c1w4/index.html" class="no-external">Classification &amp; Vector Spaces</a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('TkxQ'); return false;">
+NLP
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Q291cnNlcmE='); return false;">
+Coursera
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('bm90ZXM='); return false;">
+notes
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('ZGVlcGxlYXJuaW5nLmFp'); return false;">
+deeplearning.ai
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Y291cnNlJTIwbm90ZXM='); return false;">
+course notes
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('V29yZCUyMEVtYmVkZGluZ3M='); return false;">
+Word Embeddings
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('UENT'); return false;">
+PCS
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TGFwbGFjZSUyMHNtb290aGluZw=='); return false;">
+Laplace smoothing
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TG9nLWxpa2VsaWhvb2Q='); return false;">
+Log-likelihood
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Y2xhc3NpZmljYXRpb24='); return false;">
+classification
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('c2VudGltZW50JTIwYW5hbHlzaXMlMjB0YXNr'); return false;">
+sentiment analysis task
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Q2xhc3NpZmljYXRpb24lMjAlMjYlMjBWZWN0b3IlMjBTcGFjZXM='); return false;">
+Classification &amp; Vector Spaces
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/c1w4/index.html" class="no-external">Concepts, code snippets, and slide commentaries for this week’s lesson of the Course notes from the deeplearning.ai natural language programming specialization.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/c1w4/index.html" class="no-external">
+<div class="listing-date">
+Oct 23, 2020
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="11" data-categories="TkxQJTJDQ291cnNlcmElMkNub3RlcyUyQ1Byb2JhYmlsaXN0aWMlMjBNb2RlbHM=" data-listing-date-sort="1603400400000" data-listing-file-modified-sort="1738120316478" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="9">
+<div class="thumbnail">
+<p><a href="./posts/c3w1/index.html" class="no-external"></a></p><a href="./posts/c3w1/index.html" class="no-external">
+<p class="card-img-top"><img src="posts/c3w1/img/course-banner.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/c3w1/index.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c3w1/index.html" class="no-external">Neural Networks for Sentiment Analysis</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c3w1/index.html" class="no-external">Sequence Models</a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('TkxQ'); return false;">
+NLP
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Q291cnNlcmE='); return false;">
+Coursera
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('bm90ZXM='); return false;">
+notes
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('UHJvYmFiaWxpc3RpYyUyME1vZGVscw=='); return false;">
+Probabilistic Models
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/c3w1/index.html" class="no-external">we cover Neural networks for deep learning, then build a tweet classifier that places tweets into positive or negative sentiment categories, using a DNN.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/c3w1/index.html" class="no-external">
+<div class="listing-date">
+Oct 23, 2020
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="12" data-listing-date-sort="1603400400000" data-listing-file-modified-sort="1738111925937" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1894">
+<div class="thumbnail">
+<p><a href="./posts/c1lab2/index.html" class="no-external"></a></p><a href="./posts/c1lab2/index.html" class="no-external">
+<p class="card-img-top"><img src="posts/c1lab2/img/course-banner.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/c1lab2/index.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c1lab2/index.html" class="no-external">Building and Visualizing word frequencies</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c1lab2/index.html" class="no-external"></a>
+</div>
+<div class="listing-description">
+<a href="./posts/c1lab2/index.html" class="no-external">In this lab, we will focus on the <code>build_freqs()</code> helper functions and visualization of a dataset fed into it. In our goal of tweet sentiment analysis, this function will…</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/c1lab2/index.html" class="no-external">
+<div class="listing-date">
+Oct 23, 2020
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="13" data-categories="TkxQJTJDQ291cnNlcmElMkNub3RlcyUyQ1Byb2JhYmlsaXN0aWMlMjBNb2RlbHM=" data-listing-date-sort="1603400400000" data-listing-file-modified-sort="1738119269678" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="9">
+<div class="thumbnail">
+<p><a href="./posts/c2w3/index.html" class="no-external"></a></p><a href="./posts/c2w3/index.html" class="no-external">
+<p class="card-img-top"><img src="posts/c2w3/img/course-banner.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/c2w3/index.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c2w3/index.html" class="no-external">Autocomplete and Language Models</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c2w3/index.html" class="no-external">Probabilistic Models</a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('TkxQ'); return false;">
+NLP
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Q291cnNlcmE='); return false;">
+Coursera
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('bm90ZXM='); return false;">
+notes
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('UHJvYmFiaWxpc3RpYyUyME1vZGVscw=='); return false;">
+Probabilistic Models
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/c2w3/index.html" class="no-external">Extract features from text into numerical vectors, then build a binary classifier for tweets using logistic regression!</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/c2w3/index.html" class="no-external">
+<div class="listing-date">
+Oct 23, 2020
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="14" data-categories="TkxQJTJDQ291cnNlcmElMkNub3RlcyUyQ1Byb2JhYmlsaXN0aWMlMjBNb2RlbHM=" data-listing-date-sort="1603400400000" data-listing-file-modified-sort="1738120972488" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="9">
+<div class="thumbnail">
+<p><a href="./posts/c3w4/index.html" class="no-external"></a></p><a href="./posts/c3w4/index.html" class="no-external">
+<p class="card-img-top"><img src="posts/c3w4/img/course-banner.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/c3w4/index.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c3w4/index.html" class="no-external">Neural Networks for Sentiment Analysis</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c3w4/index.html" class="no-external">Sequence Models</a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('TkxQ'); return false;">
+NLP
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Q291cnNlcmE='); return false;">
+Coursera
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('bm90ZXM='); return false;">
+notes
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('UHJvYmFiaWxpc3RpYyUyME1vZGVscw=='); return false;">
+Probabilistic Models
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/c3w4/index.html" class="no-external">we cover Neural networks for deep learning, then build a tweet classifier that places tweets into positive or negative sentiment categories, using a DNN.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/c3w4/index.html" class="no-external">
+<div class="listing-date">
+Oct 23, 2020
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="15" data-categories="TkxQJTJDQ291cnNlcmElMkNub3RlcyUyQ1Byb2JhYmlsaXN0aWMlMjBNb2RlbHM=" data-listing-date-sort="1603400400000" data-listing-file-modified-sort="1738120953493" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="9">
+<div class="thumbnail">
+<p><a href="./posts/c3w2/index.html" class="no-external"></a></p><a href="./posts/c3w2/index.html" class="no-external">
+<p class="card-img-top"><img src="posts/c3w2/img/course-banner.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/c3w2/index.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c3w2/index.html" class="no-external">Neural Networks for Sentiment Analysis</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c3w2/index.html" class="no-external">Sequence Models</a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('TkxQ'); return false;">
+NLP
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Q291cnNlcmE='); return false;">
+Coursera
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('bm90ZXM='); return false;">
+notes
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('UHJvYmFiaWxpc3RpYyUyME1vZGVscw=='); return false;">
+Probabilistic Models
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/c3w2/index.html" class="no-external">we cover Neural networks for deep learning, then build a tweet classifier that places tweets into positive or negative sentiment categories, using a DNN.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/c3w2/index.html" class="no-external">
+<div class="listing-date">
+Oct 23, 2020
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="16" data-listing-date-sort="1603400400000" data-listing-file-modified-sort="1738114062106" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="21" data-listing-word-count-sort="4067">
+<div class="thumbnail">
+<p><a href="./posts/c1lab1/index.html" class="no-external"></a></p><a href="./posts/c1lab1/index.html" class="no-external">
+<p class="card-img-top"><img src="posts/c1lab1/img/course-banner.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/c1lab1/index.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c1lab1/index.html" class="no-external">Assignment 1 Logistic Regression</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c1lab1/index.html" class="no-external">Classification &amp; Vector Spaces</a>
+</div>
+<div class="listing-description">
+<a href="./posts/c1lab1/index.html" class="no-external">Welcome to week one of this specialization. You will learn about logistic regression. Concretely, you will be implementing logistic regression for sentiment analysis on…<br></a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/c1lab1/index.html" class="no-external">
+<div class="listing-date">
+Oct 23, 2020
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="17" data-categories="TkxQJTJDQ291cnNlcmElMkNub3RlcyUyQ1Byb2JhYmlsaXN0aWMlMjBNb2RlbHM=" data-listing-date-sort="1603400400000" data-listing-file-modified-sort="1738119301226" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="9">
+<div class="thumbnail">
+<p><a href="./posts/c2w4/index.html" class="no-external"></a></p><a href="./posts/c2w4/index.html" class="no-external">
+<p class="card-img-top"><img src="posts/c2w4/img/course-banner.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/c2w4/index.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c2w4/index.html" class="no-external">Word embeddings with neural networks</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c2w4/index.html" class="no-external">Probabilistic Models</a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('TkxQ'); return false;">
+NLP
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Q291cnNlcmE='); return false;">
+Coursera
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('bm90ZXM='); return false;">
+notes
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('UHJvYmFiaWxpc3RpYyUyME1vZGVscw=='); return false;">
+Probabilistic Models
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/c2w4/index.html" class="no-external">Extract features from text into numerical vectors, then build a binary classifier for tweets using logistic regression!</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/c2w4/index.html" class="no-external">
+<div class="listing-date">
+Oct 23, 2020
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="18" data-categories="TkxQJTJDQ291cnNlcmElMkNub3RlcyUyQ2RlZXBsZWFybmluZy5haSUyQ2NvdXJzZSUyMG5vdGVzJTJDQ29uZGl0aW9uYWwlMjBQcm9iYWJpbGl0eSUyQ0JheWVzJTIwcnVsZSUyQ05hJUMzJUFGdmUlMjBCYXllcyUyQ0xhcGxhY2UlMjBzbW9vdGhpbmclMkNMb2ctbGlrZWxpaG9vZCUyQ2NsYXNzaWZpY2F0aW9uJTJDc2VudGltZW50JTIwYW5hbHlzaXMlMjB0YXNrJTJDYmlibGlvZ3JhcGh5" data-listing-date-sort="1603400400000" data-listing-file-modified-sort="1738114263779" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="146">
+<div class="thumbnail">
+<p><a href="./posts/c1w2/code.html" class="no-external"></a></p><a href="./posts/c1w2/code.html" class="no-external">
+<p><img loading="lazy" src="./posts/c1w2/course-banner.jpg" class="thumbnail-image"></p>
+</a><p><a href="./posts/c1w2/code.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c1w2/code.html" class="no-external">Probability and Bayes’ Rule</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c1w2/code.html" class="no-external">Classification &amp; Vector Spaces</a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('TkxQ'); return false;">
+NLP
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Q291cnNlcmE='); return false;">
+Coursera
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('bm90ZXM='); return false;">
+notes
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('ZGVlcGxlYXJuaW5nLmFp'); return false;">
+deeplearning.ai
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Y291cnNlJTIwbm90ZXM='); return false;">
+course notes
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Q29uZGl0aW9uYWwlMjBQcm9iYWJpbGl0eQ=='); return false;">
+Conditional Probability
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('QmF5ZXMlMjBydWxl'); return false;">
+Bayes rule
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TmElQzMlQUZ2ZSUyMEJheWVz'); return false;">
+Naïve Bayes
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TGFwbGFjZSUyMHNtb290aGluZw=='); return false;">
+Laplace smoothing
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TG9nLWxpa2VsaWhvb2Q='); return false;">
+Log-likelihood
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Y2xhc3NpZmljYXRpb24='); return false;">
+classification
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('c2VudGltZW50JTIwYW5hbHlzaXMlMjB0YXNr'); return false;">
+sentiment analysis task
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('YmlibGlvZ3JhcGh5'); return false;">
+bibliography
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/c1w2/code.html" class="no-external">Concepts, code snippets, and slide commentaries for this week’s lesson of the Course notes from the deeplearning.ai natural language programming specialization.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/c1w2/code.html" class="no-external">
+<div class="listing-date">
+Oct 23, 2020
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="19" data-categories="TkxQJTJDQ291cnNlcmElMkNub3RlcyUyQ0NvbmRpdGlvbmFsJTIwUHJvYmFiaWxpdHklMkNCYXllcyUyMHJ1bGUlMkNOYSVDMyVBRnZlJTIwQmF5ZXMlMkNMYXBsYWNlJTIwc21vb3RoaW5nJTJDTG9nLWxpa2VsaWhvb2QlMkNTZW50aW1lbnQlMjBhbmFseXNpcyUyMHRhc2slMkNDbGFzc2lmaWNhdGlvbiUyMCUyNiUyMFZlY3RvciUyMFNwYWNlcw==" data-listing-date-sort="1603400400000" data-listing-file-modified-sort="1738116604854" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="17" data-listing-word-count-sort="3282">
+<div class="thumbnail">
+<p><a href="./posts/c1w2/index.html" class="no-external"></a></p><a href="./posts/c1w2/index.html" class="no-external">
+<p><img loading="lazy" src="./posts/c1w2/course-banner.jpg" class="thumbnail-image"></p>
+</a><p><a href="./posts/c1w2/index.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c1w2/index.html" class="no-external">Probability and Bayes Rule</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c1w2/index.html" class="no-external">Classification &amp; Vector Spaces</a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('TkxQ'); return false;">
+NLP
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Q291cnNlcmE='); return false;">
+Coursera
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('bm90ZXM='); return false;">
+notes
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Q29uZGl0aW9uYWwlMjBQcm9iYWJpbGl0eQ=='); return false;">
+Conditional Probability
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('QmF5ZXMlMjBydWxl'); return false;">
+Bayes rule
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TmElQzMlQUZ2ZSUyMEJheWVz'); return false;">
+Naïve Bayes
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TGFwbGFjZSUyMHNtb290aGluZw=='); return false;">
+Laplace smoothing
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TG9nLWxpa2VsaWhvb2Q='); return false;">
+Log-likelihood
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('U2VudGltZW50JTIwYW5hbHlzaXMlMjB0YXNr'); return false;">
+Sentiment analysis task
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Q2xhc3NpZmljYXRpb24lMjAlMjYlMjBWZWN0b3IlMjBTcGFjZXM='); return false;">
+Classification &amp; Vector Spaces
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/c1w2/index.html" class="no-external">The theory behind Bayes’ rule for conditional probabilities, and its application toward building a Naive Bayes tweet classifier</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/c1w2/index.html" class="no-external">
+<div class="listing-date">
+Oct 23, 2020
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="20" data-listing-date-sort="1603400400000" data-listing-file-modified-sort="1738111422619" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1728">
+<div class="thumbnail">
+<p><a href="./posts/c1lab0/index.html" class="no-external"></a></p><a href="./posts/c1lab0/index.html" class="no-external">
+<p class="card-img-top"><img src="posts/c1lab0/img/course-banner.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/c1lab0/index.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c1lab0/index.html" class="no-external">Preprocessing</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c1lab0/index.html" class="no-external"></a>
+</div>
+<div class="listing-description">
+<a href="./posts/c1lab0/index.html" class="no-external">In this lab, we will be exploring how to preprocess tweets for sentiment analysis. We will provide a function for preprocessing tweets during this week’s assignment, but it…</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/c1lab0/index.html" class="no-external">
+<div class="listing-date">
+Oct 23, 2020
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="21" data-categories="TkxQJTJDQ291cnNlcmElMkNub3RlcyUyQ0NsYXNzaWZpY2F0aW9uJTIwJTI2JTIwVmVjdG9yJTIwU3BhY2Vz" data-listing-date-sort="1603400400000" data-listing-file-modified-sort="1738168652348" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1655">
+<div class="thumbnail">
+<p><a href="./posts/c1w3/index.html" class="no-external"></a></p><a href="./posts/c1w3/index.html" class="no-external">
+<p class="card-img-top"><img src="posts/c1w3/img/course-banner.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/c1w3/index.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c1w3/index.html" class="no-external">Vector Space Models</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c1w3/index.html" class="no-external">Classification &amp; Vector Spaces</a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('TkxQ'); return false;">
+NLP
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Q291cnNlcmE='); return false;">
+Coursera
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('bm90ZXM='); return false;">
+notes
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Q2xhc3NpZmljYXRpb24lMjAlMjYlMjBWZWN0b3IlMjBTcGFjZXM='); return false;">
+Classification &amp; Vector Spaces
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/c1w3/index.html" class="no-external">Vector space models capture semantic meaning and relationships between words. You’ll learn how to create word vectors that capture dependencies between words, then visualize their relationships in two dimensions using PCA.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/c1w3/index.html" class="no-external">
+<div class="listing-date">
+Oct 23, 2020
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="22" data-listing-date-sort="1603400400000" data-listing-file-modified-sort="1738147132169" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1163">
+<div class="thumbnail">
+<p><a href="./posts/c1lab3/index.html" class="no-external"></a></p><a href="./posts/c1lab3/index.html" class="no-external">
+<p class="card-img-top"><img src="posts/c1lab3/img/course-banner.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/c1lab3/index.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c1lab3/index.html" class="no-external">Visualizing tweets and the Logistic Regression model</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c1lab3/index.html" class="no-external"></a>
+</div>
+<div class="listing-description">
+<a href="./posts/c1lab3/index.html" class="no-external"><strong>Objectives:</strong></a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/c1lab3/index.html" class="no-external">
+<div class="listing-date">
+Oct 23, 2020
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="23" data-categories="TkxQJTJDQ291cnNlcmElMkNub3RlcyUyQ1Byb2JhYmlsaXN0aWMlMjBNb2RlbHM=" data-listing-date-sort="1603400400000" data-listing-file-modified-sort="1738119228331" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="9">
+<div class="thumbnail">
+<p><a href="./posts/c2w2/index.html" class="no-external"></a></p><a href="./posts/c2w2/index.html" class="no-external">
+<p class="card-img-top"><img src="posts/c2w2/img/course-banner.jpg"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/c2w2/index.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c2w2/index.html" class="no-external">Part of Speech Tagging and Hidden Markov Models</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c2w2/index.html" class="no-external">Probabilistic Models</a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('TkxQ'); return false;">
+NLP
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Q291cnNlcmE='); return false;">
+Coursera
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('bm90ZXM='); return false;">
+notes
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('UHJvYmFiaWxpc3RpYyUyME1vZGVscw=='); return false;">
+Probabilistic Models
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/c2w2/index.html" class="no-external">Extract features from text into numerical vectors, then build a binary classifier for tweets using logistic regression!</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/c2w2/index.html" class="no-external">
+<div class="listing-date">
+Oct 23, 2020
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="24" data-categories="TkxQJTJDQ291cnNlcmElMkNub3RlcyUyQ0xvZ2lzdGljJTIwcmVncmVzc2lvbiUyQ1NlbnRpbWVudCUyMGFuYWx5c2lzJTIwdGFzayUyQ0NsYXNzaWZpY2F0aW9uJTIwJTI2JTIwVmVjdG9yJTIwU3BhY2Vz" data-listing-date-sort="1603400400000" data-listing-file-modified-sort="1738143971772" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="13" data-listing-word-count-sort="2415">
+<div class="thumbnail">
+<p><a href="./posts/c1w1/index.html" class="no-external"></a></p><a href="./posts/c1w1/index.html" class="no-external">
+<p><img loading="lazy" src="./posts/c1w1/img/course-banner.jpg" class="thumbnail-image"></p>
+</a><p><a href="./posts/c1w1/index.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/c1w1/index.html" class="no-external">Sentiment Analysis with Logistic Regression</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/c1w1/index.html" class="no-external">Classification &amp; Vector Spaces</a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('TkxQ'); return false;">
+NLP
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Q291cnNlcmE='); return false;">
+Coursera
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('bm90ZXM='); return false;">
+notes
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('TG9naXN0aWMlMjByZWdyZXNzaW9u'); return false;">
+Logistic regression
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('U2VudGltZW50JTIwYW5hbHlzaXMlMjB0YXNr'); return false;">
+Sentiment analysis task
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Q2xhc3NpZmljYXRpb24lMjAlMjYlMjBWZWN0b3IlMjBTcGFjZXM='); return false;">
+Classification &amp; Vector Spaces
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/c1w1/index.html" class="no-external">Extract features from text into numerical vectors, then build a binary classifier for tweets using logistic regression!</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/c1w1/index.html" class="no-external">
+<div class="listing-date">
+Oct 23, 2020
+</div>
+</a>
+</div>
+</div>
+</div>
+<div class="listing-no-matching d-none">
+No matching items
+</div>
+</div><div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{untitled,
+  author = {},
+  title = {Notes-Nlp},
+  url = {https://orenbochman.github.io/notes-nlp/},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-untitled" class="csl-entry quarto-appendix-citeas" role="listitem">
+<span>“Notes-Nlp.”</span> n.d. <a href="https://orenbochman.github.io/notes-nlp/">https://orenbochman.github.io/notes-nlp/</a>.
+</div></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("^(?:http:|https:)\/\/www\.quarto\.org\/custom");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+          // default icon
+          link.classList.add("external");
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© Copyright 2023-2025, Oren Bochman</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This page is built with 💛 and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
