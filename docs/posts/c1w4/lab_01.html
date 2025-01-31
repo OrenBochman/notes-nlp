@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Concepts, code snippets, and slide commentaries for this week’s lesson of the Course notes from the deeplearning.ai natural language programming specialization.">
 
-<title>Probability and Bayes Rule – NLP Specialization</title>
+<title>Vector manipulation in Python – NLP Specialization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -58,7 +57,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -76,6 +75,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -104,15 +106,55 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
 
-<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
 
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-sidebar floating nav-fixed">
+<body class="nav-sidebar floating nav-fixed slimcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -170,7 +212,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Probability and Bayes Rule</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Vector manipulation in Python</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -179,31 +221,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-right">
-      <h1 class="title">Probability and Bayes Rule</h1>
-            <p class="subtitle lead">Classification &amp; Vector Spaces</p>
-                  <div>
-        <div class="description">
-          Concepts, code snippets, and slide commentaries for this week’s lesson of the Course notes from the deeplearning.ai natural language programming specialization.
-        </div>
-      </div>
-                          <div class="quarto-categories">
+    <div class="quarto-title column-body">
+      <h1 class="title">Vector manipulation in Python</h1>
+                                <div class="quarto-categories">
                 <div class="quarto-category">NLP</div>
                 <div class="quarto-category">Coursera</div>
-                <div class="quarto-category">code</div>
-                <div class="quarto-category">Conditional Probability</div>
-                <div class="quarto-category">Bayes rule</div>
-                <div class="quarto-category">Naïve Bayes</div>
-                <div class="quarto-category">Laplace smoothing</div>
-                <div class="quarto-category">Log-likelihood</div>
-                <div class="quarto-category">classification</div>
-                <div class="quarto-category">sentiment analysis task</div>
+                <div class="quarto-category">Lab</div>
+                <div class="quarto-category">Word Embeddings</div>
+                <div class="quarto-category">Translation task</div>
+                <div class="quarto-category">Search Task</div>
               </div>
                   </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page-right">
+  <div class="quarto-title-meta column-body">
 
       
       <div>
@@ -391,293 +423,199 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#transforming-vectors" id="toc-transforming-vectors" class="nav-link active" data-scroll-target="#transforming-vectors">Transforming vectors</a>
+  <ul class="collapse">
+  <li><a href="#example-1" id="toc-example-1" class="nav-link" data-scroll-target="#example-1">Example 1</a></li>
+  <li><a href="#example-2" id="toc-example-2" class="nav-link" data-scroll-target="#example-2">Example 2</a></li>
+  </ul></li>
+  <li><a href="#frobenius-norm" id="toc-frobenius-norm" class="nav-link" data-scroll-target="#frobenius-norm">Frobenius Norm</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c1w4/lab_01.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
+<main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
 
 
 
 
 
-<div id="5b0db268" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> string </span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>raw_tweets<span class="op">=</span>[</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"I am happy because I am learning NLP"</span>,</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"I am sad, I am not learning NLP"</span>,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"I am happy, not sad"</span>,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"I am sad, not happy"</span>,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> clean(tweet:<span class="bu">str</span>):</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>  tweet.translate(<span class="bu">str</span>.maketrans(<span class="st">''</span>, <span class="st">''</span>, string.punctuation)).lower()</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>tweets <span class="op">=</span> [clean(tweet) <span class="cf">for</span> tweet <span class="kw">in</span> raw_tweets]</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>labels<span class="op">=</span>[<span class="st">'+'</span>,<span class="st">'-'</span>,<span class="st">'+'</span>,<span class="st">'-'</span>]</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({<span class="st">'tweets'</span>: tweets, <span class="st">'labels'</span>: labels})</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="1">
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="../../images/banner_c1.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="../../images/banner_c1.jpg" class="img-fluid figure-img" alt="course banner"></a></p>
+<figcaption>course banner</figcaption>
+</figure>
+</div></div><p>In this lab, you will have the opportunity to practice once again with the NumPy library. This time, we will explore some advanced operations with arrays and matrices.</p>
+<p>At the end of the previous module, we used PCA to transform a set of many variables into a set of only two uncorrelated variables. This process was made through a transformation of the data called rotation.</p>
+<p>In this week’s assignment, you will need to find a transformation matrix from English to French vector space embeddings. Such a transformation matrix is nothing else but a matrix that rotates and scales vector spaces.</p>
+<p>In this notebook, we will explain in detail the rotation transformation.</p>
+<section id="transforming-vectors" class="level2">
+<h2 class="anchored" data-anchor-id="transforming-vectors">Transforming vectors</h2>
+<p>There are three main vector transformations: * Scaling * Translation * Rotation</p>
+<p>In previous notebooks, we have applied the first two kinds of transformations. Now, let us learn how to use a fundamental transformation on vectors called <em>rotation</em>.</p>
+<p>The rotation operation changes the direction of a vector, letting unaffected its dimensionality and its norm. Let us explain with some examples.</p>
+<p>In the following cells, we will define a NumPy matrix and a NumPy array. Soon we will explain how this is related to matrix rotation.</p>
+<div id="4c5bbd0d" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np                     <span class="co"># Import numpy for array manipulation</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt        <span class="co"># Import matplotlib for charts</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> utils_nb <span class="im">import</span> plot_vectors      <span class="co"># Function to plot vectors (arrows)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="example-1" class="level3">
+<h3 class="anchored" data-anchor-id="example-1">Example 1</h3>
+<div id="15639da1" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a 2 x 2 matrix</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>R <span class="op">=</span> np.array([[<span class="dv">2</span>, <span class="dv">0</span>],</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>              [<span class="dv">0</span>, <span class="op">-</span><span class="dv">2</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="6bb7f41d" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.array([[<span class="dv">1</span>, <span class="dv">1</span>]]) <span class="co"># Create a 1 x 2 matrix</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The dot product between a vector and a square matrix produces a rotation and a scaling of the original vector.</p>
+<p>Remember that our recommended way to get the dot product in Python is np.dot(a, b):</p>
+<div id="80ae6975" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.dot(x, R) <span class="co"># Apply the dot product between x and R</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>array([[ 2, -2]])</code></pre>
+</div>
+</div>
+<p>We are going to use Pyplot to inspect the effect of the rotation on 2D vectors visually. For that, we have created a function <code>plot_vectors()</code> that takes care of all the intricate parts of the visual formatting. The code for this function is inside the <code>utils_nb.py</code> file.</p>
+<p>Now we can plot the vector <span class="math inline">\vec x = [1, 1]</span> in a cartesian plane. The cartesian plane will be centered at <code>[0,0]</code> and its x and y limits will be between <code>[-4, +4]</code></p>
+<div id="c62b740e" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>plot_vectors([x], axes<span class="op">=</span>[<span class="dv">4</span>, <span class="dv">4</span>], fname<span class="op">=</span><span class="st">'transform_x.svg'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
 <div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">tweets</th>
-<th data-quarto-table-cell-role="th">labels</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
-<td>i am happy because i am learning nlp</td>
-<td>+</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
-<td>i am sad i am not learning nlp</td>
-<td>-</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
-<td>i am happy not sad</td>
-<td>+</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
-<td>i am sad not happy</td>
-<td>-</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<div id="ea57cd38" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>p_freq,n_freq <span class="op">=</span> Counter(), Counter()</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#print( df[df.labels == '+']['tweets'].to_list())</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>[p_freq.update(tweet.split()) <span class="cf">for</span> tweet <span class="kw">in</span> df[df.labels <span class="op">==</span> <span class="st">'+'</span>][<span class="st">'tweets'</span>].to_list()]</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>[n_freq.update(tweet.split()) <span class="cf">for</span> tweet <span class="kw">in</span> df[df.labels <span class="op">==</span> <span class="st">'-'</span>][<span class="st">'tweets'</span>].to_list()]</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(p_freq)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(n_freq)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>vocab <span class="op">=</span> <span class="bu">list</span>(<span class="bu">set</span>(p_freq.keys()).union(<span class="bu">set</span>(n_freq.keys())))</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>pos_freq <span class="op">=</span> [p_freq[word] <span class="cf">for</span> word <span class="kw">in</span> vocab ]</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>neg_freq <span class="op">=</span> [n_freq[word] <span class="cf">for</span> word <span class="kw">in</span> vocab ]</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>vocab_df<span class="op">=</span>pd.DataFrame({<span class="st">'vocab'</span>:vocab,<span class="st">'pos_freq'</span>:pos_freq,<span class="st">'neg_freq'</span>:neg_freq})</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>vocab_df[<span class="st">'p_pos'</span>]<span class="op">=</span>vocab_df.pos_freq<span class="op">/</span>vocab_df.pos_freq.<span class="bu">sum</span>()</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>vocab_df[<span class="st">'p_neg'</span>]<span class="op">=</span>vocab_df.neg_freq<span class="op">/</span>vocab_df.neg_freq.<span class="bu">sum</span>()</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>vocab_df[<span class="st">'p_pos_sm'</span>]<span class="op">=</span>(vocab_df.pos_freq<span class="op">+</span><span class="dv">1</span>)<span class="op">/</span>(vocab_df.pos_freq.<span class="bu">sum</span>()<span class="op">+</span>vocab_df.shape[<span class="dv">1</span>])</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>vocab_df[<span class="st">'p_neg_sm'</span>]<span class="op">=</span>(vocab_df.neg_freq<span class="op">+</span><span class="dv">1</span>)<span class="op">/</span>(vocab_df.neg_freq.<span class="bu">sum</span>()<span class="op">+</span>vocab_df.shape[<span class="dv">1</span>])</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>vocab_df[<span class="st">'ratio'</span>]<span class="op">=</span> vocab_df.p_pos_sm<span class="op">/</span>vocab_df.p_neg_sm</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>vocab_df[<span class="st">'lambda'</span>]<span class="op">=</span> np.log(vocab_df.p_pos_sm<span class="op">/</span>vocab_df.p_neg_sm)</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>pd.set_option(<span class="st">'display.float_format'</span>, <span class="st">'</span><span class="sc">{:.2f}</span><span class="st">'</span>.<span class="bu">format</span>)</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>vocab_df</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(vocab_df.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="2">
-<pre><code>[None, None]</code></pre>
-</div>
-<div class="cell-output cell-output-display" data-execution_count="2">
-<pre><code>[None, None]</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Counter({'i': 3, 'am': 3, 'happy': 2, 'because': 1, 'learning': 1, 'nlp': 1, 'not': 1, 'sad': 1})
-Counter({'i': 3, 'am': 3, 'sad': 2, 'not': 2, 'learning': 1, 'nlp': 1, 'happy': 1})</code></pre>
-</div>
-<div class="cell-output cell-output-display" data-execution_count="2">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">vocab</th>
-<th data-quarto-table-cell-role="th">pos_freq</th>
-<th data-quarto-table-cell-role="th">neg_freq</th>
-<th data-quarto-table-cell-role="th">p_pos</th>
-<th data-quarto-table-cell-role="th">p_neg</th>
-<th data-quarto-table-cell-role="th">p_pos_sm</th>
-<th data-quarto-table-cell-role="th">p_neg_sm</th>
-<th data-quarto-table-cell-role="th">ratio</th>
-<th data-quarto-table-cell-role="th">lambda</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
-<td>not</td>
-<td>1</td>
-<td>2</td>
-<td>0.08</td>
-<td>0.15</td>
-<td>0.11</td>
-<td>0.16</td>
-<td>0.70</td>
-<td>-0.35</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
-<td>i</td>
-<td>3</td>
-<td>3</td>
-<td>0.23</td>
-<td>0.23</td>
-<td>0.22</td>
-<td>0.21</td>
-<td>1.06</td>
-<td>0.05</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
-<td>am</td>
-<td>3</td>
-<td>3</td>
-<td>0.23</td>
-<td>0.23</td>
-<td>0.22</td>
-<td>0.21</td>
-<td>1.06</td>
-<td>0.05</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
-<td>happy</td>
-<td>2</td>
-<td>1</td>
-<td>0.15</td>
-<td>0.08</td>
-<td>0.17</td>
-<td>0.11</td>
-<td>1.58</td>
-<td>0.46</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">4</td>
-<td>learning</td>
-<td>1</td>
-<td>1</td>
-<td>0.08</td>
-<td>0.08</td>
-<td>0.11</td>
-<td>0.11</td>
-<td>1.06</td>
-<td>0.05</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">5</td>
-<td>because</td>
-<td>1</td>
-<td>0</td>
-<td>0.08</td>
-<td>0.00</td>
-<td>0.11</td>
-<td>0.05</td>
-<td>2.11</td>
-<td>0.75</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">6</td>
-<td>sad</td>
-<td>1</td>
-<td>2</td>
-<td>0.08</td>
-<td>0.15</td>
-<td>0.11</td>
-<td>0.16</td>
-<td>0.70</td>
-<td>-0.35</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">7</td>
-<td>nlp</td>
-<td>1</td>
-<td>1</td>
-<td>0.08</td>
-<td>0.08</td>
-<td>0.11</td>
-<td>0.11</td>
-<td>1.06</td>
-<td>0.05</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>(8, 9)</code></pre>
-</div>
-</div>
-<div class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tabulate <span class="im">import</span> tabulate</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>table <span class="op">=</span> [[<span class="st">"Sun"</span>,<span class="dv">696000</span>,<span class="dv">1989100000</span>],</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>         [<span class="st">"Earth"</span>,<span class="dv">6371</span>,<span class="fl">5973.6</span>],</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>         [<span class="st">"Moon"</span>,<span class="dv">1737</span>,<span class="fl">73.5</span>],</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>         [<span class="st">"Mars"</span>,<span class="dv">3390</span>,<span class="fl">641.85</span>]]</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>Markdown(tabulate(</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  table, </span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  headers<span class="op">=</span>[<span class="st">"Planet"</span>,<span class="st">"R (km)"</span>, <span class="st">"mass (x 10^29 kg)"</span>]</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div id="tbl-planet-measures" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="3">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-planet-measures-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;1: Planets
-</figcaption>
-<div aria-describedby="tbl-planet-measures-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="3">
-<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Planet</th>
-<th style="text-align: right;">R (km)</th>
-<th style="text-align: right;">mass (x 10^29 kg)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Sun</td>
-<td style="text-align: right;">696000</td>
-<td style="text-align: right;">1.9891e+09</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Earth</td>
-<td style="text-align: right;">6371</td>
-<td style="text-align: right;">5973.6</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Moon</td>
-<td style="text-align: right;">1737</td>
-<td style="text-align: right;">73.5</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Mars</td>
-<td style="text-align: right;">3390</td>
-<td style="text-align: right;">641.85</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<figure class="figure">
+<p><a href="lab_01_files/figure-html/cell-6-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="lab_01_files/figure-html/cell-6-output-1.png" width="573" height="416" class="figure-img"></a></p>
 </figure>
 </div>
 </div>
+</div>
+<p>Now, let’s plot in the same system our vector <span class="math inline">\vec x = [1, 1]</span> and its dot product with the matrix</p>
+<p><span class="math display">Ro = \begin{bmatrix} 2 &amp; 0 \\ 0 &amp; -2 \end{bmatrix}</span></p>
+<p><span class="math display">y = x \cdot Ro = [[-2, 2]]</span></p>
+<div id="ae502b6c" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>plot_vectors([x, y], axes<span class="op">=</span>[<span class="dv">4</span>, <span class="dv">4</span>], fname<span class="op">=</span><span class="st">'transformx_and_y.svg'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="lab_01_files/figure-html/cell-7-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="lab_01_files/figure-html/cell-7-output-1.png" width="573" height="416" class="figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Note that the output vector <code>y</code> (blue) is transformed in another vector.</p>
+</section>
+<section id="example-2" class="level3">
+<h3 class="anchored" data-anchor-id="example-2">Example 2</h3>
+<p>We are going to use Pyplot to inspect the effect of the rotation on 2D vectors visually. For that, we have created a function that takes care of all the intricate parts of the visual formatting. The following procedure plots an arrow within a Pyplot canvas.</p>
+<p>Data that is composed of 2 real attributes is telling to belong to a $ RxR $ or $ R^2 $ space. Rotation matrices in <span class="math inline">R^2</span> rotate a given vector <span class="math inline">\vec x</span> by a counterclockwise angle <span class="math inline">\theta</span> in a fixed coordinate system. Rotation matrices are of the form:</p>
+<p><span class="math display">Ro = \begin{bmatrix} cos \theta &amp; -sin \theta \\ sin \theta &amp; cos \theta \end{bmatrix}</span></p>
+<p>The trigonometric functions in Numpy require the angle in radians, not in degrees. In the next cell, we define a rotation matrix that rotates vectors by <span class="math inline">45^o</span>.</p>
+<div id="6ca066e0" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>angle <span class="op">=</span> <span class="dv">100</span> <span class="op">*</span> (np.pi <span class="op">/</span> <span class="dv">180</span>) <span class="co">#convert degrees to radians</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>Ro <span class="op">=</span> np.array([[np.cos(angle), <span class="op">-</span>np.sin(angle)],</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>              [np.sin(angle), np.cos(angle)]])</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>x2 <span class="op">=</span> np.array([<span class="dv">2</span>, <span class="dv">2</span>]).reshape(<span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>) <span class="co"># make it a row vector</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>y2 <span class="op">=</span> np.dot(x2, Ro)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Rotation matrix'</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(Ro)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">Rotated vector'</span>)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(y2)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st"> x2 norm'</span>, np.linalg.norm(x2))</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st"> y2 norm'</span>, np.linalg.norm(y2))</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st"> Rotation matrix norm'</span>, np.linalg.norm(Ro))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rotation matrix
+[[-0.17364818 -0.98480775]
+ [ 0.98480775 -0.17364818]]
+
+Rotated vector
+[[ 1.62231915 -2.31691186]]
+
+ x2 norm 2.8284271247461903
+
+ y2 norm 2.82842712474619
+
+ Rotation matrix norm 1.414213562373095</code></pre>
+</div>
+</div>
+<div id="b7aa5890" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>plot_vectors([x2, y2], fname<span class="op">=</span><span class="st">'transform_02.svg'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="lab_01_files/figure-html/cell-9-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="lab_01_files/figure-html/cell-9-output-1.png" width="573" height="411" class="figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Some points to note:</p>
+<ul>
+<li>The norm of the input vector is the same as the norm of the output vector. Rotations matrices do not modify the norm of the vector, only its direction.</li>
+<li>The norm of any <span class="math inline">R^2</span> rotation matrix is always <span class="math inline">\sqrt 2 = 1.414221</span></li>
+</ul>
+</section>
+</section>
+<section id="frobenius-norm" class="level2">
+<h2 class="anchored" data-anchor-id="frobenius-norm">Frobenius Norm</h2>
+<p>The Frobenius norm is the generalization to <span class="math inline">R^2</span> of the already known norm function for vectors</p>
+<p><span class="math display">\| \vec a \| = \sqrt {{\vec a} \cdot {\vec a}} </span></p>
+<p>For a given <span class="math inline">R^2</span> matrix A, the frobenius norm is defined as:</p>
+<p><span class="math display">\|\mathrm{A}\|_{F} \equiv \sqrt{\sum_{i=1}^{m} \sum_{j=1}^{n}\left|a_{i j}\right|^{2}}</span></p>
+<div id="dc00a478" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([[<span class="dv">2</span>, <span class="dv">2</span>],</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>              [<span class="dv">2</span>, <span class="dv">2</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><code>np.square()</code> is a way to square each element of a matrix. It must be equivalent to use the * operator in Numpy arrays.</p>
+<div id="e0c66d8a" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>A_squared <span class="op">=</span> np.square(A)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>A_squared</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<pre><code>array([[4, 4],
+       [4, 4]])</code></pre>
+</div>
+</div>
+<p>Now you can sum over the elements of the resulting array, and then get the square root of the sum.</p>
+<div id="ecb9440e" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>A_Frobenius <span class="op">=</span> np.sqrt(np.<span class="bu">sum</span>(A_squared))</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>A_Frobenius</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>np.float64(4.0)</code></pre>
+</div>
+</div>
+<p>That was the extended version of the <code>np.linalg.norm()</code> function. You can check that it yields the same result.</p>
+<div id="a323ae10" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Frobenius norm of the Rotation matrix'</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.sqrt(np.<span class="bu">sum</span>(Ro <span class="op">*</span> Ro)), <span class="st">'== '</span>, np.linalg.norm(Ro))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Frobenius norm of the Rotation matrix
+1.414213562373095 ==  1.414213562373095</code></pre>
+</div>
+</div>
+<p><strong>Congratulations!! We’ve covered a few more matrix operations in this lab. This will come in handy in this week’s programming assignment!</strong></p>
 
 
+</section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{2020,
   author = {},
-  title = {Probability and {Bayes} {Rule}},
+  title = {Vector Manipulation in {Python}},
   date = {2020-10-23},
-  url = {https://orenbochman.github.io/notes-nlp/posts/c1w2/code.html},
+  url = {https://orenbochman.github.io/notes-nlp/posts/c1w4/lab_01.html},
   langid = {en}
 }
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-2020" class="csl-entry quarto-appendix-citeas" role="listitem">
-<span>“Probability and Bayes Rule.”</span> 2020. October 23, 2020. <a href="https://orenbochman.github.io/notes-nlp/posts/c1w2/code.html">https://orenbochman.github.io/notes-nlp/posts/c1w2/code.html</a>.
+<span>“Vector Manipulation in Python.”</span> 2020. October 23, 2020. <a href="https://orenbochman.github.io/notes-nlp/posts/c1w4/lab_01.html">https://orenbochman.github.io/notes-nlp/posts/c1w4/lab_01.html</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -1255,12 +1193,44 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c1w2/code.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c1w4/lab_01.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p>This page is built with 💛 and <a href="https://quarto.org/">Quarto</a>.</p>
 </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

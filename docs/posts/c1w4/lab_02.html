@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Extract features from text into numerical vectors, then build a binary classifier for tweets using logistic regression!">
 
-<title>Autocomplete and Language Models – NLP Specialization</title>
+<title>Hash functions and multiplanes – NLP Specialization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,27 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-  margin-bottom: 0em;
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
 }
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -199,7 +212,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/c2w1/index.html">Probabilistic Models</a></li><li class="breadcrumb-item"><a href="../../posts/c2w3/index.html">Autocomplete and Language Models</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Hash functions and multiplanes</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -208,19 +221,15 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/c2w1/index.html">Probabilistic Models</a></li><li class="breadcrumb-item"><a href="../../posts/c2w3/index.html">Autocomplete and Language Models</a></li></ol></nav>
-      <h1 class="title">Autocomplete and Language Models</h1>
-            <p class="subtitle lead">Probabilistic Models</p>
-                  <div>
-        <div class="description">
-          Extract features from text into numerical vectors, then build a binary classifier for tweets using logistic regression!
-        </div>
-      </div>
-                          <div class="quarto-categories">
+    <div class="quarto-title column-body">
+      <h1 class="title">Hash functions and multiplanes</h1>
+                                <div class="quarto-categories">
                 <div class="quarto-category">NLP</div>
                 <div class="quarto-category">Coursera</div>
-                <div class="quarto-category">notes</div>
-                <div class="quarto-category">Probabilistic Models</div>
+                <div class="quarto-category">Lab</div>
+                <div class="quarto-category">Word Embeddings</div>
+                <div class="quarto-category">Translation task</div>
+                <div class="quarto-category">Search Task</div>
               </div>
                   </div>
   </div>
@@ -327,7 +336,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../posts/c2w3/index.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../posts/c2w3/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Autocomplete and Language Models</span></a>
   </div>
 </li>
@@ -419,34 +428,13 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#tldr---autocomplete-and-language-models" id="toc-tldr---autocomplete-and-language-models" class="nav-link active" data-scroll-target="#tldr---autocomplete-and-language-models">TL;DR - Autocomplete and Language Models</a></li>
-  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
-  <li><a href="#n-grams-overview" id="toc-n-grams-overview" class="nav-link" data-scroll-target="#n-grams-overview">N-Grams Overview</a></li>
-  <li><a href="#n-grams-and-probabilities" id="toc-n-grams-and-probabilities" class="nav-link" data-scroll-target="#n-grams-and-probabilities">N-grams and Probabilities</a>
-  <ul class="collapse">
-  <li><a href="#bigram-probability" id="toc-bigram-probability" class="nav-link" data-scroll-target="#bigram-probability">Bigram Probability:</a></li>
-  <li><a href="#trigram-probability" id="toc-trigram-probability" class="nav-link" data-scroll-target="#trigram-probability">Trigram Probability:</a></li>
-  </ul></li>
-  <li><a href="#sequence-probabilities" id="toc-sequence-probabilities" class="nav-link" data-scroll-target="#sequence-probabilities">Sequence Probabilities</a></li>
-  <li><a href="#starting-and-ending-sentences" id="toc-starting-and-ending-sentences" class="nav-link" data-scroll-target="#starting-and-ending-sentences">Starting and Ending Sentences</a></li>
-  <li><a href="#lecture-notebook-corpus-preprocessing-for-n-grams" id="toc-lecture-notebook-corpus-preprocessing-for-n-grams" class="nav-link" data-scroll-target="#lecture-notebook-corpus-preprocessing-for-n-grams">Lecture notebook: Corpus preprocessing for N-grams</a></li>
-  <li><a href="#the-n-gram-language-model" id="toc-the-n-gram-language-model" class="nav-link" data-scroll-target="#the-n-gram-language-model">The N-gram Language Model</a></li>
-  <li><a href="#lecture-notebook-building-the-language-model" id="toc-lecture-notebook-building-the-language-model" class="nav-link" data-scroll-target="#lecture-notebook-building-the-language-model">Lecture notebook: Building the language model</a></li>
-  <li><a href="#language-model-evaluation" id="toc-language-model-evaluation" class="nav-link" data-scroll-target="#language-model-evaluation">Language Model Evaluation</a></li>
-  <li><a href="#out-of-vocabulary-words" id="toc-out-of-vocabulary-words" class="nav-link" data-scroll-target="#out-of-vocabulary-words">Out of Vocabulary Words</a>
-  <ul class="collapse">
-  <li><a href="#criteria-to-create-the-vocabulary" id="toc-criteria-to-create-the-vocabulary" class="nav-link" data-scroll-target="#criteria-to-create-the-vocabulary">Criteria to create the vocabulary</a></li>
-  </ul></li>
-  <li><a href="#out-of-vocabulary-words-1" id="toc-out-of-vocabulary-words-1" class="nav-link" data-scroll-target="#out-of-vocabulary-words-1">Out of Vocabulary Words</a></li>
-  <li><a href="#smoothing" id="toc-smoothing" class="nav-link" data-scroll-target="#smoothing">Smoothing</a></li>
-  <li><a href="#week-summary" id="toc-week-summary" class="nav-link" data-scroll-target="#week-summary">Week Summary</a></li>
-  <li><a href="#lecture-notebook-language-model-generalization" id="toc-lecture-notebook-language-model-generalization" class="nav-link" data-scroll-target="#lecture-notebook-language-model-generalization">Lecture notebook: Language model generalization</a></li>
-  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">Resources:</a>
-  <ul class="collapse">
-  <li><a href="#slides" id="toc-slides" class="nav-link" data-scroll-target="#slides">Slides</a></li>
-  </ul></li>
+  <li><a href="#basic-hash-tables" id="toc-basic-hash-tables" class="nav-link active" data-scroll-target="#basic-hash-tables">Basic Hash tables</a></li>
+  <li><a href="#planes" id="toc-planes" class="nav-link" data-scroll-target="#planes">Planes</a></li>
+  <li><a href="#hash-function-with-multiple-planes" id="toc-hash-function-with-multiple-planes" class="nav-link" data-scroll-target="#hash-function-with-multiple-planes">Hash Function with multiple planes</a></li>
+  <li><a href="#random-planes" id="toc-random-planes" class="nav-link" data-scroll-target="#random-planes">Random Planes</a></li>
+  <li><a href="#document-vectors" id="toc-document-vectors" class="nav-link" data-scroll-target="#document-vectors">Document vectors</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c2w3/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c1w4/lab_02.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
@@ -458,534 +446,306 @@ window.Quarto = {
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/course-banner.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="img/course-banner.jpg" class="img-fluid figure-img" alt="course banner"></a></p>
+<p><a href="../../images/banner_c1.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="../../images/banner_c1.jpg" class="img-fluid figure-img" alt="course banner"></a></p>
 <figcaption>course banner</figcaption>
 </figure>
-</div></div><p>These are my notes for Week 3 notes for the <a href="https://www.coursera.org/learn/probabilistic-models-in-nlp/home/welcome">Natural Language Processing with Probabilistic Models</a> Course in the Natural Language Processing Specialization Offered by DeepLearning.AI on Coursera.</p>
-<section id="tldr---autocomplete-and-language-models" class="level2 callout-info">
-<h2 class="anchored" data-anchor-id="tldr---autocomplete-and-language-models">TL;DR - Autocomplete and Language Models</h2>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="../../images/in_a_nutshell.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Language Models in a nutshell"><img src="../../images/in_a_nutshell.jpg" class="img-fluid figure-img" alt="Language Models in a nutshell"></a></p>
-<figcaption>Language Models in a nutshell</figcaption>
-</figure>
-</div>
-<p>This week we learn how to model a language using N-grams. Starting from the definition of conditional probability we develop the probabilities of sequences of words. Next we add start and end of sentences tokens to our word sequence model. Next we add tokens to represent <strong>out of vocabulary</strong> words. Then we tackle sparsity by implementing <strong>smoothing</strong> and <strong>backoff</strong>. Finally we consider how to evaluate our language model.</p>
-<p>In the labs we preprocess a corpus to create an N-gram language model. We then build the language model and evaluate it using perplexity.</p>
-<p>In the assignment for this week, we build a language model to generate autocomplete a text fragment. We will also evaluate the perplexity of the model.</p>
-</section>
-<section id="learning-objectives" class="level2">
-<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
+</div></div><p>In this lab, we are going to practice the most important concepts related to the hash functions explained in the videos. You will be using these in this week’s assignment.</p>
+<p>A key point for the lookup using hash functions is the calculation of the hash key or bucket id that we assign for a given entry. In this notebook, we will cover:</p>
 <ul>
-<li>Conditional probabilities</li>
-<li>Text pre-processing</li>
-<li>Language modeling</li>
-<li>Perplexity</li>
-<li>K-smoothing</li>
-<li>N-grams</li>
-<li>Backoff</li>
-<li>Tokenization</li>
+<li>Basic hash tables</li>
+<li>Multiplanes</li>
+<li>Random planes</li>
 </ul>
+<section id="basic-hash-tables" class="level2">
+<h2 class="anchored" data-anchor-id="basic-hash-tables">Basic Hash tables</h2>
+<p>Hash tables are data structures that allow indexing data to make lookup tasks more efficient. In this part, you will see the implementation of the simplest hash function.</p>
+<div id="1740e7bc" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np                <span class="co"># library for array and matrix manipulation</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pprint                     <span class="co"># utilities for console printing </span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> utils_nb <span class="im">import</span> plot_vectors <span class="co"># helper function to plot vectors</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt   <span class="co"># visualization library</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>pp <span class="op">=</span> pprint.PrettyPrinter(indent<span class="op">=</span><span class="dv">4</span>) <span class="co"># Instantiate a pretty printer</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In the next cell, we will define a straightforward hash function for integer numbers. The function will receive a list of integer numbers and the desired amount of buckets. The function will produce a hash table stored as a dictionary, where keys contain the hash keys, and the values will provide the hashed elements of the input list.</p>
+<p>The hash function is just the remainder of the integer division between each element and the desired number of buckets.</p>
+<div id="81b15b91" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> basic_hash_table(value_l, n_buckets):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> hash_function(value, n_buckets):</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">int</span>(value) <span class="op">%</span> n_buckets</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    hash_table <span class="op">=</span> {i:[] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n_buckets)} <span class="co"># Initialize all the buckets in the hash table as empty lists</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> value <span class="kw">in</span> value_l:</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        hash_value <span class="op">=</span> hash_function(value,n_buckets) <span class="co"># Get the hash key for the given value</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        hash_table[hash_value].append(value) <span class="co"># Add the element to the corresponding bucket</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> hash_table</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now let’s see the hash table function in action. The pretty print function (<code>pprint()</code>) will produce a visually appealing output.</p>
+<div id="64f7d9e4" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>value_l <span class="op">=</span> [<span class="dv">100</span>, <span class="dv">10</span>, <span class="dv">14</span>, <span class="dv">17</span>, <span class="dv">97</span>] <span class="co"># Set of values to hash</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>hash_table_example <span class="op">=</span> basic_hash_table(value_l, n_buckets<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>pp.pprint(hash_table_example)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>{   0: [100, 10],
+    1: [],
+    2: [],
+    3: [],
+    4: [14],
+    5: [],
+    6: [],
+    7: [17, 97],
+    8: [],
+    9: []}</code></pre>
+</div>
+</div>
+<p>In this case, the bucket key must be the rightmost digit of each number.</p>
 </section>
-<section id="n-grams-overview" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="n-grams-overview">N-Grams Overview</h2>
-<p>Recall how Firth suggested a distributional view of semantics?</p>
-<p>Previously we used a vector space model to represent this idea. Now we dive deeper and develop a model for distributional semantics using probabilities of sequences of words. Once we can estimate these probabilities we can predict the next word in a sentence.</p>
-<p>N-gram refer to howe we model the a sequence of N words. For example, a bigram model would model the probability of a word given the previous word. A trigram model would model the probability of a word given the previous bigram. And so on. These probabilities are derived by counting frequencies in a corpus of texts.</p>
-<p>N-grams are fundamental and give you a foundation that will allow you to understand more complicated models in the specialization. They form the theoretical under pinning for the next two courses.</p>
-<p>N-grams models allow us to predict the probabilities of certain words happening in a specific sequence. Using that, you can build an auto-correct or even a search suggestion tool.</p>
-<p>Other applications of N-gram language modeling include:</p>
-<ul>
-<li>Speech recognition</li>
-<li>Spelling correction</li>
-<li>Augmentative communication</li>
-</ul>
-
-<div class="no-row-height column-margin column-container"><div id="fig-01" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-figure quarto-figure-center">
+<section id="planes" class="level2">
+<h2 class="anchored" data-anchor-id="planes">Planes</h2>
+<p>Multiplanes hash functions are other types of hash functions. Multiplanes hash functions are based on the idea of numbering every single region that is formed by the intersection of n planes. In the following code, we show the most basic forms of the multiplanes principle. First, with a single plane:</p>
+<div id="e150ddc5" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>P <span class="op">=</span> np.array([[<span class="dv">1</span>, <span class="dv">1</span>]]) <span class="co"># Define a single plane. </span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>fig, ax1 <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">8</span>)) <span class="co"># Create a plot</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>plot_vectors([P], axes<span class="op">=</span>[<span class="dv">2</span>, <span class="dv">2</span>], ax<span class="op">=</span>ax1) <span class="co"># Plot the plane P as a vector</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot  random points. </span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">10</span>):</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        v1 <span class="op">=</span> np.array(np.random.uniform(<span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">2</span>)) <span class="co"># Get a pair of random numbers between -4 and 4 </span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        side_of_plane <span class="op">=</span> np.sign(np.dot(P, v1.T)) </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Color the points depending on the sign of the result of np.dot(P, point.T)</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> side_of_plane <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>            ax1.plot([v1[<span class="dv">0</span>]], [v1[<span class="dv">1</span>]], <span class="st">'bo'</span>) <span class="co"># Plot blue points</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>            ax1.plot([v1[<span class="dv">0</span>]], [v1[<span class="dv">1</span>]], <span class="st">'ro'</span>) <span class="co"># Plot red points</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
 <figure class="figure">
-<p><a href="img/slide01.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="caption"><img src="img/slide01.png" class="img-fluid figure-img"></a></p>
-<figcaption>caption</figcaption>
+<p><a href="lab_02_files/figure-html/cell-5-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="lab_02_files/figure-html/cell-5-output-1.png" width="667" height="638" class="figure-img"></a></p>
 </figure>
 </div>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Description
-</figcaption>
-</figure>
-</div></div><p>This week you are going to learn to:</p>
-<ul>
-<li>Process a text corpus to N-gram language model</li>
-<li>Handle out of vocabulary words</li>
-<li>Implement smoothing for previously unseen N-grams</li>
-<li>Language model evaluation</li>
-</ul>
-</section>
-<section id="n-grams-and-probabilities" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="n-grams-and-probabilities">N-grams and Probabilities</h2>
-<p>Before we start computing probabilities of certain sequences, we need to first define what is an N-gram language model:</p>
-
-<div class="no-row-height column-margin column-container"><div id="fig-02" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-figure quarto-figure-center">
+</div>
+<p>The first thing to note is that the vector that defines the plane does not mark the boundary between the two sides of the plane. It marks the direction in which you find the ‘positive’ side of the plane. Not intuitive at all!</p>
+<p>If we want to plot the separation plane, we need to plot a line that is perpendicular to our vector <code>P</code>. We can get such a line using a <span class="math inline">90^o</span> rotation matrix.</p>
+<p>Feel free to change the direction of the plane <code>P</code>.</p>
+<div id="13f05547" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>P <span class="op">=</span> np.array([[<span class="dv">1</span>, <span class="dv">2</span>]])  <span class="co"># Define a single plane. You may change the direction</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Get a new plane perpendicular to P. We use a rotation matrix</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>PT <span class="op">=</span> np.dot([[<span class="dv">0</span>, <span class="dv">1</span>], [<span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>]], P.T).T  </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>fig, ax1 <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">8</span>)) <span class="co"># Create a plot with custom size</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>plot_vectors([P], colors<span class="op">=</span>[<span class="st">'b'</span>], axes<span class="op">=</span>[<span class="dv">2</span>, <span class="dv">2</span>], ax<span class="op">=</span>ax1) <span class="co"># Plot the plane P as a vector</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the plane P as a 2 vectors. </span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># We scale by 2 just to get the arrows outside the current box</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>plot_vectors([PT <span class="op">*</span> <span class="dv">4</span>, PT <span class="op">*</span> <span class="op">-</span><span class="dv">4</span>], colors<span class="op">=</span>[<span class="st">'k'</span>, <span class="st">'k'</span>], axes<span class="op">=</span>[<span class="dv">4</span>, <span class="dv">4</span>], ax<span class="op">=</span>ax1)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 20 random points. </span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">20</span>):</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        v1 <span class="op">=</span> np.array(np.random.uniform(<span class="op">-</span><span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">2</span>)) <span class="co"># Get a pair of random numbers between -4 and 4 </span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        side_of_plane <span class="op">=</span> np.sign(np.dot(P, v1.T)) <span class="co"># Get the sign of the dot product with P</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Color the points depending on the sign of the result of np.dot(P, point.T)</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> side_of_plane <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>            ax1.plot([v1[<span class="dv">0</span>]], [v1[<span class="dv">1</span>]], <span class="st">'bo'</span>) <span class="co"># Plot a blue point</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>            ax1.plot([v1[<span class="dv">0</span>]], [v1[<span class="dv">1</span>]], <span class="st">'ro'</span>) <span class="co"># Plot a red point</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
 <figure class="figure">
-<p><a href="img/slide02.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="caption"><img src="img/slide02.png" class="img-fluid figure-img"></a></p>
-<figcaption>caption</figcaption>
+<p><a href="lab_02_files/figure-html/cell-6-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="lab_02_files/figure-html/cell-6-output-1.png" width="648" height="638" class="figure-img"></a></p>
 </figure>
 </div>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: Description
-</figcaption>
-</figure>
-</div></div><p>Now given the those definitions, we can label a sentence as follows:</p>
-
-<div class="no-row-height column-margin column-container"><div id="fig-03" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/slide03.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="caption"><img src="img/slide03.png" class="img-fluid figure-img"></a></p>
-<figcaption>caption</figcaption>
-</figure>
+</div>
+<p>Now, let us see what is inside the code that color the points.</p>
+<div id="26bbb710" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>P <span class="op">=</span> np.array([[<span class="dv">1</span>, <span class="dv">1</span>]])      <span class="co"># Single plane</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>v1 <span class="op">=</span> np.array([[<span class="dv">1</span>, <span class="dv">2</span>]])     <span class="co"># Sample point 1</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>v2 <span class="op">=</span> np.array([[<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>]])    <span class="co"># Sample point 2</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>v3 <span class="op">=</span> np.array([[<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>]])   <span class="co"># Sample point 3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="0141eb6f" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>np.dot(P, v1.T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code>array([[3]])</code></pre>
 </div>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3: Description
-</figcaption>
-</figure>
-</div></div><p>In other notation you can write:</p>
-<p><span class="math display">
-w_1^m = w_1 w_2 w_3 ... w_m
-</span> <span class="math display">
-w_1^3 = w_1 w_2 w_3
-</span> <span class="math display">
-w_{m-2}^m = w_{m-2} w_{m-1} w_m
-</span></p>
-<p>Given the following corpus: I am happy because I am learning.</p>
-<p>Size of corpus m = 7.</p>
-<p><span class="math display">
-P(I) = \frac{1}{7}
-</span></p>
-<p><span class="math display">
-P(happy) = \frac{1}{7}
-</span></p>
-<p>To generalize, the probability of a unigram is</p>
-<p><span class="math display">
-P(w) = \frac{C(w)}{m}
-</span></p>
-<p>Where C(w) is the count of the word in the corpus and m is the size of the corpus.</p>
-<section id="bigram-probability" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="bigram-probability">Bigram Probability:</h3>
-
-<div class="no-row-height column-margin column-container"><div id="fig-04" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/slide04.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="caption"><img src="img/slide04.png" class="img-fluid figure-img"></a></p>
-<figcaption>caption</figcaption>
-</figure>
+<div id="528ffd52" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>np.dot(P, v2.T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>array([[0]])</code></pre>
 </div>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4: Description
-</figcaption>
-</figure>
-</div></div></section>
-<section id="trigram-probability" class="level3">
-<h3 class="anchored" data-anchor-id="trigram-probability">Trigram Probability:</h3>
-<p>To compute the probability of a trigram: <span class="math display">
-P(w_3 | w_1^2) = \frac{C(w_1^2 w_3)}{C(w_1^2)}
-</span></p>
-<p><span class="math display">
-C(w_1^2 w_3) = C(w_1 w_2 w_3) = C(w_1^3)
-</span></p>
-<p>N-gram Probability:</p>
-<p><span class="math display">
-P(w_n | w_1^{n-1}) = \frac{C(w_1^{n-1} w_n)}{C(w_1^{n-1})}
-</span></p>
-<p><span class="math display">
-C(w_1^{n-1} w_n) = C(w_1^n)
-</span></p>
+<div id="d0d6a905" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>np.dot(P, v3.T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>array([[-3]])</code></pre>
+</div>
+</div>
+<p>The function below checks in which side of the plane P is located the vector <code>v</code></p>
+<div id="00c0be11" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> side_of_plane(P, v):</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    dotproduct <span class="op">=</span> np.dot(P, v.T) <span class="co"># Get the dot product P * v'</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    sign_of_dot_product <span class="op">=</span> np.sign(dotproduct) <span class="co"># The sign of the elements of the dotproduct matrix </span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    sign_of_dot_product_scalar <span class="op">=</span> sign_of_dot_product.item() <span class="co"># The value of the first item</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sign_of_dot_product_scalar</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="91784a33" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>side_of_plane(P, v1) <span class="co"># In which side is [1, 2]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>1</code></pre>
+</div>
+</div>
+<div id="8298868f" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>side_of_plane(P, v2) <span class="co"># In which side is [-1, 1]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>0</code></pre>
+</div>
+</div>
+<div id="35e02241" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>side_of_plane(P, v3) <span class="co"># In which side is [-2, -1]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<pre><code>-1</code></pre>
+</div>
+</div>
+</section>
+<section id="hash-function-with-multiple-planes" class="level2">
+<h2 class="anchored" data-anchor-id="hash-function-with-multiple-planes">Hash Function with multiple planes</h2>
+<p>In the following section, we are going to define a hash function with a list of three custom planes in 2D.</p>
+<div id="8643163f" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>P1 <span class="op">=</span> np.array([[<span class="dv">1</span>, <span class="dv">1</span>]])   <span class="co"># First plane 2D</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>P2 <span class="op">=</span> np.array([[<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>]])  <span class="co"># Second plane 2D</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>P3 <span class="op">=</span> np.array([[<span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>]]) <span class="co"># Third plane 2D</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>P_l <span class="op">=</span> [P1, P2, P3]  <span class="co"># List of arrays. It is the multi plane</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Vector to search</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>v <span class="op">=</span> np.array([[<span class="dv">2</span>, <span class="dv">2</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The next function creates a hash value based on a set of planes. The output value is a combination of the side of the plane where the vector is localized with respect to the collection of planes.</p>
+<p>We can think of this list of planes as a set of basic hash functions, each of which can produce only 1 or 0 as output.</p>
+<div id="9b6a8bd6" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> hash_multi_plane(P_l, v):</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    hash_value <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, P <span class="kw">in</span> <span class="bu">enumerate</span>(P_l):</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>        sign <span class="op">=</span> side_of_plane(P,v)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>        hash_i <span class="op">=</span> <span class="dv">1</span> <span class="cf">if</span> sign <span class="op">&gt;=</span><span class="dv">0</span> <span class="cf">else</span> <span class="dv">0</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>        hash_value <span class="op">+=</span> <span class="dv">2</span><span class="op">**</span>i <span class="op">*</span> hash_i</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> hash_value</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="268a9c9d" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>hash_multi_plane(P_l, v) <span class="co"># Find the number of the plane that containes this value</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
+<pre><code>3</code></pre>
+</div>
+</div>
+</section>
+<section id="random-planes" class="level2">
+<h2 class="anchored" data-anchor-id="random-planes">Random Planes</h2>
+<p>In the cell below, we create a set of three random planes</p>
+<div id="cce20934" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">0</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>num_dimensions <span class="op">=</span> <span class="dv">2</span> <span class="co"># is 300 in assignment</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>num_planes <span class="op">=</span> <span class="dv">3</span> <span class="co"># is 10 in assignment</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>random_planes_matrix <span class="op">=</span> np.random.normal(</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>                       size<span class="op">=</span>(num_planes,</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>                             num_dimensions))</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(random_planes_matrix)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[ 1.76405235  0.40015721]
+ [ 0.97873798  2.2408932 ]
+ [ 1.86755799 -0.97727788]]</code></pre>
+</div>
+</div>
+<div id="5eddf4e5" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>v <span class="op">=</span> np.array([[<span class="dv">2</span>, <span class="dv">2</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The next function is similar to the <code>side_of_plane()</code> function, but it evaluates more than a plane each time. The result is an array with the side of the plane of <code>v</code>, for the set of planes <code>P</code></p>
+<div id="76473908" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Side of the plane function. The result is a matrix</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> side_of_plane_matrix(P, v):</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    dotproduct <span class="op">=</span> np.dot(P, v.T)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    sign_of_dot_product <span class="op">=</span> np.sign(dotproduct) <span class="co"># Get a boolean value telling if the value in the cell is positive or negative</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sign_of_dot_product</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Get the side of the plane of the vector <code>[2, 2]</code> for the set of random planes.</p>
+<div id="3bbef90e" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>sides_l <span class="op">=</span> side_of_plane_matrix(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>            random_planes_matrix, v)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>sides_l</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="20">
+<pre><code>array([[1.],
+       [1.],
+       [1.]])</code></pre>
+</div>
+</div>
+<p>Now, let us use the former function to define our multiplane hash function</p>
+<div id="c4e0c5a8" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> hash_multi_plane_matrix(P, v, num_planes):</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    sides_matrix <span class="op">=</span> side_of_plane_matrix(P, v) <span class="co"># Get the side of planes for P and v</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    hash_value <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(num_planes):</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>        sign <span class="op">=</span> sides_matrix[i].item() <span class="co"># Get the value inside the matrix cell</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>        hash_i <span class="op">=</span> <span class="dv">1</span> <span class="cf">if</span> sign <span class="op">&gt;=</span><span class="dv">0</span> <span class="cf">else</span> <span class="dv">0</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>        hash_value <span class="op">+=</span> <span class="dv">2</span><span class="op">**</span>i <span class="op">*</span> hash_i <span class="co"># sum 2^i * hash_i</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> hash_value</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Print the bucket hash for the vector <code>v = [2, 2]</code>.</p>
+<div id="5d53974f" class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>hash_multi_plane_matrix(random_planes_matrix, v, num_planes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="22">
+<pre><code>7</code></pre>
+</div>
+</div>
+<section id="note" class="level4">
+<h4 class="anchored" data-anchor-id="note">Note</h4>
+<p>This showed you how to make one set of random planes. You will make multiple sets of random planes in order to make the approximate nearest neighbors more accurate.</p>
 </section>
 </section>
-<section id="sequence-probabilities" class="level2">
-<h2 class="anchored" data-anchor-id="sequence-probabilities">Sequence Probabilities</h2>
-<p>You just saw how to compute sequence probabilities, their short comings, and finally how to approximate N-gram probabilities. In doing so, you try to approximate the probability of a sentence. For example, what is the probability of the following sentence: <em>The teacher drinks tea</em>. To compute it, you will make use of the following:</p>
-<p><span class="math display">
-P(B|A) = \frac{P(A,B)}{P(A)} \Rightarrow P(A,B) = P(A)P(B|A)
-</span></p>
-<p><span class="math display">
-P(A,B,C,D) = P(A)P(B|A)P(C|A,B)P(D|A,B,C)
-</span></p>
-<p>To compute the probability of a sequence, you can compute the following:</p>
-<p><span class="math display">
-P(\text{The teacher drinks tea}) = P(\text{The})P(\text{teacher}|\text{The})P(\text{drinks}|\text{The teacher})P(\text{tea}|\text{The teacher drinks})
-</span></p>
-<p>One of the main issues with computing the probabilities above is the corpus rarely contains the exact same phrases as the ones you computed your probabilities on. Hence, you can easily end up getting a probability of 0. The Markov assumption indicates that only the last word matters. Hence:</p>
-<p><span class="math display">
-\text{Bigram} \qquad P(w_n | w_1^{n-1}) \approx P(w_n | w_{n-1})
-</span></p>
-<p><span class="math display">
-\text{Trigram} \qquad P(w_n | w_1^{n-1}) \approx P(w_n | w_{n-2}^{n-1})
-</span></p>
-<p><span class="math display">
-\text{N-gram} \qquad P(w_n | w_1^{n-1}) \approx P(w_n | w_{n-N+1}^{n-1})
-</span></p>
-<p>You can model the entire sentence as follows:</p>
-<p><span class="math display">
-P(w_1^n) = P(w_1)P(w_2|w_1)P(w_3|w_2)P(w_4|w_3) ... P(w_n|w_{n-1}) = \prod_{i=1}^{n} P(w_i|w_{i-1})
-</span></p>
-<p><span class="math display">
-P(w_1^n) = P(w_1)P(w_2|w_1)P(w_3|w_2)P(w_4|w_3) ... P(w_n|w_{n-1}) = \prod_{i=1}^{n} P(w_i|w_{i-1})
-</span></p>
-</section>
-<section id="starting-and-ending-sentences" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="starting-and-ending-sentences">Starting and Ending Sentences</h2>
-<p>We usually start and end a sentence with the following tokens respectively: &lt;s&gt; &lt;/s&gt;.</p>
-<p>When computing probabilities using a unigram, you can append an &lt;s&gt; in the beginning of the sentence. To generalize to an N-gram language model, you can add N-1 start tokens &lt;s&gt;.</p>
-<p>For the end of sentence token &lt;/s&gt;, you only need one even if it is an N-gram. Here is an example:</p>
-
-<div class="no-row-height column-margin column-container"><div id="fig-08" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-08-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/slide08.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="caption"><img src="img/slide08.png" class="img-fluid figure-img"></a></p>
-<figcaption>caption</figcaption>
-</figure>
+<section id="document-vectors" class="level2">
+<h2 class="anchored" data-anchor-id="document-vectors">Document vectors</h2>
+<p>Before we finish this lab, remember that you can represent a document as a vector by adding up the word vectors for the words inside the document. In this example, our embedding contains only three words, each represented by a 3D array.</p>
+<div id="15eede0a" class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>word_embedding <span class="op">=</span> {<span class="st">"I"</span>: np.array([<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>]),</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"love"</span>: np.array([<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>]),</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"learning"</span>: np.array([<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>])</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>                  }</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>words_in_document <span class="op">=</span> [<span class="st">'I'</span>, <span class="st">'love'</span>, <span class="st">'learning'</span>, <span class="st">'not_a_word'</span>]</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>document_embedding <span class="op">=</span> np.array([<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>])</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> word <span class="kw">in</span> words_in_document:</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    document_embedding <span class="op">+=</span> word_embedding.get(word,<span class="dv">0</span>)</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(document_embedding)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1 0 3]</code></pre>
 </div>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-08-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5: Description
-</figcaption>
-</figure>
-</div></div><p>Make sure you know how to compute the probabilities above!</p>
-</section>
-<section id="lecture-notebook-corpus-preprocessing-for-n-grams" class="level2">
-<h2 class="anchored" data-anchor-id="lecture-notebook-corpus-preprocessing-for-n-grams">Lecture notebook: Corpus preprocessing for N-grams</h2>
-<p><a href="lab01.qmd">lab 1 Corpus preprocessing for N-grams</a></p>
-</section>
-<section id="the-n-gram-language-model" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="the-n-gram-language-model">The N-gram Language Model</h2>
-
-<div class="no-row-height column-margin column-container"><div id="fig-09" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-09-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/slide09.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="caption"><img src="img/slide09.png" class="img-fluid figure-img"></a></p>
-<figcaption>caption</figcaption>
-</figure>
-</div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-09-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6: Count Matrix
-</figcaption>
-</figure>
-</div><div id="fig-10" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/slide10.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="caption"><img src="img/slide10.png" class="img-fluid figure-img"></a></p>
-<figcaption>caption</figcaption>
-</figure>
-</div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7: Count Matrix
-</figcaption>
-</figure>
-</div><div id="fig-11" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/slide11.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="caption"><img src="img/slide11.png" class="img-fluid figure-img"></a></p>
-<figcaption>caption</figcaption>
-</figure>
-</div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8: Count Matrix
-</figcaption>
-</figure>
-</div><div id="fig-12" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/slide12.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="caption"><img src="img/slide12.png" class="img-fluid figure-img"></a></p>
-<figcaption>caption</figcaption>
-</figure>
-</div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9: Count Matrix
-</figcaption>
-</figure>
-</div></div>
-
-
-<p>We covered a lot of concepts in the previous video. You have seen:</p>
-<ul>
-<li><a href="@fig-09">Count matrix</a></li>
-<li><a href="@fig-10">Probability matrix</a></li>
-<li><a href="@fig-11">Language model</a></li>
-<li><a href="@fig-12">Log probability</a> to avoid underflow</li>
-<li><a href="@fig-13">Generative language model</a></li>
-</ul>
-<p>In the count matrix:</p>
-<ul>
-<li>Rows correspond to the unique corpus N-1 grams.</li>
-<li>Columns correspond to the unique corpus words.</li>
-</ul>
-<p>Here is an example of the count matrix of a bigram.</p>
-<p>To convert it into a probability matrix, you can use the following formula:</p>
-<ul>
-<li><span class="math inline">P(w_n \mid w^{n-1}_{n-N+1}) = \frac{C(w^{n-1}_{n-N+1}, w_n)}{C(w^{n-1}_{n-N+1})}</span></li>
-<li><span class="math inline">sum(row) = \sum_{w \in V} C(w^{n-1}_{n-N+1}, w) = C(w^{n-1}_{n-N+1})</span></li>
-</ul>
-<p>Now given the probability matrix, you can generate the language model. You can compute the sentence probability and the next word prediction.</p>
-<p>To compute the probability of a sequence, you needed to compute:</p>
-<p><span class="math display">
-P(w_1^n) = P(w_1)P(w_2|w_1)P(w_3|w_2)P(w_4|w_3) \ldots P(w_n|w_{n-1}) = \prod_{i=1}^{n} P(w_i | w_{i-1})
-</span></p>
-<p>To avoid underflow, you can multiply by the log.</p>
-<p><span class="math display">
-\log P(w_1^n) = \log P(w_1) + \log P(w_2|w_1) + \log P(w_3|w_2) + \log P(w_4|w_3) + \ldots+ \log P(w_n|w_{n-1}) = \sum_{i=1}^{n} \log P(w_i|w_{i-1})
-</span></p>
-<p>Finally, you can create a generative language model.</p>
-
-<div class="no-row-height column-margin column-container"><div id="fig-13" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/slide13.png" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="caption"><img src="img/slide13.png" class="img-fluid figure-img"></a></p>
-<figcaption>caption</figcaption>
-</figure>
-</div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;10: Count Matrix
-</figcaption>
-</figure>
-</div></div></section>
-<section id="lecture-notebook-building-the-language-model" class="level2">
-<h2 class="anchored" data-anchor-id="lecture-notebook-building-the-language-model">Lecture notebook: Building the language model</h2>
-<p><a href="lab02.qmd">lab 2 Building the language model</a></p>
-</section>
-<section id="language-model-evaluation" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="language-model-evaluation">Language Model Evaluation</h2>
-<p>Splitting the Data We will now discuss the train/val/test splits and perplexity.</p>
-<p>Train/Val/Test splits Smaller Corpora:</p>
-<p>80% train</p>
-<p>10% val</p>
-<p>10% test</p>
-<p>Larger Corpora:</p>
-<p>98% train</p>
-<p>1% val</p>
-<p>1% test</p>
-<p>There are two main methods for splitting the data:</p>
-
-<div class="no-row-height column-margin column-container"><div id="fig-14" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/slide14.png" class="lightbox" data-gallery="quarto-lightbox-gallery-13" title="caption"><img src="img/slide14.png" class="img-fluid figure-img"></a></p>
-<figcaption>caption</figcaption>
-</figure>
-</div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;11: Count Matrix
-</figcaption>
-</figure>
-</div></div><p>Perplexity Perplexity is used to tell us whether a set of sentences look like they were written by humans rather than by a simple program choosing words at random. A text that is written by humans is more likely to have lower perplexity, where a text generated by random word choice would have a higher perplexity.</p>
-<p>Concretely, here are the formulas to calculate perplexity.</p>
-<p><span class="math display">
-PP(W) = P(s_1, s_2, \ldots, s_m)^{-\frac{1}{m}}
-</span></p>
-<p><span class="math display">
-PP(W) = \sqrt{ \prod_{i=1}^{m} \prod_{j=1}^{|s_i|} \frac{1}{P(w_j^{(i)} | w_{j-1}^{(i)})}}
-</span></p>
-<p>​<span class="math inline">w_j^{(i)}</span> corresponds to the jth word in the ith sentence. If you were to concatenate all the sentences then <span class="math inline">w_i</span> is the ith word in the test set. To compute the log perplexity, you go from:</p>
-<p><span class="math display">
-PP(W) = \sqrt{ \prod_{i=1}^{m} \frac{1}{P(w_i | w_{i-1})}}
-</span></p>
-<p>To</p>
-<p><span class="math display">
-log PP(W) = -\frac{1}{m} \sum_{i=1}^{m} \log_2 P(w_i | w_{i-1})
-</span></p>
-</section>
-<section id="out-of-vocabulary-words" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="out-of-vocabulary-words">Out of Vocabulary Words</h2>
-<p>Many times, you will be dealing with unknown words in the corpus. So how do you choose your vocabulary? What is a vocabulary?</p>
-<p>A vocabulary is a set of unique words supported by your language model. In some tasks like speech recognition or question answering, you will encounter and generate words only from a fixed set of words. Hence, a <strong>closed vocabulary</strong>.</p>
-<p><strong>Open vocabulary</strong> means that you may encounter words from outside the vocabulary, like a name of a new city in the training set. Here is one recipe that would allow you to handle unknown words.</p>
-<ul>
-<li>Create vocabulary V</li>
-<li>Replace any word in corpus and not in V by &lt;UNK&gt;</li>
-<li>Count the probabilities with &lt;UNK&gt; as with any other word</li>
-</ul>
-
-<div class="no-row-height column-margin column-container"><div id="fig-15" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-15-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/slide15.png" class="lightbox" data-gallery="quarto-lightbox-gallery-14" title="caption"><img src="img/slide15.png" class="img-fluid figure-img"></a></p>
-<figcaption>caption</figcaption>
-</figure>
-</div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-15-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;12: Count Matrix
-</figcaption>
-</figure>
-</div></div><p>The example above shows how you can use min_frequency and replace all the words that show up fewer times than min_frequency by UNK. You can then treat UNK as a regular word.</p>
-<section id="criteria-to-create-the-vocabulary" class="level3">
-<h3 class="anchored" data-anchor-id="criteria-to-create-the-vocabulary">Criteria to create the vocabulary</h3>
-<ul>
-<li>Min word frequency f</li>
-<li>Max |V|, include words by frequency</li>
-<li>Use &lt;UNK&gt; sparingly (Why?)</li>
-<li>Perplexity - only compare LMs with the same V</li>
-</ul>
-</section>
-</section>
-<section id="out-of-vocabulary-words-1" class="level2">
-<h2 class="anchored" data-anchor-id="out-of-vocabulary-words-1">Out of Vocabulary Words</h2>
-</section>
-<section id="smoothing" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="smoothing">Smoothing</h2>
-
-<div class="no-row-height column-margin column-container"><div id="fig-16" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-16-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/slide16.png" class="lightbox" data-gallery="quarto-lightbox-gallery-15" title="Problem"><img src="img/slide16.png" class="img-fluid figure-img"></a></p>
-<figcaption>Problem</figcaption>
-</figure>
-</div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-16-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;13: Missing N-grams
-</figcaption>
-</figure>
-</div></div><p>The three main concepts covered here are dealing with missing n-grams, smoothing, and Backoff and interpolation.</p>
-
-<div class="no-row-height column-margin column-container"><div id="fig-17" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-17-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/slide17.png" class="lightbox" data-gallery="quarto-lightbox-gallery-16" title="Smoothing"><img src="img/slide17.png" class="img-fluid figure-img"></a></p>
-<figcaption>Smoothing</figcaption>
-</figure>
-</div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-17-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;14: Add One Smoothing, Add K Smoothing
-</figcaption>
-</figure>
-</div></div><p><span id="eq-n-gram-prob"><span class="math display">
-P(w_n | w^{n-1}_{n-N+1}) = \frac{C(w^{n-1}_{n-N+1}, w_n)}{C(w^{n-1}_{n-N+1})} \qquad \text{can be 0}
-\tag{1}</span></span></p>
-<p>Hence we can add-1 smoothing as follows to fix that problem:</p>
-<p><span id="eq-add-one-smoothing"><span class="math display">
-P(w_n | w_{n-1}) = \frac{C(w_{n-1}, w_n) + 1}{\sum_{w \in V} (C(w_{n-1}, w) + 1)} = \frac{C(w_{n-1}, w_n) + 1}{C(w_{n-1}) + V} \qquad
-\tag{2}</span></span></p>
-<p>Add-k smoothing is very similar:</p>
-<p><span id="eq-add-k-smoothing"><span class="math display">
-P(w_n | w_{n-1}) = \frac{C(w_{n-1}, w_n) + k}{\sum_{w \in V} (C(w_{n-1}, w) + k)} =\frac{C(w_{n-1}, w_n) + k}{C(w_{n-1}) + k\times V} \qquad
-\tag{3}</span></span></p>
-
-<div class="no-row-height column-margin column-container"><div id="fig-18" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-18-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/slide18.png" class="lightbox" data-gallery="quarto-lightbox-gallery-17" title="Backoff"><img src="img/slide18.png" class="img-fluid figure-img"></a></p>
-<figcaption>Backoff</figcaption>
-</figure>
-</div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-18-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;15: Backoff
-</figcaption>
-</figure>
-</div></div><p>When using back-off:</p>
-<ul>
-<li><p>If N-gram missing =&gt; use (N-1)-gram, …: Using the lower level N-grams (i.e.&nbsp;(N-1)-gram, (N-2)-gram, down to unigram) distorts the probability distribution. Especially for smaller corpora, some probability needs to be discounted from higher level N-grams to use it for lower level N-grams.</p></li>
-<li><p>Probability discounting e.g.&nbsp;Katz backoff: makes use of discounting.</p></li>
-<li><p>“Stupid” backoff: If the higher order N-gram probability is missing, the lower order N-gram probability is used, just multiplied by a constant. A constant of about 0.4 was experimentally shown to work well.</p></li>
-</ul>
-<p>Here is a <a href="@fig-18">visualization</a> of the backoff process.</p>
-<p>You can also use interpolation when computing probabilities as follows:</p>
-<p><span id="eq-interpolation"><span class="math display">
-\hat{P}(w_n | w_{n-2} W_{n-1}) = \lambda_1 \times P(w_n | w_{n-2} w_{n-1}) + \lambda_2 \times P(w_n | w_{n-1}) + \lambda_3 \times P(w_n) \qquad
-\tag{4}</span></span></p>
-<p>Where</p>
-<p><span class="math display">
-\sum_i \lambda_i = 1
-</span></p>
-</section>
-<section id="week-summary" class="level2">
-<h2 class="anchored" data-anchor-id="week-summary">Week Summary</h2>
-<p>This week you learned the following concepts</p>
-<ul>
-<li>N-Grams and probabilities</li>
-<li>Approximate sentence probability from N-Grams</li>
-<li>Build a language model from a corpus</li>
-<li>Fix missing information</li>
-<li>Out of vocabulary words with &lt;UNK&gt;</li>
-<li>Missing N-Gram in corpus with smoothing, backoff and interpolation</li>
-<li>Evaluate language model with perplexity</li>
-<li>Coding assignment!</li>
-</ul>
-</section>
-<section id="lecture-notebook-language-model-generalization" class="level2">
-<h2 class="anchored" data-anchor-id="lecture-notebook-language-model-generalization">Lecture notebook: Language model generalization</h2>
-<p><a href="lab03.qmd">Autocomplete</a></p>
-</section>
-<section id="resources" class="level1">
-<h1>Resources:</h1>
-<ul>
-<li><span class="citation" data-cites="Chadha2020DistilledNotesCourseraDLSpec">(<a href="#ref-Chadha2020DistilledNotesCourseraDLSpec" role="doc-biblioref">Chadha 2020</a>)</span> <a href="https://aman.ai/coursera-nlp/logistic-regression/">Aman Chadha’s Notes</a></li>
-<li><a href="https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization/tree/master/1%20-%20Natural%20Language%20Processing%20with%20Classification%20and%20Vector%20Spaces#testing-logistic-regression">Ibrahim Jelliti’s Notes</a></li>
-</ul>
-<section id="slides" class="level2">
-<h2 class="anchored" data-anchor-id="slides">Slides</h2>
-<p><a href="slides.pdf" class="lightbox" data-gallery="quarto-lightbox-gallery-18"><embed src="slides.pdf" class="img-fluid"></a></p>
-
+<p><strong>Congratulations! You’ve now completed this lab on hash functions and multiplanes!</strong></p>
 
 
 </section>
-</section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
-<div id="ref-Chadha2020DistilledNotesCourseraDLSpec" class="csl-entry" role="listitem">
-Chadha, Aman. 2020. <span>“Distilled Notes for the Natural Language Processing Specialization on Coursera (Offered by Deeplearning.ai).”</span> <a href="https://www.aman.ai" class="uri">https://www.aman.ai</a>. <a href="https://www.aman.ai">www.aman.ai</a>.
-</div>
-</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{2020,
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{2020,
   author = {},
-  title = {Autocomplete and {Language} {Models}},
+  title = {Hash Functions and Multiplanes},
   date = {2020-10-23},
-  url = {https://orenbochman.github.io/notes-nlp/posts/c2w3/},
+  url = {https://orenbochman.github.io/notes-nlp/posts/c1w4/lab_02.html},
   langid = {en}
 }
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-2020" class="csl-entry quarto-appendix-citeas" role="listitem">
-<span>“Autocomplete and Language Models.”</span> 2020. October 23, 2020.
-<a href="https://orenbochman.github.io/notes-nlp/posts/c2w3/">https://orenbochman.github.io/notes-nlp/posts/c2w3/</a>.
+<span>“Hash Functions and Multiplanes.”</span> 2020. October 23, 2020.
+<a href="https://orenbochman.github.io/notes-nlp/posts/c1w4/lab_02.html">https://orenbochman.github.io/notes-nlp/posts/c1w4/lab_02.html</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -1563,7 +1323,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c2w3/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c1w4/lab_02.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p>This page is built with 💛 and <a href="https://quarto.org/">Quarto</a>.</p>
 </div>

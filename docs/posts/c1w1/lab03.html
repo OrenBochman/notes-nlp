@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Concepts, code snippets, and slide commentaries for this week’s lesson of the Course notes from the deeplearning.ai natural language programming specialization.">
 
-<title>Probability and Bayes Rule – NLP Specialization</title>
+<title>Visualizing tweets and the Logistic Regression model – NLP Specialization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -76,6 +75,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -108,11 +110,54 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-sidebar floating nav-fixed">
+<body class="nav-sidebar floating nav-fixed slimcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -170,7 +215,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Probability and Bayes Rule</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Visualizing tweets and the Logistic Regression model</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -179,31 +224,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-right">
-      <h1 class="title">Probability and Bayes Rule</h1>
-            <p class="subtitle lead">Classification &amp; Vector Spaces</p>
-                  <div>
-        <div class="description">
-          Concepts, code snippets, and slide commentaries for this week’s lesson of the Course notes from the deeplearning.ai natural language programming specialization.
-        </div>
-      </div>
-                          <div class="quarto-categories">
+    <div class="quarto-title column-body">
+      <h1 class="title">Visualizing tweets and the Logistic Regression model</h1>
+                                <div class="quarto-categories">
                 <div class="quarto-category">NLP</div>
                 <div class="quarto-category">Coursera</div>
-                <div class="quarto-category">code</div>
-                <div class="quarto-category">Conditional Probability</div>
-                <div class="quarto-category">Bayes rule</div>
-                <div class="quarto-category">Naïve Bayes</div>
-                <div class="quarto-category">Laplace smoothing</div>
-                <div class="quarto-category">Log-likelihood</div>
-                <div class="quarto-category">classification</div>
-                <div class="quarto-category">sentiment analysis task</div>
+                <div class="quarto-category">lab</div>
+                <div class="quarto-category">Logistic regression</div>
+                <div class="quarto-category">Sentiment analysis task</div>
+                <div class="quarto-category">Classification &amp; Vector Spaces</div>
               </div>
                   </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page-right">
+  <div class="quarto-title-meta column-body">
 
       
       <div>
@@ -391,103 +426,83 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#import-the-required-libraries" id="toc-import-the-required-libraries" class="nav-link active" data-scroll-target="#import-the-required-libraries">Import the required libraries</a></li>
+  <li><a href="#load-the-nltk-sample-dataset" id="toc-load-the-nltk-sample-dataset" class="nav-link" data-scroll-target="#load-the-nltk-sample-dataset">Load the NLTK sample dataset</a></li>
+  <li><a href="#load-the-extracted-features" id="toc-load-the-extracted-features" class="nav-link" data-scroll-target="#load-the-extracted-features">Load the extracted features</a>
+  <ul class="collapse">
+  <li><a href="#load-a-pretrained-logistic-regression-model" id="toc-load-a-pretrained-logistic-regression-model" class="nav-link" data-scroll-target="#load-a-pretrained-logistic-regression-model">Load a pretrained Logistic Regression model</a></li>
+  <li><a href="#plot-the-samples-in-a-scatter-plot" id="toc-plot-the-samples-in-a-scatter-plot" class="nav-link" data-scroll-target="#plot-the-samples-in-a-scatter-plot">Plot the samples in a scatter plot</a></li>
+  <li><a href="#plot-the-model-alongside-the-data" id="toc-plot-the-model-alongside-the-data" class="nav-link" data-scroll-target="#plot-the-model-alongside-the-data">Plot the model alongside the data</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c1w1/lab03.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
+<main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
 
 
 
 
 
-<div id="5b0db268" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> string </span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>raw_tweets<span class="op">=</span>[</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"I am happy because I am learning NLP"</span>,</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"I am sad, I am not learning NLP"</span>,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"I am happy, not sad"</span>,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"I am sad, not happy"</span>,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> clean(tweet:<span class="bu">str</span>):</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>  tweet.translate(<span class="bu">str</span>.maketrans(<span class="st">''</span>, <span class="st">''</span>, string.punctuation)).lower()</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>tweets <span class="op">=</span> [clean(tweet) <span class="cf">for</span> tweet <span class="kw">in</span> raw_tweets]</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>labels<span class="op">=</span>[<span class="st">'+'</span>,<span class="st">'-'</span>,<span class="st">'+'</span>,<span class="st">'-'</span>]</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({<span class="st">'tweets'</span>: tweets, <span class="st">'labels'</span>: labels})</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="1">
-<div>
 
-
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">tweets</th>
-<th data-quarto-table-cell-role="th">labels</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
-<td>i am happy because i am learning nlp</td>
-<td>+</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
-<td>i am sad i am not learning nlp</td>
-<td>-</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
-<td>i am happy not sad</td>
-<td>+</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
-<td>i am sad not happy</td>
-<td>-</td>
-</tr>
-</tbody>
-</table>
-
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="../../images/banner_c1.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="../../images/banner_c1.jpg" class="img-fluid figure-img" alt="course banner"></a></p>
+<figcaption>course banner</figcaption>
+</figure>
+</div></div><p><strong>Objectives:</strong> Visualize and interpret the logistic regression model</p>
+<p><strong>Steps:</strong> * Plot tweets in a scatter plot using their positive and negative sums. * Plot the output of the logistic regression model in the same plot as a solid line</p>
+<section id="import-the-required-libraries" class="level2">
+<h2 class="anchored" data-anchor-id="import-the-required-libraries">Import the required libraries</h2>
+<p>We will be using <a href="http://www.nltk.org/howto/twitter.html"><em>NLTK</em></a>, an opensource NLP library, for collecting, handling, and processing Twitter data. In this lab, we will use the example dataset that comes alongside with NLTK. This dataset has been manually annotated and serves to establish baselines for models quickly.</p>
+<p>So, to start, let’s import the required libraries.</p>
+<div id="abe16fc3" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> nltk                         <span class="co"># NLP toolbox</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> os <span class="im">import</span> getcwd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd                 <span class="co"># Library for Dataframes </span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nltk.corpus <span class="im">import</span> twitter_samples </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt     <span class="co"># Library for visualization</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np                  <span class="co"># Library for math functions</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> utils <span class="im">import</span> process_tweet, build_freqs <span class="co"># Our functions for NLP</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-</div>
-<div id="ea57cd38" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>p_freq,n_freq <span class="op">=</span> Counter(), Counter()</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#print( df[df.labels == '+']['tweets'].to_list())</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>[p_freq.update(tweet.split()) <span class="cf">for</span> tweet <span class="kw">in</span> df[df.labels <span class="op">==</span> <span class="st">'+'</span>][<span class="st">'tweets'</span>].to_list()]</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>[n_freq.update(tweet.split()) <span class="cf">for</span> tweet <span class="kw">in</span> df[df.labels <span class="op">==</span> <span class="st">'-'</span>][<span class="st">'tweets'</span>].to_list()]</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(p_freq)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(n_freq)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>vocab <span class="op">=</span> <span class="bu">list</span>(<span class="bu">set</span>(p_freq.keys()).union(<span class="bu">set</span>(n_freq.keys())))</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>pos_freq <span class="op">=</span> [p_freq[word] <span class="cf">for</span> word <span class="kw">in</span> vocab ]</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>neg_freq <span class="op">=</span> [n_freq[word] <span class="cf">for</span> word <span class="kw">in</span> vocab ]</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>vocab_df<span class="op">=</span>pd.DataFrame({<span class="st">'vocab'</span>:vocab,<span class="st">'pos_freq'</span>:pos_freq,<span class="st">'neg_freq'</span>:neg_freq})</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>vocab_df[<span class="st">'p_pos'</span>]<span class="op">=</span>vocab_df.pos_freq<span class="op">/</span>vocab_df.pos_freq.<span class="bu">sum</span>()</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>vocab_df[<span class="st">'p_neg'</span>]<span class="op">=</span>vocab_df.neg_freq<span class="op">/</span>vocab_df.neg_freq.<span class="bu">sum</span>()</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>vocab_df[<span class="st">'p_pos_sm'</span>]<span class="op">=</span>(vocab_df.pos_freq<span class="op">+</span><span class="dv">1</span>)<span class="op">/</span>(vocab_df.pos_freq.<span class="bu">sum</span>()<span class="op">+</span>vocab_df.shape[<span class="dv">1</span>])</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>vocab_df[<span class="st">'p_neg_sm'</span>]<span class="op">=</span>(vocab_df.neg_freq<span class="op">+</span><span class="dv">1</span>)<span class="op">/</span>(vocab_df.neg_freq.<span class="bu">sum</span>()<span class="op">+</span>vocab_df.shape[<span class="dv">1</span>])</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>vocab_df[<span class="st">'ratio'</span>]<span class="op">=</span> vocab_df.p_pos_sm<span class="op">/</span>vocab_df.p_neg_sm</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>vocab_df[<span class="st">'lambda'</span>]<span class="op">=</span> np.log(vocab_df.p_pos_sm<span class="op">/</span>vocab_df.p_neg_sm)</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>pd.set_option(<span class="st">'display.float_format'</span>, <span class="st">'</span><span class="sc">{:.2f}</span><span class="st">'</span>.<span class="bu">format</span>)</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>vocab_df</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(vocab_df.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="2">
-<pre><code>[None, None]</code></pre>
-</div>
-<div class="cell-output cell-output-display" data-execution_count="2">
-<pre><code>[None, None]</code></pre>
-</div>
+</section>
+<section id="load-the-nltk-sample-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="load-the-nltk-sample-dataset">Load the NLTK sample dataset</h2>
+<p>To complete this lab, you need the sample dataset of the previous lab. Here, we assume the files are already available, and we only need to load into Python lists.</p>
+<div id="8f2b8a5d" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># select the set of positive and negative tweets</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>all_positive_tweets <span class="op">=</span> twitter_samples.strings(<span class="st">'positive_tweets.json'</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>all_negative_tweets <span class="op">=</span> twitter_samples.strings(<span class="st">'negative_tweets.json'</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>tweets <span class="op">=</span> all_positive_tweets <span class="op">+</span> all_negative_tweets <span class="co">## Concatenate the lists. </span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> np.append(np.ones((<span class="bu">len</span>(all_positive_tweets),<span class="dv">1</span>)), np.zeros((<span class="bu">len</span>(all_negative_tweets),<span class="dv">1</span>)), axis <span class="op">=</span> <span class="dv">0</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># split the data into two pieces, one for training and one for testing (validation set) </span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>train_pos  <span class="op">=</span> all_positive_tweets[:<span class="dv">4000</span>]</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>train_neg  <span class="op">=</span> all_negative_tweets[:<span class="dv">4000</span>]</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>train_x <span class="op">=</span> train_pos <span class="op">+</span> train_neg </span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Number of tweets: "</span>, <span class="bu">len</span>(train_x))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Counter({'i': 3, 'am': 3, 'happy': 2, 'because': 1, 'learning': 1, 'nlp': 1, 'not': 1, 'sad': 1})
-Counter({'i': 3, 'am': 3, 'sad': 2, 'not': 2, 'learning': 1, 'nlp': 1, 'happy': 1})</code></pre>
+<pre><code>Number of tweets:  8000</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="2">
+</div>
+</section>
+<section id="load-the-extracted-features" class="level1">
+<h1>Load the extracted features</h1>
+<p>Part of this week’s assignment is the creation of the numerical features needed for the Logistic regression model. In order not to interfere with it, we have previously calculated and stored these features in a CSV file for the entire training set.</p>
+<p>So, please load these features created for the tweets sample.</p>
+<div id="28f5ff87" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">'logistic_features.csv'</span>)<span class="op">;</span> <span class="co"># Load a 3 columns csv file using pandas function</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>data.head(<span class="dv">10</span>) <span class="co"># Print the first 10 data entries</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
 <div>
 
 
@@ -495,189 +510,224 @@ Counter({'i': 3, 'am': 3, 'sad': 2, 'not': 2, 'learning': 1, 'nlp': 1, 'happy': 
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">vocab</th>
-<th data-quarto-table-cell-role="th">pos_freq</th>
-<th data-quarto-table-cell-role="th">neg_freq</th>
-<th data-quarto-table-cell-role="th">p_pos</th>
-<th data-quarto-table-cell-role="th">p_neg</th>
-<th data-quarto-table-cell-role="th">p_pos_sm</th>
-<th data-quarto-table-cell-role="th">p_neg_sm</th>
-<th data-quarto-table-cell-role="th">ratio</th>
-<th data-quarto-table-cell-role="th">lambda</th>
+<th data-quarto-table-cell-role="th">bias</th>
+<th data-quarto-table-cell-role="th">positive</th>
+<th data-quarto-table-cell-role="th">negative</th>
+<th data-quarto-table-cell-role="th">sentiment</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">0</td>
-<td>not</td>
-<td>1</td>
-<td>2</td>
-<td>0.08</td>
-<td>0.15</td>
-<td>0.11</td>
-<td>0.16</td>
-<td>0.70</td>
-<td>-0.35</td>
+<td>1.0</td>
+<td>3020.0</td>
+<td>61.0</td>
+<td>1.0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">1</td>
-<td>i</td>
-<td>3</td>
-<td>3</td>
-<td>0.23</td>
-<td>0.23</td>
-<td>0.22</td>
-<td>0.21</td>
-<td>1.06</td>
-<td>0.05</td>
+<td>1.0</td>
+<td>3573.0</td>
+<td>444.0</td>
+<td>1.0</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">2</td>
-<td>am</td>
-<td>3</td>
-<td>3</td>
-<td>0.23</td>
-<td>0.23</td>
-<td>0.22</td>
-<td>0.21</td>
-<td>1.06</td>
-<td>0.05</td>
+<td>1.0</td>
+<td>3005.0</td>
+<td>115.0</td>
+<td>1.0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">3</td>
-<td>happy</td>
-<td>2</td>
-<td>1</td>
-<td>0.15</td>
-<td>0.08</td>
-<td>0.17</td>
-<td>0.11</td>
-<td>1.58</td>
-<td>0.46</td>
+<td>1.0</td>
+<td>2862.0</td>
+<td>4.0</td>
+<td>1.0</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">4</td>
-<td>learning</td>
-<td>1</td>
-<td>1</td>
-<td>0.08</td>
-<td>0.08</td>
-<td>0.11</td>
-<td>0.11</td>
-<td>1.06</td>
-<td>0.05</td>
+<td>1.0</td>
+<td>3119.0</td>
+<td>225.0</td>
+<td>1.0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">5</td>
-<td>because</td>
-<td>1</td>
-<td>0</td>
-<td>0.08</td>
-<td>0.00</td>
-<td>0.11</td>
-<td>0.05</td>
-<td>2.11</td>
-<td>0.75</td>
+<td>1.0</td>
+<td>2955.0</td>
+<td>119.0</td>
+<td>1.0</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">6</td>
-<td>sad</td>
-<td>1</td>
-<td>2</td>
-<td>0.08</td>
-<td>0.15</td>
-<td>0.11</td>
-<td>0.16</td>
-<td>0.70</td>
-<td>-0.35</td>
+<td>1.0</td>
+<td>3934.0</td>
+<td>538.0</td>
+<td>1.0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">7</td>
-<td>nlp</td>
-<td>1</td>
-<td>1</td>
-<td>0.08</td>
-<td>0.08</td>
-<td>0.11</td>
-<td>0.11</td>
-<td>1.06</td>
-<td>0.05</td>
+<td>1.0</td>
+<td>3162.0</td>
+<td>276.0</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">8</td>
+<td>1.0</td>
+<td>628.0</td>
+<td>189.0</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">9</td>
+<td>1.0</td>
+<td>264.0</td>
+<td>112.0</td>
+<td>1.0</td>
 </tr>
 </tbody>
 </table>
 
 </div>
 </div>
+</div>
+<p>Now let us get rid of the data frame to keep only Numpy arrays.</p>
+<div id="88960ccb" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Each feature is labeled as bias, positive and negative</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> data[[<span class="st">'bias'</span>, <span class="st">'positive'</span>, <span class="st">'negative'</span>]].values <span class="co"># Get only the numerical values of the dataframe</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> data[<span class="st">'sentiment'</span>].values<span class="op">;</span> <span class="co"># Put in Y the corresponding labels or sentiments</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(X.shape) <span class="co"># Print the shape of the X part</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(X) <span class="co"># Print some rows of X</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>(8, 9)</code></pre>
+<pre><code>(8000, 3)
+[[1.000e+00 3.020e+03 6.100e+01]
+ [1.000e+00 3.573e+03 4.440e+02]
+ [1.000e+00 3.005e+03 1.150e+02]
+ ...
+ [1.000e+00 1.440e+02 7.830e+02]
+ [1.000e+00 2.050e+02 3.890e+03]
+ [1.000e+00 1.890e+02 3.974e+03]]</code></pre>
 </div>
 </div>
-<div class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tabulate <span class="im">import</span> tabulate</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>table <span class="op">=</span> [[<span class="st">"Sun"</span>,<span class="dv">696000</span>,<span class="dv">1989100000</span>],</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>         [<span class="st">"Earth"</span>,<span class="dv">6371</span>,<span class="fl">5973.6</span>],</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>         [<span class="st">"Moon"</span>,<span class="dv">1737</span>,<span class="fl">73.5</span>],</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>         [<span class="st">"Mars"</span>,<span class="dv">3390</span>,<span class="fl">641.85</span>]]</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>Markdown(tabulate(</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  table, </span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  headers<span class="op">=</span>[<span class="st">"Planet"</span>,<span class="st">"R (km)"</span>, <span class="st">"mass (x 10^29 kg)"</span>]</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div id="tbl-planet-measures" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="3">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-planet-measures-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;1: Planets
-</figcaption>
-<div aria-describedby="tbl-planet-measures-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display cell-output-markdown" data-execution_count="3">
-<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Planet</th>
-<th style="text-align: right;">R (km)</th>
-<th style="text-align: right;">mass (x 10^29 kg)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Sun</td>
-<td style="text-align: right;">696000</td>
-<td style="text-align: right;">1.9891e+09</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Earth</td>
-<td style="text-align: right;">6371</td>
-<td style="text-align: right;">5973.6</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Moon</td>
-<td style="text-align: right;">1737</td>
-<td style="text-align: right;">73.5</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Mars</td>
-<td style="text-align: right;">3390</td>
-<td style="text-align: right;">641.85</td>
-</tr>
-</tbody>
-</table>
+<section id="load-a-pretrained-logistic-regression-model" class="level2">
+<h2 class="anchored" data-anchor-id="load-a-pretrained-logistic-regression-model">Load a pretrained Logistic Regression model</h2>
+<p>In the same way, as part of this week’s assignment, a Logistic regression model must be trained. The next cell contains the resulting model from such training. Notice that a list of 3 numeric values represents the whole model, that we have called <em>theta</em> <span class="math inline">\theta</span>.</p>
+<div id="9e3a452d" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>theta <span class="op">=</span> [<span class="fl">7e-08</span>, <span class="fl">0.0005239</span>, <span class="op">-</span><span class="fl">0.00055517</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="plot-the-samples-in-a-scatter-plot" class="level2">
+<h2 class="anchored" data-anchor-id="plot-the-samples-in-a-scatter-plot">Plot the samples in a scatter plot</h2>
+<p>The vector theta represents a plane that split our feature space into two parts. Samples located over that plane are considered positive, and samples located under that plane are considered negative. Remember that we have a 3D feature space, i.e., each tweet is represented as a vector comprised of three values: <code>[bias, positive_sum, negative_sum]</code>, always having <code>bias = 1</code>.</p>
+<p>If we ignore the bias term, we can plot each tweet in a cartesian plane, using <code>positive_sum</code> and <code>negative_sum</code>. In the cell below, we do precisely this. Additionally, we color each tweet, depending on its class. Positive tweets will be green and negative tweets will be red.</p>
+<div id="3238c441" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the samples using columns 1 and 2 of the matrix</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize <span class="op">=</span> (<span class="dv">8</span>, <span class="dv">8</span>))</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> [<span class="st">'red'</span>, <span class="st">'green'</span>]</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Color based on the sentiment Y</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>ax.scatter(X[:,<span class="dv">1</span>], X[:,<span class="dv">2</span>], c<span class="op">=</span>[colors[<span class="bu">int</span>(k)] <span class="cf">for</span> k <span class="kw">in</span> Y], s <span class="op">=</span> <span class="fl">0.1</span>)  <span class="co"># Plot a dot for each pair of words</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Positive"</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Negative"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>Text(0.5, 0, 'Positive')</code></pre>
 </div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>Text(0, 0.5, 'Negative')</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="lab03_files/figure-html/cell-7-output-3.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="lab03_files/figure-html/cell-7-output-3.png" width="684" height="651" class="figure-img"></a></p>
 </figure>
 </div>
 </div>
+</div>
+<p>From the plot, it is evident that the features that we have chosen to represent tweets as numerical vectors allow an almost perfect separation between positive and negative tweets. So you can expect a very high accuracy for this model!</p>
+</section>
+<section id="plot-the-model-alongside-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="plot-the-model-alongside-the-data">Plot the model alongside the data</h2>
+<p>We will draw a gray line to show the cutoff between the positive and negative regions. In other words, the gray line marks the line where <span class="math display"> z = \theta * x = 0.</span> To draw this line, we have to solve the above equation in terms of one of the independent variables.</p>
+<p><span class="math display"> z = \theta * x = 0</span> <span class="math display"> x = [1, pos, neg] </span> <span class="math display"> z(\theta, x) = \theta_0+ \theta_1 * pos + \theta_2 * neg = 0 </span> <span class="math display"> neg = (-\theta_0 - \theta_1 * pos) / \theta_2 </span></p>
+<p>The red and green lines that point in the direction of the corresponding sentiment are calculated using a perpendicular line to the separation line calculated in the previous equations(neg function). It must point in the same direction as the derivative of the Logit function, but the magnitude may differ. It is only for a visual representation of the model.</p>
+<p><span class="math display">direction = pos * \theta_2 / \theta_1</span></p>
+<div id="714d5a3d" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Equation for the separation plane</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># It give a value in the negative axe as a function of a positive value</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># f(pos, neg, W) = w0 + w1 * pos + w2 * neg = 0</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># s(pos, W) = (w0 - w1 * pos) / w2</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> neg(theta, pos):</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (<span class="op">-</span>theta[<span class="dv">0</span>] <span class="op">-</span> pos <span class="op">*</span> theta[<span class="dv">1</span>]) <span class="op">/</span> theta[<span class="dv">2</span>]</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Equation for the direction of the sentiments change</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co"># We don't care about the magnitude of the change. We are only interested </span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co"># in the direction. So this direction is just a perpendicular function to the </span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co"># separation plane</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co"># df(pos, W) = pos * w2 / w1</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> direction(theta, pos):</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span>    pos <span class="op">*</span> theta[<span class="dv">2</span>] <span class="op">/</span> theta[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The green line in the chart points in the direction where z &gt; 0 and the red line points in the direction where z &lt; 0. The direction of these lines are given by the weights <span class="math inline">\theta_1</span> and <span class="math inline">\theta_2</span></p>
+<div id="fdac8790" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the samples using columns 1 and 2 of the matrix</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize <span class="op">=</span> (<span class="dv">8</span>, <span class="dv">8</span>))</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> [<span class="st">'red'</span>, <span class="st">'green'</span>]</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Color base on the sentiment Y</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>ax.scatter(X[:,<span class="dv">1</span>], X[:,<span class="dv">2</span>], c<span class="op">=</span>[colors[<span class="bu">int</span>(k)] <span class="cf">for</span> k <span class="kw">in</span> Y], s <span class="op">=</span> <span class="fl">0.1</span>)  <span class="co"># Plot a dot for each pair of words</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Positive"</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Negative"</span>)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Now lets represent the logistic regression model in this chart. </span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>maxpos <span class="op">=</span> np.<span class="bu">max</span>(X[:,<span class="dv">1</span>])</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>offset <span class="op">=</span> <span class="dv">5000</span> <span class="co"># The pos value for the direction vectors origin</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot a gray line that divides the 2 areas.</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>ax.plot([<span class="dv">0</span>,  maxpos], [neg(theta, <span class="dv">0</span>),   neg(theta, maxpos)], color <span class="op">=</span> <span class="st">'gray'</span>) </span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot a green line pointing to the positive direction</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>ax.arrow(offset, neg(theta, offset), offset, direction(theta, offset), head_width<span class="op">=</span><span class="dv">500</span>, head_length<span class="op">=</span><span class="dv">500</span>, fc<span class="op">=</span><span class="st">'g'</span>, ec<span class="op">=</span><span class="st">'g'</span>)</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot a red line pointing to the negative direction</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>ax.arrow(offset, neg(theta, offset), <span class="op">-</span>offset, <span class="op">-</span>direction(theta, offset), head_width<span class="op">=</span><span class="dv">500</span>, head_length<span class="op">=</span><span class="dv">500</span>, fc<span class="op">=</span><span class="st">'r'</span>, ec<span class="op">=</span><span class="st">'r'</span>)</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>Text(0.5, 0, 'Positive')</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>Text(0, 0.5, 'Negative')</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="lab03_files/figure-html/cell-9-output-3.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="lab03_files/figure-html/cell-9-output-3.png" width="684" height="651" class="figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Note that more critical than the Logistic regression itself, are the features extracted from tweets that allow getting the right results in this exercise.</strong></p>
+<p>That is all, folks. Hopefully, now you understand better what the Logistic regression model represents, and why it works that well for this specific problem.</p>
 
 
+</section>
+</section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{2020,
   author = {},
-  title = {Probability and {Bayes} {Rule}},
+  title = {Visualizing Tweets and the {Logistic} {Regression} Model},
   date = {2020-10-23},
-  url = {https://orenbochman.github.io/notes-nlp/posts/c1w2/code.html},
+  url = {https://orenbochman.github.io/notes-nlp/posts/c1w1/lab03.html},
   langid = {en}
 }
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-2020" class="csl-entry quarto-appendix-citeas" role="listitem">
-<span>“Probability and Bayes Rule.”</span> 2020. October 23, 2020. <a href="https://orenbochman.github.io/notes-nlp/posts/c1w2/code.html">https://orenbochman.github.io/notes-nlp/posts/c1w2/code.html</a>.
+<span>“Visualizing Tweets and the Logistic Regression Model.”</span>
+2020. October 23, 2020. <a href="https://orenbochman.github.io/notes-nlp/posts/c1w1/lab03.html">https://orenbochman.github.io/notes-nlp/posts/c1w1/lab03.html</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -1255,12 +1305,44 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c1w2/code.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c1w1/lab03.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p>This page is built with 💛 and <a href="https://quarto.org/">Quarto</a>.</p>
 </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 
