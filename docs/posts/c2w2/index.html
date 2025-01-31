@@ -6,10 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2020-10-23">
 <meta name="description" content="Extract features from text into numerical vectors, then build a binary classifier for tweets using logistic regression!">
 
-<title>Part of Speech Tagging and Hidden Markov Models</title>
+<title>Part of Speech Tagging and Hidden Markov Models – NLP Specialization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,27 +21,7 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-  margin-bottom: 0em;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -57,10 +36,15 @@ div.csl-indent {
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-eefa51cfd4367a2c2ab6a47af1b603aa.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -90,6 +74,49 @@ div.csl-indent {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -100,6 +127,11 @@ div.csl-indent {
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">NLP Specialization</span>
+    </a>
+  </div>
             <div id="quarto-search" class="" title="Search"></div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
@@ -138,6 +170,7 @@ div.csl-indent {
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -179,7 +212,7 @@ div.csl-indent {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">October 23, 2020</p>
+        <p class="date">Friday, October 23, 2020</p>
       </div>
     </div>
     
@@ -366,7 +399,20 @@ div.csl-indent {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">resources:</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#part-of-speech-tagging" id="toc-part-of-speech-tagging" class="nav-link" data-scroll-target="#part-of-speech-tagging">Part of Speech Tagging</a></li>
+  <li><a href="#lab1-working-with-text-data" id="toc-lab1-working-with-text-data" class="nav-link" data-scroll-target="#lab1-working-with-text-data">Lab1: Working with text data</a></li>
+  <li><a href="#markov-chains" id="toc-markov-chains" class="nav-link" data-scroll-target="#markov-chains">Markov Chains</a></li>
+  <li><a href="#markov-chains-and-pos-tags" id="toc-markov-chains-and-pos-tags" class="nav-link" data-scroll-target="#markov-chains-and-pos-tags">Markov Chains and POS Tags</a></li>
+  <li><a href="#hidden-markov-models" id="toc-hidden-markov-models" class="nav-link" data-scroll-target="#hidden-markov-models">Hidden Markov Models</a></li>
+  <li><a href="#calculating-probabilities" id="toc-calculating-probabilities" class="nav-link" data-scroll-target="#calculating-probabilities">Calculating Probabilities</a></li>
+  <li><a href="#populating-the-transition-matrix" id="toc-populating-the-transition-matrix" class="nav-link" data-scroll-target="#populating-the-transition-matrix">Populating the Transition Matrix</a></li>
+  <li><a href="#populating-the-emission-matrix" id="toc-populating-the-emission-matrix" class="nav-link" data-scroll-target="#populating-the-emission-matrix">Populating the Emission Matrix</a></li>
+  <li><a href="#lab2-working-with-text-data" id="toc-lab2-working-with-text-data" class="nav-link" data-scroll-target="#lab2-working-with-text-data">Lab2: Working with text data</a></li>
+  <li><a href="#the-viterbi-algorithm" id="toc-the-viterbi-algorithm" class="nav-link" data-scroll-target="#the-viterbi-algorithm">The Viterbi Algorithm</a></li>
+  <li><a href="#viterbi-initialization" id="toc-viterbi-initialization" class="nav-link" data-scroll-target="#viterbi-initialization">Viterbi Initialization</a></li>
+  <li><a href="#viterbi-forward-pass" id="toc-viterbi-forward-pass" class="nav-link" data-scroll-target="#viterbi-forward-pass">Viterbi: Forward Pass</a></li>
+  <li><a href="#viterbi-backward-pass" id="toc-viterbi-backward-pass" class="nav-link" data-scroll-target="#viterbi-backward-pass">Viterbi: Backward Pass</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c2w2/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -380,26 +426,431 @@ div.csl-indent {
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/course-banner.jpg" class="img-fluid figure-img"></p>
+<p><a href="img/course-banner.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="img/course-banner.jpg" class="img-fluid figure-img" alt="course banner"></a></p>
 <figcaption>course banner</figcaption>
 </figure>
-</div></div><section id="resources" class="level1">
-<h1>resources:</h1>
+</div></div><section id="learning-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
 <ul>
-<li><span class="citation" data-cites="Chadha2020DistilledNotesCourseraDLSpec">(<a href="#ref-Chadha2020DistilledNotesCourseraDLSpec" role="doc-biblioref">Chadha 2020</a>)</span> <a href="https://aman.ai/coursera-nlp/logistic-regression/">Aman Chadha’s Notes</a></li>
-<li><a href="https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization/tree/master/1%20-%20Natural%20Language%20Processing%20with%20Classification%20and%20Vector%20Spaces#testing-logistic-regression">Ibrahim Jelliti’s Notes</a></li>
+<li>Markov chains</li>
+<li>Hidden Markov models</li>
+<li>Part-of-speech tagging</li>
+<li>Viterbi algorithm</li>
+<li>Transition probabilities</li>
+<li>Emission probabilities</li>
 </ul>
-<p><embed src="slides.pdf" class="img-fluid"></p>
+</section>
+<section id="part-of-speech-tagging" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="part-of-speech-tagging">Part of Speech Tagging</h2>
+<p>Part of Speech Tagging (POS) is the process of assigning a part of speech to a word. By doing so, you will learn the following:</p>
+<ul>
+<li>Markov Chains</li>
+<li>Hidden Markov Models</li>
+<li>Viterbi algorithm</li>
+</ul>
+<p>Here is a concrete example:</p>
 
+<div class="no-row-height column-margin column-container"><div id="fig-01" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide01.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="autocorrect"><img src="img/slide01.png" class="img-fluid figure-img"></a></p>
+<figcaption>autocorrect</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Learning Objectives
+</figcaption>
+</figure>
+</div></div><p>You can use part of speech tagging for:</p>
+<ul>
+<li>Identifying named entities</li>
+<li>Speech recognition</li>
+<li>Coreference Resolution</li>
+</ul>
+<p>You can use the probabilities of POS tags happening near one another to come up with the most reasonable output</p>
+</section>
+<section id="lab1-working-with-text-data" class="level2">
+<h2 class="anchored" data-anchor-id="lab1-working-with-text-data">Lab1: Working with text data</h2>
+<p><a href="lab01.ipynb">Working with text data</a></p>
+</section>
+<section id="markov-chains" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="markov-chains">Markov Chains</h2>
+
+<div class="no-row-height column-margin column-container"><div id="fig-02" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide02.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="POS Tagging"><img src="img/slide02.png" class="img-fluid figure-img"></a></p>
+<figcaption>POS Tagging</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: POS Tagging
+</figcaption>
+</figure>
+</div><div id="fig-03" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide03.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="FSM"><img src="img/slide03.png" class="img-fluid figure-img"></a></p>
+<figcaption>FSM</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: FSM representation for POS tagging
+</figcaption>
+</figure>
+</div></div>
+<p>The circles of the graph represent the states of your model. A state refers to a certain condition of the present moment. You can think of these as the POS tags of the current word.</p>
+<p><span class="math display">
+Q={q_1, q_2, q_3} \qquad \text{ is the set of all states in your model. }
+</span></p>
+</section>
+<section id="markov-chains-and-pos-tags" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="markov-chains-and-pos-tags">Markov Chains and POS Tags</h2>
+<p>To help identify the parts of speech for every word, you need to build a transition matrix that gives you the probabilities from one state to another.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-04" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide04.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="FSM"><img src="img/slide04.png" class="img-fluid figure-img"></a></p>
+<figcaption>FSM</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Learning Objectives
+</figcaption>
+</figure>
+</div></div><p>In the diagram above, the blue circles correspond to the part of speech tags, and the arrows correspond to the transition probabilities from one part of speech to another. You can populate the table on the right from the diagram on the left. The first row in your A matrix corresponds to the initial distribution among all the states. According to the table, the sentence has a 40% chance to start as a noun, 10% chance to start with a verb, and a 50% chance to start with another part of speech tag.</p>
+<p>In more general notation, you can write the transition matrix A, given some states Q, as follows:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-05" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide05.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="FSM"><img src="img/slide05.png" class="img-fluid figure-img"></a></p>
+<figcaption>FSM</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Learning Objectives
+</figcaption>
+</figure>
+</div></div></section>
+<section id="hidden-markov-models" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="hidden-markov-models">Hidden Markov Models</h2>
+<p>In the previous video, I showed you an example with a simple markov model. The transition probabilities allowed you to identify the transition probability from one POS to another. We will now explore hidden markov models. In hidden markov models you make use of emission probabilities that give you the probability to go from one state (POS tag) to a specific word.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-06" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide06.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="State Transition Graph"><img src="img/slide06.png" class="img-fluid figure-img"></a></p>
+<figcaption>State Transition Graph</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: Emission probabilities
+</figcaption>
+</figure>
+</div></div><p>For example, given that you are in a verb state, you can go to other words with certain probabilities. This emission matrix B, will be used with your transition matrix A, to help you identify the part of speech of a word in a sentence. To populate your matrix B, you can just have a labelled dataset and compute the probabilities of going from a POS to each word in your vocabulary. Here is a recap of what you have seen so far:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-07" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-07-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide07.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="HMM"><img src="img/slide07.png" class="img-fluid figure-img"></a></p>
+<figcaption>HMM</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-07-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7: HMM Summary
+</figcaption>
+</figure>
+</div></div><p>Note that the sum of each row in your A and B matrix has to be 1. Next, I will show you how you can calculate the probabilities inside these matrices.</p>
+</section>
+<section id="calculating-probabilities" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="calculating-probabilities">Calculating Probabilities</h2>
+<p>Here is a visual representation on how to calculate the probabilities:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-08" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-08-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide08.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Transition Probabilities"><img src="img/slide08.png" class="img-fluid figure-img"></a></p>
+<figcaption>Transition Probabilities</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-08-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8: Transition Probabilities
+</figcaption>
+</figure>
+</div></div><p>The number of times that blue is followed by purple is 2 out of 3. We will use the same logic to populate our transition and emission matrices. In the transition matrix we will count the number of times tag <span class="math inline">t_{(i−1)},t{(i)}</span> show up near each other and divide by the total number of times <span class="math inline">t_{(i−1)}</span> shows up. (which is the same as the number of times it shows up followed by anything else).</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-09" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-09-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide09.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="Transition Probabilities"><img src="img/slide09.png" class="img-fluid figure-img"></a></p>
+<figcaption>Transition Probabilities</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-09-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9: Transition Probabilities
+</figcaption>
+</figure>
+</div></div><ol type="1">
+<li><p>calculate co-occrence of tag pairs <span class="math display">
+C(t_{(i-1)},t_{(i)})
+</span></p></li>
+<li><p>calculate the probabilities using the counts <span class="math display">
+P(t_{(i)}|t_{(i-1)}) = \frac{C(t_{(i)}),t_{(i-1)},}{\sum_{i=1}^{N} C(t_{(i-1)})}
+</span></p></li>
+</ol>
+<p><span class="math inline">C(t_{(i−1)} ,t_{(i)})</span> is the count of times tag <span class="math inline">t_{(i-1)}</span> shows up before tag <span class="math inline">i</span>.</p>
+<p>From this you can compute the probability that a tag shows up after another tag.</p>
+</section>
+<section id="populating-the-transition-matrix" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="populating-the-transition-matrix">Populating the Transition Matrix</h2>
+<p>To populate the transition matrix you have to keep track of the number of times each tag shows up before another tag.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-10" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide10.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="Transition Probabilities"><img src="img/slide10.png" class="img-fluid figure-img"></a></p>
+<figcaption>Transition Probabilities</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10: Transition Probabilities
+</figcaption>
+</figure>
+</div></div><p>In the table above, you can see that green corresponds to nouns (NN), purple corresponds to verbs (VB), and blue corresponds to other (O). Orange (π) corresponds to the initial state. The numbers inside the matrix correspond to the number of times a part of speech tag shows up right after another one.</p>
+<p>To go from O to NN or in other words to calculate P(O∣NN) you have to compute the following:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-11" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide11.png" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="Transition Probabilities"><img src="img/slide11.png" class="img-fluid figure-img"></a></p>
+<figcaption>Transition Probabilities</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;11: Transition Probabilities
+</figcaption>
+</figure>
+</div></div><p>To generalize:</p>
+<p><span class="math display">
+P(t_{(i)}|t_{(i-1)}) = \frac{C(t_{(i)},t_{(i-1)})}{\sum_{j=1}^{N} C(t_{(i-1)},t_{(j)})}
+</span></p>
+<p>Unfortunately, sometimes you might not see two POS tags in front each other. This will give you a probability of 0. To solve this issue, you will “smooth” it as follows:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-12" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide12.png" class="lightbox" data-gallery="quarto-lightbox-gallery-13" title="Transition Probabilities"><img src="img/slide12.png" class="img-fluid figure-img"></a></p>
+<figcaption>Transition Probabilities</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12: Transition Probabilities
+</figcaption>
+</figure>
+</div></div><p>The <span class="math inline">ϵ</span> allows you to not have any two sequences showing up with 0 probability. Why is this important?</p>
+</section>
+<section id="populating-the-emission-matrix" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="populating-the-emission-matrix">Populating the Emission Matrix</h2>
+<p>To populate the emission matrix, you have to keep track of the words associated with their parts of speech tags.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-13" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide13.png" class="lightbox" data-gallery="quarto-lightbox-gallery-14" title="The Emission Matrix"><img src="img/slide13.png" class="img-fluid figure-img"></a></p>
+<figcaption>The Emission Matrix</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;13: The Emission Matrix
+</figcaption>
+</figure>
+</div></div><p>To populate the matrix, we will also use smoothing as we have previously used:</p>
+<p><span class="math display">
+P(w_i|t_i) = \frac{C(t_i,w_i)+\epsilon}{\sum_{j=1}^{N} C(t_i,w_j)+ N \times \epsilon} = \frac{C(t_i,w_i)+\epsilon}{\sum_{j=1}^{N} C(t_i)+N\times \epsilon}
+</span></p>
+<p>Where <span class="math inline">C(t_i,w_i)</span> is the count associated with how many times the tag <span class="math inline">t_i</span> is associated with the word <span class="math inline">w_i</span>. The epsilon above is the smoothing parameter. In the next video, we will talk about the Viterbi algorithm and discuss how you can use the transition and emission matrix to come up with probabilities.</p>
+</section>
+<section id="lab2-working-with-text-data" class="level2">
+<h2 class="anchored" data-anchor-id="lab2-working-with-text-data">Lab2: Working with text data</h2>
+<p><a href="lab02.ipynb">Working with text data</a></p>
+</section>
+<section id="the-viterbi-algorithm" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="the-viterbi-algorithm">The Viterbi Algorithm</h2>
+<p>The Viterbi algorithm makes use of the transition probabilities and the emission probabilities as follows.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-14" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide14.png" class="lightbox" data-gallery="quarto-lightbox-gallery-15" title="The Emission Matrix"><img src="img/slide14.png" class="img-fluid figure-img"></a></p>
+<figcaption>The Emission Matrix</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;14: The Viterbi Algorithm
+</figcaption>
+</figure>
+</div></div><p>To go from <span class="math inline">π</span> to <span class="math inline">O</span> you need to multiply the corresponding transition probability (0.3) and the corresponding emission probability (0.5), which gives you 0.15. You keep doing that for all the words, until you get the probability of an entire sequence.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-14" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide14.png" class="lightbox" data-gallery="quarto-lightbox-gallery-16" title="The Emission Matrix"><img src="img/slide14.png" class="img-fluid figure-img"></a></p>
+<figcaption>The Emission Matrix</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15: The Viterbi Algorithm
+</figcaption>
+</figure>
+</div></div><p>You can then see how you will just pick the sequence with the highest probability. We will show you a systematic way to accomplish this (Viterbi!).</p>
+</section>
+<section id="viterbi-initialization" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="viterbi-initialization">Viterbi Initialization</h2>
+<p>You will now populate a matrix C of dimension (num_tags, num_words). This matrix will have the probabilities that will tell you what part of speech each word belongs to.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-15" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-15-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide15.png" class="lightbox" data-gallery="quarto-lightbox-gallery-17" title="The Emission Matrix"><img src="img/slide15.png" class="img-fluid figure-img"></a></p>
+<figcaption>The Emission Matrix</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-15-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;16: The Viterbi Initialization
+</figcaption>
+</figure>
+</div></div><p>Now to populate the first column, you just multiply the initial π distribution, for each tag, times <span class="math inline">b_{i,cindex(w_1)}</span>, which is the emission probability of the <em>word 1</em> given the tag <span class="math inline">i</span>. Where the i, corresponds to the tag of the initial distribution and the <span class="math inline">cindex(w_1)</span>, is the index of <strong>word 1</strong> in the emission matrix. And that’s it, you are done with populating the first column of your new C matrix. You will now need to keep track what part of speech you are coming from. Hence we introduce a matrix D, which allows you to store the labels that represent the different states you are going through when finding the most likely sequence of POS tags for the given sequence of words <span class="math inline">w_2 ,…,w_k</span>. At first you set the first column to 0, because you are not coming from any POS tag.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-16" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-16-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide16.png" class="lightbox" data-gallery="quarto-lightbox-gallery-18" title="The Emission Matrix"><img src="img/slide16.png" class="img-fluid figure-img"></a></p>
+<figcaption>The Emission Matrix</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-16-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;17: The Viterbi Initialization
+</figcaption>
+</figure>
+</div></div><p>These two matrices will make more sense in the next videos.</p>
+</section>
+<section id="viterbi-forward-pass" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="viterbi-forward-pass">Viterbi: Forward Pass</h2>
+<p>This will be best illustrated with an example:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-17" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-17-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide17.png" class="lightbox" data-gallery="quarto-lightbox-gallery-19" title="Viterbi: Forward Pass"><img src="img/slide17.png" class="img-fluid figure-img"></a></p>
+<figcaption>Viterbi: Forward Pass</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-17-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;18: Viterbi: Forward Pass
+</figcaption>
+</figure>
+</div></div><p>So to populate a cell (i.e.&nbsp;1,2) in the image above, you have to take the max of [kth cells in the previous column, times the corresponding transition probability of the kth POS to the first POS times the emission probability of the first POS and the current word you are looking at]. You do that for all the cells. Take a paper and a pencil, and make sure you understand how it is done.</p>
+<p>The general rule is <span class="math inline">c_{ij}= max_k c_{k,j-1} \times a_{k,i} \times b_{i,cindex(w_j)}</span></p>
+<p>Now to populate the <strong>D</strong> matrix, you will keep track of the argmax of where you came from as follows:</p>
+<p>Note that the only difference between <span class="math inline">c_{ij}</span> and <span class="math inline">d_{ij}</span>, is that in the former you compute the probability and in the latter you keep track of the index of the row where that probability came from. So you keep track of which <span class="math inline">k</span> was used to get that max probability.</p>
+</section>
+<section id="viterbi-backward-pass" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="viterbi-backward-pass">Viterbi: Backward Pass</h2>
+<p>Great, now that you know how to compute <span class="math inline">A</span>, <span class="math inline">B</span>, <span class="math inline">C</span>, and <span class="math inline">D</span>, we will put it all together and show you how to construct the path that will give you the part of speech tags for your sentence.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-19" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-19-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide19.png" class="lightbox" data-gallery="quarto-lightbox-gallery-20" title="Viterbi: Forward Pass"><img src="img/slide19.png" class="img-fluid figure-img"></a></p>
+<figcaption>Viterbi: Forward Pass</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-19-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;19: Viterbi: Forward Pass
+</figcaption>
+</figure>
+</div></div><p>The equation above just gives you the index of the highest row in the last column of C. Once you have that, you can go ahead and start using your D matrix as follows:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-20" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-20-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide20.png" class="lightbox" data-gallery="quarto-lightbox-gallery-21" title="Viterbi: Forward Pass"><img src="img/slide20.png" class="img-fluid figure-img"></a></p>
+<figcaption>Viterbi: Forward Pass</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-20-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;20: Viterbi: Forward Pass
+</figcaption>
+</figure>
+</div></div><p>Note that since we started at index one, hence the last word (w5) is <span class="math inline">t_1</span>. Then we go to the first row of D and what ever that number is, it indicated the row of the next part of speech tag. Then next part of speech tag indicates the row of the next and so forth. This allows you to reconstruct the POS tags for your sentence.</p>
+<p>You will be implementing this in this week’s programming assignment.</p>
 
 
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
-<div id="ref-Chadha2020DistilledNotesCourseraDLSpec" class="csl-entry" role="listitem">
-Chadha, Aman. 2020. <span>“Distilled Notes for the Natural Language Processing Specialization on Coursera (Offered by Deeplearning.ai).”</span> <a href="https://www.aman.ai" class="uri">https://www.aman.ai</a>. <a href="https://www.aman.ai">www.aman.ai</a>.
-</div>
-</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{2020,
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{2020,
   author = {},
   title = {Part of {Speech} {Tagging} and {Hidden} {Markov} {Models}},
   date = {2020-10-23},
@@ -430,6 +881,150 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
@@ -848,6 +1443,38 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

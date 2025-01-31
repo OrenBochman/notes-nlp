@@ -1,0 +1,2388 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Assignment 4 - Naive Machine Translation and LSH – NLP Specialization</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">NLP Specialization</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Assignment 4 - Naive Machine Translation and LSH</li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Assignment 4 - Naive Machine Translation and LSH</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-body">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">Wednesday, January 29, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Classification &amp; Vector Spaces</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Logistic Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Probability and Bayes Rule</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Vector Space Models and PCA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Machine Translation and Document Search via KNN</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1lab0/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab on preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1lab1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Assignment 1 Logistic Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1lab2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab on Building and Visualizing word frequencies</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1lab3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Lab on visualizing tweets and the Logistic Regression model</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Probabilistic Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Autocorrect and Dynamic Programming</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part of Speech Tagging and Hidden Markov Models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Autocomplete and Language Models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Word embeddings with neural networks</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Sequence Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Neural Machine Translation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Text Summarization</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Question Answering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Chat Bots</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">NLP with Attention Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Neural Machine Translation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Text Summarization</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Question Answering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Chat Bots</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#this-assignment-covers-the-folowing-topics" id="toc-this-assignment-covers-the-folowing-topics" class="nav-link active" data-scroll-target="#this-assignment-covers-the-folowing-topics">This assignment covers the folowing topics:</a></li>
+  <li><a href="#the-word-embeddings-data-for-english-and-french-words" id="toc-the-word-embeddings-data-for-english-and-french-words" class="nav-link" data-scroll-target="#the-word-embeddings-data-for-english-and-french-words">1. The word embeddings data for English and French words</a>
+  <ul class="collapse">
+  <li><a href="#the-data" id="toc-the-data" class="nav-link" data-scroll-target="#the-data">The data</a></li>
+  <li><a href="#generate-embedding-and-transform-matrices" id="toc-generate-embedding-and-transform-matrices" class="nav-link" data-scroll-target="#generate-embedding-and-transform-matrices">1.1 Generate embedding and transform matrices</a></li>
+  </ul></li>
+  <li><a href="#translations" id="toc-translations" class="nav-link" data-scroll-target="#translations">2. Translations</a>
+  <ul class="collapse">
+  <li><a href="#describing-translation-as-the-minimization-problem" id="toc-describing-translation-as-the-minimization-problem" class="nav-link" data-scroll-target="#describing-translation-as-the-minimization-problem">Describing translation as the minimization problem</a></li>
+  <li><a href="#frobenius-norm" id="toc-frobenius-norm" class="nav-link" data-scroll-target="#frobenius-norm">Frobenius norm</a></li>
+  <li><a href="#actual-loss-function" id="toc-actual-loss-function" class="nav-link" data-scroll-target="#actual-loss-function">Actual loss function</a></li>
+  <li><a href="#exercise-02-implementing-translation-mechanism-described-in-this-section." id="toc-exercise-02-implementing-translation-mechanism-described-in-this-section." class="nav-link" data-scroll-target="#exercise-02-implementing-translation-mechanism-described-in-this-section.">Exercise 02: Implementing translation mechanism described in this section.</a></li>
+  <li><a href="#exercise-03" id="toc-exercise-03" class="nav-link" data-scroll-target="#exercise-03">Exercise 03</a></li>
+  <li><a href="#step-2-computing-the-gradient-of-loss-in-respect-to-transform-matrix-r" id="toc-step-2-computing-the-gradient-of-loss-in-respect-to-transform-matrix-r" class="nav-link" data-scroll-target="#step-2-computing-the-gradient-of-loss-in-respect-to-transform-matrix-r">Step 2: Computing the gradient of loss in respect to transform matrix R</a></li>
+  <li><a href="#step-3-finding-the-optimal-r-with-gradient-descent-algorithm" id="toc-step-3-finding-the-optimal-r-with-gradient-descent-algorithm" class="nav-link" data-scroll-target="#step-3-finding-the-optimal-r-with-gradient-descent-algorithm">Step 3: Finding the optimal R with gradient descent algorithm</a></li>
+  <li><a href="#exercise-04" id="toc-exercise-04" class="nav-link" data-scroll-target="#exercise-04">Exercise 04</a></li>
+  <li><a href="#calculate-transformation-matrix-r" id="toc-calculate-transformation-matrix-r" class="nav-link" data-scroll-target="#calculate-transformation-matrix-r">Calculate transformation matrix R</a></li>
+  <li><a href="#testing-the-translation" id="toc-testing-the-translation" class="nav-link" data-scroll-target="#testing-the-translation">2.2 Testing the translation</a>
+  <ul class="collapse">
+  <li><a href="#k-nearest-neighbors-algorithm" id="toc-k-nearest-neighbors-algorithm" class="nav-link" data-scroll-target="#k-nearest-neighbors-algorithm">k-Nearest neighbors algorithm</a></li>
+  <li><a href="#searching-for-the-translation-embedding" id="toc-searching-for-the-translation-embedding" class="nav-link" data-scroll-target="#searching-for-the-translation-embedding">Searching for the translation embedding</a></li>
+  <li><a href="#cosine-similarity" id="toc-cosine-similarity" class="nav-link" data-scroll-target="#cosine-similarity">Cosine similarity</a></li>
+  <li><a href="#test-your-translation-and-compute-its-accuracy" id="toc-test-your-translation-and-compute-its-accuracy" class="nav-link" data-scroll-target="#test-your-translation-and-compute-its-accuracy">Test your translation and compute its accuracy</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#lsh-and-document-search" id="toc-lsh-and-document-search" class="nav-link" data-scroll-target="#lsh-and-document-search">3. LSH and document search</a>
+  <ul class="collapse">
+  <li><a href="#getting-the-document-embeddings" id="toc-getting-the-document-embeddings" class="nav-link" data-scroll-target="#getting-the-document-embeddings">3.1 Getting the document embeddings</a></li>
+  <li><a href="#exercise-08" id="toc-exercise-08" class="nav-link" data-scroll-target="#exercise-08">Exercise 08</a></li>
+  <li><a href="#looking-up-the-tweets" id="toc-looking-up-the-tweets" class="nav-link" data-scroll-target="#looking-up-the-tweets">3.2 Looking up the tweets</a></li>
+  <li><a href="#finding-the-most-similar-tweets-with-lsh" id="toc-finding-the-most-similar-tweets-with-lsh" class="nav-link" data-scroll-target="#finding-the-most-similar-tweets-with-lsh">3.3 Finding the most similar tweets with LSH</a></li>
+  <li><a href="#getting-the-hash-number-for-a-vector" id="toc-getting-the-hash-number-for-a-vector" class="nav-link" data-scroll-target="#getting-the-hash-number-for-a-vector">3.4 Getting the hash number for a vector</a>
+  <ul class="collapse">
+  <li><a href="#hyperlanes-in-vector-spaces" id="toc-hyperlanes-in-vector-spaces" class="nav-link" data-scroll-target="#hyperlanes-in-vector-spaces">Hyperlanes in vector spaces</a></li>
+  <li><a href="#using-hyperplanes-to-split-the-vector-space" id="toc-using-hyperplanes-to-split-the-vector-space" class="nav-link" data-scroll-target="#using-hyperplanes-to-split-the-vector-space">Using Hyperplanes to split the vector space</a></li>
+  <li><a href="#encoding-hash-buckets" id="toc-encoding-hash-buckets" class="nav-link" data-scroll-target="#encoding-hash-buckets">Encoding hash buckets</a></li>
+  <li><a href="#exercise-09-implementing-hash-buckets" id="toc-exercise-09-implementing-hash-buckets" class="nav-link" data-scroll-target="#exercise-09-implementing-hash-buckets">Exercise 09: Implementing hash buckets</a></li>
+  </ul></li>
+  <li><a href="#creating-a-hash-table" id="toc-creating-a-hash-table" class="nav-link" data-scroll-target="#creating-a-hash-table">3.5 Creating a hash table</a>
+  <ul class="collapse">
+  <li><a href="#exercise-10" id="toc-exercise-10" class="nav-link" data-scroll-target="#exercise-10">Exercise 10</a></li>
+  <li><a href="#creating-all-hash-tables" id="toc-creating-all-hash-tables" class="nav-link" data-scroll-target="#creating-all-hash-tables">3.6 Creating all hash tables</a></li>
+  <li><a href="#approximate-k-nn" id="toc-approximate-k-nn" class="nav-link" data-scroll-target="#approximate-k-nn">Approximate K-NN</a></li>
+  <li><a href="#exercise-11" id="toc-exercise-11" class="nav-link" data-scroll-target="#exercise-11">Exercise 11</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">4 Conclusion</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.dev/OrenBochman/notes-nlp/blob/main/posts/c1w4/C1_W4_Assignment.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block column-body" id="quarto-document-content">
+
+
+
+
+
+<p>You will now implement your first machine translation system and then you will see how locality sensitive hashing works. Let’s get started by importing the required functions!</p>
+<p>If you are running this notebook in your local computer, don’t forget to download the twitter samples and stopwords from nltk.</p>
+<pre><code>nltk.download('stopwords')
+nltk.download('twitter_samples')</code></pre>
+<p><strong>NOTE</strong>: The <code>Exercise xx</code> numbers in this assignment <strong><em>are inconsistent</em></strong> with the <code>UNQ_Cx</code> numbers.</p>
+<section id="this-assignment-covers-the-folowing-topics" class="level3">
+<h3 class="anchored" data-anchor-id="this-assignment-covers-the-folowing-topics">This assignment covers the folowing topics:</h3>
+<ul>
+<li><a href="#1">1. The word embeddings data for English and French words</a>
+<ul>
+<li><a href="#1-1">1.1 Generate embedding and transform matrices</a>
+<ul>
+<li><a href="#ex-01">Exercise 1</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#2">2. Translations</a>
+<ul>
+<li><a href="#2-1">2.1 Translation as linear transformation of embeddings</a>
+<ul>
+<li><a href="#ex-02">Exercise 2</a><br>
+</li>
+<li><a href="#ex-03">Exercise 3</a><br>
+</li>
+<li><a href="#ex-04">Exercise 4</a><br>
+</li>
+</ul></li>
+<li><a href="#2-2">2.2 Testing the translation</a>
+<ul>
+<li><a href="#ex-05">Exercise 5</a></li>
+<li><a href="#ex-06">Exercise 6</a><br>
+</li>
+</ul></li>
+</ul></li>
+<li><a href="#3">3. LSH and document search</a>
+<ul>
+<li><a href="#3-1">3.1 Getting the document embeddings</a>
+<ul>
+<li><a href="#ex-07">Exercise 7</a></li>
+<li><a href="#ex-08">Exercise 8</a><br>
+</li>
+</ul></li>
+<li><a href="#3-2">3.2 Looking up the tweets</a></li>
+<li><a href="#3-3">3.3 Finding the most similar tweets with LSH</a></li>
+<li><a href="#3-4">3.4 Getting the hash number for a vector</a>
+<ul>
+<li><a href="#ex-09">Exercise 9</a><br>
+</li>
+</ul></li>
+<li><a href="#3-5">3.5 Creating a hash table</a>
+<ul>
+<li><a href="#ex-10">Exercise 10</a><br>
+</li>
+</ul></li>
+<li><a href="#3-6">3.6 Creating all hash tables</a>
+<ul>
+<li><a href="#ex-11">Exercise 11</a></li>
+</ul></li>
+</ul></li>
+</ul>
+<div id="cell-4" class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pdb</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pickle</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> string</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gensim</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> nltk</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> scipy</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sklearn</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> gensim.models <span class="im">import</span> KeyedVectors</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nltk.corpus <span class="im">import</span> stopwords, twitter_samples</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nltk.tokenize <span class="im">import</span> TweetTokenizer</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> utils <span class="im">import</span> (cosine_similarity, get_dict,</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>                   process_tweet)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> os <span class="im">import</span> getcwd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-5" class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># add folder, tmp2, from our local workspace containing pre-downloaded corpora files to nltk's data path</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>filePath <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>getcwd()<span class="sc">}</span><span class="ss">/../tmp2/"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>nltk.data.path.append(filePath)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><a name="1"></a></p>
+</section>
+<section id="the-word-embeddings-data-for-english-and-french-words" class="level1">
+<h1>1. The word embeddings data for English and French words</h1>
+<p>Write a program that translates English to French.</p>
+<section id="the-data" class="level2">
+<h2 class="anchored" data-anchor-id="the-data">The data</h2>
+<p>The full dataset for English embeddings is about 3.64 gigabytes, and the French embeddings are about 629 megabytes. To prevent the Coursera workspace from crashing, we’ve extracted a subset of the embeddings for the words that you’ll use in this assignment.</p>
+<p>If you want to run this on your local computer and use the full dataset, you can download the * English embeddings from Google code archive word2vec <a href="https://code.google.com/archive/p/word2vec/">look for GoogleNews-vectors-negative300.bin.gz</a> * You’ll need to unzip the file first. * and the French embeddings from <a href="https://github.com/vjstark/crosslingual_text_classification">cross_lingual_text_classification</a>. * in the terminal, type (in one line) <code>curl -o ./wiki.multi.fr.vec https://dl.fbaipublicfiles.com/arrival/vectors/wiki.multi.fr.vec</code></p>
+<p>Then copy-paste the code below and run it.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use this code to download and process the full dataset on your local computer</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> gensim.models <span class="im">import</span> KeyedVectors</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>en_embeddings <span class="op">=</span> KeyedVectors.load_word2vec_format(<span class="st">'./GoogleNews-vectors-negative300.bin'</span>, binary <span class="op">=</span> <span class="va">True</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>fr_embeddings <span class="op">=</span> KeyedVectors.load_word2vec_format(<span class="st">'./wiki.multi.fr.vec'</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co"># loading the english to french dictionaries</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>en_fr_train <span class="op">=</span> get_dict(<span class="st">'en-fr.train.txt'</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'The length of the english to french training dictionary is'</span>, <span class="bu">len</span>(en_fr_train))</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>en_fr_test <span class="op">=</span> get_dict(<span class="st">'en-fr.test.txt'</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'The length of the english to french test dictionary is'</span>, <span class="bu">len</span>(en_fr_train))</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>english_set <span class="op">=</span> <span class="bu">set</span>(en_embeddings.vocab)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>french_set <span class="op">=</span> <span class="bu">set</span>(fr_embeddings.vocab)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>en_embeddings_subset <span class="op">=</span> {}</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>fr_embeddings_subset <span class="op">=</span> {}</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>french_words <span class="op">=</span> <span class="bu">set</span>(en_fr_train.values())</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> en_word <span class="kw">in</span> en_fr_train.keys():</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    fr_word <span class="op">=</span> en_fr_train[en_word]</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> fr_word <span class="kw">in</span> french_set <span class="kw">and</span> en_word <span class="kw">in</span> english_set:</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        en_embeddings_subset[en_word] <span class="op">=</span> en_embeddings[en_word]</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>        fr_embeddings_subset[fr_word] <span class="op">=</span> fr_embeddings[fr_word]</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> en_word <span class="kw">in</span> en_fr_test.keys():</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    fr_word <span class="op">=</span> en_fr_test[en_word]</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> fr_word <span class="kw">in</span> french_set <span class="kw">and</span> en_word <span class="kw">in</span> english_set:</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>        en_embeddings_subset[en_word] <span class="op">=</span> en_embeddings[en_word]</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>        fr_embeddings_subset[fr_word] <span class="op">=</span> fr_embeddings[fr_word]</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>pickle.dump( en_embeddings_subset, <span class="bu">open</span>( <span class="st">"en_embeddings.p"</span>, <span class="st">"wb"</span> ) )</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>pickle.dump( fr_embeddings_subset, <span class="bu">open</span>( <span class="st">"fr_embeddings.p"</span>, <span class="st">"wb"</span> ) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="the-subset-of-data" class="level4">
+<h4 class="anchored" data-anchor-id="the-subset-of-data">The subset of data</h4>
+<p>To do the assignment on the Coursera workspace, we’ll use the subset of word embeddings.</p>
+<div id="cell-9" class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>en_embeddings_subset <span class="op">=</span> pickle.load(<span class="bu">open</span>(<span class="st">"en_embeddings.p"</span>, <span class="st">"rb"</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>fr_embeddings_subset <span class="op">=</span> pickle.load(<span class="bu">open</span>(<span class="st">"fr_embeddings.p"</span>, <span class="st">"rb"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="look-at-the-data" class="level4">
+<h4 class="anchored" data-anchor-id="look-at-the-data">Look at the data</h4>
+<ul>
+<li>en_embeddings_subset: the key is an English word, and the vaule is a 300 dimensional array, which is the embedding for that word.</li>
+</ul>
+<pre><code>'the': array([ 0.08007812,  0.10498047,  0.04980469,  0.0534668 , -0.06738281, ....</code></pre>
+<ul>
+<li>fr_embeddings_subset: the key is an French word, and the vaule is a 300 dimensional array, which is the embedding for that word.</li>
+</ul>
+<pre><code>'la': array([-6.18250e-03, -9.43867e-04, -8.82648e-03,  3.24623e-02,...</code></pre>
+</section>
+<section id="load-two-dictionaries-mapping-the-english-to-french-words" class="level4">
+<h4 class="anchored" data-anchor-id="load-two-dictionaries-mapping-the-english-to-french-words">Load two dictionaries mapping the English to French words</h4>
+<ul>
+<li>A training dictionary</li>
+<li>and a testing dictionary.</li>
+</ul>
+<div id="cell-12" class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># loading the english to french dictionaries</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>en_fr_train <span class="op">=</span> get_dict(<span class="st">'en-fr.train.txt'</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'The length of the English to French training dictionary is'</span>, <span class="bu">len</span>(en_fr_train))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>en_fr_test <span class="op">=</span> get_dict(<span class="st">'en-fr.test.txt'</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'The length of the English to French test dictionary is'</span>, <span class="bu">len</span>(en_fr_train))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="looking-at-the-english-french-dictionary" class="level4">
+<h4 class="anchored" data-anchor-id="looking-at-the-english-french-dictionary">Looking at the English French dictionary</h4>
+<ul>
+<li><code>en_fr_train</code> is a dictionary where the key is the English word and the value is the French translation of that English word.</li>
+</ul>
+<pre><code>{'the': 'la',
+ 'and': 'et',
+ 'was': 'était',
+ 'for': 'pour',</code></pre>
+<ul>
+<li><code>en_fr_test</code> is similar to <code>en_fr_train</code>, but is a test set. We won’t look at it until we get to testing.</li>
+</ul>
+<p><a name="1-1"></a></p>
+</section>
+</section>
+<section id="generate-embedding-and-transform-matrices" class="level2">
+<h2 class="anchored" data-anchor-id="generate-embedding-and-transform-matrices">1.1 Generate embedding and transform matrices</h2>
+<p><a name="ex-01"></a> #### Exercise 01: Translating English dictionary to French by using embeddings</p>
+<p>You will now implement a function <code>get_matrices</code>, which takes the loaded data and returns matrices <code>X</code> and <code>Y</code>.</p>
+<p>Inputs: - <code>en_fr</code> : English to French dictionary - <code>en_embeddings</code> : English to embeddings dictionary - <code>fr_embeddings</code> : French to embeddings dictionary</p>
+<p>Returns: - Matrix <code>X</code> and matrix <code>Y</code>, where each row in X is the word embedding for an english word, and the same row in Y is the word embedding for the French version of that English word.</p>
+<div style="width:image width px; font-size:100%; text-align:center;">
+<img src="X_to_Y.jpg" alt="alternate text" width="width" height="height" style="width:800px;height:200px;"> Figure 2
+</div>
+<p>Use the <code>en_fr</code> dictionary to ensure that the ith row in the <code>X</code> matrix corresponds to the ith row in the <code>Y</code> matrix.</p>
+<p><strong>Instructions</strong>: Complete the function <code>get_matrices()</code>: * Iterate over English words in <code>en_fr</code> dictionary. * Check if the word have both English and French embedding.</p>
+<details>
+<summary>
+<font size="3" color="darkgreen"><b>Hints</b></font>
+</summary>
+<pre><code>&lt;p&gt;
+    &lt;ul&gt;
+        &lt;li&gt;&lt;a href="https://realpython.com/python-sets/#set-size-and-membership" &gt;Sets&lt;/a&gt; are useful data structures that can be used to check if an item is a member of a group.&lt;/li&gt;
+        &lt;li&gt;You can get words which are embedded into the language by using &lt;a href="https://www.w3schools.com/python/ref_dictionary_keys.asp"&gt; keys&lt;/a&gt; method.&lt;/li&gt;
+        &lt;li&gt;Keep vectors in `X` and `Y` sorted in list. You can use &lt;a href="https://docs.scipy.org/doc/numpy-1.13.0/reference/generated/numpy.ma.vstack.html"&gt; np.vstack()&lt;/a&gt; to merge them into the numpy matrix. &lt;/li&gt;
+        &lt;li&gt;&lt;a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.vstack.html"&gt;numpy.vstack&lt;/a&gt; stacks the items in a list as rows in a matrix.&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/p&gt;</code></pre>
+<div id="cell-17" class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C1 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_matrices(en_fr, french_vecs, english_vecs):</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Input:</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">        en_fr: English to French dictionary</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">        french_vecs: French words to their corresponding word embeddings.</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">        english_vecs: English words to their corresponding word embeddings.</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">    Output: </span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">        X: a matrix where the columns are the English embeddings.</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">        Y: a matrix where the columns correspong to the French embeddings.</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">        R: the projection matrix that minimizes the F norm ||X R -Y||^2.</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">### START CODE HERE (REPLACE INSTANCES OF 'None' with your code) </span><span class="al">###</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># X_l and Y_l are lists of the english and french word embeddings</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    X_l <span class="op">=</span> <span class="bu">list</span>()</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    Y_l <span class="op">=</span> <span class="bu">list</span>()</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># get the english words (the keys in the dictionary) and store in a set()</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    english_set <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># get the french words (keys in the dictionary) and store in a set()</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>    french_set <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># store the french words that are part of the english-french dictionary (these are the values of the dictionary)</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>    french_words <span class="op">=</span> <span class="bu">set</span>(en_fr.values())</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># loop through all english, french word pairs in the english french dictionary</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> en_word, fr_word <span class="kw">in</span> en_fr.items():</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>        <span class="co"># check that the french word has an embedding and that the english word has an embedding</span></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> fr_word <span class="kw">in</span> french_set <span class="kw">and</span> en_word <span class="kw">in</span> english_set:</span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>            <span class="co"># get the english embedding</span></span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>            en_vec <span class="op">=</span> english_vecs[en_word]</span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>            <span class="co"># get the french embedding</span></span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>            fr_vec <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>            <span class="co"># add the english embedding to the list</span></span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a>            X_l.append(en_vec)</span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>            <span class="co"># add the french embedding to the list</span></span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>            <span class="va">None</span></span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>    <span class="co"># stack the vectors of X_l into a matrix X</span></span>
+<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>    X <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>    <span class="co"># stack the vectors of Y_l into a matrix Y</span></span>
+<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a>    Y <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>    <span class="co">### </span><span class="re">END</span><span class="co"> CODE HERE </span><span class="al">###</span></span>
+<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> X, Y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we will use function <code>get_matrices()</code> to obtain sets <code>X_train</code> and <code>Y_train</code> of English and French word embeddings into the corresponding vector space models.</p>
+<div id="cell-19" class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C2 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># getting the training set:</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>X_train, Y_train <span class="op">=</span> get_matrices(</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    en_fr_train, fr_embeddings_subset, en_embeddings_subset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><a name="2"></a></p>
+</details></section>
+</section>
+<section id="translations" class="level1">
+<h1>2. Translations</h1>
+<div style="width:image width px; font-size:100%; text-align:center;">
+<img src="e_to_f.jpg" alt="alternate text" width="width" height="height" style="width:700px;height:200px;"> Figure 1
+</div>
+<p>Write a program that translates English words to French words using word embeddings and vector space models.</p>
+<p><a name="2-1"></a> ## 2.1 Translation as linear transformation of embeddings</p>
+<p>Given dictionaries of English and French word embeddings you will create a transformation matrix <code>R</code> * Given an English word embedding, <span class="math inline">\mathbf{e}</span>, you can multiply <span class="math inline">\mathbf{eR}</span> to get a new word embedding <span class="math inline">\mathbf{f}</span>. * Both <span class="math inline">\mathbf{e}</span> and <span class="math inline">\mathbf{f}</span> are <a href="https://en.wikipedia.org/wiki/Row_and_column_vectors">row vectors</a>. * You can then compute the nearest neighbors to <code>f</code> in the french embeddings and recommend the word that is most similar to the transformed word embedding.</p>
+<section id="describing-translation-as-the-minimization-problem" class="level3">
+<h3 class="anchored" data-anchor-id="describing-translation-as-the-minimization-problem">Describing translation as the minimization problem</h3>
+<p>Find a matrix <code>R</code> that minimizes the following equation.</p>
+<p><span class="math display">\arg \min _{\mathbf{R}}\| \mathbf{X R} - \mathbf{Y}\|_{F}\tag{1} </span></p>
+</section>
+<section id="frobenius-norm" class="level3">
+<h3 class="anchored" data-anchor-id="frobenius-norm">Frobenius norm</h3>
+<p>The Frobenius norm of a matrix <span class="math inline">A</span> (assuming it is of dimension <span class="math inline">m,n</span>) is defined as the square root of the sum of the absolute squares of its elements:</p>
+<p><span class="math display">\|\mathbf{A}\|_{F} \equiv \sqrt{\sum_{i=1}^{m} \sum_{j=1}^{n}\left|a_{i j}\right|^{2}}\tag{2}</span></p>
+</section>
+<section id="actual-loss-function" class="level3">
+<h3 class="anchored" data-anchor-id="actual-loss-function">Actual loss function</h3>
+<p>In the real world applications, the Frobenius norm loss:</p>
+<p><span class="math display">\| \mathbf{XR} - \mathbf{Y}\|_{F}</span></p>
+<p>is often replaced by it’s squared value divided by <span class="math inline">m</span>:</p>
+<p><span class="math display"> \frac{1}{m} \|  \mathbf{X R} - \mathbf{Y} \|_{F}^{2}</span></p>
+<p>where <span class="math inline">m</span> is the number of examples (rows in <span class="math inline">\mathbf{X}</span>).</p>
+<ul>
+<li>The same R is found when using this loss function versus the original Frobenius norm.</li>
+<li>The reason for taking the square is that it’s easier to compute the gradient of the squared Frobenius.</li>
+<li>The reason for dividing by <span class="math inline">m</span> is that we’re more interested in the average loss per embedding than the loss for the entire training set.
+<ul>
+<li>The loss for all training set increases with more words (training examples), so taking the average helps us to track the average loss regardless of the size of the training set.</li>
+</ul></li>
+</ul>
+<section id="optional-detailed-explanation-why-we-use-norm-squared-instead-of-the-norm" class="level5">
+<h5 class="anchored" data-anchor-id="optional-detailed-explanation-why-we-use-norm-squared-instead-of-the-norm">[Optional] Detailed explanation why we use norm squared instead of the norm:</h5>
+<details>
+<summary>
+Click for optional details
+</summary>
+<pre><code>&lt;p&gt;
+    &lt;ul&gt;
+        &lt;li&gt;The norm is always nonnegative (we're summing up absolute values), and so is the square. 
+        &lt;li&gt; When we take the square of all non-negative (positive or zero) numbers, the order of the data is preserved.  
+        &lt;li&gt; For example, if 3 &gt; 2, 3^2 &gt; 2^2
+        &lt;li&gt; Using the norm or squared norm in gradient descent results in the same &lt;i&gt;location&lt;/i&gt; of the minimum.
+        &lt;li&gt; Squaring cancels the square root in the Frobenius norm formula. Because of the &lt;a href="https://en.wikipedia.org/wiki/Chain_rule"&gt; chain rule&lt;/a&gt;, we would have to do more calculations if we had a square root in our expression for summation.
+        &lt;li&gt; Dividing the function value by the positive number doesn't change the optimum of the function, for the same reason as described above.
+        &lt;li&gt; We're interested in transforming English embedding into the French. Thus, it is more important to measure average loss per embedding than the loss for the entire dictionary (which increases as the number of words in the dictionary increases).
+    &lt;/ul&gt;
+&lt;/p&gt;</code></pre>
+<p><a name="ex-02"></a></p>
+</details></section>
+</section>
+<section id="exercise-02-implementing-translation-mechanism-described-in-this-section." class="level3">
+<h3 class="anchored" data-anchor-id="exercise-02-implementing-translation-mechanism-described-in-this-section.">Exercise 02: Implementing translation mechanism described in this section.</h3>
+<section id="step-1-computing-the-loss" class="level4">
+<h4 class="anchored" data-anchor-id="step-1-computing-the-loss">Step 1: Computing the loss</h4>
+<ul>
+<li>The loss function will be squared Frobenoius norm of the difference between matrix and its approximation, divided by the number of training examples <span class="math inline">m</span>.</li>
+<li>Its formula is: <span class="math display"> L(X, Y, R)=\frac{1}{m}\sum_{i=1}^{m} \sum_{j=1}^{n}\left( a_{i j} \right)^{2}</span></li>
+</ul>
+<p>where <span class="math inline">a_{i j}</span> is value in <span class="math inline">i</span>th row and <span class="math inline">j</span>th column of the matrix <span class="math inline">\mathbf{XR}-\mathbf{Y}</span>.</p>
+</section>
+<section id="instructions-complete-the-compute_loss-function" class="level4">
+<h4 class="anchored" data-anchor-id="instructions-complete-the-compute_loss-function">Instructions: complete the <code>compute_loss()</code> function</h4>
+<ul>
+<li>Compute the approximation of <code>Y</code> by matrix multiplying <code>X</code> and <code>R</code></li>
+<li>Compute difference <code>XR - Y</code></li>
+<li>Compute the squared Frobenius norm of the difference and divide it by <span class="math inline">m</span>.</li>
+</ul>
+<details>
+<summary>
+<font size="3" color="darkgreen"><b>Hints</b></font>
+</summary>
+<p>
+</p><ul>
+<li>
+Useful functions: <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.dot.html">Numpy dot </a>, <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.sum.html">Numpy sum</a>, <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.square.html">Numpy square</a>, <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.norm.html">Numpy norm</a>
+</li>
+<li>
+Be careful about which operation is elementwise and which operation is a matrix multiplication.
+</li>
+<li>
+Try to use matrix operations instead of the numpy norm function. If you choose to use norm function, take care of extra arguments and that it’s returning loss squared, and not the loss itself.
+</li>
+</ul>
+<p></p>
+<div id="cell-27" class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C3 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_loss(X, Y, R):</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Inputs: </span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">        X: a matrix of dimension (m,n) where the columns are the English embeddings.</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">        Y: a matrix of dimension (m,n) where the columns correspong to the French embeddings.</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">        R: a matrix of dimension (n,n) - transformation matrix from English to French vector space embeddings.</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co">    Outputs:</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">        L: a matrix of dimension (m,n) - the value of the loss function for given X, Y and R.</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co">    '''</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">### START CODE HERE (REPLACE INSTANCES OF 'None' with your code) </span><span class="al">###</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># m is the number of rows in X</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    m <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># diff is XR - Y</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    diff <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># diff_squared is the element-wise square of the difference</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>    diff_squared <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># sum_diff_squared is the sum of the squared elements</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>    sum_diff_squared <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># loss i the sum_diff_squard divided by the number of examples (m)</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>    <span class="co">### </span><span class="re">END</span><span class="co"> CODE HERE </span><span class="al">###</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> loss</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><a name="ex-03"></a></p>
+</details></section>
+</section>
+<section id="exercise-03" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-03">Exercise 03</h3>
+</section>
+<section id="step-2-computing-the-gradient-of-loss-in-respect-to-transform-matrix-r" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-computing-the-gradient-of-loss-in-respect-to-transform-matrix-r">Step 2: Computing the gradient of loss in respect to transform matrix R</h3>
+<ul>
+<li>Calculate the gradient of the loss with respect to transform matrix <code>R</code>.</li>
+<li>The gradient is a matrix that encodes how much a small change in <code>R</code> affect the change in the loss function.</li>
+<li>The gradient gives us the direction in which we should decrease <code>R</code> to minimize the loss.</li>
+<li><span class="math inline">m</span> is the number of training examples (number of rows in <span class="math inline">X</span>).</li>
+<li>The formula for the gradient of the loss function <span class="math inline">𝐿(𝑋,𝑌,𝑅)</span> is:</li>
+</ul>
+<p><span class="math display">\frac{d}{dR}𝐿(𝑋,𝑌,𝑅)=\frac{d}{dR}\Big(\frac{1}{m}\| X R -Y\|_{F}^{2}\Big) = \frac{2}{m}X^{T} (X R - Y)</span></p>
+<p><strong>Instructions</strong>: Complete the <code>compute_gradient</code> function below.</p>
+<details>
+<summary>
+<font size="3" color="darkgreen"><b>Hints</b></font>
+</summary>
+<p>
+</p><ul>
+<li>
+<a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.matrix.T.html"> Transposing in numpy </a>
+</li>
+<li>
+<a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.shape.html"> Finding out the dimensions</a> of matrices in numpy
+</li>
+<li>
+Remember to use numpy.dot for matrix multiplication
+</li>
+</ul>
+<p></p>
+<div id="cell-30" class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C4 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_gradient(X, Y, R):</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Inputs: </span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">        X: a matrix of dimension (m,n) where the columns are the English embeddings.</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">        Y: a matrix of dimension (m,n) where the columns correspong to the French embeddings.</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">        R: a matrix of dimension (n,n) - transformation matrix from English to French vector space embeddings.</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">    Outputs:</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">        g: a matrix of dimension (n,n) - gradient of the loss function L for given X, Y and R.</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co">    '''</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">### START CODE HERE (REPLACE INSTANCES OF 'None' with your code) </span><span class="al">###</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># m is the number of rows in X</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    m <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># gradient is X^T(XR - Y) * 2/m</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    gradient <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">### </span><span class="re">END</span><span class="co"> CODE HERE </span><span class="al">###</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> gradient</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</details></section>
+<section id="step-3-finding-the-optimal-r-with-gradient-descent-algorithm" class="level3">
+<h3 class="anchored" data-anchor-id="step-3-finding-the-optimal-r-with-gradient-descent-algorithm">Step 3: Finding the optimal R with gradient descent algorithm</h3>
+<section id="gradient-descent" class="level4">
+<h4 class="anchored" data-anchor-id="gradient-descent">Gradient descent</h4>
+<p><a href="https://ml-cheatsheet.readthedocs.io/en/latest/gradient_descent.html">Gradient descent</a> is an iterative algorithm which is used in searching for the optimum of the function. * Earlier, we’ve mentioned that the gradient of the loss with respect to the matrix encodes how much a tiny change in some coordinate of that matrix affect the change of loss function. * Gradient descent uses that information to iteratively change matrix <code>R</code> until we reach a point where the loss is minimized.</p>
+</section>
+<section id="training-with-a-fixed-number-of-iterations" class="level4">
+<h4 class="anchored" data-anchor-id="training-with-a-fixed-number-of-iterations">Training with a fixed number of iterations</h4>
+<p>Most of the time we iterate for a fixed number of training steps rather than iterating until the loss falls below a threshold.</p>
+<section id="optional-explanation-for-fixed-number-of-iterations" class="level5">
+<h5 class="anchored" data-anchor-id="optional-explanation-for-fixed-number-of-iterations">OPTIONAL: explanation for fixed number of iterations</h5>
+<details>
+<summary>
+<font size="3" color="darkgreen"><b>click here for detailed discussion</b></font>
+</summary>
+<p>
+</p><ul>
+<li>
+You cannot rely on training loss getting low – what you really want is the validation loss to go down, or validation accuracy to go up. And indeed - in some cases people train until validation accuracy reaches a threshold, or – commonly known as “early stopping” – until the validation accuracy starts to go down, which is a sign of over-fitting.
+</li>
+<li>
+Why not always do “early stopping”? Well, mostly because well-regularized models on larger data-sets never stop improving. Especially in NLP, you can often continue training for months and the model will continue getting slightly and slightly better. This is also the reason why it’s hard to just stop at a threshold – unless there’s an external customer setting the threshold, why stop, where do you put the threshold?
+</li>
+<li>
+Stopping after a certain number of steps has the advantage that you know how long your training will take - so you can keep some sanity and not train for months. You can then try to get the best performance within this time budget. Another advantage is that you can fix your learning rate schedule – e.g., lower the learning rate at 10% before finish, and then again more at 1% before finishing. Such learning rate schedules help a lot, but are harder to do if you don’t know how long you’re training.
+</li>
+</ul>
+<p></p>
+<p>Pseudocode: 1. Calculate gradient <span class="math inline">g</span> of the loss with respect to the matrix <span class="math inline">R</span>. 2. Update <span class="math inline">R</span> with the formula: <span class="math display">R_{\text{new}}= R_{\text{old}}-\alpha g</span></p>
+<p>Where <span class="math inline">\alpha</span> is the learning rate, which is a scalar.</p>
+</details></section>
+</section>
+<section id="learning-rate" class="level4">
+<h4 class="anchored" data-anchor-id="learning-rate">Learning rate</h4>
+<ul>
+<li>The learning rate or “step size” <span class="math inline">\alpha</span> is a coefficient which decides how much we want to change <span class="math inline">R</span> in each step.</li>
+<li>If we change <span class="math inline">R</span> too much, we could skip the optimum by taking too large of a step.</li>
+<li>If we make only small changes to <span class="math inline">R</span>, we will need many steps to reach the optimum.</li>
+<li>Learning rate <span class="math inline">\alpha</span> is used to control those changes.</li>
+<li>Values of <span class="math inline">\alpha</span> are chosen depending on the problem, and we’ll use <code>learning_rate</code><span class="math inline">=0.0003</span> as the default value for our algorithm.</li>
+</ul>
+<p><a name="ex-04"></a></p>
+</section>
+</section>
+<section id="exercise-04" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-04">Exercise 04</h3>
+<section id="instructions-implement-align_embeddings" class="level4">
+<h4 class="anchored" data-anchor-id="instructions-implement-align_embeddings">Instructions: Implement <code>align_embeddings()</code></h4>
+<details>
+<summary>
+<font size="3" color="darkgreen"><b>Hints</b></font>
+</summary>
+<p>
+</p><ul>
+<li>
+Use the ‘compute_gradient()’ function to get the gradient in each step
+</li>
+</ul>
+<p></p>
+<div id="cell-37" class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C5 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> align_embeddings(X, Y, train_steps<span class="op">=</span><span class="dv">100</span>, learning_rate<span class="op">=</span><span class="fl">0.0003</span>):</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Inputs:</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">        X: a matrix of dimension (m,n) where the columns are the English embeddings.</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">        Y: a matrix of dimension (m,n) where the columns correspong to the French embeddings.</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co">        train_steps: positive int - describes how many steps will gradient descent algorithm do.</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">        learning_rate: positive float - describes how big steps will  gradient descent algorithm do.</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co">    Outputs:</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co">        R: a matrix of dimension (n,n) - the projection matrix that minimizes the F norm ||X R -Y||^2</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co">    '''</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    np.random.seed(<span class="dv">129</span>)</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># the number of columns in X is the number of dimensions for a word vector (e.g. 300)</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># R is a square matrix with length equal to the number of dimensions in th  word embedding</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    R <span class="op">=</span> np.random.rand(X.shape[<span class="dv">1</span>], X.shape[<span class="dv">1</span>])</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(train_steps):</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> i <span class="op">%</span> <span class="dv">25</span> <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f"loss at iteration </span><span class="sc">{</span>i<span class="sc">}</span><span class="ss"> is: </span><span class="sc">{</span>compute_loss(X, Y, R)<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>        <span class="co">### START CODE HERE (REPLACE INSTANCES OF 'None' with your code) </span><span class="al">###</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>        <span class="co"># use the function that you defined to compute the gradient</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>        gradient <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>        <span class="co"># update R by subtracting the learning rate times gradient</span></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>        R <span class="op">-=</span> <span class="va">None</span></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>        <span class="co">### </span><span class="re">END</span><span class="co"> CODE HERE </span><span class="al">###</span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> R</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-38" class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C6 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Testing your implementation.</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">129</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.random.rand(m, n)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> np.random.rand(m, n) <span class="op">*</span> <span class="fl">.1</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>R <span class="op">=</span> align_embeddings(X, Y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Expected Output:</strong></p>
+<pre><code>loss at iteration 0 is: 3.7242
+loss at iteration 25 is: 3.6283
+loss at iteration 50 is: 3.5350
+loss at iteration 75 is: 3.4442</code></pre>
+</details></section>
+</section>
+<section id="calculate-transformation-matrix-r" class="level2">
+<h2 class="anchored" data-anchor-id="calculate-transformation-matrix-r">Calculate transformation matrix R</h2>
+<p>Using those the training set, find the transformation matrix <span class="math inline">\mathbf{R}</span> by calling the function <code>align_embeddings()</code>.</p>
+<p><strong>NOTE:</strong> The code cell below will take a few minutes to fully execute (~3 mins)</p>
+<div id="cell-41" class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C7 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co"># You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>R_train <span class="op">=</span> align_embeddings(X_train, Y_train, train_steps<span class="op">=</span><span class="dv">400</span>, learning_rate<span class="op">=</span><span class="fl">0.8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="expected-output" class="level5">
+<h5 class="anchored" data-anchor-id="expected-output">Expected Output</h5>
+<pre><code>loss at iteration 0 is: 963.0146
+loss at iteration 25 is: 97.8292
+loss at iteration 50 is: 26.8329
+loss at iteration 75 is: 9.7893
+loss at iteration 100 is: 4.3776
+loss at iteration 125 is: 2.3281
+loss at iteration 150 is: 1.4480
+loss at iteration 175 is: 1.0338
+loss at iteration 200 is: 0.8251
+loss at iteration 225 is: 0.7145
+loss at iteration 250 is: 0.6534
+loss at iteration 275 is: 0.6185
+loss at iteration 300 is: 0.5981
+loss at iteration 325 is: 0.5858
+loss at iteration 350 is: 0.5782
+loss at iteration 375 is: 0.5735</code></pre>
+<p><a name="2-2"></a></p>
+</section>
+</section>
+<section id="testing-the-translation" class="level2">
+<h2 class="anchored" data-anchor-id="testing-the-translation">2.2 Testing the translation</h2>
+<section id="k-nearest-neighbors-algorithm" class="level3">
+<h3 class="anchored" data-anchor-id="k-nearest-neighbors-algorithm">k-Nearest neighbors algorithm</h3>
+<p><a href="https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm">k-Nearest neighbors algorithm</a> * k-NN is a method which takes a vector as input and finds the other vectors in the dataset that are closest to it. * The ‘k’ is the number of “nearest neighbors” to find (e.g.&nbsp;k=2 finds the closest two neighbors).</p>
+</section>
+<section id="searching-for-the-translation-embedding" class="level3">
+<h3 class="anchored" data-anchor-id="searching-for-the-translation-embedding">Searching for the translation embedding</h3>
+<p>Since we’re approximating the translation function from English to French embeddings by a linear transformation matrix <span class="math inline">\mathbf{R}</span>, most of the time we won’t get the exact embedding of a French word when we transform embedding <span class="math inline">\mathbf{e}</span> of some particular English word into the French embedding space. * This is where <span class="math inline">k</span>-NN becomes really useful! By using <span class="math inline">1</span>-NN with <span class="math inline">\mathbf{eR}</span> as input, we can search for an embedding <span class="math inline">\mathbf{f}</span> (as a row) in the matrix <span class="math inline">\mathbf{Y}</span> which is the closest to the transformed vector <span class="math inline">\mathbf{eR}</span></p>
+</section>
+<section id="cosine-similarity" class="level3">
+<h3 class="anchored" data-anchor-id="cosine-similarity">Cosine similarity</h3>
+<p>Cosine similarity between vectors <span class="math inline">u</span> and <span class="math inline">v</span> calculated as the cosine of the angle between them. The formula is</p>
+<p><span class="math display">\cos(u,v)=\frac{u\cdot v}{\left\|u\right\|\left\|v\right\|}</span></p>
+<ul>
+<li><span class="math inline">\cos(u,v)</span> = <span class="math inline">1</span> when <span class="math inline">u</span> and <span class="math inline">v</span> lie on the same line and have the same direction.</li>
+<li><span class="math inline">\cos(u,v)</span> is <span class="math inline">-1</span> when they have exactly opposite directions.</li>
+<li><span class="math inline">\cos(u,v)</span> is <span class="math inline">0</span> when the vectors are orthogonal (perpendicular) to each other.</li>
+</ul>
+<section id="note-distance-and-similarity-are-pretty-much-opposite-things." class="level4">
+<h4 class="anchored" data-anchor-id="note-distance-and-similarity-are-pretty-much-opposite-things.">Note: Distance and similarity are pretty much opposite things.</h4>
+<ul>
+<li>We can obtain distance metric from cosine similarity, but the cosine similarity can’t be used directly as the distance metric.</li>
+<li>When the cosine similarity increases (towards <span class="math inline">1</span>), the “distance” between the two vectors decreases (towards <span class="math inline">0</span>).</li>
+<li>We can define the cosine distance between <span class="math inline">u</span> and <span class="math inline">v</span> as <span class="math display">d_{\text{cos}}(u,v)=1-\cos(u,v)</span></li>
+</ul>
+<p><a name="ex-05"></a></p>
+<p><strong>Exercise 05</strong>: Complete the function <code>nearest_neighbor()</code></p>
+<p>Inputs: * Vector <code>v</code>, * A set of possible nearest neighbors <code>candidates</code> * <code>k</code> nearest neighbors to find. * The distance metric should be based on cosine similarity. * <code>cosine_similarity</code> function is already implemented and imported for you. It’s arguments are two vectors and it returns the cosine of the angle between them. * Iterate over rows in <code>candidates</code>, and save the result of similarities between current row and vector <code>v</code> in a python list. Take care that similarities are in the same order as row vectors of <code>candidates</code>. * Now you can use <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.argsort.html#numpy.argsort">numpy argsort</a> to sort the indices for the rows of <code>candidates</code>.</p>
+<details>
+<summary>
+<font size="3" color="darkgreen"><b>Hints</b></font>
+</summary>
+<p>
+</p><ul>
+<li>
+numpy.argsort sorts values from most negative to most positive (smallest to largest)
+</li>
+<li>
+The candidates that are nearest to ‘v’ should have the highest cosine similarity
+</li>
+<li>
+To get the last element of a list ‘tmp’, the notation is tmp[-1:]
+</li>
+</ul>
+<p></p>
+<div id="cell-48" class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C8 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> nearest_neighbor(v, candidates, k<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Input:</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co">      - v, the vector you are going find the nearest neighbor for</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co">      - candidates: a set of vectors where we will find the neighbors</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co">      - k: top k nearest neighbors to find</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co">    Output:</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co">      - k_idx: the indices of the top k closest vectors in sorted form</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">### START CODE HERE (REPLACE INSTANCES OF 'None' with your code) </span><span class="al">###</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    similarity_l <span class="op">=</span> []</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># for each candidate vector...</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> row <span class="kw">in</span> candidates:</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># get the cosine similarity</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>        cos_similarity <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>        <span class="co"># append the similarity to the list</span></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>        <span class="va">None</span></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># sort the similarity list and get the indices of the sorted list</span></span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>    sorted_ids <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># get the indices of the k most similar candidate vectors</span></span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>    k_idx <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>    <span class="co">### </span><span class="re">END</span><span class="co"> CODE HERE </span><span class="al">###</span></span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> k_idx</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-49" class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C9 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Test your implementation:</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>v <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>])</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>candidates <span class="op">=</span> np.array([[<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">5</span>], [<span class="op">-</span><span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">3</span>], [<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">1</span>], [<span class="dv">6</span>, <span class="op">-</span><span class="dv">9</span>, <span class="dv">5</span>], [<span class="dv">9</span>, <span class="dv">9</span>, <span class="dv">9</span>]])</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(candidates[nearest_neighbor(v, candidates, <span class="dv">3</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Expected Output</strong>:</p>
+<p><code>[[9 9 9]  [1 0 5]  [2 0 1]]</code></p>
+</details></section>
+</section>
+<section id="test-your-translation-and-compute-its-accuracy" class="level3">
+<h3 class="anchored" data-anchor-id="test-your-translation-and-compute-its-accuracy">Test your translation and compute its accuracy</h3>
+<p><a name="ex-06"></a> <strong>Exercise 06</strong>: Complete the function <code>test_vocabulary</code> which takes in English embedding matrix <span class="math inline">X</span>, French embedding matrix <span class="math inline">Y</span> and the <span class="math inline">R</span> matrix and returns the accuracy of translations from <span class="math inline">X</span> to <span class="math inline">Y</span> by <span class="math inline">R</span>.</p>
+<ul>
+<li>Iterate over transformed English word embeddings and check if the closest French word vector belongs to French word that is the actual translation.</li>
+<li>Obtain an index of the closest French embedding by using <code>nearest_neighbor</code> (with argument <code>k=1</code>), and compare it to the index of the English embedding you have just transformed.</li>
+<li>Keep track of the number of times you get the correct translation.</li>
+<li>Calculate accuracy as <span class="math display">\text{accuracy}=\frac{\#(\text{correct predictions})}{\#(\text{total predictions})}</span></li>
+</ul>
+<div id="cell-52" class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C10 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_vocabulary(X, Y, R):</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Input:</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co">        X: a matrix where the columns are the English embeddings.</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co">        Y: a matrix where the columns correspong to the French embeddings.</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co">        R: the transform matrix which translates word embeddings from</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="co">        English to French word vector space.</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co">    Output:</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="co">        accuracy: for the English to French capitals</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co">    '''</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">### START CODE HERE (REPLACE INSTANCES OF 'None' with your code) </span><span class="al">###</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The prediction is X times R</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>    pred <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># initialize the number correct to zero</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>    num_correct <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># loop through each row in pred (each transformed embedding)</span></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(pred)):</span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>        <span class="co"># get the index of the nearest neighbor of pred at row 'i'; also pass in the candidates in Y</span></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>        pred_idx <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>        <span class="co"># if the index of the nearest neighbor equals the row of i... \</span></span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> pred_idx <span class="op">==</span> i:</span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>            <span class="co"># increment the number correct by 1.</span></span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>            num_correct <span class="op">+=</span> <span class="va">None</span></span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># accuracy is the number correct divided by the number of rows in 'pred' (also number of rows in X)</span></span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a>    accuracy <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a>    <span class="co">### </span><span class="re">END</span><span class="co"> CODE HERE </span><span class="al">###</span></span>
+<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> accuracy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s see how is your translation mechanism working on the unseen data:</p>
+<div id="cell-54" class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>X_val, Y_val <span class="op">=</span> get_matrices(en_fr_test, fr_embeddings_subset, en_embeddings_subset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-55" class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C11 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co"># You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>acc <span class="op">=</span> test_vocabulary(X_val, Y_val, R_train)  <span class="co"># this might take a minute or two</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"accuracy on test set is </span><span class="sc">{</span>acc<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Expected Output</strong>:</p>
+<pre><code>0.557</code></pre>
+<p>You managed to translate words from one language to another language without ever seing them with almost 56% accuracy by using some basic linear algebra and learning a mapping of words from one language to another!</p>
+<p><a name="3"></a></p>
+</section>
+</section>
+</section>
+<section id="lsh-and-document-search" class="level1">
+<h1>3. LSH and document search</h1>
+<p>In this part of the assignment, you will implement a more efficient version of k-nearest neighbors using locality sensitive hashing. You will then apply this to document search.</p>
+<ul>
+<li>Process the tweets and represent each tweet as a vector (represent a document with a vector embedding).</li>
+<li>Use locality sensitive hashing and k nearest neighbors to find tweets that are similar to a given tweet.</li>
+</ul>
+<div id="cell-58" class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get the positive and negative tweets</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>all_positive_tweets <span class="op">=</span> twitter_samples.strings(<span class="st">'positive_tweets.json'</span>)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>all_negative_tweets <span class="op">=</span> twitter_samples.strings(<span class="st">'negative_tweets.json'</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>all_tweets <span class="op">=</span> all_positive_tweets <span class="op">+</span> all_negative_tweets</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><a name="3-1"></a></p>
+<section id="getting-the-document-embeddings" class="level3">
+<h3 class="anchored" data-anchor-id="getting-the-document-embeddings">3.1 Getting the document embeddings</h3>
+<section id="bag-of-words-bow-document-models" class="level4">
+<h4 class="anchored" data-anchor-id="bag-of-words-bow-document-models">Bag-of-words (BOW) document models</h4>
+<p>Text documents are sequences of words. * The ordering of words makes a difference. For example, sentences “Apple pie is better than pepperoni pizza.” and “Pepperoni pizza is better than apple pie” have opposite meanings due to the word ordering. * However, for some applications, ignoring the order of words can allow us to train an efficient and still effective model. * This approach is called Bag-of-words document model.</p>
+</section>
+<section id="document-embeddings" class="level4">
+<h4 class="anchored" data-anchor-id="document-embeddings">Document embeddings</h4>
+<ul>
+<li>Document embedding is created by summing up the embeddings of all words in the document.</li>
+<li>If we don’t know the embedding of some word, we can ignore that word.</li>
+</ul>
+<p><a name="ex-07"></a></p>
+<p><strong>Exercise 07</strong>: Complete the <code>get_document_embedding()</code> function. * The function <code>get_document_embedding()</code> encodes entire document as a “document” embedding. * It takes in a docoument (as a string) and a dictionary, <code>en_embeddings</code> * It processes the document, and looks up the corresponding embedding of each word. * It then sums them up and returns the sum of all word vectors of that processed tweet.</p>
+<details>
+<summary>
+<font size="3" color="darkgreen"><b>Hints</b></font>
+</summary>
+<p>
+</p><ul>
+<li>
+You can handle missing words easier by using the <code>get()</code> method of the python dictionary instead of the bracket notation (i.e.&nbsp;“[ ]”). See more about it <a href="https://stackoverflow.com/a/11041421/12816433">here</a>
+</li>
+<li>
+The default value for missing word should be the zero vector. Numpy will <a href="https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html"> broadcast </a> simple 0 scalar into a vector of zeros during the summation.
+</li>
+<li>
+Alternatively, skip the addition if a word is not in the dictonary.
+</li>
+<li>
+You can use your <code>process_tweet()</code> function which allows you to process the tweet. The function just takes in a tweet and returns a list of words.
+</li>
+</ul>
+<p></p>
+<div id="cell-62" class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C12 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_document_embedding(tweet, en_embeddings): </span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Input:</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="co">        - tweet: a string</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="co">        - en_embeddings: a dictionary of word embeddings</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="co">    Output:</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="co">        - doc_embedding: sum of all word embeddings in the tweet</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="co">    '''</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    doc_embedding <span class="op">=</span> np.zeros(<span class="dv">300</span>)</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">### START CODE HERE (REPLACE INSTANCES OF 'None' with your code) </span><span class="al">###</span></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># process the document into a list of words (process the tweet)</span></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>    processed_doc <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> word <span class="kw">in</span> processed_doc:</span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># add the word embedding to the running total for the document embedding</span></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>        doc_embedding <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>    <span class="co">### </span><span class="re">END</span><span class="co"> CODE HERE </span><span class="al">###</span></span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> doc_embedding</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-63" class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C13 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="co"># You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co"># testing your function</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>custom_tweet <span class="op">=</span> <span class="st">"RT @Twitter @chapagain Hello There! Have a great day. :) #good #morning http://chapagain.com.np"</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>tweet_embedding <span class="op">=</span> get_document_embedding(custom_tweet, en_embeddings_subset)</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>tweet_embedding[<span class="op">-</span><span class="dv">5</span>:]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Expected output</strong>:</p>
+<pre><code>array([-0.00268555, -0.15378189, -0.55761719, -0.07216644, -0.32263184])</code></pre>
+<p><a name="ex-08"></a></p>
+</details></section>
+</section>
+<section id="exercise-08" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-08">Exercise 08</h3>
+<section id="store-all-document-vectors-into-a-dictionary" class="level4">
+<h4 class="anchored" data-anchor-id="store-all-document-vectors-into-a-dictionary">Store all document vectors into a dictionary</h4>
+<p>Now, let’s store all the tweet embeddings into a dictionary. Implement <code>get_document_vecs()</code></p>
+<div id="cell-66" class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C14 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_document_vecs(all_docs, en_embeddings):</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Input:</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="co">        - all_docs: list of strings - all tweets in our dataset.</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="co">        - en_embeddings: dictionary with words as the keys and their embeddings as the values.</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="co">    Output:</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="co">        - document_vec_matrix: matrix of tweet embeddings.</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="co">        - ind2Doc_dict: dictionary with indices of tweets in vecs as keys and their embeddings as the values.</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="co">    '''</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># the dictionary's key is an index (integer) that identifies a specific tweet</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># the value is the document embedding for that document</span></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>    ind2Doc_dict <span class="op">=</span> {}</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># this is list that will store the document vectors</span></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>    document_vec_l <span class="op">=</span> []</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, doc <span class="kw">in</span> <span class="bu">enumerate</span>(all_docs):</span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>        <span class="co">### START CODE HERE (REPLACE INSTANCES OF 'None' with your code) </span><span class="al">###</span></span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>        <span class="co"># get the document embedding of the tweet</span></span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>        doc_embedding <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>        <span class="co"># save the document embedding into the ind2Tweet dictionary at index i</span></span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>        ind2Doc_dict[i] <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>        <span class="co"># append the document embedding to the list of document vectors</span></span>
+<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>        document_vec_l.append(<span class="va">None</span>)</span>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a>        <span class="co">### </span><span class="re">END</span><span class="co"> CODE HERE </span><span class="al">###</span></span>
+<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a>    <span class="co"># convert the list of document vectors into a 2D array (each row is a document vector)</span></span>
+<span id="cb31-34"><a href="#cb31-34" aria-hidden="true" tabindex="-1"></a>    document_vec_matrix <span class="op">=</span> np.vstack(document_vec_l)</span>
+<span id="cb31-35"><a href="#cb31-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-36"><a href="#cb31-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> document_vec_matrix, ind2Doc_dict</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-67" class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>document_vecs, ind2Tweet <span class="op">=</span> get_document_vecs(all_tweets, en_embeddings_subset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-68" class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C15 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="co"># You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"length of dictionary </span><span class="sc">{</span><span class="bu">len</span>(ind2Tweet)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"shape of document_vecs </span><span class="sc">{</span>document_vecs<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="expected-output-1" class="level5">
+<h5 class="anchored" data-anchor-id="expected-output-1">Expected Output</h5>
+<pre><code>length of dictionary 10000
+shape of document_vecs (10000, 300)</code></pre>
+<p><a name="3-2"></a></p>
+</section>
+</section>
+</section>
+<section id="looking-up-the-tweets" class="level2">
+<h2 class="anchored" data-anchor-id="looking-up-the-tweets">3.2 Looking up the tweets</h2>
+<p>Now you have a vector of dimension (m,d) where <code>m</code> is the number of tweets (10,000) and <code>d</code> is the dimension of the embeddings (300). Now you will input a tweet, and use cosine similarity to see which tweet in our corpus is similar to your tweet.</p>
+<div id="cell-71" class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>my_tweet <span class="op">=</span> <span class="st">'i am sad'</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>process_tweet(my_tweet)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>tweet_embedding <span class="op">=</span> get_document_embedding(my_tweet, en_embeddings_subset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-72" class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C16 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="co"># You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co"># this gives you a similar tweet as your input.</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="co"># this implementation is vectorized...</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>idx <span class="op">=</span> np.argmax(cosine_similarity(document_vecs, tweet_embedding))</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(all_tweets[idx])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="expected-output-2" class="level5">
+<h5 class="anchored" data-anchor-id="expected-output-2">Expected Output</h5>
+<pre><code>@zoeeylim sad sad sad kid :( it's ok I help you watch the match HAHAHAHAHA</code></pre>
+<p><a name="3-3"></a></p>
+</section>
+</section>
+<section id="finding-the-most-similar-tweets-with-lsh" class="level2">
+<h2 class="anchored" data-anchor-id="finding-the-most-similar-tweets-with-lsh">3.3 Finding the most similar tweets with LSH</h2>
+<p>You will now implement locality sensitive hashing (LSH) to identify the most similar tweet. * Instead of looking at all 10,000 vectors, you can just search a subset to find its nearest neighbors.</p>
+<p>Let’s say your data points are plotted like this:</p>
+<div style="width:image width px; font-size:100%; text-align:center;">
+<img src="one.png" alt="alternate text" width="width" height="height" style="width:400px;height:200px;"> Figure 3
+</div>
+<p>You can divide the vector space into regions and search within one region for nearest neighbors of a given vector.</p>
+<div style="width:image width px; font-size:100%; text-align:center;">
+<img src="four.png" alt="alternate text" width="width" height="height" style="width:400px;height:200px;"> Figure 4
+</div>
+<div id="cell-75" class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>N_VECS <span class="op">=</span> <span class="bu">len</span>(all_tweets)       <span class="co"># This many vectors.</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>N_DIMS <span class="op">=</span> <span class="bu">len</span>(ind2Tweet[<span class="dv">1</span>])     <span class="co"># Vector dimensionality.</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Number of vectors is </span><span class="sc">{</span>N_VECS<span class="sc">}</span><span class="ss"> and each has </span><span class="sc">{</span>N_DIMS<span class="sc">}</span><span class="ss"> dimensions."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="choosing-the-number-of-planes" class="level4">
+<h4 class="anchored" data-anchor-id="choosing-the-number-of-planes">Choosing the number of planes</h4>
+<ul>
+<li>Each plane divides the space to <span class="math inline">2</span> parts.</li>
+<li>So <span class="math inline">n</span> planes divide the space into <span class="math inline">2^{n}</span> hash buckets.</li>
+<li>We want to organize 10,000 document vectors into buckets so that every bucket has about <span class="math inline">~16</span> vectors.</li>
+<li>For that we need <span class="math inline">\frac{10000}{16}=625</span> buckets.</li>
+<li>We’re interested in <span class="math inline">n</span>, number of planes, so that <span class="math inline">2^{n}= 625</span>. Now, we can calculate <span class="math inline">n=\log_{2}625 = 9.29 \approx 10</span>.</li>
+</ul>
+<div id="cell-77" class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The number of planes. We use log2(625) to have ~16 vectors/bucket.</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>N_PLANES <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of times to repeat the hashing to improve the search.</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>N_UNIVERSES <span class="op">=</span> <span class="dv">25</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><a name="3-4"></a></p>
+</section>
+</section>
+<section id="getting-the-hash-number-for-a-vector" class="level2">
+<h2 class="anchored" data-anchor-id="getting-the-hash-number-for-a-vector">3.4 Getting the hash number for a vector</h2>
+<p>For each vector, we need to get a unique number associated to that vector in order to assign it to a “hash bucket”.</p>
+<section id="hyperlanes-in-vector-spaces" class="level3">
+<h3 class="anchored" data-anchor-id="hyperlanes-in-vector-spaces">Hyperlanes in vector spaces</h3>
+<ul>
+<li>In <span class="math inline">3</span>-dimensional vector space, the hyperplane is a regular plane. In <span class="math inline">2</span> dimensional vector space, the hyperplane is a line.</li>
+<li>Generally, the hyperplane is subspace which has dimension <span class="math inline">1</span> lower than the original vector space has.</li>
+<li>A hyperplane is uniquely defined by its normal vector.</li>
+<li>Normal vector <span class="math inline">n</span> of the plane <span class="math inline">\pi</span> is the vector to which all vectors in the plane <span class="math inline">\pi</span> are orthogonal (perpendicular in <span class="math inline">3</span> dimensional case).</li>
+</ul>
+</section>
+<section id="using-hyperplanes-to-split-the-vector-space" class="level3">
+<h3 class="anchored" data-anchor-id="using-hyperplanes-to-split-the-vector-space">Using Hyperplanes to split the vector space</h3>
+<p>We can use a hyperplane to split the vector space into <span class="math inline">2</span> parts. * All vectors whose dot product with a plane’s normal vector is positive are on one side of the plane. * All vectors whose dot product with the plane’s normal vector is negative are on the other side of the plane.</p>
+</section>
+<section id="encoding-hash-buckets" class="level3">
+<h3 class="anchored" data-anchor-id="encoding-hash-buckets">Encoding hash buckets</h3>
+<ul>
+<li>For a vector, we can take its dot product with all the planes, then encode this information to assign the vector to a single hash bucket.</li>
+<li>When the vector is pointing to the opposite side of the hyperplane than normal, encode it by 0.</li>
+<li>Otherwise, if the vector is on the same side as the normal vector, encode it by 1.</li>
+<li>If you calculate the dot product with each plane in the same order for every vector, you’ve encoded each vector’s unique hash ID as a binary number, like [0, 1, 1, … 0].</li>
+</ul>
+<p><a name="ex-09"></a></p>
+</section>
+<section id="exercise-09-implementing-hash-buckets" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-09-implementing-hash-buckets">Exercise 09: Implementing hash buckets</h3>
+<p>We’ve initialized hash table <code>hashes</code> for you. It is list of <code>N_UNIVERSES</code> matrices, each describes its own hash table. Each matrix has <code>N_DIMS</code> rows and <code>N_PLANES</code> columns. Every column of that matrix is a <code>N_DIMS</code>-dimensional normal vector for each of <code>N_PLANES</code> hyperplanes which are used for creating buckets of the particular hash table.</p>
+<p><em>Exercise</em>: Your task is to complete the function <code>hash_value_of_vector</code> which places vector <code>v</code> in the correct hash bucket.</p>
+<ul>
+<li>First multiply your vector <code>v</code>, with a corresponding plane. This will give you a vector of dimension <span class="math inline">(1,\text{N_planes})</span>.</li>
+<li>You will then convert every element in that vector to 0 or 1.</li>
+<li>You create a hash vector by doing the following: if the element is negative, it becomes a 0, otherwise you change it to a 1.</li>
+<li>You then compute the unique number for the vector by iterating over <code>N_PLANES</code></li>
+<li>Then you multiply <span class="math inline">2^i</span> times the corresponding bit (0 or 1).</li>
+<li>You will then store that sum in the variable <code>hash_value</code>.</li>
+</ul>
+<p><strong>Intructions:</strong> Create a hash for the vector in the function below. Use this formula:</p>
+<p><span class="math display"> hash = \sum_{i=0}^{N-1} \left( 2^{i} \times h_{i} \right) </span></p>
+<section id="create-the-sets-of-planes" class="level4">
+<h4 class="anchored" data-anchor-id="create-the-sets-of-planes">Create the sets of planes</h4>
+<ul>
+<li>Create multiple (25) sets of planes (the planes that divide up the region).</li>
+<li>You can think of these as 25 separate ways of dividing up the vector space with a different set of planes.</li>
+<li>Each element of this list contains a matrix with 300 rows (the word vector have 300 dimensions), and 10 columns (there are 10 planes in each “universe”).</li>
+</ul>
+<div id="cell-81" class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">0</span>)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>planes_l <span class="op">=</span> [np.random.normal(size<span class="op">=</span>(N_DIMS, N_PLANES))</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(N_UNIVERSES)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<details>
+<summary>
+<font size="3" color="darkgreen"><b>Hints</b></font>
+</summary>
+<p>
+</p><ul>
+<li>
+numpy.squeeze() removes unused dimensions from an array; for instance, it converts a (10,1) 2D array into a (10,) 1D array
+</li>
+</ul>
+<p></p>
+<div id="cell-83" class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C17 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> hash_value_of_vector(v, planes):</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Create a hash for a vector; hash_id says which random hash to use.</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Input:</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="co">        - v:  vector of tweet. It's dimension is (1, N_DIMS)</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="co">        - planes: matrix of dimension (N_DIMS, N_PLANES) - the set of planes that divide up the region</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="co">    Output:</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="co">        - res: a number which is used as a hash for your vector</span></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">### START CODE HERE (REPLACE INSTANCES OF 'None' with your code) </span><span class="al">###</span></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># for the set of planes,</span></span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># calculate the dot product between the vector and the matrix containing the planes</span></span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># remember that planes has shape (300, 10)</span></span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The dot product will have the shape (1,10)</span></span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>    dot_product <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># get the sign of the dot product (1,10) shaped vector</span></span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>    sign_of_dot_product <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># set h to be false (eqivalent to 0 when used in operations) if the sign is negative,</span></span>
+<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># and true (equivalent to 1) if the sign is positive (1,10) shaped vector</span></span>
+<span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a>    h <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb41-24"><a href="#cb41-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-25"><a href="#cb41-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># remove extra un-used dimensions (convert this from a 2D to a 1D array)</span></span>
+<span id="cb41-26"><a href="#cb41-26" aria-hidden="true" tabindex="-1"></a>    h <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb41-27"><a href="#cb41-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-28"><a href="#cb41-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># initialize the hash value to 0</span></span>
+<span id="cb41-29"><a href="#cb41-29" aria-hidden="true" tabindex="-1"></a>    hash_value <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb41-30"><a href="#cb41-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-31"><a href="#cb41-31" aria-hidden="true" tabindex="-1"></a>    n_planes <span class="op">=</span> planes.shape[<span class="dv">1</span>]</span>
+<span id="cb41-32"><a href="#cb41-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n_planes):</span>
+<span id="cb41-33"><a href="#cb41-33" aria-hidden="true" tabindex="-1"></a>        <span class="co"># increment the hash value by 2^i * h_i</span></span>
+<span id="cb41-34"><a href="#cb41-34" aria-hidden="true" tabindex="-1"></a>        hash_value <span class="op">+=</span> <span class="va">None</span></span>
+<span id="cb41-35"><a href="#cb41-35" aria-hidden="true" tabindex="-1"></a>    <span class="co">### </span><span class="re">END</span><span class="co"> CODE HERE </span><span class="al">###</span></span>
+<span id="cb41-36"><a href="#cb41-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-37"><a href="#cb41-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># cast hash_value as an integer</span></span>
+<span id="cb41-38"><a href="#cb41-38" aria-hidden="true" tabindex="-1"></a>    hash_value <span class="op">=</span> <span class="bu">int</span>(hash_value)</span>
+<span id="cb41-39"><a href="#cb41-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-40"><a href="#cb41-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> hash_value</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-84" class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C18 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="co"># You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">0</span>)</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>idx <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>planes <span class="op">=</span> planes_l[idx]  <span class="co"># get one 'universe' of planes to test the function</span></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>vec <span class="op">=</span> np.random.rand(<span class="dv">1</span>, <span class="dv">300</span>)</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f" The hash value for this vector,"</span>,</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"and the set of planes at index </span><span class="sc">{</span>idx<span class="sc">}</span><span class="ss">,"</span>,</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"is </span><span class="sc">{</span>hash_value_of_vector(vec, planes)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="expected-output-3" class="level5">
+<h5 class="anchored" data-anchor-id="expected-output-3">Expected Output</h5>
+<pre><code>The hash value for this vector, and the set of planes at index 0, is 768</code></pre>
+<p><a name="3-5"></a></p>
+</section>
+</details></section>
+</section>
+</section>
+<section id="creating-a-hash-table" class="level2">
+<h2 class="anchored" data-anchor-id="creating-a-hash-table">3.5 Creating a hash table</h2>
+<p><a name="ex-10"></a></p>
+<section id="exercise-10" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-10">Exercise 10</h3>
+<p>Given that you have a unique number for each vector (or tweet), You now want to create a hash table. You need a hash table, so that given a hash_id, you can quickly look up the corresponding vectors. This allows you to reduce your search by a significant amount of time.</p>
+<div style="width:image width px; font-size:100%; text-align:center;">
+<img src="table.png" alt="alternate text" width="width" height="height" style="width:500px;height:200px;">
+</div>
+<p>We have given you the <code>make_hash_table</code> function, which maps the tweet vectors to a bucket and stores the vector there. It returns the <code>hash_table</code> and the <code>id_table</code>. The <code>id_table</code> allows you know which vector in a certain bucket corresponds to what tweet.</p>
+<details>
+<summary>
+<font size="3" color="darkgreen"><b>Hints</b></font>
+</summary>
+<p>
+</p><ul>
+<li>
+a dictionary comprehension, similar to a list comprehension, looks like this: <code>{i:0 for i in range(10)}</code>, where the key is ‘i’ and the value is zero for all key-value pairs.
+</li>
+</ul>
+<p></p>
+<div id="cell-88" class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C19 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This is the code used to create a hash table: feel free to read over it</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> make_hash_table(vecs, planes):</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Input:</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="co">        - vecs: list of vectors to be hashed.</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a><span class="co">        - planes: the matrix of planes in a single "universe", with shape (embedding dimensions, number of planes).</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a><span class="co">    Output:</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a><span class="co">        - hash_table: dictionary - keys are hashes, values are lists of vectors (hash buckets)</span></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a><span class="co">        - id_table: dictionary - keys are hashes, values are list of vectors id's</span></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a><span class="co">                            (it's used to know which tweet corresponds to the hashed vector)</span></span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">### START CODE HERE (REPLACE INSTANCES OF 'None' with your code) </span><span class="al">###</span></span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># number of planes is the number of columns in the planes matrix</span></span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>    num_of_planes <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># number of buckets is 2^(number of planes)</span></span>
+<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a>    num_buckets <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># create the hash table as a dictionary.</span></span>
+<span id="cb44-22"><a href="#cb44-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Keys are integers (0,1,2.. number of buckets)</span></span>
+<span id="cb44-23"><a href="#cb44-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Values are empty lists</span></span>
+<span id="cb44-24"><a href="#cb44-24" aria-hidden="true" tabindex="-1"></a>    hash_table <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb44-25"><a href="#cb44-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-26"><a href="#cb44-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># create the id table as a dictionary.</span></span>
+<span id="cb44-27"><a href="#cb44-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Keys are integers (0,1,2... number of buckets)</span></span>
+<span id="cb44-28"><a href="#cb44-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Values are empty lists</span></span>
+<span id="cb44-29"><a href="#cb44-29" aria-hidden="true" tabindex="-1"></a>    id_table <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb44-30"><a href="#cb44-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-31"><a href="#cb44-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># for each vector in 'vecs'</span></span>
+<span id="cb44-32"><a href="#cb44-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, v <span class="kw">in</span> <span class="bu">enumerate</span>(vecs):</span>
+<span id="cb44-33"><a href="#cb44-33" aria-hidden="true" tabindex="-1"></a>        <span class="co"># calculate the hash value for the vector</span></span>
+<span id="cb44-34"><a href="#cb44-34" aria-hidden="true" tabindex="-1"></a>        h <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb44-35"><a href="#cb44-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-36"><a href="#cb44-36" aria-hidden="true" tabindex="-1"></a>        <span class="co"># store the vector into hash_table at key h,</span></span>
+<span id="cb44-37"><a href="#cb44-37" aria-hidden="true" tabindex="-1"></a>        <span class="co"># by appending the vector v to the list at key h</span></span>
+<span id="cb44-38"><a href="#cb44-38" aria-hidden="true" tabindex="-1"></a>        <span class="va">None</span></span>
+<span id="cb44-39"><a href="#cb44-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-40"><a href="#cb44-40" aria-hidden="true" tabindex="-1"></a>        <span class="co"># store the vector's index 'i' (each document is given a unique integer 0,1,2...)</span></span>
+<span id="cb44-41"><a href="#cb44-41" aria-hidden="true" tabindex="-1"></a>        <span class="co"># the key is the h, and the 'i' is appended to the list at key h</span></span>
+<span id="cb44-42"><a href="#cb44-42" aria-hidden="true" tabindex="-1"></a>        <span class="va">None</span></span>
+<span id="cb44-43"><a href="#cb44-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-44"><a href="#cb44-44" aria-hidden="true" tabindex="-1"></a>    <span class="co">### </span><span class="re">END</span><span class="co"> CODE HERE </span><span class="al">###</span></span>
+<span id="cb44-45"><a href="#cb44-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-46"><a href="#cb44-46" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> hash_table, id_table</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-89" class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C20 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="co"># You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">0</span>)</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>planes <span class="op">=</span> planes_l[<span class="dv">0</span>]  <span class="co"># get one 'universe' of planes to test the function</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>vec <span class="op">=</span> np.random.rand(<span class="dv">1</span>, <span class="dv">300</span>)</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>tmp_hash_table, tmp_id_table <span class="op">=</span> make_hash_table(document_vecs, planes)</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The hash table at key 0 has </span><span class="sc">{</span><span class="bu">len</span>(tmp_hash_table[<span class="dv">0</span>])<span class="sc">}</span><span class="ss"> document vectors"</span>)</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The id table at key 0 has </span><span class="sc">{</span><span class="bu">len</span>(tmp_id_table[<span class="dv">0</span>])<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The first 5 document indices stored at key 0 of are </span><span class="sc">{</span>tmp_id_table[<span class="dv">0</span>][<span class="dv">0</span>:<span class="dv">5</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="expected-output-4" class="level5">
+<h5 class="anchored" data-anchor-id="expected-output-4">Expected output</h5>
+<pre><code>The hash table at key 0 has 3 document vectors
+The id table at key 0 has 3
+The first 5 document indices stored at key 0 of are [3276, 3281, 3282]</code></pre>
+<p><a name="3-6"></a></p>
+</section>
+</details></section>
+<section id="creating-all-hash-tables" class="level3">
+<h3 class="anchored" data-anchor-id="creating-all-hash-tables">3.6 Creating all hash tables</h3>
+<p>You can now hash your vectors and store them in a hash table that would allow you to quickly look up and search for similar vectors. Run the cell below to create the hashes. By doing so, you end up having several tables which have all the vectors. Given a vector, you then identify the buckets in all the tables. You can then iterate over the buckets and consider much fewer vectors. The more buckets you use, the more accurate your lookup will be, but also the longer it will take.</p>
+<div id="cell-92" class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating the hashtables</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>hash_tables <span class="op">=</span> []</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>id_tables <span class="op">=</span> []</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> universe_id <span class="kw">in</span> <span class="bu">range</span>(N_UNIVERSES):  <span class="co"># there are 25 hashes</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">'working on hash universe #:'</span>, universe_id)</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>    planes <span class="op">=</span> planes_l[universe_id]</span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>    hash_table, id_table <span class="op">=</span> make_hash_table(document_vecs, planes)</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>    hash_tables.append(hash_table)</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>    id_tables.append(id_table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="approximate-k-nn" class="level3">
+<h3 class="anchored" data-anchor-id="approximate-k-nn">Approximate K-NN</h3>
+<p><a name="ex-11"></a></p>
+</section>
+<section id="exercise-11" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-11">Exercise 11</h3>
+<p>Implement approximate K nearest neighbors using locality sensitive hashing, to search for documents that are similar to a given document at the index <code>doc_id</code>.</p>
+<section id="inputs" class="level5">
+<h5 class="anchored" data-anchor-id="inputs">Inputs</h5>
+<ul>
+<li><code>doc_id</code> is the index into the document list <code>all_tweets</code>.</li>
+<li><code>v</code> is the document vector for the tweet in <code>all_tweets</code> at index <code>doc_id</code>.</li>
+<li><code>planes_l</code> is the list of planes (the global variable created earlier).</li>
+<li><code>k</code> is the number of nearest neighbors to search for.</li>
+<li><code>num_universes_to_use</code>: to save time, we can use fewer than the total number of available universes. By default, it’s set to <code>N_UNIVERSES</code>, which is <span class="math inline">25</span> for this assignment.</li>
+</ul>
+<p>The <code>approximate_knn</code> function finds a subset of candidate vectors that are in the same “hash bucket” as the input vector ‘v’. Then it performs the usual k-nearest neighbors search on this subset (instead of searching through all 10,000 tweets).</p>
+<details>
+<summary>
+<font size="3" color="darkgreen"><b>Hints</b></font>
+</summary>
+<p>
+</p><ul>
+<li>
+There are many dictionaries used in this function. Try to print out planes_l, hash_tables, id_tables to understand how they are structured, what the keys represent, and what the values contain.
+</li>
+<li>
+To remove an item from a list, use <code>.remove()</code>
+</li>
+<li>
+To append to a list, use <code>.append()</code>
+</li>
+<li>
+To add to a set, use <code>.add()</code>
+</li>
+</ul>
+<p></p>
+<div id="cell-95" class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C21 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="co"># This is the code used to do the fast nearest neighbor search. Feel free to go over it</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> approximate_knn(doc_id, v, planes_l, k<span class="op">=</span><span class="dv">1</span>, num_universes_to_use<span class="op">=</span>N_UNIVERSES):</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Search for k-NN using hashes."""</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> num_universes_to_use <span class="op">&lt;=</span> N_UNIVERSES</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Vectors that will be checked as possible nearest neighbor</span></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>    vecs_to_consider_l <span class="op">=</span> <span class="bu">list</span>()</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># list of document IDs</span></span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>    ids_to_consider_l <span class="op">=</span> <span class="bu">list</span>()</span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># create a set for ids to consider, for faster checking if a document ID already exists in the set</span></span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a>    ids_to_consider_set <span class="op">=</span> <span class="bu">set</span>()</span>
+<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># loop through the universes of planes</span></span>
+<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> universe_id <span class="kw">in</span> <span class="bu">range</span>(num_universes_to_use):</span>
+<span id="cb48-18"><a href="#cb48-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-19"><a href="#cb48-19" aria-hidden="true" tabindex="-1"></a>        <span class="co"># get the set of planes from the planes_l list, for this particular universe_id</span></span>
+<span id="cb48-20"><a href="#cb48-20" aria-hidden="true" tabindex="-1"></a>        planes <span class="op">=</span> planes_l[universe_id]</span>
+<span id="cb48-21"><a href="#cb48-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-22"><a href="#cb48-22" aria-hidden="true" tabindex="-1"></a>        <span class="co"># get the hash value of the vector for this set of planes</span></span>
+<span id="cb48-23"><a href="#cb48-23" aria-hidden="true" tabindex="-1"></a>        hash_value <span class="op">=</span> hash_value_of_vector(v, planes)</span>
+<span id="cb48-24"><a href="#cb48-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-25"><a href="#cb48-25" aria-hidden="true" tabindex="-1"></a>        <span class="co"># get the hash table for this particular universe_id</span></span>
+<span id="cb48-26"><a href="#cb48-26" aria-hidden="true" tabindex="-1"></a>        hash_table <span class="op">=</span> hash_tables[universe_id]</span>
+<span id="cb48-27"><a href="#cb48-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-28"><a href="#cb48-28" aria-hidden="true" tabindex="-1"></a>        <span class="co"># get the list of document vectors for this hash table, where the key is the hash_value</span></span>
+<span id="cb48-29"><a href="#cb48-29" aria-hidden="true" tabindex="-1"></a>        document_vectors_l <span class="op">=</span> hash_table[hash_value]</span>
+<span id="cb48-30"><a href="#cb48-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-31"><a href="#cb48-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># get the id_table for this particular universe_id</span></span>
+<span id="cb48-32"><a href="#cb48-32" aria-hidden="true" tabindex="-1"></a>        id_table <span class="op">=</span> id_tables[universe_id]</span>
+<span id="cb48-33"><a href="#cb48-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-34"><a href="#cb48-34" aria-hidden="true" tabindex="-1"></a>        <span class="co"># get the subset of documents to consider as nearest neighbors from this id_table dictionary</span></span>
+<span id="cb48-35"><a href="#cb48-35" aria-hidden="true" tabindex="-1"></a>        new_ids_to_consider <span class="op">=</span> id_table[hash_value]</span>
+<span id="cb48-36"><a href="#cb48-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-37"><a href="#cb48-37" aria-hidden="true" tabindex="-1"></a>        <span class="co">### START CODE HERE (REPLACE INSTANCES OF 'None' with your code) </span><span class="al">###</span></span>
+<span id="cb48-38"><a href="#cb48-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-39"><a href="#cb48-39" aria-hidden="true" tabindex="-1"></a>        <span class="co"># remove the id of the document that we're searching</span></span>
+<span id="cb48-40"><a href="#cb48-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> doc_id <span class="kw">in</span> new_ids_to_consider:</span>
+<span id="cb48-41"><a href="#cb48-41" aria-hidden="true" tabindex="-1"></a>            <span class="va">None</span></span>
+<span id="cb48-42"><a href="#cb48-42" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f"removed doc_id </span><span class="sc">{</span>doc_id<span class="sc">}</span><span class="ss"> of input vector from new_ids_to_search"</span>)</span>
+<span id="cb48-43"><a href="#cb48-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-44"><a href="#cb48-44" aria-hidden="true" tabindex="-1"></a>        <span class="co"># loop through the subset of document vectors to consider</span></span>
+<span id="cb48-45"><a href="#cb48-45" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i, new_id <span class="kw">in</span> <span class="bu">enumerate</span>(new_ids_to_consider):</span>
+<span id="cb48-46"><a href="#cb48-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-47"><a href="#cb48-47" aria-hidden="true" tabindex="-1"></a>            <span class="co"># if the document ID is not yet in the set ids_to_consider...</span></span>
+<span id="cb48-48"><a href="#cb48-48" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> new_id <span class="kw">not</span> <span class="kw">in</span> ids_to_consider_set:</span>
+<span id="cb48-49"><a href="#cb48-49" aria-hidden="true" tabindex="-1"></a>                <span class="co"># access document_vectors_l list at index i to get the embedding</span></span>
+<span id="cb48-50"><a href="#cb48-50" aria-hidden="true" tabindex="-1"></a>                <span class="co"># then append it to the list of vectors to consider as possible nearest neighbors</span></span>
+<span id="cb48-51"><a href="#cb48-51" aria-hidden="true" tabindex="-1"></a>                document_vector_at_i <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb48-52"><a href="#cb48-52" aria-hidden="true" tabindex="-1"></a>                <span class="va">None</span></span>
+<span id="cb48-53"><a href="#cb48-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-54"><a href="#cb48-54" aria-hidden="true" tabindex="-1"></a>                <span class="co"># append the new_id (the index for the document) to the list of ids to consider</span></span>
+<span id="cb48-55"><a href="#cb48-55" aria-hidden="true" tabindex="-1"></a>                <span class="va">None</span></span>
+<span id="cb48-56"><a href="#cb48-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-57"><a href="#cb48-57" aria-hidden="true" tabindex="-1"></a>                <span class="co"># also add the new_id to the set of ids to consider</span></span>
+<span id="cb48-58"><a href="#cb48-58" aria-hidden="true" tabindex="-1"></a>                <span class="co"># (use this to check if new_id is not already in the IDs to consider)</span></span>
+<span id="cb48-59"><a href="#cb48-59" aria-hidden="true" tabindex="-1"></a>                <span class="va">None</span></span>
+<span id="cb48-60"><a href="#cb48-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-61"><a href="#cb48-61" aria-hidden="true" tabindex="-1"></a>        <span class="co">### </span><span class="re">END</span><span class="co"> CODE HERE </span><span class="al">###</span></span>
+<span id="cb48-62"><a href="#cb48-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-63"><a href="#cb48-63" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Now run k-NN on the smaller set of vecs-to-consider.</span></span>
+<span id="cb48-64"><a href="#cb48-64" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Fast considering </span><span class="sc">%d</span><span class="st"> vecs"</span> <span class="op">%</span> <span class="bu">len</span>(vecs_to_consider_l))</span>
+<span id="cb48-65"><a href="#cb48-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-66"><a href="#cb48-66" aria-hidden="true" tabindex="-1"></a>    <span class="co"># convert the vecs to consider set to a list, then to a numpy array</span></span>
+<span id="cb48-67"><a href="#cb48-67" aria-hidden="true" tabindex="-1"></a>    vecs_to_consider_arr <span class="op">=</span> np.array(vecs_to_consider_l)</span>
+<span id="cb48-68"><a href="#cb48-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-69"><a href="#cb48-69" aria-hidden="true" tabindex="-1"></a>    <span class="co"># call nearest neighbors on the reduced list of candidate vectors</span></span>
+<span id="cb48-70"><a href="#cb48-70" aria-hidden="true" tabindex="-1"></a>    nearest_neighbor_idx_l <span class="op">=</span> nearest_neighbor(v, vecs_to_consider_arr, k<span class="op">=</span>k)</span>
+<span id="cb48-71"><a href="#cb48-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-72"><a href="#cb48-72" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Use the nearest neighbor index list as indices into the ids to consider</span></span>
+<span id="cb48-73"><a href="#cb48-73" aria-hidden="true" tabindex="-1"></a>    <span class="co"># create a list of nearest neighbors by the document ids</span></span>
+<span id="cb48-74"><a href="#cb48-74" aria-hidden="true" tabindex="-1"></a>    nearest_neighbor_ids <span class="op">=</span> [ids_to_consider_l[idx]</span>
+<span id="cb48-75"><a href="#cb48-75" aria-hidden="true" tabindex="-1"></a>                            <span class="cf">for</span> idx <span class="kw">in</span> nearest_neighbor_idx_l]</span>
+<span id="cb48-76"><a href="#cb48-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-77"><a href="#cb48-77" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> nearest_neighbor_ids</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-96" class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co">#document_vecs, ind2Tweet</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>doc_id <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>doc_to_search <span class="op">=</span> all_tweets[doc_id]</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>vec_to_search <span class="op">=</span> document_vecs[doc_id]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-97" class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C22 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="co"># You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Sample</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>nearest_neighbor_ids <span class="op">=</span> approximate_knn(</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>    doc_id, vec_to_search, planes_l, k<span class="op">=</span><span class="dv">3</span>, num_universes_to_use<span class="op">=</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-98" class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Nearest neighbors for document </span><span class="sc">{</span>doc_id<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Document contents: </span><span class="sc">{</span>doc_to_search<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">""</span>)</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> neighbor_id <span class="kw">in</span> nearest_neighbor_ids:</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Nearest neighbor at document id </span><span class="sc">{</span>neighbor_id<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"document contents: </span><span class="sc">{</span>all_tweets[neighbor_id]<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</details></section>
+</section>
+</section>
+</section>
+<section id="conclusion" class="level1">
+<h1>4 Conclusion</h1>
+<p>Congratulations - Now you can look up vectors that are similar to the encoding of your tweet using LSH!</p>
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{2025,
+  author = {},
+  title = {Assignment 4 - {Naive} {Machine} {Translation} and {LSH}},
+  date = {2025-01-29},
+  url = {https://orenbochman.github.io/notes-nlp/posts/c1w4/C1_W4_Assignment.html},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-2025" class="csl-entry quarto-appendix-citeas" role="listitem">
+<span>“Assignment 4 - Naive Machine Translation and LSH.”</span> 2025.
+January 29, 2025. <a href="https://orenbochman.github.io/notes-nlp/posts/c1w4/C1_W4_Assignment.html">https://orenbochman.github.io/notes-nlp/posts/c1w4/C1_W4_Assignment.html</a>.
+</div></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("^(?:http:|https:)\/\/www\.quarto\.org\/custom");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+          // default icon
+          link.classList.add("external");
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© Copyright 2023-2025, Oren Bochman</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.dev/OrenBochman/notes-nlp/blob/main/posts/c1w4/C1_W4_Assignment.ipynb" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This page is built with 💛 and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

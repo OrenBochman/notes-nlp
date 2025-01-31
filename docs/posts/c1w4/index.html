@@ -6,10 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2020-10-23">
 <meta name="description" content="Concepts, code snippets, and slide commentaries for this week’s lesson of the Course notes from the deeplearning.ai natural language programming specialization.">
 
-<title>Machine Translation and Document Search</title>
+<title>Machine Translation and Document Search – NLP Specialization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -56,7 +55,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -71,10 +90,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-eefa51cfd4367a2c2ab6a47af1b603aa.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -157,6 +181,11 @@ window.Quarto = {
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">NLP Specialization</span>
+    </a>
+  </div>
             <div id="quarto-search" class="" title="Search"></div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
@@ -195,6 +224,7 @@ window.Quarto = {
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -224,15 +254,9 @@ window.Quarto = {
                 <div class="quarto-category">NLP</div>
                 <div class="quarto-category">Coursera</div>
                 <div class="quarto-category">notes</div>
-                <div class="quarto-category">deeplearning.ai</div>
-                <div class="quarto-category">course notes</div>
                 <div class="quarto-category">Word Embeddings</div>
-                <div class="quarto-category">PCS</div>
-                <div class="quarto-category">Laplace smoothing</div>
-                <div class="quarto-category">Log-likelihood</div>
-                <div class="quarto-category">classification</div>
-                <div class="quarto-category">sentiment analysis task</div>
-                <div class="quarto-category">Classification &amp; Vector Spaces</div>
+                <div class="quarto-category">Translation task</div>
+                <div class="quarto-category">Search Task</div>
               </div>
                   </div>
   </div>
@@ -244,7 +268,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">October 23, 2020</p>
+        <p class="date">Friday, October 23, 2020</p>
       </div>
     </div>
     
@@ -439,15 +463,10 @@ window.Quarto = {
   <li><a href="#locality-sensitive-hashing" id="toc-locality-sensitive-hashing" class="nav-link" data-scroll-target="#locality-sensitive-hashing">Locality sensitive hashing</a></li>
   <li><a href="#multiple-planes" id="toc-multiple-planes" class="nav-link" data-scroll-target="#multiple-planes">Multiple Planes</a></li>
   <li><a href="#ungraded-lab-hash-tables" id="toc-ungraded-lab-hash-tables" class="nav-link" data-scroll-target="#ungraded-lab-hash-tables">Ungraded Lab: Hash tables</a></li>
-  <li><a href="#video-approximate-nearest-neighbors" id="toc-video-approximate-nearest-neighbors" class="nav-link" data-scroll-target="#video-approximate-nearest-neighbors">Video: Approximate nearest neighbors</a></li>
-  <li><a href="#app-item-join-us-on-discourse" id="toc-app-item-join-us-on-discourse" class="nav-link" data-scroll-target="#app-item-join-us-on-discourse">App Item: Join us on Discourse!</a></li>
   <li><a href="#reading-approximate-nearest-neighbors" id="toc-reading-approximate-nearest-neighbors" class="nav-link" data-scroll-target="#reading-approximate-nearest-neighbors">Reading: Approximate nearest neighbors</a></li>
-  <li><a href="#video-searching-documents" id="toc-video-searching-documents" class="nav-link" data-scroll-target="#video-searching-documents">Video: Searching documents</a></li>
-  <li><a href="#reading-searching-documents" id="toc-reading-searching-documents" class="nav-link" data-scroll-target="#reading-searching-documents">Reading: Searching documents</a></li>
+  <li><a href="#searching-documents" id="toc-searching-documents" class="nav-link" data-scroll-target="#searching-documents">Searching documents</a></li>
   <li><a href="#video-andrew-ng-with-kathleen-mckeown" id="toc-video-andrew-ng-with-kathleen-mckeown" class="nav-link" data-scroll-target="#video-andrew-ng-with-kathleen-mckeown">Video: Andrew Ng with Kathleen McKeown</a></li>
-  <li><a href="#reading-acknowledgements" id="toc-reading-acknowledgements" class="nav-link" data-scroll-target="#reading-acknowledgements">Reading: Acknowledgements</a></li>
   <li><a href="#reading-bibliography" id="toc-reading-bibliography" class="nav-link" data-scroll-target="#reading-bibliography">Reading: Bibliography</a></li>
-  <li><a href="#slides" id="toc-slides" class="nav-link" data-scroll-target="#slides">Slides:</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c1w4/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -458,8 +477,18 @@ window.Quarto = {
 
 
 
-<div class="page-columns page-full"><p></p><div class="no-row-height column-margin column-container"><img src="img/course-banner.jpg" class="img-fluid"></div></div>
-<section id="video-overview" class="level3 page-columns page-full">
+<p class="page-columns page-full"><a href="img/course-banner.jpg" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-1"><div class="no-row-height column-margin column-container"><img src="img/course-banner.jpg" class="img-fluid"></div></a></p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-slide-00" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="slides.pdf" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;1: Using Vector Space Models for Translation and Search"><embed src="slides.pdf" class="img-fluid"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Using Vector Space Models for Translation and Search
+</figcaption>
+</figure>
+</div></div><section id="video-overview" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="video-overview">Video: Overview</h3>
 <p>This week we will be looking at machine translation and document search. We will start by looking at how we can represent words in a vector space. We will then look at how we can use these vectors to translate words from one language to another. We will also look at how we can use these vectors to search for documents that are similar to a given document.</p>
 
@@ -468,13 +497,13 @@ window.Quarto = {
 <div aria-describedby="fig-slide-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide01.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide01.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="translation and search"><img src="img/slide01.png" class="img-fluid figure-img"></a></p>
 <figcaption>translation and search</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Using Vector Space Models for Translation and Search
+Figure&nbsp;2: Using Vector Space Models for Translation and Search
 </figcaption>
 </figure>
 </div><div id="fig-slide-02" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -482,13 +511,13 @@ Figure&nbsp;1: Using Vector Space Models for Translation and Search
 <div aria-describedby="fig-slide-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide02.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide02.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Objectives"><img src="img/slide02.png" class="img-fluid figure-img"></a></p>
 <figcaption>Objectives</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: Learning Objectives
+Figure&nbsp;3: Learning Objectives
 </figcaption>
 </figure>
 </div></div>
@@ -527,13 +556,13 @@ Learning Objectives
 <div aria-describedby="fig-slide-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide03.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide03.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Caption"><img src="img/slide03.png" class="img-fluid figure-img"></a></p>
 <figcaption>Caption</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3: Figure Text
+Figure&nbsp;4: Figure Text
 </figcaption>
 </figure>
 </div></div><p>Note that the word “chat” in french means cat. You can learn that by taking the vector corresponding to “cat” in english, multiplying it by a matrix that you learn and then you can use cosine similarity between the output and all the french vectors. You should see that the closest result is the vector which corresponds to “chat”.</p>
@@ -550,13 +579,13 @@ Figure&nbsp;3: Figure Text
 <div aria-describedby="fig-slide-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide04.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide04.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Caption"><img src="img/slide04.png" class="img-fluid figure-img"></a></p>
 <figcaption>Caption</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4: Figure Text
+Figure&nbsp;5: Figure Text
 </figcaption>
 </figure>
 </div></div><p>Steps required to learn <span class="math inline">R</span>:</p>
@@ -579,13 +608,13 @@ R = R−\alpha ∗ g
 <div aria-describedby="fig-slide-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide05.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide05.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Caption"><img src="img/slide05.png" class="img-fluid figure-img"></a></p>
 <figcaption>Caption</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5: Figure Text
+Figure&nbsp;6: Figure Text
 </figcaption>
 </figure>
 </div></div><p>Here is an worked out example to show you how the Frobenius norm works.</p>
@@ -595,13 +624,13 @@ Figure&nbsp;5: Figure Text
 <div aria-describedby="fig-slide-06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide06.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide06.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Caption"><img src="img/slide06.png" class="img-fluid figure-img"></a></p>
 <figcaption>Caption</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6: Figure Text
+Figure&nbsp;7: Figure Text
 </figcaption>
 </figure>
 </div></div><p><span class="math display">
@@ -615,7 +644,7 @@ A = \begin{bmatrix} 2 &amp; 2 \\ 2 &amp; 2 \end{bmatrix}
 </span></p>
 <p><span class="math display">
 ∥A∥_F ≡ \sum _{i=1}^m\sum _{j=1}^n |a_{ij}|^2
-</span> ​</p>
+</span></p>
 <p>In summary you are making use of the following:</p>
 <ul>
 <li><span class="math inline">XR≈Y</span></li>
@@ -627,13 +656,13 @@ A = \begin{bmatrix} 2 &amp; 2 \\ 2 &amp; 2 \end{bmatrix}
 <div aria-describedby="fig-slide-07-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide08.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide08.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Caption"><img src="img/slide08.png" class="img-fluid figure-img"></a></p>
 <figcaption>Caption</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-07-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7: Figure Text
+Figure&nbsp;8: Figure Text
 </figcaption>
 </figure>
 </div><div id="fig-slide-09" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -641,13 +670,13 @@ Figure&nbsp;7: Figure Text
 <div aria-describedby="fig-slide-09-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide09.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide09.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="Caption"><img src="img/slide09.png" class="img-fluid figure-img"></a></p>
 <figcaption>Caption</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-09-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8: Figure Text
+Figure&nbsp;9: Figure Text
 </figcaption>
 </figure>
 </div><div id="fig-slide-10" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -655,21 +684,22 @@ Figure&nbsp;8: Figure Text
 <div aria-describedby="fig-slide-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide10.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide10.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="Caption"><img src="img/slide10.png" class="img-fluid figure-img"></a></p>
 <figcaption>Caption</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9: Figure Text
+Figure&nbsp;10: Figure Text
 </figcaption>
 </figure>
 </div></div>
 
+<div style="page-break-after: always;"></div>
 </section>
 <section id="ungraded-lab-rotation-matrices-in-r2" class="level3">
 <h3 class="anchored" data-anchor-id="ungraded-lab-rotation-matrices-in-r2">Ungraded Lab: Rotation matrices in R2</h3>
-<p><a href="">Rotation matrices in R2</a></p>
+<p><a href="../../posts/c1w4/nb_01.html">Rotation matrices in R<sup>2</sup></a></p>
 </section>
 <section id="video-k-nearest-neighbors" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="video-k-nearest-neighbors">Video: K-nearest neighbors</h3>
@@ -681,13 +711,13 @@ Figure&nbsp;9: Figure Text
 <div aria-describedby="fig-slide-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide11.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide11.png" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="Caption"><img src="img/slide11.png" class="img-fluid figure-img"></a></p>
 <figcaption>Caption</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;10: Finding Translation
+Figure&nbsp;11: Finding Translation
 </figcaption>
 </figure>
 </div></div><p>In the video, we mentioned if you were in San Francisco, and you had friends all over the world, you would want to find the nearest neighbors. To do that it might be expensive to go over all the countries one at a time. So we will introduce hashing to show you how you can do a look up much faster.</p>
@@ -697,13 +727,13 @@ Figure&nbsp;10: Finding Translation
 <div aria-describedby="fig-slide-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide12.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide12.png" class="lightbox" data-gallery="quarto-lightbox-gallery-13" title="Caption"><img src="img/slide12.png" class="img-fluid figure-img"></a></p>
 <figcaption>Caption</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;11: KNN
+Figure&nbsp;12: KNN
 </figcaption>
 </figure>
 </div><div id="fig-slide-13" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -711,13 +741,13 @@ Figure&nbsp;11: KNN
 <div aria-describedby="fig-slide-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide13.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide13.png" class="lightbox" data-gallery="quarto-lightbox-gallery-14" title="Caption"><img src="img/slide13.png" class="img-fluid figure-img"></a></p>
 <figcaption>Caption</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;12: KNN
+Figure&nbsp;13: KNN
 </figcaption>
 </figure>
 </div><div id="fig-slide-14" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -725,13 +755,13 @@ Figure&nbsp;12: KNN
 <div aria-describedby="fig-slide-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide14.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide14.png" class="lightbox" data-gallery="quarto-lightbox-gallery-15" title="Caption"><img src="img/slide14.png" class="img-fluid figure-img"></a></p>
 <figcaption>Caption</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;13: KNN
+Figure&nbsp;14: KNN
 </figcaption>
 </figure>
 </div></div>
@@ -746,13 +776,13 @@ Figure&nbsp;13: KNN
 <div aria-describedby="fig-slide-15-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide15.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide15.png" class="lightbox" data-gallery="quarto-lightbox-gallery-16" title="Hashing"><img src="img/slide15.png" class="img-fluid figure-img"></a></p>
 <figcaption>Hashing</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-15-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;14: Hashing
+Figure&nbsp;15: Hashing
 </figcaption>
 </figure>
 </div></div><p>Note that the figures blue, red, and gray ones would each be clustered with each other</p>
@@ -762,13 +792,13 @@ Figure&nbsp;14: Hashing
 <div aria-describedby="fig-slide-16-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide16.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide16.png" class="lightbox" data-gallery="quarto-lightbox-gallery-17" title="Hash Tables"><img src="img/slide16.png" class="img-fluid figure-img"></a></p>
 <figcaption>Hash Tables</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-16-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;15: Hashing
+Figure&nbsp;16: Hashing
 </figcaption>
 </figure>
 </div></div><p>You can think of hash function as a function that takes data of arbitrary sizes and maps it to a fixed value. The values returned are known as hash values or even hashes.</p>
@@ -778,13 +808,13 @@ Figure&nbsp;15: Hashing
 <div aria-describedby="fig-slide-17-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide17.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide17.png" class="lightbox" data-gallery="quarto-lightbox-gallery-18" title="Hash Tables"><img src="img/slide17.png" class="img-fluid figure-img"></a></p>
 <figcaption>Hash Tables</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-17-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;16: Hashing
+Figure&nbsp;17: Hashing
 </figcaption>
 </figure>
 </div></div><p>The diagram above shows a concrete example of a hash function which takes a vector and returns a value. Then you can mod that value by the number of buckets and put that number in its corresponding bucket. For example, 14 is in the 4th bucker, 17 &amp; 97 are in the 7th bucket. Let’s take a look at how you can do it using some code.</p>
@@ -794,13 +824,13 @@ Figure&nbsp;16: Hashing
 <div aria-describedby="fig-slide-18-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide18.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide18.png" class="lightbox" data-gallery="quarto-lightbox-gallery-19" title="Hash Tables"><img src="img/slide18.png" class="img-fluid figure-img"></a></p>
 <figcaption>Hash Tables</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-18-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;17: Hashing
+Figure&nbsp;18: Hashing
 </figcaption>
 </figure>
 </div></div><p>The code snippet above creates a basic hash table which consists of hashed values inside their buckets. hash_function takes in value_l (a list of values to be hashed) and n_buckets and mods the value by the buckets. Now to create the hash_table, you first initialize a list to be of dimension n_buckets (each value will go to a bucket). For each value in your list of values, you will feed it into your hash_function, get the hash_value, and append it to the list of values in the corresponding bucket.</p>
@@ -812,13 +842,13 @@ Figure&nbsp;17: Hashing
 <div aria-describedby="fig-slide-19-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide19.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide19.png" class="lightbox" data-gallery="quarto-lightbox-gallery-20" title="Hash Tables"><img src="img/slide19.png" class="img-fluid figure-img"></a></p>
 <figcaption>Hash Tables</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-19-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;18: Hashing
+Figure&nbsp;19: Hashing
 </figcaption>
 </figure>
 </div><div id="fig-slide-20" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -826,13 +856,13 @@ Figure&nbsp;18: Hashing
 <div aria-describedby="fig-slide-20-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide20.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide20.png" class="lightbox" data-gallery="quarto-lightbox-gallery-21" title="Hash Tables"><img src="img/slide20.png" class="img-fluid figure-img"></a></p>
 <figcaption>Hash Tables</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-20-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;19: Hashing
+Figure&nbsp;20: Hashing
 </figcaption>
 </figure>
 </div></div>
@@ -846,13 +876,13 @@ Figure&nbsp;19: Hashing
 <div aria-describedby="fig-slide-21-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide21.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide21.png" class="lightbox" data-gallery="quarto-lightbox-gallery-22" title="Hash Tables"><img src="img/slide21.png" class="img-fluid figure-img"></a></p>
 <figcaption>Hash Tables</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-21-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;20: Locality sensitive hashing
+Figure&nbsp;21: Locality sensitive hashing
 </figcaption>
 </figure>
 </div></div><p>Instead of the typical buckets we have been using, you can think of clustering the points by deciding whether they are above or below the line. Now as we go to higher dimensions (say n-dimensional vectors), you would be using planes instead of lines. Let’s look at a concrete example:</p>
@@ -862,13 +892,13 @@ Figure&nbsp;20: Locality sensitive hashing
 <div aria-describedby="fig-slide-24-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide24.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide24.png" class="lightbox" data-gallery="quarto-lightbox-gallery-23" title="Hash Tables"><img src="img/slide24.png" class="img-fluid figure-img"></a></p>
 <figcaption>Hash Tables</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-24-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;21: Locality sensitive hashing
+Figure&nbsp;22: Locality sensitive hashing
 </figcaption>
 </figure>
 </div></div><p>Given some point located at (1,1) and three vectors <span class="math inline">V_1=(1,2)</span>, <span class="math inline">V_2=(-1,1)</span>, <span class="math inline">V_3=(-2,-1)</span> you will see what happens when we take the dot product. First note that the dashed line is our plane. The vector with point <span class="math inline">P=(1,1)</span> is perpendicular to that line (plane). Now any vector above the dashed line that is multiplied by <span class="math inline">(1,1)</span> would have a positive number. Any vector below the dashed line when dotted with <span class="math inline">(1,1)</span> will have a negative number. Any vector on the dashed line multiplied by <span class="math inline">(1,1)</span> will give you a dot product of 0. ​ Here is how to visualize a projection (i.e.&nbsp;a dot product between two vectors):</p>
@@ -878,13 +908,13 @@ Figure&nbsp;21: Locality sensitive hashing
 <div aria-describedby="fig-slide-25-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide25.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide25.png" class="lightbox" data-gallery="quarto-lightbox-gallery-24" title="Hash Tables"><img src="img/slide25.png" class="img-fluid figure-img"></a></p>
 <figcaption>Hash Tables</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-25-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;22: Locality sensitive hashing
+Figure&nbsp;23: Locality sensitive hashing
 </figcaption>
 </figure>
 </div></div><p>When you take the dot product of a vector <span class="math inline">V</span> and a <span class="math inline">P</span>, then you take the magnitude or length of that vector, you get the black line (labelled as Projection). The sign indicates on which side of the plane the projection vector lies.</p>
@@ -898,13 +928,13 @@ Figure&nbsp;22: Locality sensitive hashing
 <div aria-describedby="fig-slide-35-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide35.png" class="img-fluid figure-img"></p>
+<p><a href="img/slide35.png" class="lightbox" data-gallery="quarto-lightbox-gallery-25" title="Hash Tables"><img src="img/slide35.png" class="img-fluid figure-img"></a></p>
 <figcaption>Hash Tables</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-35-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;23: Locality sensitive hashing
+Figure&nbsp;24: Locality sensitive hashing
 </figcaption>
 </figure>
 </div></div><p>Given some point denoted by v, you can run it through several projections <span class="math inline">P_1, P_2, P_3</span> to get one hash value. If you compute <span class="math inline">P_1v^T P_1v^T</span> you get a positive number, so you set <span class="math inline">h_1=1</span>. <span class="math inline">P_2v^T P_2v^T</span> gives you a positive number so you get <span class="math inline">h_2=1</span>. <span class="math inline">P_3v^T P_3v^T</span> is a negative number so you set <span class="math inline">h_3</span> to be 0. You can then compute the hash value as follows. ​ <span class="math display">
@@ -915,7 +945,7 @@ hash=2^0×h_1+2^1×h_2+2^2×h_3 = 1×1+2×1+4×0=3
 hash_{value}=\sum_i^H 2^i×h_i
 </span></p>
 <p>Here is how you can code it up:</p>
-<div id="c5883cd4" class="cell" data-execution_count="1">
+<div id="8527dd10" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> hash_value_of_vector(P, v):</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    hash_value <span class="op">=</span> <span class="dv">0</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, plane <span class="kw">in</span> <span class="bu">enumerate</span>(P):</span>
@@ -926,65 +956,264 @@ hash_{value}=\sum_i^H 2^i×h_i
 </div>
 <p><span class="math inline">P_l</span> is the list of planes. You initialize the value to 0, and then you iterate over all the planes (P), and you keep track of the index. You get the sign by finding the sign of the dot product between v and your plane P. If it is positive you set it equal to 1, otherwise you set it equal to 0. You then add the score for the ith plane to the hash value by computing <span class="math inline">2^i×h_i</span>.</p>
 
-<div class="no-row-height column-margin column-container"><div id="fig-slide-26" class="quarto-float quarto-figure quarto-figure-center anchored">
+<!-- TODO: convert slide to code -->
+<div class="no-row-height column-margin column-container"><div id="fig-slide-37" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-slide-26-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div aria-describedby="fig-slide-37-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/slide37.png" class="img-fluid figure-img"></p>
-<figcaption>Hash Tables</figcaption>
+<p><a href="img/slide37.png" class="lightbox" data-gallery="quarto-lightbox-gallery-26" title="hash_multiple_plane()"><img src="img/slide37.png" class="img-fluid figure-img"></a></p>
+<figcaption>hash_multiple_plane()</figcaption>
 </figure>
 </div>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-26-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;24: Locality sensitive hashing
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-37-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;25: Code for computing hash value for multiple planes
 </figcaption>
 </figure>
 </div></div></section>
 <section id="ungraded-lab-hash-tables" class="level3">
 <h3 class="anchored" data-anchor-id="ungraded-lab-hash-tables">Ungraded Lab: Hash tables</h3>
-<p><a href="">Hash Tables Lab</a></p>
+<p><a href="../../posts/c1w4/nb_02.html">Hash Tables Lab</a></p>
 </section>
-<section id="video-approximate-nearest-neighbors" class="level3">
-<h3 class="anchored" data-anchor-id="video-approximate-nearest-neighbors">Video: Approximate nearest neighbors</h3>
-<p>Proin sodales neque erat, varius cursus diam tincidunt sit amet. Etiam scelerisque fringilla nisl eu venenatis. Donec sem ipsum, scelerisque ac venenatis quis, hendrerit vel mauris. Praesent semper erat sit amet purus condimentum, sit amet auctor mi feugiat. In hac habitasse platea dictumst. Nunc ac mauris in massa feugiat bibendum id in dui. Praesent accumsan urna at lacinia aliquet. Proin ultricies eu est quis pellentesque. In vel lorem at nisl rhoncus cursus eu quis mi. In eu rutrum ante, quis placerat justo. Etiam euismod nibh nibh, sed elementum nunc imperdiet in. Praesent gravida nunc vel odio lacinia, at tempus nisl placerat. Aenean id ipsum sed est sagittis hendrerit non in tortor.</p>
-</section>
-<section id="app-item-join-us-on-discourse" class="level3">
-<h3 class="anchored" data-anchor-id="app-item-join-us-on-discourse">App Item: Join us on Discourse!</h3>
-<p>Etiam quis tortor luctus, pellentesque ante a, finibus dolor. Phasellus in nibh et magna pulvinar malesuada. Ut nisl ex, sagittis at sollicitudin et, sollicitudin id nunc. In id porta urna. Proin porta dolor dolor, vel dapibus nisi lacinia in. Pellentesque ante mauris, ornare non euismod a, fermentum ut sapien. Proin sed vehicula enim. Aliquam tortor odio, vestibulum vitae odio in, tempor molestie justo. Praesent maximus lacus nec leo maximus blandit.</p>
-</section>
-<section id="reading-approximate-nearest-neighbors" class="level3">
+<section id="reading-approximate-nearest-neighbors" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="reading-approximate-nearest-neighbors">Reading: Approximate nearest neighbors</h3>
-<p>Etiam quis tortor luctus, pellentesque ante a, finibus dolor. Phasellus in nibh et magna pulvinar malesuada. Ut nisl ex, sagittis at sollicitudin et, sollicitudin id nunc. In id porta urna. Proin porta dolor dolor, vel dapibus nisi lacinia in. Pellentesque ante mauris, ornare non euismod a, fermentum ut sapien. Proin sed vehicula enim. Aliquam tortor odio, vestibulum vitae odio in, tempor molestie justo. Praesent maximus lacus nec leo maximus blandit.</p>
+<p>Approximate nearest neighbors does not give you the full nearest neighbors but gives you an approximation of the nearest neighbors. It usually trades off accuracy for efficiency.</p>
+<p>Look at the following plot:</p>
+
+<!-- TODO: convert slide to code -->
+<div class="no-row-height column-margin column-container"><div id="fig-slide-39" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide-39-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide39.png" class="lightbox" data-gallery="quarto-lightbox-gallery-27" title="nearest neighnours"><img src="img/slide39.png" class="img-fluid figure-img"></a></p>
+<figcaption>nearest neighnours</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-39-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;26: Approximate nearest Neighbors
+</figcaption>
+</figure>
+</div></div><p>You are trying to find the nearest neighbor for the red vector (point). The first time, the plane gave you green points. You then ran it a second time, but this time you got the blue points. The third time you got the orange points to be the neighbors. So you can see as you do it more times, you are likely to get all the neighbors. Here is the code for one set of random planes. Make sure you understand what is going on.</p>
+
+<!-- TODO: convert slide to code -->
+<div class="no-row-height column-margin column-container"><div id="fig-slide-40" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide-40-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide40.png" class="lightbox" data-gallery="quarto-lightbox-gallery-28" title="hash_multiple_plane()"><img src="img/slide40.png" class="img-fluid figure-img"></a></p>
+<figcaption>hash_multiple_plane()</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-40-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;27: Code for computing hash value for multiple planes
+</figcaption>
+</figure>
+</div><div id="fig-slide-41" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide-41-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide41.png" class="lightbox" data-gallery="quarto-lightbox-gallery-29" title="Document representation"><img src="img/slide41.png" class="img-fluid figure-img"></a></p>
+<figcaption>Document representation</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-41-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;28: A combination of word vectors to get document vectors based on Document search with KNN
+</figcaption>
+</figure>
+</div></div>
 </section>
-<section id="video-searching-documents" class="level3">
-<h3 class="anchored" data-anchor-id="video-searching-documents">Video: Searching documents</h3>
-<p>Etiam quis tortor luctus, pellentesque ante a, finibus dolor. Phasellus in nibh et magna pulvinar malesuada. Ut nisl ex, sagittis at sollicitudin et, sollicitudin id nunc. In id porta urna. Proin porta dolor dolor, vel dapibus nisi lacinia in. Pellentesque ante mauris, ornare non euismod a, fermentum ut sapien. Proin sed vehicula enim. Aliquam tortor odio, vestibulum vitae odio in, tempor molestie justo. Praesent maximus lacus nec leo maximus blandit.</p>
-</section>
-<section id="reading-searching-documents" class="level3">
-<h3 class="anchored" data-anchor-id="reading-searching-documents">Reading: Searching documents</h3>
-<p>Ut ut condimentum augue, nec eleifend nisl. Sed facilisis egestas odio ac pretium. Pellentesque consequat magna sed venenatis sagittis. Vivamus feugiat lobortis magna vitae accumsan. Pellentesque euismod malesuada hendrerit. Ut non mauris non arcu condimentum sodales vitae vitae dolor. Nullam dapibus, velit eget lacinia rutrum, ipsum justo malesuada odio, et lobortis sapien magna vel lacus. Nulla purus neque, hendrerit non malesuada eget, mattis vel erat. Suspendisse potenti.</p>
-</section>
+<section id="searching-documents" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="searching-documents">Searching documents</h3>
+<p>The previous video shows you a toy example of how you can actually represent a document as a vector.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-slide-39" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide-39-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide42.png" class="lightbox" data-gallery="quarto-lightbox-gallery-30" title="hash_multiple_plane()"><img src="img/slide42.png" class="img-fluid figure-img"></a></p>
+<figcaption>hash_multiple_plane()</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-39-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;29: Code for combining word vectors to get document vectors
+</figcaption>
+</figure>
+</div></div><p>In this example, you just add the word vectors of a document to get the document vector. So in summary you should now be familiar with the following concepts:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-slide-39" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide-39-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide02.png" class="lightbox" data-gallery="quarto-lightbox-gallery-31" title="hash_multiple_plane()"><img src="img/slide02.png" class="img-fluid figure-img"></a></p>
+<figcaption>hash_multiple_plane()</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide-39-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;30: Code for combining word vectors to get document vectors
+</figcaption>
+</figure>
+</div></div></section>
 <section id="video-andrew-ng-with-kathleen-mckeown" class="level3">
 <h3 class="anchored" data-anchor-id="video-andrew-ng-with-kathleen-mckeown">Video: Andrew Ng with Kathleen McKeown</h3>
-<p>Aenean placerat luctus tortor vitae molestie. Nulla at aliquet nulla. Sed efficitur tellus orci, sed fringilla lectus laoreet eget. Vivamus maximus quam sit amet arcu dignissim, sed accumsan massa ullamcorper. Sed iaculis tincidunt feugiat. Nulla in est at nunc ultricies dictum ut vitae nunc. Aenean convallis vel diam at malesuada. Suspendisse arcu libero, vehicula tempus ultrices a, placerat sit amet tortor. Sed dictum id nulla commodo mattis. Aliquam mollis, nunc eu tristique faucibus, purus lacus tincidunt nulla, ac pretium lorem nunc ut enim. Curabitur eget mattis nisl, vitae sodales augue. Nam felis massa, bibendum sit amet nulla vel, vulputate rutrum lacus. Aenean convallis odio pharetra nulla mattis consequat.</p>
-</section>
-<section id="reading-acknowledgements" class="level3">
-<h3 class="anchored" data-anchor-id="reading-acknowledgements">Reading: Acknowledgements</h3>
-<p>Maecenas turpis velit, ultricies non elementum vel, luctus nec nunc. Nulla a diam interdum, faucibus sapien viverra, finibus metus. Donec non tortor diam. In ut elit aliquet, bibendum sem et, aliquam tortor. Donec congue, sem at rhoncus ultrices, nunc augue cursus erat, quis porttitor mauris libero ut ex. Nullam quis leo urna. Donec faucibus ligula eget pellentesque interdum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean rhoncus interdum erat ut ultricies. Aenean tempus ex non elit suscipit, quis dignissim enim efficitur. Proin laoreet enim massa, vitae laoreet nulla mollis quis.</p>
+<blockquote class="blockquote">
+<p>I am delighted to have with me here today, Kathy McKeown, who is the Henry and Gertrude Rothschild Professor of Computer Science at Columbia University. Where she is also the founding director of the Institute for Data Sciences and Engineering. She is also an Amazon Scholar and is well known for the work that she’s done over many years on text summarization and many other topics in NLP. Welcome, Kathy, and thanks for joining me.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Thanks Andrew, and thanks for having me.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>So today you lead a large group doing NLP research, but your journey to becoming an AI researcher and an NLP searcher has been an unusual one. If I remember correctly, you actually majored in comparative literature when you were in undergrad, even though you’re also very mathematically oriented at the time. So tell us you story of how you became an NLP researcher.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Yeah, so when I started out at Brown I didn’t know what I wanted to major in. So I took courses both in math and comparative literature. And as I went on, I became more interested in comparative literature. Probably in part because of the teachers who I had who really influenced me. It was only as I came near the end of my time at Brown that and when I graduated, I took a job as a programmer, which I found actually very boring. And I thought if I was going to have to be working 40 hours a week, I wanted to be doing something that I enjoyed. And it was then that a friend of mine who was a linguistics major at Brown told me about computational linguistics. And so I spent a lot of the year in the library reading about AI and natural language processing. And when I applied for Graduate School the following year I knew that was what I wanted to do. Because it gave me a way to bring together my interest in language and in math.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>So that’s fascinating, so as a comparative literature major, you spent a lot of time in the Brown University Library reading about computational linguistics and NLP. Today, with a lot of learners, maybe some watching this video that may not yet be a NLP researcher or AI engineer wanting to break into the field. So I’d love to hear more about what your experience was like reading so much. Were you doing it by yourself? Did you have a study group or what was that like?</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>I was doing it entirely by myself. I really had no guidance in terms of what to look at. I guess this friend that I had made a few suggestions. And then I traced references when I first began reading. I would follow up on references to go further. Yeah, and when I first entered Graduate School, and I had essentially switched fields, I found it very frightening. I was sure that I was and impostor, that I didn’t know enough. And before long they would find out that I really shouldn’t be there after all. Yeah, but that’s something you overcome with time and you learn that it’s not the case and people value your input.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>That’s really inspiring. Thank you for sharing that. Would you have any advice for someone maybe today that is trying to do this themselves and wondering if they know enough, or are good enough, or should be in the field? It sounds like you got through that and you’ve been incredibly successful. But what would you say to someone today maybe looking to follow in your footsteps and wondering if this is very for them or if they’ll make it?</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>So I I guess I have a couple pieces of advice. I do think reaching out to people and talking to people is useful. Until I got to Graduate School I wasn’t in an environment where I had people to talk to. So I do think it’s really helpful, especially to talk to your peers about what they’re doing and what they’re interested in. When you pick problems to work on. And I guess, especially in today’s world of deep learning and neural nets, I would advise choosing problems that are different from what everybody else works on. Sort of strike out in a different direction, choose something new, a new task, and take off from there.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>And I think I would love to come back to the different problems stopping within. And when I speak with learners from around the world, I do hear from some that they feel lonely or isolated. They’re kind of out somewhere or maybe not living in the major tech hub, and they sometimes feel like they’re doing this by themselves. So I find it actually really inspiring that you were able to do that by yourself in a library in Brown University. I don’t know if you have any other thoughts to offer learners that may feel like they’re somewhere in a company or in a city just trying to do this by themselves.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>I’m not sure I do have a lot more to say about it. I guess read what you enjoy about, if you can be part of a reading group, an online reading group, that would be helpful. There are a lot of reading groups now, and that’s a good way to get sort of insights. There are online videos and course experiences, like yours. And I think that’s a way to find out what’s going on and get in touch with what people are doing. So I think today, the online environment can help people get connected and hear what’s going on. I was lucky, I mean, I was really lucky, I applied to Penn. I didn’t know that at the time it was the best place in natural language processing, and that was totally luck. So I don’t know that I would recommend doing it blind again today, I think getting advice is great.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Everyone that’s been successful has had many elements of luck. But the preparation makes you ready to take advantage of when good luck falls into your lap.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Yeah.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Thank you for sharing that, that was really inspiring to hear about your early days as a developing researcher. And today you lead a large group at Columbia University doing very interdisciplinary work and doing a lot of work on summarization and other topics. So tell us a bit more about your current work and which excites,</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>So I mean, summarization has really been the bulk of my work over the most recent years. We’ve done work on summarization of all kinds of different genres, from personal novels to emails. One thread of research in summarization that I’m particularly excited about is work that I’ve done with researchers at Amazon and which was published at ACL. And this is work on summarization of novel chapters. And it’s very new, no one has been working on this task, it’s very challenging, very different from summarization. So the chapters are much longer than the news articles on which most current work in summarization today is done. And that is a challenge for current neural models. And a big problem is that there is an extreme amount of paraphrasing between the input, which is 19th century novels, and the output, which is a summary written in today’s language. None of the current models can handle the kind of paraphrasing that we see there. And that, in general, is a topic that I’m really interested in is a sort of very abstractive summarization. Where the sentences use different words than the input document, where the syntactic structure is different. And that is very different from the vast Majority of work today which is done on summarization of news. And it’s done on summarization of news because that’s where the data is. So some of the other areas that I’m looking at are summarization of personal narratives that you find online where the personal narratives are very informal language and the summary is more formal. Summarization of debates. In past work, we’ve also done summarization of email. Which has some of those same characteristics.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Why did you choose to work on the novel summarization task?</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Well, so we had done work on novels even earlier. I would say in 2010, when one of my students who was very interested in creative writing, and I really thought he should do a PhD. And so to convince him to stay, we came to a topic that he would be happy with, which was analysis and generation of creative language. And I felt then that my work came full circle, that we collaborated then with a professor in comparative literature. So I acme back to my roots in comparative literature and that was a lot of fun. So, when I first went to Amazon, I knew because of Kindle and online on Amazon, they have a lot of novels. And I thought, what would be more fun than being able to summarize novels?</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Sounds like a fun project, I read a lot on my Kindle, so maybe your work will be a feature on Kindle some day. One aspect of your work that stood out as well is that you’re known for doing highly interdisciplinary work. So rather than focusing arrowly on NLP research, your work spans AI, and the media where I know the Columbia University is a great journalism school. So wonderful journalists you work with there or the application of NLP to social networks. I think you work with medical problems. So tell us a bit about how you think about interdisciplinary work because you’ve done more of it I think than most NLP researchers have.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Yeah, I really enjoy interdisciplinary work. I think it’s my most favorite kind of research to do. And in part we get a really different perspective on research in the world when we talk to people in other fields. It takes us out of our sort of technical, narrow field.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>And so earlier, you alluded to picking research topics that are novel and I think your research portfolio has certainly touched on a lot of problems that very few others are working on. So can you say more about that? So how do you pick research projects you work on and how do you advise others to pick topics to work on?</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>I think it’s important to pick a task that matters. So that for me is one thing to look at. For example, most of the work in tech summarization today is done on summarization of what’s called single document summarization of news. So take one news article in and generate a summary of that news article. And the reason for that is because that’s where the data is. There’s a huge amount of data that has been pulled together from first the CNN Daily Mail Corpus, and later New York Times, and there are a number of other corpora as well. The problem is that’s not really a task that we need. We’ve known for a long time that the lead of the news article can help people pretty well in serving as a summary of the document. And in fact, for years it was hard to beat. The lead people just worked on, that wasn’t a problem that people worked on in the early years of summarization.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>The lead being the first sentence or the first-</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>The first couple of sentences in the news article. So, Yeah, I mean, people work on a problem like that because that’s where the data is. We have leaderboards. People are competitive. They like to be The leaderboard, but I would question does that one or even half a point in Rouge, which the automated network used to score them, really make a difference? If you look at the output you can see that actually the summaries are quite similar and either one of them might be fine. So I prefer to go in directions that people haven’t gone in before and to choose a task where if you solve it, it’s going to help people. It’s going to be a useful application that you’ve developed. So this is why I have done things like summarization of personal narrative, which we did in the course of disaster. So that we could summarize, think of having a browsing view of summaries of what people have experienced after they’ve lived through a disaster. Or the current work on summarization of novels where it’d be helpful to have a summary of an input chapter. I’d like to go in a different direction, in part because I want to solve the task that matters. But I also like to go in a different direction because in this day in age of deep learning where results come so fast, everybody works on the same problem trying to beat the previous state of the art. It can be hard to be the first one to get there, and if you go in a different direction, nobody else is working on, you are going to be the first one to come to solution. And that’s what I like to do in my research. Overtime I like to be first on a problem. I see, cool yeah. And I feel like, for myself, I have a lot of respect for people that could push that extra half points of performance on the leaderboard because hopefully that advances the whole field. And this all shifts. I also have a lot of respect for people with your creativity in the inside, to charter the new problem that no one else has thought of, and advances the whole field in a different direction. I think the field of AI NLP is broad enough. I think it’s actually not a bad thing if we have lots of people working on lots of different things, including standardized benchmarks. And a bunch of new things.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Yeah, sure, I feel that there are not as many people who want to go in that new direction and it does take some sort of guts to do it. Because the first thing that happens when you submit a paper is there is no benchmark. There is no baseline of prior work and reviewers have a very hard time dealing with that. How can they judge whether it’s really a good step forward. Whereas if you can show on a leaderboard that you’ve improved by a certain amount and you stay within the traditional trajectory, it’s easier to judge.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Yeah, I’m with you on that. Actually, I was recently chatting with one of my friends Sharon Joe who mentioned that sometimes the way benchmarks and metrics are established is that some researcher publishing a paper publishes something using some metric. Maybe a good one, maybe an okay one. But to make sure that subsequent papers can compare to earlier work, then everyone, and more and more people end up using the same metric. More for historical reasons and it makes things comparable rather than because it is actually the most useful metric. It’s funny how metrics get established in academia.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Yeah, I mean that has happened in the summarization field. And I think also in machine translation where you want an automated metric because it’s easier to develop a system to train over and over again. And yet everybody knows that the automated metrics that we currently have are really flawed. And but everyone keeps using them, because that’s what we’ve always done. One of my most stark memories was I remember going to a the Information Retrieval Conference and attending a workshop in text summarization. And I remember being fascinated, but struck that about half of that workshop was on text summarization algorithms and the other half of that workshop was on how to develop metrics to evaluate. Text summarization especially, the development of automated metrics has been challenging.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Yeah.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Hey, so in terms of choosing. Lead topics to work on. One of the pieces of work that you’ve been doing that I thought was fascinating, was you were taking texts from the black community from Harlem, near I guess where you teach at Columbia University and analyzing that as well. Tell us about that.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>This is where I’m moving with my work with a researcher from social work. And we’re also beginning to involve a linguist who works on African American vernacular. And what we’re doing is we’re looking at what people say, what kind of emotions they express in reaction to major events that are going on today. So, for example, in reaction to Black Lives Matter and in reaction to COVID-19. So this is work that we’re just beginning. We’ve begun with developing an interface where people can post about their experiences with these events and how they’re feeling. And I guess what we’re hoping to do with that in part, so we have two directions to go. One on the natural language side is to be able to understand how people express different kinds of language. Sorry, different kinds of emotion and African American vernacular. And how that difference from how people express it in standard American English. And look at the difference in language and probably even the difference in content in terms of what’s expressed. And this can help us in developing algorithms that are not biased as we move forward. Most of the work in natural language, all of the systems have been trained on language that comes from news like the Wall Street Journal.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Yeah, that’s great. If this type of work can help fight bias or build bridges between communities or just play some role in understanding and helping to advance the Black Lives Matter movement, that seems to be a wonderful thing to me.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Yeah, I mean, we also want in that work to look at the impact of trauma. So it’s a different kind of trauma and sometimes it’s not your personal trauma, but the trauma of seeing what has happened to other people who are like you. So yeah, we want to look at how that is expressed in the different kinds of emotions, the intensity of emotion, and so forth.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>I find it really wonderful that NLP researchers, AI researchers can play an active role in some of these most important societal questions and issues of our time. It feels like the work we do as AI researchers, it could matter in these really important times.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Yeah, I mean I think so. And I’ve sort of been trying to do that for a while. I think it really attract students to work with you, and often different kinds of students into the field to work with you. On our first work on with analyzing social media posts of gang involved youth, we didn’t have funding. We did that entirely with undergraduates who were just totally amazing. In earlier work we were looking at being able to automatically generate updates about disaster as it unfolded. We did that after Hurricane Sandy hit New York. And again it was something that students came to me and they had seen this happen and they have seen their neighborhoods hurt. Or they lived through the uncertainty of it and they wanted to help. They wanted to know what can we do and that was at that point in time, this whistle pre-neural net we began developing systems that could automatically generate updates as an event unfolded.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>I think that you don’t need a PhD, don’t need a long publication record, but in undergrad spotting an opportunity with a desire to help. Can step in and start to work on systems that they can make a difference.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Yes, they’re really passionate about it and There are really good, the work that came out of that was really excellent.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Yeah, thank you, so Kathy, this is great stuff. And switching tracks a bit, you’ve been working in NLP and associated areas for a long time. In fact, I saw that even way back in 1985 you written an early book on text generation before the modern neural text generation techniques were around. So you’ve been a leader in the field for a long time and seen a lot of things change. I’d love to hear your thoughts on how the field of NLP has evolved over these many years.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Sure, so when I started, which I got my PhD in 82. so I spent those earlier years at Penn. And there were some characteristics of the field that were salient. So one of them is that there was a lot of interdisciplinary work. There was in developing NLP systems, we drew a lot on work from linguistics, from philosophy, from psychology, from cognitive science. And so when I was at Penn I interacted a lot with faculty from linguistics. Ellen Prince was one of the people or faculty from philosophy. We spent time in these interdisciplinary meetings. And I can remember walking across campus with my advisor to go from the computer science department to the psychology department, for example. I was influenced a lot and I have to mention this, although it’s not exactly what you asked, I was influenced a lot by senior women at the time. If I look back to who was most influential in how I progressed in my early research. My advisor, of course, who was a male Aravan Joshi. But then also Bonnie Weber, who was there in computer science, Eva Hychova from Charles University at Prague who was a linguist. Barbara Gross who lives at Sanford at that time in the CFLI Institute. And Karen Spark Jones was very influential to me. She was from the field of information retrieval. And she and I spent a lot of time talking about summarization. So interdisciplinary is one main feature of that time. A second was drawing on theories from these other areas, so we drew on theories from linguistics. One main kind of theory that we looked at was the focus of attention and how that changed over the course of a discourse. And how that influenced how you made choices and how you realized text in language. So for example, did you use a pronoun or did you use a full noun phrase? What kind of syntactic structure did you use? You might use different syntactic structures to make a concept more prominent in the discourse. We also drew on work from philosophy. So we drew on work from theories from Cyril about intention, and work from Grice about conversational implicature. And so we looked at these theories and we looked at how we could embody them in our natural language approaches.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>It’s great to hear about some of your early sources of inspiration. Much as I think today you will be a source of inspiration to many others. So you’ve seen a lot and see a lot in NLP, which continues to be a rapidly evolving field. So I’m actually curious, Kathy, what do you find most exciting in terms of emerging or exciting NLP technologies?</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>For me, personally, some of the work that I’ve already talked about today on truly abstracted summarization that uses extreme paraphrasing. Work on analyzing the language from diverse community. So we’ve been looking at the black community, but I think there are other communities we could look at as well. I’m interested in looking at how you deal with bias and data. And another very important topic is being able to arrive at what I would call para linguistic meaning. So this pragmatics information about emotion, about intention, would be another important direction to go. And I also think more work on events, being able to understand what events have happened, and to be able to follow them. I also think about often if I look back. Is it okay, if I talk about this now. I look back?</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Okay. If I look back on my favorite technologies and papers, I can think of papers from thee points in time. The first would be older, and this was very early work in language generation, on how we pick the words in our sentence. And we thought then that it was a hard problem that constraints came from many different sources. And we wrote a paper called Floating Constraints on Lexical Choice. Where we looked at how information from different parts of language, from the discourse, from the lexicon, from syntax, from semantics, will influence what we chose. And we worked in two different domains. One was basketball and one with stock markets. And I give it the example of the floating constraint, where we want to express both the time at which something happened and the manner. In the first example we expressed time and the verb, and the manner and the adverbs. So Wall Street indexes open strongly, open is the time. And in the second weeks press manner in the verb and time and the propositional phrase. So stock index surged at the start of the trading day. And so we wanted to look at how we could control that choice. And I think control is something that’s missing in language generation and summarization. Today using deep learning methods, how do we control what the output is and make sure it’s true to what our intention is? In more recent work, my favorite is work on News Blaster. That’s still about 15 years ago, but it feels recent to me. And that was where we took a real world problem. We did do some collaboration with journalists, and we’ve developed a testbed, where we could identify the events that happened during the day, and produce summary on each event. And then we also looked at how we could track that overtime. And this platform gave us a common sort of application, in which my students could address really hard research questions. And so that was where we looked at, did some of our first work on abstract and summarization. Looking at how we might compress sentences, how we could fuse phrases together, how we might reference, edit references, so that the summary was more coherent. And we also did work on multi lingual summarization. Yeah.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Cool, Thank you. Lots of exciting, very distinct projects over the years. Do you have any wrap up? Did you have any lost thoughts? You can just say, do you have any final thoughts?</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Well, I guess I would just say that natural language is a really exciting field today. There’s been a huge amount of progress with deep learning. We’ve seen dramatic increases in accuracy, but we still have a lot of directions to go. And I guess I would like to see more of the interdisciplinary work being brought back in. I’d like to see people looking at the data more and at their output more, rather than just numbers. But I think there are many exciting directions for people to work in, and I hope we’ll see many people joining the field.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Thank you, that was great. Yeah, I saw the hope that will have a lot more people join NLP and contribute to all of this exciting work. So thanks Kathy, it was cool</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Thanks you much for asking me, it was fun.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>For more interviews with NLP thought leaders, check out the DeepLearning.AI YouTube channel, or enroll in the NLP specialization on Coursera.</p>
+</blockquote>
 </section>
 <section id="reading-bibliography" class="level3">
 <h3 class="anchored" data-anchor-id="reading-bibliography">Reading: Bibliography</h3>
-<p>Nulla eget cursus ipsum. Vivamus porttitor leo diam, sed volutpat lectus facilisis sit amet. Maecenas et pulvinar metus. Ut at dignissim tellus. In in tincidunt elit. Etiam vulputate lobortis arcu, vel faucibus leo lobortis ac. Aliquam erat volutpat. In interdum orci ac est euismod euismod. Nunc eleifend tristique risus, at lacinia odio commodo in. Sed aliquet ligula odio, sed tempor neque ultricies sit amet.</p>
+<ul>
+<li><span class="citation" data-cites="jm3">(<a href="#ref-jm3" role="doc-biblioref">Jurafsky and Martin 2025</a>)</span> :Speech and Language Processing</li>
+</ul>
+
+
+
 </section>
-<section id="slides" class="level2">
-<h2 class="anchored" data-anchor-id="slides">Slides:</h2>
-<p><embed src="slides.pdf" class="img-fluid"></p>
 
-
-</section>
-
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{2020,
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-jm3" class="csl-entry" role="listitem">
+Jurafsky, Daniel, and James H. Martin. 2025. <em>Speech and Language Processing: An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition with Language Models</em>. 3rd ed. <a href="https://web.stanford.edu/~jurafsky/slp3/">https://web.stanford.edu/~jurafsky/slp3/</a>.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{2020,
   author = {},
   title = {Machine {Translation} and {Document} {Search}},
   date = {2020-10-23},
@@ -1015,6 +1244,150 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
@@ -1433,6 +1806,38 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

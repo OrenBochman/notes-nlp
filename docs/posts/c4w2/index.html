@@ -6,10 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2021-03-31">
 <meta name="description" content="This week of the NLP Specialization, we unlock the secrets of Neural Text Summarization. We will building a powerful Transformer model to extract crucial information and create concise summaries. Through hands-on exercises using JAX, we will learn techniques like beam search and length normalization to enhance the quality of our summaries. Through hands-on exercises we will train our model on a dataset of articles. We will master the skills to create effective text summaries using state-of-the-art NLP techniques.">
 
-<title>Week 2 Text Summarization</title>
+<title>Week 2 Text Summarization – NLP Specialization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -91,10 +90,15 @@ div.csl-indent {
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-eefa51cfd4367a2c2ab6a47af1b603aa.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -177,6 +181,11 @@ window.Quarto = {
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">NLP Specialization</span>
+    </a>
+  </div>
             <div id="quarto-search" class="" title="Search"></div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
@@ -215,6 +224,7 @@ window.Quarto = {
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -241,12 +251,10 @@ window.Quarto = {
         </div>
       </div>
                           <div class="quarto-categories">
-                <div class="quarto-category">Natural Language Processing Specialization</div>
-                <div class="quarto-category">Natural Language Processing with Attention Models</div>
+                <div class="quarto-category">Attention Models</div>
                 <div class="quarto-category">Neural Machine Translation</div>
                 <div class="quarto-category">Coursera</div>
                 <div class="quarto-category">notes</div>
-                <div class="quarto-category">NLP</div>
                 <div class="quarto-category">Deep Learning Algorithms</div>
                 <div class="quarto-category">transformer</div>
                 <div class="quarto-category">teacher forcing</div>
@@ -270,7 +278,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">March 31, 2021</p>
+        <p class="date">Wednesday, March 31, 2021</p>
       </div>
     </div>
     
@@ -457,15 +465,12 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#tldr-neural-network-engineering" id="toc-tldr-neural-network-engineering" class="nav-link active" data-scroll-target="#tldr-neural-network-engineering">TLDR: neural network engineering</a>
-  <ul class="collapse">
-  <li><a href="#what-is-attention" id="toc-what-is-attention" class="nav-link" data-scroll-target="#what-is-attention">What is attention ?</a></li>
+  <li><a href="#what-is-attention" id="toc-what-is-attention" class="nav-link active" data-scroll-target="#what-is-attention">What is attention ?</a></li>
   <li><a href="#what-is-dot-product-attention" id="toc-what-is-dot-product-attention" class="nav-link" data-scroll-target="#what-is-dot-product-attention">What is dot-product attention ?</a></li>
   <li><a href="#what-is-causal-attention" id="toc-what-is-causal-attention" class="nav-link" data-scroll-target="#what-is-causal-attention">What is causal attention ?</a></li>
   <li><a href="#what-is-multi-headed-attention" id="toc-what-is-multi-headed-attention" class="nav-link" data-scroll-target="#what-is-multi-headed-attention">What is multi-headed attention?</a></li>
   <li><a href="#what-is-positional-encoding" id="toc-what-is-positional-encoding" class="nav-link" data-scroll-target="#what-is-positional-encoding">What is positional encoding</a></li>
   <li><a href="#what-is-teacher-forcing" id="toc-what-is-teacher-forcing" class="nav-link" data-scroll-target="#what-is-teacher-forcing">What is teacher forcing ?</a></li>
-  </ul></li>
   <li><a href="#additional-coding-notes" id="toc-additional-coding-notes" class="nav-link" data-scroll-target="#additional-coding-notes">Additional coding notes:</a>
   <ul class="collapse">
   <li><a href="#how-to-reshape-a-test-tensor-so-it-has-a-size-0-batch-dimension-at-the-front" id="toc-how-to-reshape-a-test-tensor-so-it-has-a-size-0-batch-dimension-at-the-front" class="nav-link" data-scroll-target="#how-to-reshape-a-test-tensor-so-it-has-a-size-0-batch-dimension-at-the-front">How to reshape a test tensor so it has a (size 0) batch dimension at the front?</a></li>
@@ -542,7 +547,7 @@ window.Quarto = {
 <!-- vale on -->
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/logo_deeplearning_ai.png" class="img-fluid figure-img"></p>
+<p><a href="img/course-banner.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="deeplearning.ai"><img src="img/course-banner.jpg" class="img-fluid figure-img" alt="deeplearning.ai"></a></p>
 <figcaption>deeplearning.ai</figcaption>
 </figure>
 </div></div><ul>
@@ -560,6 +565,7 @@ Learning objectives
 </div>
 </div>
 <div class="callout-body-container callout-body">
+<!-- TODO: add links to repective sections -->
 <ul class="task-list">
 <li><label><input type="checkbox" checked="">Describe the three basic types of attention.</label></li>
 <li><label><input type="checkbox" checked="">Name the two types of layers in a Transformer.</label></li>
@@ -570,9 +576,24 @@ Learning objectives
 </ul>
 </div>
 </div>
-<section id="tldr-neural-network-engineering" class="level2">
-<h2 class="anchored" data-anchor-id="tldr-neural-network-engineering">TLDR: neural network engineering</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+TL;DR neural network engineering
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<!-- TODO: better summary -->
 <p>For the impatient - We’ll start with NLP engineering insights from this week.</p>
+<!-- TODO: add podcast for this week's material -->
+</div>
+</div>
+</div>
 <section id="what-is-attention" class="level3">
 <h3 class="anchored" data-anchor-id="what-is-attention">What is attention ?</h3>
 <p>The latest version of {{ site.product_name }} is now available. - Attention is a general solution for the sequence alignment problem. - Attention doesn’t reorder the input sequence. - It provides a linear transformation which filters the relevant parts of the source for predicting the each item in the target.</p>
@@ -591,7 +612,7 @@ attention(h_t,\bar{h}_s)= softmax(h_t^T\bar{h}_s)
 <p><span class="math display">
 attention_{(\cdot)}(Q,V,K) = softmax(\frac{QK^T}{\sqrt{n}})V
 </span></p>
-<div id="b21ca3cd" class="cell" data-execution_count="1">
+<div id="47ef8fac" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> DotProductAttention(query,key,value,mask,scale<span class="op">=</span><span class="va">True</span>):</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Dot product self-attention.</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
@@ -674,7 +695,6 @@ attention_{mh}(Q,V,K) = softmax(\frac{QK^T}{\sqrt{n}})V
 <p>An interesting technique that is frequently used in dynamical supervised learning tasks is to replace the actual output y(t) of a unit by the teacher signal d(t) in subsequent computation of the behavior of the network, whenever such a value exists. We call this technique teacher forcing. — <a href="http://ieeexplore.ieee.org/document/6795228/">A Learning Algorithm for Continually Running Fully Recurrent Neural Networks, 1989</a>.</p>
 </blockquote>
 </section>
-</section>
 <section id="additional-coding-notes" class="level2">
 <h2 class="anchored" data-anchor-id="additional-coding-notes">Additional coding notes:</h2>
 <p>Here are some notable code snippets.</p>
@@ -735,12 +755,12 @@ output tensor shape: (6, 2, 3)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-04-rnn-non-parallel.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-04-rnn-non-parallel.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="rnn-non-parallel"><img src="img/c4w2-04-rnn-non-parallel.png" class="img-fluid figure-img" alt="rnn-non-parallel"></a></p>
 <figcaption>rnn-non-parallel</figcaption>
 </figure>
 </div><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-10-lstm.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-10-lstm.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="lstm"><img src="img/c4w2-10-lstm.png" class="img-fluid figure-img" alt="lstm"></a></p>
 <figcaption>lstm</figcaption>
 </figure>
 </div></div>
@@ -749,7 +769,7 @@ output tensor shape: (6, 2, 3)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-11-seq2seq-steps.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-11-seq2seq-steps.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="seq2seq-steps"><img src="img/c4w2-11-seq2seq-steps.png" class="img-fluid figure-img" alt="seq2seq-steps"></a></p>
 <figcaption>seq2seq-steps</figcaption>
 </figure>
 </div></div><p>Which entailed that to process the word “you”, the RNN it has to first go through “are” and then “you”. Two other issues with RNNs are the:</p>
@@ -759,7 +779,7 @@ output tensor shape: (6, 2, 3)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-12-transformer.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-12-transformer.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Transformer"><img src="img/c4w2-12-transformer.png" class="img-fluid figure-img" alt="Transformer"></a></p>
 <figcaption>Transformer</figcaption>
 </figure>
 </div></div><p>transformer architecture:</p>
@@ -772,14 +792,14 @@ output tensor shape: (6, 2, 3)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-14-positonal-encoding.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-14-positonal-encoding.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="positional-encoding"><img src="img/c4w2-14-positonal-encoding.png" class="img-fluid figure-img" alt="positional-encoding"></a></p>
 <figcaption>positional-encoding</figcaption>
 </figure>
 </div></div><p>Transformers which are based on attention and don’t require any sequential computation per layer, only a single step is needed.</p>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-13-summary.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-13-summary.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="summary"><img src="img/c4w2-13-summary.png" class="img-fluid figure-img" alt="summary"></a></p>
 <figcaption>summary</figcaption>
 </figure>
 </div></div><p>Additionally, the gradient steps that need to be taken from the last output to the first input in a transformer is just one. For RNNs, the number of steps increases with longer sequences. Finally, transformers don’t suffer from vanishing gradients problems that are related to the length of the sequences.</p>
@@ -791,7 +811,7 @@ output tensor shape: (6, 2, 3)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-16-application-NLP.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-16-application-NLP.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="application-NLP"><img src="img/c4w2-16-application-NLP.png" class="img-fluid figure-img" alt="application-NLP"></a></p>
 <figcaption>application-NLP</figcaption>
 </figure>
 </div></div><section id="applications" class="level3 page-columns page-full">
@@ -812,7 +832,7 @@ output tensor shape: (6, 2, 3)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-17-sota.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-17-sota.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="sota"><img src="img/c4w2-17-sota.png" class="img-fluid figure-img" alt="sota"></a></p>
 <figcaption>sota</figcaption>
 </figure>
 </div></div></section>
@@ -832,12 +852,12 @@ output tensor shape: (6, 2, 3)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-18-t5.gif" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-18-t5.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="t5"><img src="img/c4w2-18-t5.gif" class="img-fluid figure-img" alt="t5"></a></p>
 <figcaption>t5</figcaption>
 </figure>
 </div><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-18-t5.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-18-t5.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="t5"><img src="img/c4w2-18-t5.png" class="img-fluid figure-img" alt="t5"></a></p>
 <figcaption>t5</figcaption>
 </figure>
 </div></div>
@@ -848,7 +868,7 @@ output tensor shape: (6, 2, 3)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-19-text-to-text-transformer.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-19-text-to-text-transformer.png" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="text-to-text-transformer"><img src="img/c4w2-19-text-to-text-transformer.png" class="img-fluid figure-img" alt="text-to-text-transformer"></a></p>
 <figcaption>text-to-text-transformer</figcaption>
 </figure>
 </div></div></section>
@@ -862,7 +882,7 @@ output tensor shape: (6, 2, 3)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-21-quiz.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-21-quiz.png" class="lightbox" data-gallery="quarto-lightbox-gallery-13" title="transformers quiz"><img src="img/c4w2-21-quiz.png" class="img-fluid figure-img" alt="transformers quiz"></a></p>
 <figcaption>transformers quiz</figcaption>
 </figure>
 </div></div><div class="callout callout-style-default callout-warning callout-titled">
@@ -882,7 +902,7 @@ Warning
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-20-summary-of-transformers.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-20-summary-of-transformers.png" class="lightbox" data-gallery="quarto-lightbox-gallery-14" title="summary of transformers"><img src="img/c4w2-20-summary-of-transformers.png" class="img-fluid figure-img" alt="summary of transformers"></a></p>
 <figcaption>summary of transformers</figcaption>
 </figure>
 </div></div></section>
@@ -892,7 +912,7 @@ Warning
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-22-outline-of-dot-product-attention.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-22-outline-of-dot-product-attention.png" class="lightbox" data-gallery="quarto-lightbox-gallery-15" title="outline-of-dot-product-attention"><img src="img/c4w2-22-outline-of-dot-product-attention.png" class="img-fluid figure-img" alt="outline-of-dot-product-attention"></a></p>
 <figcaption>outline-of-dot-product-attention</figcaption>
 </figure>
 </div></div><p>Dot product attention was introduced in 2015 by <em>Minh-Thang Luong, Hieu Pham, Christopher D. Manning</em> in <a href="https://arxiv.org/pdf/1508.04025v5.pdf">Effective Approaches to Attention-based Neural Machine Translation</a> which is available at <a href="https://paperswithcode.com/paper/effective-approaches-to-attention-based">papers with code</a>.</p>
@@ -901,7 +921,7 @@ Warning
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-23-intro-to-attention.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-23-intro-to-attention.png" class="lightbox" data-gallery="quarto-lightbox-gallery-16" title="intro-to-attention"><img src="img/c4w2-23-intro-to-attention.png" class="img-fluid figure-img" alt="intro-to-attention"></a></p>
 <figcaption>intro-to-attention</figcaption>
 </figure>
 </div></div><p>Let’s try to understand <em>dot product attention</em> intuitively by walking over its operations at the word level. The actual algorithm uses linear algebra to perform many operations at once which is fast but more abstract and therefore difficult to understand.</p>
@@ -923,7 +943,7 @@ Warning
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-24-queries-keys-values.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-24-queries-keys-values.png" class="lightbox" data-gallery="quarto-lightbox-gallery-17" title="queries-keys-values"><img src="img/c4w2-24-queries-keys-values.png" class="img-fluid figure-img" alt="queries-keys-values"></a></p>
 <figcaption>queries-keys-values</figcaption>
 </figure>
 </div></div><p>Attention uses three matrices which are formed as shown in the figure The <strong>Query</strong> <span class="math inline">Q</span>, <strong>Key</strong> <span class="math inline">K</span> and <strong>Value</strong> <span class="math inline">V</span> are formed from the source and target (if there is no target then just from the source). Each word is converted into an embedding column vector and these are placed into the matracies as their columns. In the master class embedded bellow Dr.&nbsp;Łukasz Kaiser talks about attention and here he is talking about solving the problem of retrieving information from a long sequence. At around 16 minutes in he call Q a query vector and K and V a memory, of all the words we have seen, which we want to access.</p>
@@ -951,7 +971,7 @@ Note
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-26-dot-product-attention-math.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-26-dot-product-attention-math.png" class="lightbox" data-gallery="quarto-lightbox-gallery-18" title="attention-formula"><img src="img/c4w2-26-dot-product-attention-math.png" class="img-fluid figure-img" alt="attention-formula"></a></p>
 <figcaption>attention-formula</figcaption>
 </figure>
 </div></div><ol type="1">
@@ -962,7 +982,7 @@ Note
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-26-attention-math.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-26-attention-math.png" class="lightbox" data-gallery="quarto-lightbox-gallery-19" title="attention-math"><img src="img/c4w2-26-attention-math.png" class="img-fluid figure-img" alt="attention-math"></a></p>
 <figcaption>attention-math</figcaption>
 </figure>
 </div></div><p>This is restating the above in a very confusing way. I looked at it many times before I figured out that the square brackets are the dimensions and that we have the following two formulas indicated schematically above:</p>
@@ -982,19 +1002,19 @@ W_A = softmax(QK^T)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-27-attention-formula.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-27-attention-formula.png" class="lightbox" data-gallery="quarto-lightbox-gallery-20" title="attention-formula"><img src="img/c4w2-27-attention-formula.png" class="img-fluid figure-img" alt="attention-formula"></a></p>
 <figcaption>attention-formula</figcaption>
 </figure>
 </div></div><p>Queries are the German words and the keys are the English words. Once you have the attention weights, you can just multiply it by <span class="math inline">V</span> to get a weighted combination of the input.</p>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-28-attention-quizz.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-28-attention-quizz.png" class="lightbox" data-gallery="quarto-lightbox-gallery-21" title="attention-quiz"><img src="img/c4w2-28-attention-quizz.png" class="img-fluid figure-img" alt="attention-quiz"></a></p>
 <figcaption>attention-quiz</figcaption>
 </figure>
 </div><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-29-summary-for-dot-product-attention.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-29-summary-for-dot-product-attention.png" class="lightbox" data-gallery="quarto-lightbox-gallery-22" title="summary-for-dot-product-attention"><img src="img/c4w2-29-summary-for-dot-product-attention.png" class="img-fluid figure-img" alt="summary-for-dot-product-attention"></a></p>
 <figcaption>summary-for-dot-product-attention</figcaption>
 </figure>
 </div></div>
@@ -1012,7 +1032,7 @@ W_A = softmax(QK^T)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-30-three-ways-of-attention.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-30-three-ways-of-attention.png" class="lightbox" data-gallery="quarto-lightbox-gallery-23" title="three forms of attention"><img src="img/c4w2-30-three-ways-of-attention.png" class="img-fluid figure-img" alt="three forms of attention"></a></p>
 <figcaption>three forms of attention</figcaption>
 </figure>
 </div></div><p>In terms of use cases there are three types of attention mechanisms:</p>
@@ -1056,33 +1076,33 @@ W_A = softmax(QK^T)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-31-causal-attention.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-31-causal-attention.png" class="lightbox" data-gallery="quarto-lightbox-gallery-24" title="causal attention"><img src="img/c4w2-31-causal-attention.png" class="img-fluid figure-img" alt="causal attention"></a></p>
 <figcaption>causal attention</figcaption>
 </figure>
 </div></div><p>In causal attention, <strong>queries</strong> and <strong>keys</strong> come from the same sentence. That is why it is often referred to as <strong>self-attention</strong>. In general, causal attention allows words to attend to other words that are related in various ways.</p>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-32-causal-attention-mask.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-32-causal-attention-mask.png" class="lightbox" data-gallery="quarto-lightbox-gallery-25" title="causal attention mask"><img src="img/c4w2-32-causal-attention-mask.png" class="img-fluid figure-img" alt="causal attention mask"></a></p>
 <figcaption>causal attention mask</figcaption>
 </figure>
 </div></div><p>At a high-level We have K Q V matrices. corresponding However, token should not attend to words in the future since these were not generated yet. Therefore the future token’s data is masked by adding a big negative number.</p>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-33-causal-attention-math-.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-33-causal-attention-math-.png" class="lightbox" data-gallery="quarto-lightbox-gallery-26" title="causal-attention-math-"><img src="img/c4w2-33-causal-attention-math-.png" class="img-fluid figure-img" alt="causal-attention-math-"></a></p>
 <figcaption>causal-attention-math-</figcaption>
 </figure>
 </div></div><p>Mathematically, it looks like this:</p>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-34-causal-attention-quiz.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-34-causal-attention-quiz.png" class="lightbox" data-gallery="quarto-lightbox-gallery-27" title="causal-attention-quiz"><img src="img/c4w2-34-causal-attention-quiz.png" class="img-fluid figure-img" alt="causal-attention-quiz"></a></p>
 <figcaption>causal-attention-quiz</figcaption>
 </figure>
 </div><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-35-summary-for-causal-attention.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-35-summary-for-causal-attention.png" class="lightbox" data-gallery="quarto-lightbox-gallery-28" title="summary-for-causal-attention"><img src="img/c4w2-35-summary-for-causal-attention.png" class="img-fluid figure-img" alt="summary-for-causal-attention"></a></p>
 <figcaption>summary-for-causal-attention</figcaption>
 </figure>
 </div></div>
@@ -1094,7 +1114,7 @@ W_A = softmax(QK^T)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-41-muti-head-attention.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-41-muti-head-attention.png" class="lightbox" data-gallery="quarto-lightbox-gallery-29" title="muti-head-attention"><img src="img/c4w2-41-muti-head-attention.png" class="img-fluid figure-img" alt="muti-head-attention"></a></p>
 <figcaption>muti-head-attention</figcaption>
 </figure>
 </div></div><p>Q. What are multiple attention heads?</p>
@@ -1106,7 +1126,7 @@ W_A = softmax(QK^T)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-42-overview-of-muti-head-attention.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-42-overview-of-muti-head-attention.png" class="lightbox" data-gallery="quarto-lightbox-gallery-30" title="overview of muti-head attention"><img src="img/c4w2-42-overview-of-muti-head-attention.png" class="img-fluid figure-img" alt="overview of muti-head attention"></a></p>
 <figcaption>overview of muti-head attention</figcaption>
 </figure>
 </div></div><p>This is perhaps the most important slide - but it fails to show the critical part of the algorithm.</p>
@@ -1116,7 +1136,7 @@ W_A = softmax(QK^T)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-43-muti-head-attention-scaled-dot-product.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-43-muti-head-attention-scaled-dot-product.png" class="lightbox" data-gallery="quarto-lightbox-gallery-31" title="muti-head attention scaled dot-product"><img src="img/c4w2-43-muti-head-attention-scaled-dot-product.png" class="img-fluid figure-img" alt="muti-head attention scaled dot-product"></a></p>
 <figcaption>muti-head attention scaled dot-product</figcaption>
 </figure>
 </div></div><p>For example if we used a 1024 dimension embedding which concatenates 4 representations.</p>
@@ -1142,42 +1162,42 @@ W_A = softmax(QK^T)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-44-muti-head-attention-concatenation.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-44-muti-head-attention-concatenation.png" class="lightbox" data-gallery="quarto-lightbox-gallery-32" title="muti-head-attention-concatenation"><img src="img/c4w2-44-muti-head-attention-concatenation.png" class="img-fluid figure-img" alt="muti-head-attention-concatenation"></a></p>
 <figcaption>muti-head-attention-concatenation</figcaption>
 </figure>
 </div><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-46-muti-head-attention-math.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-46-muti-head-attention-math.png" class="lightbox" data-gallery="quarto-lightbox-gallery-33" title="muti-head-attention-math"><img src="img/c4w2-46-muti-head-attention-math.png" class="img-fluid figure-img" alt="muti-head-attention-math"></a></p>
 <figcaption>muti-head-attention-math</figcaption>
 </figure>
 </div><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-47-muti-head-attention-fotmula.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-47-muti-head-attention-fotmula.png" class="lightbox" data-gallery="quarto-lightbox-gallery-34" title="muti-head-attention-fotmula"><img src="img/c4w2-47-muti-head-attention-fotmula.png" class="img-fluid figure-img" alt="muti-head-attention-fotmula"></a></p>
 <figcaption>muti-head-attention-fotmula</figcaption>
 </figure>
 </div><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-48-muti-head-attention-quiz.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-48-muti-head-attention-quiz.png" class="lightbox" data-gallery="quarto-lightbox-gallery-35" title="muti-head-attention-quiz"><img src="img/c4w2-48-muti-head-attention-quiz.png" class="img-fluid figure-img" alt="muti-head-attention-quiz"></a></p>
 <figcaption>muti-head-attention-quiz</figcaption>
 </figure>
 </div><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-50-muti-head-attention-math.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-50-muti-head-attention-math.png" class="lightbox" data-gallery="quarto-lightbox-gallery-36" title="muti-head-attention-math"><img src="img/c4w2-50-muti-head-attention-math.png" class="img-fluid figure-img" alt="muti-head-attention-math"></a></p>
 <figcaption>muti-head-attention-math</figcaption>
 </figure>
 </div><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-51-muti-head-attention-math.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-51-muti-head-attention-math.png" class="lightbox" data-gallery="quarto-lightbox-gallery-37" title="muti-head-attention-math"><img src="img/c4w2-51-muti-head-attention-math.png" class="img-fluid figure-img" alt="muti-head-attention-math"></a></p>
 <figcaption>muti-head-attention-math</figcaption>
 </figure>
 </div><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-52-muti-head-attention-math.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-52-muti-head-attention-math.png" class="lightbox" data-gallery="quarto-lightbox-gallery-38" title="muti-head-attention-math"><img src="img/c4w2-52-muti-head-attention-math.png" class="img-fluid figure-img" alt="muti-head-attention-math"></a></p>
 <figcaption>muti-head-attention-math</figcaption>
 </figure>
 </div><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-53-muti-head-attention-math.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-53-muti-head-attention-math.png" class="lightbox" data-gallery="quarto-lightbox-gallery-39" title="muti-head-attention-math"><img src="img/c4w2-53-muti-head-attention-math.png" class="img-fluid figure-img" alt="muti-head-attention-math"></a></p>
 <figcaption>muti-head-attention-math</figcaption>
 </figure>
 </div></div>
@@ -1195,7 +1215,7 @@ W_A = softmax(QK^T)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-49-summary-muti-head-attention.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-49-summary-muti-head-attention.png" class="lightbox" data-gallery="quarto-lightbox-gallery-40" title="summary-muti-head-attention"><img src="img/c4w2-49-summary-muti-head-attention.png" class="img-fluid figure-img" alt="summary-muti-head-attention"></a></p>
 <figcaption>summary-muti-head-attention</figcaption>
 </figure>
 </div></div></section>
@@ -1204,7 +1224,7 @@ W_A = softmax(QK^T)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-60-outline.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-60-outline.png" class="lightbox" data-gallery="quarto-lightbox-gallery-41" title="outline"><img src="img/c4w2-60-outline.png" class="img-fluid figure-img" alt="outline"></a></p>
 <figcaption>outline</figcaption>
 </figure>
 </div></div><p>There is a learning objective here!</p>
@@ -1216,27 +1236,27 @@ W_A = softmax(QK^T)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-62-transformer-decoder-overview.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-62-transformer-decoder-overview.png" class="lightbox" data-gallery="quarto-lightbox-gallery-42" title="transformer-decoder-overview"><img src="img/c4w2-62-transformer-decoder-overview.png" class="img-fluid figure-img" alt="transformer-decoder-overview"></a></p>
 <figcaption>transformer-decoder-overview</figcaption>
 </figure>
 </div><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-63-transformer-decoder-explaination.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-63-transformer-decoder-explaination.png" class="lightbox" data-gallery="quarto-lightbox-gallery-43" title="transformer-decoder-explaination"><img src="img/c4w2-63-transformer-decoder-explaination.png" class="img-fluid figure-img" alt="transformer-decoder-explaination"></a></p>
 <figcaption>transformer-decoder-explaination</figcaption>
 </figure>
 </div><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-64-transformer-decoder-ff.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-64-transformer-decoder-ff.png" class="lightbox" data-gallery="quarto-lightbox-gallery-44" title="transformer-decoder-ff"><img src="img/c4w2-64-transformer-decoder-ff.png" class="img-fluid figure-img" alt="transformer-decoder-ff"></a></p>
 <figcaption>transformer-decoder-ff</figcaption>
 </figure>
 </div><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-65-transformer-decoder-explaination.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-65-transformer-decoder-explaination.png" class="lightbox" data-gallery="quarto-lightbox-gallery-45" title="transformer-decoder-explaination"><img src="img/c4w2-65-transformer-decoder-explaination.png" class="img-fluid figure-img" alt="transformer-decoder-explaination"></a></p>
 <figcaption>transformer-decoder-explaination</figcaption>
 </figure>
 </div><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-68-transformer-decoder-summary.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-68-transformer-decoder-summary.png" class="lightbox" data-gallery="quarto-lightbox-gallery-46" title="transformer-decoder-summary"><img src="img/c4w2-68-transformer-decoder-summary.png" class="img-fluid figure-img" alt="transformer-decoder-summary"></a></p>
 <figcaption>transformer-decoder-summary</figcaption>
 </figure>
 </div></div>
@@ -1249,7 +1269,7 @@ W_A = softmax(QK^T)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-70-outline.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-70-outline.png" class="lightbox" data-gallery="quarto-lightbox-gallery-47" title="outline"><img src="img/c4w2-70-outline.png" class="img-fluid figure-img" alt="outline"></a></p>
 <figcaption>outline</figcaption>
 </figure>
 </div></div><p>In this video we move on from attention and transformer blocks to the actual nlp task of text summarization. I noticed that the assignment put most of the focus on the coding of attention and the transformer block. Once it worked I started to really wonder what was going on under the hood and realized that while the notebooks it said we were building this from scratch, the reality was that <code>trax</code> framework was hiding lots of the implementation details from us</p>
@@ -1262,7 +1282,7 @@ W_A = softmax(QK^T)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-73-cost-function.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-73-cost-function.png" class="lightbox" data-gallery="quarto-lightbox-gallery-48" title="cost-function"><img src="img/c4w2-73-cost-function.png" class="img-fluid figure-img" alt="cost-function"></a></p>
 <figcaption>cost-function</figcaption>
 </figure>
 </div></div><section id="cross-entropy-loss" class="level2 page-columns page-full">
@@ -1271,7 +1291,7 @@ W_A = softmax(QK^T)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-74-inference.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-74-inference.png" class="lightbox" data-gallery="quarto-lightbox-gallery-49" title="inference"><img src="img/c4w2-74-inference.png" class="img-fluid figure-img" alt="inference"></a></p>
 <figcaption>inference</figcaption>
 </figure>
 </div></div><p>After training GPT2 on summarization data we just treat it like a word model and mine it for summaries. We do this by supply it with an input and predicting the output token by token. A more sophisticated method might be to use a beam search.</p>
@@ -1280,7 +1300,7 @@ W_A = softmax(QK^T)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-76-quiz.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-76-quiz.png" class="lightbox" data-gallery="quarto-lightbox-gallery-50" title="quiz"><img src="img/c4w2-76-quiz.png" class="img-fluid figure-img" alt="quiz"></a></p>
 <figcaption>quiz</figcaption>
 </figure>
 </div></div><p>We want the model to be penalized if it makes the wrong prediction. In this case it it does not predict the next word in the summary.</p>
@@ -1300,7 +1320,7 @@ W_A = softmax(QK^T)
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/c4w2-75-summary.png" class="img-fluid figure-img"></p>
+<p><a href="img/c4w2-75-summary.png" class="lightbox" data-gallery="quarto-lightbox-gallery-51" title="summary"><img src="img/c4w2-75-summary.png" class="img-fluid figure-img" alt="summary"></a></p>
 <figcaption>summary</figcaption>
 </figure>
 </div></div><p>I think these is much missing from this lesson about summerization. However there are a number of good source in papers as well as some lectures on YouTube.</p>
@@ -1561,6 +1581,150 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
@@ -1979,6 +2143,38 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

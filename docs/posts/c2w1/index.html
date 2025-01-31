@@ -6,10 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2020-10-23">
-<meta name="description" content="Extract features from text into numerical vectors, then build a binary classifier for tweets using logistic regression!">
+<meta name="description" content="Auto-correct text with minimum edit distances">
 
-<title>Autocorrect</title>
+<title>Autocorrect and minimum edit distance – NLP Specialization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -57,10 +56,15 @@ div.csl-indent {
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-eefa51cfd4367a2c2ab6a47af1b603aa.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -100,6 +104,11 @@ div.csl-indent {
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">NLP Specialization</span>
+    </a>
+  </div>
             <div id="quarto-search" class="" title="Search"></div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
@@ -138,6 +147,7 @@ div.csl-indent {
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -156,11 +166,11 @@ div.csl-indent {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/c2w1/index.html">Probabilistic Models</a></li><li class="breadcrumb-item"><a href="../../posts/c2w1/index.html">Autocorrect and Dynamic Programming</a></li></ol></nav>
-      <h1 class="title">Autocorrect</h1>
+      <h1 class="title">Autocorrect and minimum edit distance</h1>
             <p class="subtitle lead">Probabilistic Models</p>
                   <div>
         <div class="description">
-          Extract features from text into numerical vectors, then build a binary classifier for tweets using logistic regression!
+          Auto-correct text with minimum edit distances
         </div>
       </div>
                           <div class="quarto-categories">
@@ -179,7 +189,7 @@ div.csl-indent {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">October 23, 2020</p>
+        <p class="date">Friday, October 23, 2020</p>
       </div>
     </div>
     
@@ -366,7 +376,18 @@ div.csl-indent {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">resources:</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#autocorrect" id="toc-autocorrect" class="nav-link" data-scroll-target="#autocorrect">Autocorrect</a></li>
+  <li><a href="#lab-building-the-vocabulary" id="toc-lab-building-the-vocabulary" class="nav-link" data-scroll-target="#lab-building-the-vocabulary">Lab: Building the vocabulary</a></li>
+  <li><a href="#building-the-model-ii" id="toc-building-the-model-ii" class="nav-link" data-scroll-target="#building-the-model-ii">Building the model II</a></li>
+  <li><a href="#lab-building-the-vocabulary-1" id="toc-lab-building-the-vocabulary-1" class="nav-link" data-scroll-target="#lab-building-the-vocabulary-1">Lab: Building the vocabulary</a></li>
+  <li><a href="#minimum-edit-distance" id="toc-minimum-edit-distance" class="nav-link" data-scroll-target="#minimum-edit-distance">Minimum edit distance</a></li>
+  <li><a href="#minimum-edit-distance-algorithm" id="toc-minimum-edit-distance-algorithm" class="nav-link" data-scroll-target="#minimum-edit-distance-algorithm">Minimum edit distance algorithm</a></li>
+  <li><a href="#minimum-edit-distance-algorithm-ii" id="toc-minimum-edit-distance-algorithm-ii" class="nav-link" data-scroll-target="#minimum-edit-distance-algorithm-ii">Minimum edit distance algorithm II</a></li>
+  <li><a href="#minimum-edit-distance-iii" id="toc-minimum-edit-distance-iii" class="nav-link" data-scroll-target="#minimum-edit-distance-iii">Minimum edit distance III</a></li>
+  <li><a href="#assignment-autocorrect" id="toc-assignment-autocorrect" class="nav-link" data-scroll-target="#assignment-autocorrect">Assignment : Autocorrect</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">Resources:</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c2w1/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -378,18 +399,297 @@ div.csl-indent {
 
 
 
-<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<div class="no-row-height column-margin column-container"><div id="fig-00" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/course-banner.jpg" class="img-fluid figure-img"></p>
+<p><a href="img/course-banner.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="img/course-banner.jpg" class="img-fluid figure-img"></a></p>
 <figcaption>course banner</figcaption>
 </figure>
-</div></div><section id="resources" class="level1">
-<h1>resources:</h1>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1
+</figcaption>
+</figure>
+</div></div><section id="learning-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
+<ul>
+<li>Word probabilities</li>
+<li>Dynamic programming</li>
+<li>Minimum edit distance</li>
+<li>Autocorrect</li>
+</ul>
+</section>
+<section id="overview" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<p>You use auto-correct everyday. When you send your friend a text message, or when you make a mistake in a query, there is an autocorrect behind the scenes that corrects the sentence for you. This week you are also going to learn about minimum edit distance, which tells you the minimum amount of edits to change one word into another. In doing that, you will learn about dynamic programming which is an important programming concept which frequently comes up in interviews and could be used to solve a lot of optimization problems.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-01" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide01.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="autocorrect"><img src="img/slide01.png" class="img-fluid figure-img"></a></p>
+<figcaption>autocorrect</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Learning Objectives
+</figcaption>
+</figure>
+</div></div></section>
+<section id="autocorrect" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="autocorrect">Autocorrect</h2>
+<p>Autocorrects are used everywhere. You use them in your phones, tablets, and computers.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-02" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide02.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="find candidates"><img src="img/slide02.png" class="img-fluid figure-img"></a></p>
+<figcaption>find candidates</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: What is autocorrect
+</figcaption>
+</figure>
+</div></div><p>To implement autocorrect in this week’s assignment, you have to follow these steps:</p>
+<ul>
+<li>Identify a misspelled word</li>
+<li>Find strings n edit distance away: (these could be random strings)</li>
+<li>Filter candidates: (keep only the real words from the previous steps)</li>
+<li>Calculate word probabilities: (choose the word that is most likely to occur in that context)</li>
+</ul>
+
+<div class="no-row-height column-margin column-container"><div id="fig-03" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide03.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="find candidates"><img src="img/slide03.png" class="img-fluid figure-img"></a></p>
+<figcaption>find candidates</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Find candidates
+</figcaption>
+</figure>
+</div></div><p>Building the model:</p>
+<ol type="1">
+<li>Identify the misspelled word</li>
+</ol>
+<ul>
+<li>When identifying the misspelled word, you can check whether it is in the vocabulary. If you don’t find it, then it is probably a typo.</li>
+</ul>
+<ol start="2" type="1">
+<li>Find strings n edit distance away</li>
+<li>Filter candidates</li>
+</ol>
+<ul>
+<li>In this step, you want to take all the words generated above and then only keep the actual words that make sense and that you can find in your vocabulary.</li>
+</ul>
+
+<div class="no-row-height column-margin column-container"><div id="fig-04" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide04.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="filter"><img src="img/slide04.png" class="img-fluid figure-img"></a></p>
+<figcaption>filter</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Filter candidates
+</figcaption>
+</figure>
+</div></div></section>
+<section id="lab-building-the-vocabulary" class="level2">
+<h2 class="anchored" data-anchor-id="lab-building-the-vocabulary">Lab: Building the vocabulary</h2>
+<p><a href="../../posts/c2w1/lab01.html">Building the vocabulary</a></p>
+</section>
+<section id="building-the-model-ii" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="building-the-model-ii">Building the model II</h2>
+<ol start="4" type="1">
+<li>Calculating word probabilities</li>
+</ol>
+
+<div class="no-row-height column-margin column-container"><div id="fig-05" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide05.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="word probabilities"><img src="img/slide05.png" class="img-fluid figure-img"></a></p>
+<figcaption>word probabilities</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: calculating word probabilities
+</figcaption>
+</figure>
+</div></div><p>Note that you are storing the count of words and then you can use that to generate the probabilities. For this week, you will be counting the probabilities of words occurring. If you want to build a slightly more sophisticated auto-correct you can keep track of two words occurring next to each other instead. You can then use the previous word to decide. For example which combo is more likely, there friend or their friend? For this week however you will be implementing the probabilities by just using the word frequencies.</p>
+<p>Here is a summary of everything you have seen before in the previous two videos.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-06" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide06.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="summary"><img src="img/slide06.png" class="img-fluid figure-img"></a></p>
+<figcaption>summary</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7: summary of first four autocorrect steps
+</figcaption>
+</figure>
+</div></div></section>
+<section id="lab-building-the-vocabulary-1" class="level2">
+<h2 class="anchored" data-anchor-id="lab-building-the-vocabulary-1">Lab: Building the vocabulary</h2>
+<p><a href="../../posts/c2w1/lab02.html">Candidates from Edits</a></p>
+</section>
+<section id="minimum-edit-distance" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="minimum-edit-distance">Minimum edit distance</h2>
+<p>Minimum edit distance allows you to:</p>
+<ul>
+<li>Evaluate similarity between two strings</li>
+<li>Find the minimum number of edits between two strings</li>
+<li>Implement spelling correction, document similarity, machine translation, DNA sequencing, and more</li>
+</ul>
+<p>Remember that the edits include:</p>
+<ul>
+<li>Insert (add a letter) ‘to’: ‘top’, ‘two’ …</li>
+<li>Delete (remove a letter) ‘hat’: ‘ha’, ‘at’, ‘ht’</li>
+<li>Replace (change 1 letter to another) ‘jaw’: ‘jar’, ‘paw’, …</li>
+</ul>
+<p>Here is a concrete example where we calculate the cost (i.e.&nbsp;edit distance) between two strings.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-07" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-07-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide07.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Minimum edit distance"><img src="img/slide07.png" class="img-fluid figure-img"></a></p>
+<figcaption>Minimum edit distance</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-07-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8: Minimum edit distance
+</figcaption>
+</figure>
+</div></div><p>Note that as your strings get larger it gets much harder to calculate the minimum edit distance. Hence you will now learn about the minimum edit distance algorithm!</p>
+</section>
+<section id="minimum-edit-distance-algorithm" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="minimum-edit-distance-algorithm">Minimum edit distance algorithm</h2>
+<p>When computing the minimum edit distance, you would start with a source word and transform it into the target word. Let’s look at the following example:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-08" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-08-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide08.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Minimum edit distance"><img src="img/slide08.png" class="img-fluid figure-img"></a></p>
+<figcaption>Minimum edit distance</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-08-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9: Minimum edit distance algorithm
+</figcaption>
+</figure>
+</div></div><p>To go:</p>
+<ul>
+<li>from # → # has a cost of 0</li>
+<li>from p → # has a cost of 1, because that is the cost of a delete.<br>
+</li>
+<li>from p → s has a cost of 2, delete p and insert s.</li>
+</ul>
+<p>You can keep going this way by populating one element at a time, but it turns out there is a faster way to do this.</p>
+<p>Wee will learn about it next.</p>
+</section>
+<section id="minimum-edit-distance-algorithm-ii" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="minimum-edit-distance-algorithm-ii">Minimum edit distance algorithm II</h2>
+<p>To populate the following table:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-09" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-09-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide09.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="Minimum edit distance"><img src="img/slide09.png" class="img-fluid figure-img"></a></p>
+<figcaption>Minimum edit distance</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-09-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10: Minimum edit distance algorithm
+</figcaption>
+</figure>
+</div></div><p>There are three equations:</p>
+<p>D[i,j] = D[i-1, j] + del_cost: this indicates you want to populate the current cell (i,j) by using the cost in the cell found directly above.</p>
+<p>D[i,j] = D[i, j-1] + ins_cost: this indicates you want to populate the current cell (i,j) by using the cost in the cell found directly to its left.</p>
+<p>D[i,j] = D[i-1, j-1] + rep_cost: the rep cost can be 2 or 0 depending if you are going to actually replace it or not.</p>
+<p>At every time step you check the three possible paths where you can come from and you select the least expensive one. Once you are done, you get the following:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-10" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide10.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="Minimum edit distance"><img src="img/slide10.png" class="img-fluid figure-img"></a></p>
+<figcaption>Minimum edit distance</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;11: Minimum edit distance algorithm
+</figcaption>
+</figure>
+</div></div></section>
+<section id="minimum-edit-distance-iii" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="minimum-edit-distance-iii">Minimum edit distance III</h2>
+
+<div class="no-row-height column-margin column-container"><div id="fig-10" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide10.png" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="Minimum edit distance"><img src="img/slide10.png" class="img-fluid figure-img"></a></p>
+<figcaption>Minimum edit distance</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12: Minimum edit distance algorithm
+</figcaption>
+</figure>
+</div></div><p>To summarize, you have seen the levenshtein distance which specifies the cost per operation. If you need to reconstruct the path of how you got from one string to the other, you can use a backtrace. You should keep a simple pointer in each cell letting you know where you came from to get there. So you know the path taken across the table from the top left corner, to the bottom right corner. You can then reconstruct it.</p>
+<p>This method for computation instead of brute force is a technique known as dynamic programming. You first solve the smallest subproblem first and then reusing that result you solve the next biggest subproblem, saving that result, reusing it again, and so on. This is exactly what you did by populating each cell from the top right to the bottom left. It’s a well-known technique in computer science!</p>
+</section>
+<section id="assignment-autocorrect" class="level2">
+<h2 class="anchored" data-anchor-id="assignment-autocorrect">Assignment : Autocorrect</h2>
+<ul>
+<li><a href="../../posts/c2w1/lab03.html">lab 3</a></li>
+</ul>
+<p>Note: due to the honor code, this is the original assignment notebook, and not the solution.</p>
+<p>I hope to later add some projects which should include similar material.</p>
+</section>
+<section id="resources" class="level1">
+<h1>Resources:</h1>
 <ul>
 <li><span class="citation" data-cites="Chadha2020DistilledNotesCourseraDLSpec">(<a href="#ref-Chadha2020DistilledNotesCourseraDLSpec" role="doc-biblioref">Chadha 2020</a>)</span> <a href="https://aman.ai/coursera-nlp/logistic-regression/">Aman Chadha’s Notes</a></li>
-<li><a href="https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization/tree/master/1%20-%20Natural%20Language%20Processing%20with%20Classification%20and%20Vector%20Spaces#testing-logistic-regression">Ibrahim Jelliti’s Notes</a></li>
+<li><a href="https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization/tree/master">Ibrahim Jelliti’s Notes</a></li>
 </ul>
-<p><embed src="slides.pdf" class="img-fluid"></p>
 
 
 
@@ -401,13 +701,14 @@ Chadha, Aman. 2020. <span>“Distilled Notes for the Natural Language Processing
 </div>
 </div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{2020,
   author = {},
-  title = {Autocorrect},
+  title = {Autocorrect and Minimum Edit Distance},
   date = {2020-10-23},
   url = {https://orenbochman.github.io/notes-nlp/posts/c2w1/},
   langid = {en}
 }
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-2020" class="csl-entry quarto-appendix-citeas" role="listitem">
-<span>“Autocorrect.”</span> 2020. October 23, 2020. <a href="https://orenbochman.github.io/notes-nlp/posts/c2w1/">https://orenbochman.github.io/notes-nlp/posts/c2w1/</a>.
+<span>“Autocorrect and Minimum Edit Distance.”</span> 2020. October 23,
+2020. <a href="https://orenbochman.github.io/notes-nlp/posts/c2w1/">https://orenbochman.github.io/notes-nlp/posts/c2w1/</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -429,6 +730,150 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
@@ -847,6 +1292,38 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

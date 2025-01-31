@@ -6,10 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2020-10-23">
 <meta name="description" content="Extract features from text into numerical vectors, then build a binary classifier for tweets using logistic regression!">
 
-<title>Autocomplete and Language Models</title>
+<title>Autocomplete and Language Models – NLP Specialization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -57,10 +56,15 @@ div.csl-indent {
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-eefa51cfd4367a2c2ab6a47af1b603aa.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -90,6 +94,49 @@ div.csl-indent {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -100,6 +147,11 @@ div.csl-indent {
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">NLP Specialization</span>
+    </a>
+  </div>
             <div id="quarto-search" class="" title="Search"></div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
@@ -138,6 +190,7 @@ div.csl-indent {
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -179,7 +232,7 @@ div.csl-indent {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">October 23, 2020</p>
+        <p class="date">Friday, October 23, 2020</p>
       </div>
     </div>
     
@@ -366,7 +419,32 @@ div.csl-indent {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">resources:</a></li>
+  <li><a href="#tldr---autocomplete-and-language-models" id="toc-tldr---autocomplete-and-language-models" class="nav-link active" data-scroll-target="#tldr---autocomplete-and-language-models">TL;DR - Autocomplete and Language Models</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#n-grams-overview" id="toc-n-grams-overview" class="nav-link" data-scroll-target="#n-grams-overview">N-Grams Overview</a></li>
+  <li><a href="#n-grams-and-probabilities" id="toc-n-grams-and-probabilities" class="nav-link" data-scroll-target="#n-grams-and-probabilities">N-grams and Probabilities</a>
+  <ul class="collapse">
+  <li><a href="#bigram-probability" id="toc-bigram-probability" class="nav-link" data-scroll-target="#bigram-probability">Bigram Probability:</a></li>
+  <li><a href="#trigram-probability" id="toc-trigram-probability" class="nav-link" data-scroll-target="#trigram-probability">Trigram Probability:</a></li>
+  </ul></li>
+  <li><a href="#sequence-probabilities" id="toc-sequence-probabilities" class="nav-link" data-scroll-target="#sequence-probabilities">Sequence Probabilities</a></li>
+  <li><a href="#starting-and-ending-sentences" id="toc-starting-and-ending-sentences" class="nav-link" data-scroll-target="#starting-and-ending-sentences">Starting and Ending Sentences</a></li>
+  <li><a href="#lecture-notebook-corpus-preprocessing-for-n-grams" id="toc-lecture-notebook-corpus-preprocessing-for-n-grams" class="nav-link" data-scroll-target="#lecture-notebook-corpus-preprocessing-for-n-grams">Lecture notebook: Corpus preprocessing for N-grams</a></li>
+  <li><a href="#the-n-gram-language-model" id="toc-the-n-gram-language-model" class="nav-link" data-scroll-target="#the-n-gram-language-model">The N-gram Language Model</a></li>
+  <li><a href="#lecture-notebook-building-the-language-model" id="toc-lecture-notebook-building-the-language-model" class="nav-link" data-scroll-target="#lecture-notebook-building-the-language-model">Lecture notebook: Building the language model</a></li>
+  <li><a href="#language-model-evaluation" id="toc-language-model-evaluation" class="nav-link" data-scroll-target="#language-model-evaluation">Language Model Evaluation</a></li>
+  <li><a href="#out-of-vocabulary-words" id="toc-out-of-vocabulary-words" class="nav-link" data-scroll-target="#out-of-vocabulary-words">Out of Vocabulary Words</a>
+  <ul class="collapse">
+  <li><a href="#criteria-to-create-the-vocabulary" id="toc-criteria-to-create-the-vocabulary" class="nav-link" data-scroll-target="#criteria-to-create-the-vocabulary">Criteria to create the vocabulary</a></li>
+  </ul></li>
+  <li><a href="#out-of-vocabulary-words-1" id="toc-out-of-vocabulary-words-1" class="nav-link" data-scroll-target="#out-of-vocabulary-words-1">Out of Vocabulary Words</a></li>
+  <li><a href="#smoothing" id="toc-smoothing" class="nav-link" data-scroll-target="#smoothing">Smoothing</a></li>
+  <li><a href="#week-summary" id="toc-week-summary" class="nav-link" data-scroll-target="#week-summary">Week Summary</a></li>
+  <li><a href="#lecture-notebook-language-model-generalization" id="toc-lecture-notebook-language-model-generalization" class="nav-link" data-scroll-target="#lecture-notebook-language-model-generalization">Lecture notebook: Language model generalization</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">Resources:</a>
+  <ul class="collapse">
+  <li><a href="#slides" id="toc-slides" class="nav-link" data-scroll-target="#slides">Slides</a></li>
+  </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c2w3/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -380,19 +458,518 @@ div.csl-indent {
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/course-banner.jpg" class="img-fluid figure-img"></p>
+<p><a href="img/course-banner.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="img/course-banner.jpg" class="img-fluid figure-img" alt="course banner"></a></p>
 <figcaption>course banner</figcaption>
 </figure>
-</div></div><section id="resources" class="level1">
-<h1>resources:</h1>
+</div></div><p>These are my notes for Week 3 notes for the <a href="https://www.coursera.org/learn/probabilistic-models-in-nlp/home/welcome">Natural Language Processing with Probabilistic Models</a> Course in the Natural Language Processing Specialization Offered by DeepLearning.AI on Coursera.</p>
+<section id="tldr---autocomplete-and-language-models" class="level2 callout-info">
+<h2 class="anchored" data-anchor-id="tldr---autocomplete-and-language-models">TL;DR - Autocomplete and Language Models</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="../../images/in_a_nutshell.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Language Models in a nutshell"><img src="../../images/in_a_nutshell.jpg" class="img-fluid figure-img" alt="Language Models in a nutshell"></a></p>
+<figcaption>Language Models in a nutshell</figcaption>
+</figure>
+</div>
+<p>This week we learn how to create a language model using N-grams. Starting from the definition of conditional probability we develop the probabilities of sequences of words. Next we add start and end of sentences tokens to our word sequence model. Next we add tokens to represent <strong>out of vocabulary</strong> words. Then we tackle sparsity by implementing <strong>smoothing</strong> and <strong>backoff</strong>. Finally we consider how to evaluate our language model.</p>
+<p>In the labs we preprocess a corpus to create an N-gram language model. We then build the language model and evaluate it using perplexity.</p>
+<p>In the assignment for this week, we build a language model to generate autocomplete a text fragment. We will also evaluate the perplexity of the model.</p>
+</section>
+<section id="learning-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
+<ul>
+<li>Conditional probabilities</li>
+<li>Text pre-processing</li>
+<li>Language modeling</li>
+<li>Perplexity</li>
+<li>K-smoothing</li>
+<li>N-grams</li>
+<li>Backoff</li>
+<li>Tokenization</li>
+</ul>
+</section>
+<section id="n-grams-overview" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="n-grams-overview">N-Grams Overview</h2>
+<p>Recall how Firth suggested a distributional view of semantics?</p>
+<p>Previously we used a vector space model to represent this idea. Now we dive deeper and develop a model for distributional semantics using probabilities of sequences of words. Once we can estimate these probabilities we can predict the next word in a sentence.</p>
+<p>N-gram refer to howe we model the a sequence of N words. For example, a bigram model would model the probability of a word given the previous word. A trigram model would model the probability of a word given the previous bigram. And so on. These probabilities are derived by counting frequencies in a corpus of texts.</p>
+<p>N-grams are fundamental and give you a foundation that will allow you to understand more complicated models in the specialization. They form the theoretical under pinning for the next two courses.</p>
+<p>N-grams models allow us to predict the probabilities of certain words happening in a specific sequence. Using that, you can build an auto-correct or even a search suggestion tool.</p>
+<p>Other applications of N-gram language modeling include:</p>
+<ul>
+<li>Speech recognition</li>
+<li>Spelling correction</li>
+<li>Augmentative communication</li>
+</ul>
+
+<div class="no-row-height column-margin column-container"><div id="fig-01" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide01.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="caption"><img src="img/slide01.png" class="img-fluid figure-img"></a></p>
+<figcaption>caption</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Description
+</figcaption>
+</figure>
+</div></div><p>This week you are going to learn to:</p>
+<ul>
+<li>Process a text corpus to N-gram language model</li>
+<li>Handle out of vocabulary words</li>
+<li>Implement smoothing for previously unseen N-grams</li>
+<li>Language model evaluation</li>
+</ul>
+</section>
+<section id="n-grams-and-probabilities" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="n-grams-and-probabilities">N-grams and Probabilities</h2>
+<p>Before we start computing probabilities of certain sequences, we need to first define what is an N-gram language model:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-02" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide02.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="caption"><img src="img/slide02.png" class="img-fluid figure-img"></a></p>
+<figcaption>caption</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Description
+</figcaption>
+</figure>
+</div></div><p>Now given the those definitions, we can label a sentence as follows:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-03" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide03.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="caption"><img src="img/slide03.png" class="img-fluid figure-img"></a></p>
+<figcaption>caption</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Description
+</figcaption>
+</figure>
+</div></div><p>In other notation you can write:</p>
+<p><span class="math display">
+w_1^m = w_1 w_2 w_3 ... w_m
+</span> <span class="math display">
+w_1^3 = w_1 w_2 w_3
+</span> <span class="math display">
+w_{m-2}^m = w_{m-2} w_{m-1} w_m
+</span></p>
+<p>Given the following corpus: I am happy because I am learning.</p>
+<p>Size of corpus m = 7.</p>
+<p><span class="math display">
+P(I) = \frac{1}{7}
+</span></p>
+<p><span class="math display">
+P(happy) = \frac{1}{7}
+</span></p>
+<p>To generalize, the probability of a unigram is</p>
+<p><span class="math display">
+P(w) = \frac{C(w)}{m}
+</span></p>
+<p>Where C(w) is the count of the word in the corpus and m is the size of the corpus.</p>
+<section id="bigram-probability" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="bigram-probability">Bigram Probability:</h3>
+
+<div class="no-row-height column-margin column-container"><div id="fig-04" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide04.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="caption"><img src="img/slide04.png" class="img-fluid figure-img"></a></p>
+<figcaption>caption</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Description
+</figcaption>
+</figure>
+</div></div></section>
+<section id="trigram-probability" class="level3">
+<h3 class="anchored" data-anchor-id="trigram-probability">Trigram Probability:</h3>
+<p>To compute the probability of a trigram: <span class="math display">
+P(w_3 | w_1^2) = \frac{C(w_1^2 w_3)}{C(w_1^2)}
+</span></p>
+<p><span class="math display">
+C(w_1^2 w_3) = C(w_1 w_2 w_3) = C(w_1^3)
+</span></p>
+<p>N-gram Probability:</p>
+<p><span class="math display">
+P(w_n | w_1^{n-1}) = \frac{C(w_1^{n-1} w_n)}{C(w_1^{n-1})}
+</span></p>
+<p><span class="math display">
+C(w_1^{n-1} w_n) = C(w_1^n)
+</span></p>
+</section>
+</section>
+<section id="sequence-probabilities" class="level2">
+<h2 class="anchored" data-anchor-id="sequence-probabilities">Sequence Probabilities</h2>
+<p>You just saw how to compute sequence probabilities, their short comings, and finally how to approximate N-gram probabilities. In doing so, you try to approximate the probability of a sentence. For example, what is the probability of the following sentence: <em>The teacher drinks tea</em>. To compute it, you will make use of the following:</p>
+<p><span class="math display">
+P(B|A) = \frac{P(A,B)}{P(A)} \Rightarrow P(A,B) = P(A)P(B|A)
+</span></p>
+<p><span class="math display">
+P(A,B,C,D) = P(A)P(B|A)P(C|A,B)P(D|A,B,C)
+</span></p>
+<p>To compute the probability of a sequence, you can compute the following:</p>
+<p><span class="math display">
+P(\text{The teacher drinks tea}) = P(\text{The})P(\text{teacher}|\text{The})P(\text{drinks}|\text{The teacher})P(\text{tea}|\text{The teacher drinks})
+</span></p>
+<p>One of the main issues with computing the probabilities above is the corpus rarely contains the exact same phrases as the ones you computed your probabilities on. Hence, you can easily end up getting a probability of 0. The Markov assumption indicates that only the last word matters. Hence:</p>
+<p><span class="math display">
+\text{Bigram} \qquad P(w_n | w_1^{n-1}) \approx P(w_n | w_{n-1})
+</span></p>
+<p><span class="math display">
+\text{Trigram} \qquad P(w_n | w_1^{n-1}) \approx P(w_n | w_{n-2}^{n-1})
+</span></p>
+<p><span class="math display">
+\text{N-gram} \qquad P(w_n | w_1^{n-1}) \approx P(w_n | w_{n-N+1}^{n-1})
+</span></p>
+<p>You can model the entire sentence as follows:</p>
+<p><span class="math display">
+P(w_1^n) = P(w_1)P(w_2|w_1)P(w_3|w_2)P(w_4|w_3) ... P(w_n|w_{n-1}) = \prod_{i=1}^{n} P(w_i|w_{i-1})
+</span></p>
+<p><span class="math display">
+P(w_1^n) = P(w_1)P(w_2|w_1)P(w_3|w_2)P(w_4|w_3) ... P(w_n|w_{n-1}) = \prod_{i=1}^{n} P(w_i|w_{i-1})
+</span></p>
+</section>
+<section id="starting-and-ending-sentences" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="starting-and-ending-sentences">Starting and Ending Sentences</h2>
+<p>We usually start and end a sentence with the following tokens respectively: &lt;s&gt; &lt;/s&gt;.</p>
+<p>When computing probabilities using a unigram, you can append an &lt;s&gt; in the beginning of the sentence. To generalize to an N-gram language model, you can add N-1 start tokens &lt;s&gt;.</p>
+<p>For the end of sentence token &lt;/s&gt;, you only need one even if it is an N-gram. Here is an example:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-08" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-08-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide08.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="caption"><img src="img/slide08.png" class="img-fluid figure-img"></a></p>
+<figcaption>caption</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-08-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Description
+</figcaption>
+</figure>
+</div></div><p>Make sure you know how to compute the probabilities above!</p>
+</section>
+<section id="lecture-notebook-corpus-preprocessing-for-n-grams" class="level2">
+<h2 class="anchored" data-anchor-id="lecture-notebook-corpus-preprocessing-for-n-grams">Lecture notebook: Corpus preprocessing for N-grams</h2>
+<p><a href="lab01.qmd">lab 1 Corpus preprocessing for N-grams</a></p>
+</section>
+<section id="the-n-gram-language-model" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="the-n-gram-language-model">The N-gram Language Model</h2>
+
+<div class="no-row-height column-margin column-container"><div id="fig-09" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-09-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide09.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="caption"><img src="img/slide09.png" class="img-fluid figure-img"></a></p>
+<figcaption>caption</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-09-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: Count Matrix
+</figcaption>
+</figure>
+</div><div id="fig-10" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide10.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="caption"><img src="img/slide10.png" class="img-fluid figure-img"></a></p>
+<figcaption>caption</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7: Count Matrix
+</figcaption>
+</figure>
+</div><div id="fig-11" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide11.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="caption"><img src="img/slide11.png" class="img-fluid figure-img"></a></p>
+<figcaption>caption</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8: Count Matrix
+</figcaption>
+</figure>
+</div><div id="fig-12" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide12.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="caption"><img src="img/slide12.png" class="img-fluid figure-img"></a></p>
+<figcaption>caption</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9: Count Matrix
+</figcaption>
+</figure>
+</div></div>
+
+
+<p>We covered a lot of concepts in the previous video. You have seen:</p>
+<ul>
+<li><a href="@fig-09">Count matrix</a></li>
+<li><a href="@fig-10">Probability matrix</a></li>
+<li><a href="@fig-11">Language model</a></li>
+<li><a href="@fig-12">Log probability</a> to avoid underflow</li>
+<li><a href="@fig-13">Generative language model</a></li>
+</ul>
+<p>In the count matrix:</p>
+<ul>
+<li>Rows correspond to the unique corpus N-1 grams.</li>
+<li>Columns correspond to the unique corpus words.</li>
+</ul>
+<p>Here is an example of the count matrix of a bigram.</p>
+<p>To convert it into a probability matrix, you can use the following formula:</p>
+<ul>
+<li><span class="math inline">P(w_n \mid w^{n-1}_{n-N+1}) = \frac{C(w^{n-1}_{n-N+1}, w_n)}{C(w^{n-1}_{n-N+1})}</span></li>
+<li><span class="math inline">sum(row) = \sum_{w \in V} C(w^{n-1}_{n-N+1}, w) = C(w^{n-1}_{n-N+1})</span></li>
+</ul>
+<p>Now given the probability matrix, you can generate the language model. You can compute the sentence probability and the next word prediction.</p>
+<p>To compute the probability of a sequence, you needed to compute:</p>
+<p><span class="math display">
+P(w_1^n) = P(w_1)P(w_2|w_1)P(w_3|w_2)P(w_4|w_3) \ldots P(w_n|w_{n-1}) = \prod_{i=1}^{n} P(w_i | w_{i-1})
+</span></p>
+<p>To avoid underflow, you can multiply by the log.</p>
+<p><span class="math display">
+\log P(w_1^n) = \log P(w_1) + \log P(w_2|w_1) + \log P(w_3|w_2) + \log P(w_4|w_3) + \ldots+ \log P(w_n|w_{n-1}) = \sum_{i=1}^{n} \log P(w_i|w_{i-1})
+</span></p>
+<p>Finally, you can create a generative language model.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-13" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide13.png" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="caption"><img src="img/slide13.png" class="img-fluid figure-img"></a></p>
+<figcaption>caption</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10: Count Matrix
+</figcaption>
+</figure>
+</div></div></section>
+<section id="lecture-notebook-building-the-language-model" class="level2">
+<h2 class="anchored" data-anchor-id="lecture-notebook-building-the-language-model">Lecture notebook: Building the language model</h2>
+<p><a href="lab02.qmd">lab 2 Building the language model</a></p>
+</section>
+<section id="language-model-evaluation" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="language-model-evaluation">Language Model Evaluation</h2>
+<p>Splitting the Data We will now discuss the train/val/test splits and perplexity.</p>
+<p>Train/Val/Test splits Smaller Corpora:</p>
+<p>80% train</p>
+<p>10% val</p>
+<p>10% test</p>
+<p>Larger Corpora:</p>
+<p>98% train</p>
+<p>1% val</p>
+<p>1% test</p>
+<p>There are two main methods for splitting the data:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-14" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide14.png" class="lightbox" data-gallery="quarto-lightbox-gallery-13" title="caption"><img src="img/slide14.png" class="img-fluid figure-img"></a></p>
+<figcaption>caption</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;11: Count Matrix
+</figcaption>
+</figure>
+</div></div><p>Perplexity Perplexity is used to tell us whether a set of sentences look like they were written by humans rather than by a simple program choosing words at random. A text that is written by humans is more likely to have lower perplexity, where a text generated by random word choice would have a higher perplexity.</p>
+<p>Concretely, here are the formulas to calculate perplexity.</p>
+<p><span class="math display">
+PP(W) = P(s_1, s_2, \ldots, s_m)^{-\frac{1}{m}}
+</span></p>
+<p><span class="math display">
+PP(W) = \sqrt{ \prod_{i=1}^{m} \prod_{j=1}^{|s_i|} \frac{1}{P(w_j^{(i)} | w_{j-1}^{(i)})}}
+</span></p>
+<p>​<span class="math inline">w_j^{(i)}</span> corresponds to the jth word in the ith sentence. If you were to concatenate all the sentences then <span class="math inline">w_i</span> is the ith word in the test set. To compute the log perplexity, you go from:</p>
+<p><span class="math display">
+PP(W) = \sqrt{ \prod_{i=1}^{m} \frac{1}{P(w_i | w_{i-1})}}
+</span></p>
+<p>To</p>
+<p><span class="math display">
+log PP(W) = -\frac{1}{m} \sum_{i=1}^{m} \log_2 P(w_i | w_{i-1})
+</span></p>
+</section>
+<section id="out-of-vocabulary-words" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="out-of-vocabulary-words">Out of Vocabulary Words</h2>
+<p>Many times, you will be dealing with unknown words in the corpus. So how do you choose your vocabulary? What is a vocabulary?</p>
+<p>A vocabulary is a set of unique words supported by your language model. In some tasks like speech recognition or question answering, you will encounter and generate words only from a fixed set of words. Hence, a <strong>closed vocabulary</strong>.</p>
+<p><strong>Open vocabulary</strong> means that you may encounter words from outside the vocabulary, like a name of a new city in the training set. Here is one recipe that would allow you to handle unknown words.</p>
+<ul>
+<li>Create vocabulary V</li>
+<li>Replace any word in corpus and not in V by &lt;UNK&gt;</li>
+<li>Count the probabilities with &lt;UNK&gt; as with any other word</li>
+</ul>
+
+<div class="no-row-height column-margin column-container"><div id="fig-15" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-15-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide15.png" class="lightbox" data-gallery="quarto-lightbox-gallery-14" title="caption"><img src="img/slide15.png" class="img-fluid figure-img"></a></p>
+<figcaption>caption</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-15-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12: Count Matrix
+</figcaption>
+</figure>
+</div></div><p>The example above shows how you can use min_frequency and replace all the words that show up fewer times than min_frequency by UNK. You can then treat UNK as a regular word.</p>
+<section id="criteria-to-create-the-vocabulary" class="level3">
+<h3 class="anchored" data-anchor-id="criteria-to-create-the-vocabulary">Criteria to create the vocabulary</h3>
+<ul>
+<li>Min word frequency f</li>
+<li>Max |V|, include words by frequency</li>
+<li>Use &lt;UNK&gt; sparingly (Why?)</li>
+<li>Perplexity - only compare LMs with the same V</li>
+</ul>
+</section>
+</section>
+<section id="out-of-vocabulary-words-1" class="level2">
+<h2 class="anchored" data-anchor-id="out-of-vocabulary-words-1">Out of Vocabulary Words</h2>
+</section>
+<section id="smoothing" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="smoothing">Smoothing</h2>
+
+<div class="no-row-height column-margin column-container"><div id="fig-16" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-16-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide16.png" class="lightbox" data-gallery="quarto-lightbox-gallery-15" title="Problem"><img src="img/slide16.png" class="img-fluid figure-img"></a></p>
+<figcaption>Problem</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-16-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;13: Missing N-grams
+</figcaption>
+</figure>
+</div></div><p>The three main concepts covered here are dealing with missing n-grams, smoothing, and Backoff and interpolation.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-17" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-17-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide17.png" class="lightbox" data-gallery="quarto-lightbox-gallery-16" title="Smoothing"><img src="img/slide17.png" class="img-fluid figure-img"></a></p>
+<figcaption>Smoothing</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-17-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;14: Add One Smoothing, Add K Smoothing
+</figcaption>
+</figure>
+</div></div><p><span id="eq-n-gram-prob"><span class="math display">
+P(w_n | w^{n-1}_{n-N+1}) = \frac{C(w^{n-1}_{n-N+1}, w_n)}{C(w^{n-1}_{n-N+1})} \qquad \text{can be 0}
+\tag{1}</span></span></p>
+<p>Hence we can add-1 smoothing as follows to fix that problem:</p>
+<p><span id="eq-add-one-smoothing"><span class="math display">
+P(w_n | w_{n-1}) = \frac{C(w_{n-1}, w_n) + 1}{\sum_{w \in V} (C(w_{n-1}, w) + 1)} = \frac{C(w_{n-1}, w_n) + 1}{C(w_{n-1}) + V} \qquad
+\tag{2}</span></span></p>
+<p>Add-k smoothing is very similar:</p>
+<p><span id="eq-add-k-smoothing"><span class="math display">
+P(w_n | w_{n-1}) = \frac{C(w_{n-1}, w_n) + k}{\sum_{w \in V} (C(w_{n-1}, w) + k)} =\frac{C(w_{n-1}, w_n) + k}{C(w_{n-1}) + k\times V} \qquad
+\tag{3}</span></span></p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-18" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-18-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide18.png" class="lightbox" data-gallery="quarto-lightbox-gallery-17" title="Backoff"><img src="img/slide18.png" class="img-fluid figure-img"></a></p>
+<figcaption>Backoff</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-18-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15: Backoff
+</figcaption>
+</figure>
+</div></div><p>When using back-off:</p>
+<ul>
+<li><p>If N-gram missing =&gt; use (N-1)-gram, …: Using the lower level N-grams (i.e.&nbsp;(N-1)-gram, (N-2)-gram, down to unigram) distorts the probability distribution. Especially for smaller corpora, some probability needs to be discounted from higher level N-grams to use it for lower level N-grams.</p></li>
+<li><p>Probability discounting e.g.&nbsp;Katz backoff: makes use of discounting.</p></li>
+<li><p>“Stupid” backoff: If the higher order N-gram probability is missing, the lower order N-gram probability is used, just multiplied by a constant. A constant of about 0.4 was experimentally shown to work well.</p></li>
+</ul>
+<p>Here is a <a href="@fig-18">visualization</a> of the backoff process.</p>
+<p>You can also use interpolation when computing probabilities as follows:</p>
+<p><span id="eq-interpolation"><span class="math display">
+\hat{P}(w_n | w_{n-2} W_{n-1}) = \lambda_1 \times P(w_n | w_{n-2} w_{n-1}) + \lambda_2 \times P(w_n | w_{n-1}) + \lambda_3 \times P(w_n) \qquad
+\tag{4}</span></span></p>
+<p>Where</p>
+<p><span class="math display">
+\sum_i \lambda_i = 1
+</span></p>
+</section>
+<section id="week-summary" class="level2">
+<h2 class="anchored" data-anchor-id="week-summary">Week Summary</h2>
+<p>This week you learned the following concepts</p>
+<ul>
+<li>N-Grams and probabilities</li>
+<li>Approximate sentence probability from N-Grams</li>
+<li>Build a language model from a corpus</li>
+<li>Fix missing information</li>
+<li>Out of vocabulary words with &lt;UNK&gt;</li>
+<li>Missing N-Gram in corpus with smoothing, backoff and interpolation</li>
+<li>Evaluate language model with perplexity</li>
+<li>Coding assignment!</li>
+</ul>
+</section>
+<section id="lecture-notebook-language-model-generalization" class="level2">
+<h2 class="anchored" data-anchor-id="lecture-notebook-language-model-generalization">Lecture notebook: Language model generalization</h2>
+<p><a href="lab03.qmd">Autocomplete</a></p>
+</section>
+<section id="resources" class="level1">
+<h1>Resources:</h1>
 <ul>
 <li><span class="citation" data-cites="Chadha2020DistilledNotesCourseraDLSpec">(<a href="#ref-Chadha2020DistilledNotesCourseraDLSpec" role="doc-biblioref">Chadha 2020</a>)</span> <a href="https://aman.ai/coursera-nlp/logistic-regression/">Aman Chadha’s Notes</a></li>
 <li><a href="https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization/tree/master/1%20-%20Natural%20Language%20Processing%20with%20Classification%20and%20Vector%20Spaces#testing-logistic-regression">Ibrahim Jelliti’s Notes</a></li>
 </ul>
-<p><embed src="slides.pdf" class="img-fluid"></p>
+<section id="slides" class="level2">
+<h2 class="anchored" data-anchor-id="slides">Slides</h2>
+<p><a href="slides.pdf" class="lightbox" data-gallery="quarto-lightbox-gallery-18"><embed src="slides.pdf" class="img-fluid"></a></p>
 
 
 
+</section>
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
@@ -430,6 +1007,150 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
@@ -848,6 +1569,38 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

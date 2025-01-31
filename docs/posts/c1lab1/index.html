@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2020-10-23">
 
-<title>Assignment 1 Logistic Regression</title>
+<title>Assignment 1 Logistic Regression – NLP Specialization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -70,10 +69,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-eefa51cfd4367a2c2ab6a47af1b603aa.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -150,12 +154,17 @@ window.Quarto = {
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-sidebar floating nav-fixed">
+<body class="nav-sidebar floating nav-fixed slimcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">NLP Specialization</span>
+    </a>
+  </div>
             <div id="quarto-search" class="" title="Search"></div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
@@ -194,6 +203,7 @@ window.Quarto = {
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -224,7 +234,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">October 23, 2020</p>
+        <p class="date">Friday, October 23, 2020</p>
       </div>
     </div>
     
@@ -424,7 +434,12 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#part-1.1-sigmoid" id="toc-part-1.1-sigmoid" class="nav-link" data-scroll-target="#part-1.1-sigmoid">Part 1.1: Sigmoid</a></li>
   <li><a href="#logistic-regression-regression-and-a-sigmoid" id="toc-logistic-regression-regression-and-a-sigmoid" class="nav-link" data-scroll-target="#logistic-regression-regression-and-a-sigmoid">Logistic regression: regression and a sigmoid</a></li>
-  <li><a href="#part-2-extracting-the-features" id="toc-part-2-extracting-the-features" class="nav-link" data-scroll-target="#part-2-extracting-the-features">Part 2: Extracting the features</a></li>
+  <li><a href="#part-1.2-cost-function-and-gradient" id="toc-part-1.2-cost-function-and-gradient" class="nav-link" data-scroll-target="#part-1.2-cost-function-and-gradient">Part 1.2 Cost function and Gradient</a></li>
+  <li><a href="#instructions-implement-gradient-descent-function" id="toc-instructions-implement-gradient-descent-function" class="nav-link" data-scroll-target="#instructions-implement-gradient-descent-function">Instructions: Implement gradient descent function</a></li>
+  <li><a href="#part-2-extracting-the-features" id="toc-part-2-extracting-the-features" class="nav-link" data-scroll-target="#part-2-extracting-the-features">Part 2: Extracting the features</a>
+  <ul class="collapse">
+  <li><a href="#instructions-implement-the-extract_features-function." id="toc-instructions-implement-the-extract_features-function." class="nav-link" data-scroll-target="#instructions-implement-the-extract_features-function.">Instructions: Implement the extract_features function.</a></li>
+  </ul></li>
   <li><a href="#part-3-training-your-model" id="toc-part-3-training-your-model" class="nav-link" data-scroll-target="#part-3-training-your-model">Part 3: Training Your Model</a></li>
   </ul></li>
   <li><a href="#part-4-test-your-logistic-regression" id="toc-part-4-test-your-logistic-regression" class="nav-link" data-scroll-target="#part-4-test-your-logistic-regression">Part 4: Test your logistic regression</a>
@@ -437,25 +452,33 @@ window.Quarto = {
 <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c1lab1/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-body" id="quarto-document-content">
+<main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
 
 
 
 
 
-<div class="quarto-figure quarto-figure-center">
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/course-banner.jpg" class="img-fluid figure-img"></p>
+<p><a href="img/course-banner.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="img/course-banner.jpg" class="img-fluid figure-img" alt="course banner"></a></p>
 <figcaption>course banner</figcaption>
 </figure>
-</div>
-<section id="assignment-1-logistic-regression" class="level1">
+</div></div><section id="assignment-1-logistic-regression" class="level1">
 <h1>Assignment 1: Logistic Regression</h1>
-<p>Welcome to week one of this specialization. You will learn about logistic regression. Concretely, you will be implementing logistic regression for sentiment analysis on tweets. Given a tweet, you will decide if it has a positive sentiment or a negative one. Specifically you will: * Learn how to extract features for logistic regression given some text * Implement logistic regression from scratch * Apply logistic regression on a natural language processing task * Test using your logistic regression * Perform error analysis We will be using a data set of tweets. Hopefully you will get more than 99% accuracy.<br>
-Run the cell below to load in the packages.</p>
+<p>Welcome to week one of this specialization. You will learn about logistic regression. Concretely, you will be implementing logistic regression for sentiment analysis on tweets. Given a tweet, you will decide if it has a positive sentiment or a negative one.</p>
+<p>Specifically you will:</p>
+<ul>
+<li>Learn how to extract features for logistic regression given some text</li>
+<li>Implement logistic regression from scratch</li>
+<li>Apply logistic regression on a natural language processing task</li>
+<li>Test using your logistic regression</li>
+<li>Perform error analysis We will be using a data set of tweets. Hopefully you will get more than 99% accuracy.<br>
+Run the cell below to load in the packages.</li>
+</ul>
 <section id="import-functions-and-data" class="level2">
 <h2 class="anchored" data-anchor-id="import-functions-and-data">Import functions and data</h2>
-<div id="b1a14eaa" class="cell" data-execution_count="1">
+<div id="c98e70bd" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># run this cell to import nltk</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> nltk</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> os <span class="im">import</span> getcwd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -467,7 +490,7 @@ Run the cell below to load in the packages.</p>
 <ul>
 <li>stopwords: if you’re running this notebook on your local computer, you will need to download it using:</li>
 </ul>
-<div id="271f2d13" class="cell" data-execution_count="2">
+<div id="7641f89e" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>nltk.download(<span class="st">'stopwords'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>[nltk_data] Downloading package stopwords to /home/oren/nltk_data...
@@ -483,14 +506,14 @@ Run the cell below to load in the packages.</p>
 <li><code>process_tweet()</code>: cleans the text, tokenizes it into separate words, removes stopwords, and converts words to stems.</li>
 <li><code>build_freqs()</code>: this counts how often a word in the ‘corpus’ (the entire set of tweets) was associated with a positive label ‘1’ or a negative label ‘0’, then builds the <code>freqs</code> dictionary, where each key is a (word,label) tuple, and the value is the count of its frequency within the corpus of tweets.</li>
 </ul>
-<div id="df575139" class="cell" data-execution_count="3">
+<div id="5d2e0005" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># add folder, tmp2, from our local workspace containing pre-downloaded corpora files to nltk's data path</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># this enables importing of these files without downloading it again when we refresh our workspace</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>filePath <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>getcwd()<span class="sc">}</span><span class="ss">/../tmp2/"</span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>nltk.data.path.append(filePath)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="709a3da6" class="cell" data-execution_count="4">
+<div id="256f1fbc" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nltk.corpus <span class="im">import</span> twitter_samples </span>
@@ -508,7 +531,7 @@ Run the cell below to load in the packages.</p>
 <li>You will select just the five thousand positive tweets and five thousand negative tweets.</li>
 </ul></li>
 </ul>
-<div id="8e933dc3" class="cell" data-execution_count="5">
+<div id="06a12307" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># select the set of positive and negative tweets</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>all_positive_tweets <span class="op">=</span> twitter_samples.strings(<span class="st">'positive_tweets.json'</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>all_negative_tweets <span class="op">=</span> twitter_samples.strings(<span class="st">'negative_tweets.json'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -516,7 +539,7 @@ Run the cell below to load in the packages.</p>
 <ul>
 <li>Train test split: 20% will be in the test set, and 80% in the training set.</li>
 </ul>
-<div id="dcce6fd4" class="cell" data-execution_count="6">
+<div id="82ab5d0c" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># split the data into two pieces, one for training and one for testing (validation set) </span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>test_pos <span class="op">=</span> all_positive_tweets[<span class="dv">4000</span>:]</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>train_pos <span class="op">=</span> all_positive_tweets[:<span class="dv">4000</span>]</span>
@@ -528,12 +551,12 @@ Run the cell below to load in the packages.</p>
 <ul>
 <li>Create the numpy array of positive labels and negative labels.</li>
 </ul>
-<div id="1a92bc7a" class="cell" data-execution_count="7">
+<div id="c13b1415" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># combine positive and negative labels</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>train_y <span class="op">=</span> np.append(np.ones((<span class="bu">len</span>(train_pos), <span class="dv">1</span>)), np.zeros((<span class="bu">len</span>(train_neg), <span class="dv">1</span>)), axis<span class="op">=</span><span class="dv">0</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>test_y <span class="op">=</span> np.append(np.ones((<span class="bu">len</span>(test_pos), <span class="dv">1</span>)), np.zeros((<span class="bu">len</span>(test_neg), <span class="dv">1</span>)), axis<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="9f0fb5fd" class="cell" data-execution_count="8">
+<div id="c0770a1c" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the shape train and test sets</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"train_y.shape = "</span> <span class="op">+</span> <span class="bu">str</span>(train_y.shape))</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"test_y.shape = "</span> <span class="op">+</span> <span class="bu">str</span>(test_y.shape))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -559,7 +582,7 @@ test_y.shape = (2000, 1)</code></pre>
 <li>The <code>freqs</code> dictionary is the frequency dictionary that’s being built.</li>
 <li>The key is the tuple (word, label), such as (“happy”,1) or (“happy”,0). The value stored for each key is the count of how many times the word “happy” was associated with a positive label, or how many times “happy” was associated with a negative label.</li>
 </ul>
-<div id="cbfe36dd" class="cell" data-execution_count="9">
+<div id="822a5b16" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create frequency dictionary</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>freqs <span class="op">=</span> build_freqs(train_x, train_y)</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -580,7 +603,7 @@ len(freqs) = 11346</code></pre>
 <section id="process-tweet" class="level3">
 <h3 class="anchored" data-anchor-id="process-tweet">Process tweet</h3>
 <p>The given function <code>process_tweet()</code> tokenizes the tweet into individual words, removes stop words and applies stemming.</p>
-<div id="33aa576d" class="cell" data-execution_count="10">
+<div id="b67dfa96" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test the function below</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'This is an example of a positive tweet: </span><span class="ch">\n</span><span class="st">'</span>, train_x[<span class="dv">0</span>])</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">This is an example of the processed version of the tweet: </span><span class="ch">\n</span><span class="st">'</span>, process_tweet(train_x[<span class="dv">0</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -607,14 +630,21 @@ This is an example of the processes version:
 <h1>Part 1: Logistic regression</h1>
 <section id="part-1.1-sigmoid" class="level3">
 <h3 class="anchored" data-anchor-id="part-1.1-sigmoid">Part 1.1: Sigmoid</h3>
-You will learn to use logistic regression for text classification. * The sigmoid function is defined as: <span class="math display"> h(z) = \frac{1}{1+\exp^{-z}} \tag{1}</span> It maps the input ‘z’ to a value that ranges between 0 and 1, and so it can be treated as a probability.
-<div style="width:image width px; font-size:100%; text-align:center;">
-<img src="../tmp2/sigmoid_plot.jpg" alt="alternate text" width="width" height="height" style="width:300px;height:200px;"> Figure 1
+<p>You will learn to use logistic regression for text classification. * The sigmoid function is defined as: <span class="math display">
+h(z) = \frac{1}{1+\exp^{-z}} \tag{1}
+</span></p>
+<p>It maps the input ‘z’ to a value that ranges between 0 and 1, and so it can be treated as a probability.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/sigmoid_plot.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure 1"><img src="img/sigmoid_plot.jpg" class="img-fluid figure-img" style="width:300px;height:200px;" alt="Figure 1"></a></p>
+<figcaption>Figure 1</figcaption>
+</figure>
 </div>
 <section id="instructions-implement-the-sigmoid-function" class="level4">
 <h4 class="anchored" data-anchor-id="instructions-implement-the-sigmoid-function">Instructions: Implement the sigmoid function</h4>
 <ul>
-<li>You will want this function to work if z is a scalar as well as if it is an array.
+<li>You will want this function to work if z is a scalar as well as if it is an array.</li>
+</ul>
 <details>
 <summary>
 <font size="3" color="darkgreen"><b>Hints</b></font>
@@ -625,9 +655,9 @@ You will learn to use logistic regression for text classification. * The sigmoid
 <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.exp.html"> numpy.exp </a>
 </li>
 </ul>
-<p></p></details></li>
-</ul>
-<div id="54eeb115" class="cell" data-execution_count="11">
+<p></p>
+</details>
+<div id="cd0601e8" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C1 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sigmoid(z): </span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''</span></span>
@@ -644,7 +674,7 @@ You will learn to use logistic regression for text classification. * The sigmoid
 <span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> h</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="5eae8593" class="cell" data-execution_count="12">
+<div id="4afbf53c" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Testing your function </span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (sigmoid(<span class="dv">0</span>) <span class="op">==</span> <span class="fl">0.5</span>):</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">'SUCCESS!'</span>)</span>
@@ -663,29 +693,79 @@ CORRECT!</code></pre>
 </section>
 <section id="logistic-regression-regression-and-a-sigmoid" class="level3">
 <h3 class="anchored" data-anchor-id="logistic-regression-regression-and-a-sigmoid">Logistic regression: regression and a sigmoid</h3>
-<p>Logistic regression takes a regular linear regression, and applies a sigmoid to the output of the linear regression. Regression: <span class="math display">z = \theta_0 x_0 + \theta_1 x_1 + \theta_2 x_2 + ... \theta_N x_N</span> Note that the <span class="math inline">\theta</span> values are “weights”. If you took the Deep Learning Specialization, we referred to the weights with the <code>w</code> vector. In this course, we’re using a different variable <span class="math inline">\theta</span> to refer to the weights. Logistic regression <span class="math display"> h(z) = \frac{1}{1+\exp^{-z}}</span> <span class="math display">z = \theta_0 x_0 + \theta_1 x_1 + \theta_2 x_2 + ... \theta_N x_N</span> We will refer to ‘z’ as the ‘logits’. ### Part 1.2 Cost function and Gradient The cost function used for logistic regression is the average of the log loss across all training examples: <span class="math display">J(\theta) = -\frac{1}{m} \sum_{i=1}^m y^{(i)}\log (h(z(\theta)^{(i)})) + (1-y^{(i)})\log (1-h(z(\theta)^{(i)}))\tag{5} </span> * <span class="math inline">m</span> is the number of training examples * <span class="math inline">y^{(i)}</span> is the actual label of the i-th training example. * <span class="math inline">h(z(\theta)^{(i)})</span> is the model’s prediction for the i-th training example. The loss function for a single training example is <span class="math display"> Loss = -1 \times \left( y^{(i)}\log (h(z(\theta)^{(i)})) + (1-y^{(i)})\log (1-h(z(\theta)^{(i)})) \right)</span> * All the <span class="math inline">h</span> values are between 0 and 1, so the logs will be negative. That is the reason for the factor of -1 applied to the sum of the two loss terms. * Note that when the model predicts 1 (<span class="math inline">h(z(\theta)) = 1</span>) and the label <span class="math inline">y</span> is also 1, the loss for that training example is 0. * Similarly, when the model predicts 0 (<span class="math inline">h(z(\theta)) = 0</span>) and the actual label is also 0, the loss for that training example is 0. * However, when the model prediction is close to 1 (<span class="math inline">h(z(\theta)) = 0.9999</span>) and the label is 0, the second term of the log loss becomes a large negative number, which is then multiplied by the overall factor of -1 to convert it to a positive loss value. <span class="math inline">-1 \times (1 - 0) \times log(1 - 0.9999) \approx 9.2</span> The closer the model prediction gets to 1, the larger the loss.</p>
-<div id="0b920871" class="cell" data-execution_count="13">
+<p>Logistic regression takes a regular linear regression, and applies a sigmoid to the output of the linear regression. Regression:</p>
+<p><span class="math display">
+z = \theta_0 x_0 + \theta_1 x_1 + \theta_2 x_2 + ... \theta_N x_N
+</span></p>
+<p>Note that the <span class="math inline">\theta</span> values are “weights”. If you took the Deep Learning Specialization, we referred to the weights with the <code>w</code> vector. In this course, we’re using a different variable <span class="math inline">\theta</span> to refer to the weights. Logistic regression <span class="math display">
+h(z) = \frac{1}{1+\exp^{-z}}
+</span></p>
+<p><span class="math display">
+z = \theta_0 x_0 + \theta_1 x_1 + \theta_2 x_2 + ... \theta_N x_N
+</span></p>
+<p>We will refer to ‘z’ as the ‘logits’.</p>
+</section>
+<section id="part-1.2-cost-function-and-gradient" class="level3">
+<h3 class="anchored" data-anchor-id="part-1.2-cost-function-and-gradient">Part 1.2 Cost function and Gradient</h3>
+<p>The cost function used for logistic regression is the average of the log loss across all training examples:</p>
+<p><span class="math display">
+J(\theta) = -\frac{1}{m} \sum_{i=1}^m y^{(i)}\log (h(z(\theta)^{(i)})) + (1-y^{(i)})\log (1-h(z(\theta)^{(i)}))\tag{5}
+</span></p>
+<ul>
+<li><span class="math inline">m</span> is the number of training examples</li>
+<li><span class="math inline">y^{(i)}</span> is the actual label of the i-th training example.</li>
+<li><span class="math inline">h(z(\theta)^{(i)})</span> is the model’s prediction for the i-th training example. The loss function for a single training example is <span class="math display"> Loss = -1 \times \left( y^{(i)}\log (h(z(\theta)^{(i)})) + (1-y^{(i)})\log (1-h(z(\theta)^{(i)})) \right)</span></li>
+<li>All the <span class="math inline">h</span> values are between 0 and 1, so the logs will be negative. That is the reason for the factor of -1 applied to the sum of the two loss terms.</li>
+<li>Note that when the model predicts 1 (<span class="math inline">h(z(\theta)) = 1</span>) and the label <span class="math inline">y</span> is also 1, the loss for that training example is 0.</li>
+<li>Similarly, when the model predicts 0 (<span class="math inline">h(z(\theta)) = 0</span>) and the actual label is also 0, the loss for that training example is 0.</li>
+<li>However, when the model prediction is close to 1 (<span class="math inline">h(z(\theta)) = 0.9999</span>) and the label is 0, the second term of the log loss becomes a large negative number, which is then multiplied by the overall factor of -1 to convert it to a positive loss value. <span class="math inline">-1 \times (1 - 0) \times log(1 - 0.9999) \approx 9.2</span> The closer the model prediction gets to 1, the larger the loss.</li>
+</ul>
+<div id="84082232" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># verify that when the model predicts close to 1, but the actual label is 0, the loss is a large positive value</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="op">-</span><span class="dv">1</span> <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> <span class="dv">0</span>) <span class="op">*</span> np.log(<span class="dv">1</span> <span class="op">-</span> <span class="fl">0.9999</span>) <span class="co"># loss is about 9.2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="13">
-<pre><code>9.210340371976292</code></pre>
+<pre><code>np.float64(9.210340371976294)</code></pre>
 </div>
 </div>
 <ul>
 <li>Likewise, if the model predicts close to 0 (<span class="math inline">h(z) = 0.0001</span>) but the actual label is 1, the first term in the loss function becomes a large number: <span class="math inline">-1 \times log(0.0001) \approx 9.2</span>. The closer the prediction is to zero, the larger the loss.</li>
 </ul>
-<div id="49a3afd2" class="cell" data-execution_count="14">
+<div id="64426f28" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># verify that when the model predicts close to 0 but the actual label is 0, the loss is a large positive value</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="op">-</span><span class="dv">1</span> <span class="op">*</span> np.log(<span class="fl">0.0001</span>) <span class="co"># loss is about 9.2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
-<pre><code>9.210340371976182</code></pre>
+<pre><code>np.float64(9.210340371976182)</code></pre>
 </div>
 </div>
 <section id="update-the-weights" class="level4">
 <h4 class="anchored" data-anchor-id="update-the-weights">Update the weights</h4>
-To update your weight vector <span class="math inline">\theta</span>, you will apply gradient descent to iteratively improve your model’s predictions.<br>
-The gradient of the cost function <span class="math inline">J</span> with respect to one of the weights <span class="math inline">\theta_j</span> is: <span class="math display">\nabla_{\theta_j}J(\theta) = \frac{1}{m} \sum_{i=1}^m(h^{(i)}-y^{(i)})x_j \tag{5}</span> * ‘i’ is the index across all ‘m’ training examples. * ‘j’ is the index of the weight <span class="math inline">\theta_j</span>, so <span class="math inline">x_j</span> is the feature associated with weight <span class="math inline">\theta_j</span> * To update the weight <span class="math inline">\theta_j</span>, we adjust it by subtracting a fraction of the gradient determined by <span class="math inline">\alpha</span>: <span class="math display">\theta_j = \theta_j - \alpha \times \nabla_{\theta_j}J(\theta) </span> * The learning rate <span class="math inline">\alpha</span> is a value that we choose to control how big a single update will be. ## Instructions: Implement gradient descent function * The number of iterations <code>num_iters</code> is the number of times that you’ll use the entire training set. * For each iteration, you’ll calculate the cost function using all training examples (there are <code>m</code> training examples), and for all features. * Instead of updating a single weight <span class="math inline">\theta_i</span> at a time, we can update all the weights in the column vector:<br>
-<span class="math display">\mathbf{\theta} = \begin{pmatrix}
+<p>To update your weight vector <span class="math inline">\theta</span>, you will apply gradient descent to iteratively improve your model’s predictions.<br>
+The gradient of the cost function <span class="math inline">J</span> with respect to one of the weights <span class="math inline">\theta_j</span> is:</p>
+<p><span class="math display">
+\nabla_{\theta_j}J(\theta) = \frac{1}{m} \sum_{i=1}^m(h^{(i)}-y^{(i)})x_j \tag{5}
+</span></p>
+<ul>
+<li>‘i’ is the index across all ‘m’ training examples.</li>
+<li>‘j’ is the index of the weight <span class="math inline">\theta_j</span>, so <span class="math inline">x_j</span> is the feature associated with weight <span class="math inline">\theta_j</span></li>
+<li>To update the weight <span class="math inline">\theta_j</span>, we adjust it by subtracting a fraction of the gradient determined by <span class="math inline">\alpha</span>:</li>
+</ul>
+<p><span class="math display">
+\theta_j = \theta_j - \alpha \times \nabla_{\theta_j}J(\theta)
+</span></p>
+<ul>
+<li>The learning rate <span class="math inline">\alpha</span> is a value that we choose to control how big a single update will be.</li>
+</ul>
+</section>
+</section>
+<section id="instructions-implement-gradient-descent-function" class="level2">
+<h2 class="anchored" data-anchor-id="instructions-implement-gradient-descent-function">Instructions: Implement gradient descent function</h2>
+<ul>
+<li>The number of iterations <code>num_iters</code> is the number of times that you’ll use the entire training set.</li>
+<li>For each iteration, you’ll calculate the cost function using all training examples (there are <code>m</code> training examples), and for all features.</li>
+<li>Instead of updating a single weight <span class="math inline">\theta_i</span> at a time, we can update all the weights in the column vector:</li>
+</ul>
+<p><span class="math display">
+\mathbf{\theta} = \begin{pmatrix}
 \theta_0
 \\
 \theta_1
@@ -695,7 +775,28 @@ The gradient of the cost function <span class="math inline">J</span> with respec
 \vdots
 \\
 \theta_n
-\end{pmatrix}</span> * <span class="math inline">\mathbf{\theta}</span> has dimensions (n+1, 1), where ‘n’ is the number of features, and there is one more element for the bias term <span class="math inline">\theta_0</span> (note that the corresponding feature value <span class="math inline">\mathbf{x_0}</span> is 1). * The ‘logits’, ‘z’, are calculated by multiplying the feature matrix ‘x’ with the weight vector ‘theta’. <span class="math inline">z = \mathbf{x}\mathbf{\theta}</span> * <span class="math inline">\mathbf{x}</span> has dimensions (m, n+1) * <span class="math inline">\mathbf{\theta}</span>: has dimensions (n+1, 1) * <span class="math inline">\mathbf{z}</span>: has dimensions (m, 1) * The prediction ‘h’, is calculated by applying the sigmoid to each element in ‘z’: <span class="math inline">h(z) = sigmoid(z)</span>, and has dimensions (m,1). * The cost function <span class="math inline">J</span> is calculated by taking the dot product of the vectors ‘y’ and ‘log(h)’. Since both ‘y’ and ‘h’ are column vectors (m,1), transpose the vector to the left, so that matrix multiplication of a row vector with column vector performs the dot product. <span class="math display">J = \frac{-1}{m} \times \left(\mathbf{y}^T \cdot log(\mathbf{h}) + \mathbf{(1-y)}^T \cdot log(\mathbf{1-h}) \right)</span> * The update of theta is also vectorized. Because the dimensions of <span class="math inline">\mathbf{x}</span> are (m, n+1), and both <span class="math inline">\mathbf{h}</span> and <span class="math inline">\mathbf{y}</span> are (m, 1), we need to transpose the <span class="math inline">\mathbf{x}</span> and place it on the left in order to perform matrix multiplication, which then yields the (n+1, 1) answer we need: <span class="math display">\mathbf{\theta} = \mathbf{\theta} - \frac{\alpha}{m} \times \left( \mathbf{x}^T \cdot \left( \mathbf{h-y} \right) \right)</span>
+\end{pmatrix}
+</span></p>
+<ul>
+<li><span class="math inline">\mathbf{\theta}</span> has dimensions (n+1, 1), where ‘n’ is the number of features, and there is one more element for the bias term <span class="math inline">\theta_0</span> (note that the corresponding feature value <span class="math inline">\mathbf{x_0}</span> is 1).</li>
+<li>The ‘logits’, ‘z’, are calculated by multiplying the feature matrix ‘x’ with the weight vector ‘theta’. <span class="math inline">z = \mathbf{x}\mathbf{\theta}</span>
+<ul>
+<li><span class="math inline">\mathbf{x}</span> has dimensions (m, n+1)</li>
+<li><span class="math inline">\mathbf{\theta}</span>: has dimensions (n+1, 1)</li>
+<li><span class="math inline">\mathbf{z}</span>: has dimensions (m, 1)</li>
+</ul></li>
+<li>The prediction ‘h’, is calculated by applying the sigmoid to each element in ‘z’: <span class="math inline">h(z) = sigmoid(z)</span>, and has dimensions (m,1).</li>
+<li>The cost function <span class="math inline">J</span> is calculated by taking the dot product of the vectors ‘y’ and ‘log(h)’. Since both ‘y’ and ‘h’ are column vectors (m,1), transpose the vector to the left, so that matrix multiplication of a row vector with column vector performs the dot product.</li>
+</ul>
+<p><span class="math display">
+J = \frac{-1}{m} \times \left(\mathbf{y}^T \cdot log(\mathbf{h}) + \mathbf{(1-y)}^T \cdot log(\mathbf{1-h}) \right)
+</span></p>
+<ul>
+<li>The update of theta is also vectorized. Because the dimensions of <span class="math inline">\mathbf{x}</span> are (m, n+1), and both <span class="math inline">\mathbf{h}</span> and <span class="math inline">\mathbf{y}</span> are (m, 1), we need to transpose the <span class="math inline">\mathbf{x}</span> and place it on the left in order to perform matrix multiplication, which then yields the (n+1, 1) answer we need:</li>
+</ul>
+<p><span class="math display">
+\mathbf{\theta} = \mathbf{\theta} - \frac{\alpha}{m} \times \left( \mathbf{x}^T \cdot \left( \mathbf{h-y} \right) \right)
+</span></p>
 <details>
 <summary>
 <font size="3" color="darkgreen"><b>Hints</b></font>
@@ -710,7 +811,8 @@ To ensure that the fraction -1/m is a decimal value, cast either the numerator o
 </li>
 </ul>
 <p></p>
-<div id="1f0d00a9" class="cell" data-execution_count="15">
+</details>
+<div id="ff72bff7" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C2 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gradientDescent(x, y, theta, alpha, num_iters):</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''</span></span>
@@ -745,7 +847,7 @@ To ensure that the fraction -1/m is a decimal value, cast either the numerator o
 <span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a>    J <span class="op">=</span> <span class="bu">float</span>(J)</span>
 <span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> J, theta</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="c5fabc77" class="cell" data-execution_count="16">
+<div id="37bef377" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the function</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Construct a synthetic test case using numpy PRNG functions</span></span>
@@ -763,16 +865,13 @@ To ensure that the fraction -1/m is a decimal value, cast either the numerator o
 <span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The resulting vector of weights is </span><span class="sc">{</span>[<span class="bu">round</span>(t, <span class="dv">8</span>) <span class="cf">for</span> t <span class="kw">in</span> np.squeeze(tmp_theta)]<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>The cost after training is 0.67094970.
-The resulting vector of weights is [4.1e-07, 0.00035658, 7.309e-05]</code></pre>
+The resulting vector of weights is [np.float64(4.1e-07), np.float64(0.00035658), np.float64(7.309e-05)]</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/tmp/ipykernel_765521/190191251.py:32: DeprecationWarning:
-
-Conversion of an array with ndim &gt; 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
-</code></pre>
+<pre><code>/tmp/ipykernel_108676/190191251.py:32: DeprecationWarning: Conversion of an array with ndim &gt; 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
+  J = float(J)</code></pre>
 </div>
 </div>
-</details></section>
 <section id="expected-output-2" class="level4">
 <h4 class="anchored" data-anchor-id="expected-output-2">Expected output</h4>
 <pre><code>The cost after training is 0.67094970.
@@ -788,13 +887,19 @@ The resulting vector of weights is [4.1e-07, 0.00035658, 7.309e-05]</code></pre>
 <li>The second feature is the number of negative words in a tweet.</li>
 </ul></li>
 <li>Then train your logistic regression classifier on these features.</li>
-<li>Test the classifier on a validation set. ### Instructions: Implement the extract_features function.</li>
+<li>Test the classifier on a validation set.</li>
+</ul>
+<section id="instructions-implement-the-extract_features-function." class="level3">
+<h3 class="anchored" data-anchor-id="instructions-implement-the-extract_features-function.">Instructions: Implement the extract_features function.</h3>
+<ul>
 <li>This function takes in a single tweet.</li>
 <li>Process the tweet using the imported <code>process_tweet()</code> function and save the list of tweet words.</li>
 <li>Loop through each word in the list of processed words
 <ul>
-<li>For each word, check the <code>freqs</code> dictionary for the count when that word has a positive ‘1’ label. (Check for the key (word, 1.0)</li>
-<li>Do the same for the count for when the word is associated with the negative label ‘0’. (Check for the key (word, 0.0).)
+<li>For each word, check the <code>freqs</code> dictionary for the count when that word has a positive ‘1’ label. (Check for the key (word, 1.0))</li>
+<li>Do the same for the count for when the word is associated with the negative label ‘0’. (Check for the key (word, 0.0).)</li>
+</ul></li>
+</ul>
 <details>
 <summary>
 <font size="3" color="darkgreen"><b>Hints</b></font>
@@ -808,10 +913,9 @@ Make sure you handle cases when the (word, label) key is not found in the dictio
 Search the web for hints about using the <code>.get()</code> method of a Python dictionary. Here is an <a href="https://www.programiz.com/python-programming/methods/dictionary/get"> example </a>
 </li>
 </ul>
-<p></p></details></li>
-</ul></li>
-</ul>
-<div id="0d7b0053" class="cell" data-execution_count="17">
+<p></p>
+</details>
+<div id="4244044a" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C3 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> extract_features(tweet, freqs):</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''</span></span>
@@ -844,7 +948,7 @@ Search the web for hints about using the <code>.get()</code> method of a Python 
 <span id="cb32-30"><a href="#cb32-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span>(x.shape <span class="op">==</span> (<span class="dv">1</span>, <span class="dv">3</span>))</span>
 <span id="cb32-31"><a href="#cb32-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="97082e3a" class="cell" data-execution_count="18">
+<div id="32faac52" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check your function</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co"># test 1</span></span>
@@ -859,7 +963,7 @@ Search the web for hints about using the <code>.get()</code> method of a Python 
 <section id="expected-output-3" class="level4">
 <h4 class="anchored" data-anchor-id="expected-output-3">Expected output</h4>
 <pre><code>[[1.00e+00 3.02e+03 6.10e+01]]</code></pre>
-<div id="e71e9671" class="cell" data-execution_count="19">
+<div id="c99ecb65" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test 2:</span></span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co"># check for when the words are not in the freqs dictionary</span></span>
@@ -875,10 +979,16 @@ Search the web for hints about using the <code>.get()</code> method of a Python 
 <pre><code>[[1. 0. 0.]]</code></pre>
 </section>
 </section>
+</section>
 <section id="part-3-training-your-model" class="level2">
 <h2 class="anchored" data-anchor-id="part-3-training-your-model">Part 3: Training Your Model</h2>
-<p>To train the model: * Stack the features for all training examples into a matrix <code>X</code>. * Call <code>gradientDescent</code>, which you’ve implemented above. This section is given to you. Please read it for understanding and run the cell.</p>
-<div id="b0acc025" class="cell" data-execution_count="20">
+<p>To train the model:</p>
+<ul>
+<li>Stack the features for all training examples into a matrix <code>X</code>.</li>
+<li>Call <code>gradientDescent</code>, which you’ve implemented above.</li>
+</ul>
+<p>This section is given to you. Please read it for understanding and run the cell.</p>
+<div id="23aa3e38" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># collect the features 'x' and stack them into a matrix 'X'</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.zeros((<span class="bu">len</span>(train_x), <span class="dv">3</span>))</span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(train_x)):</span>
@@ -893,13 +1003,11 @@ Search the web for hints about using the <code>.get()</code> method of a Python 
 <span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The resulting vector of weights is </span><span class="sc">{</span>[<span class="bu">round</span>(t, <span class="dv">8</span>) <span class="cf">for</span> t <span class="kw">in</span> np.squeeze(theta)]<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>The cost after training is 0.24215478.
-The resulting vector of weights is [7e-08, 0.00052391, -0.00055517]</code></pre>
+The resulting vector of weights is [np.float64(7e-08), np.float64(0.00052391), np.float64(-0.00055517)]</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/tmp/ipykernel_765521/190191251.py:32: DeprecationWarning:
-
-Conversion of an array with ndim &gt; 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
-</code></pre>
+<pre><code>/tmp/ipykernel_108676/190191251.py:32: DeprecationWarning: Conversion of an array with ndim &gt; 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
+  J = float(J)</code></pre>
 </div>
 </div>
 <p><strong>Expected Output</strong>:</p>
@@ -909,8 +1017,12 @@ The resulting vector of weights is [7e-08, 0.0005239, -0.00055517]</code></pre>
 </section>
 <section id="part-4-test-your-logistic-regression" class="level1">
 <h1>Part 4: Test your logistic regression</h1>
-<p>It is time for you to test your logistic regression function on some new input that your model has not seen before. #### Instructions: Write <code>predict_tweet</code> Predict whether a tweet is positive or negative. * Given a tweet, process it, then extract the features. * Apply the model’s learned weights on the features to get the logits. * Apply the sigmoid to the logits to get the prediction (a value between 0 and 1). <span class="math display">y_{pred} = sigmoid(\mathbf{x} \cdot \theta)</span></p>
-<div id="8bfca1f2" class="cell" data-execution_count="21">
+<p>It is time for you to test your logistic regression function on some new input that your model has not seen before.</p>
+<section id="instructions-write-predict_tweet" class="level4">
+<h4 class="anchored" data-anchor-id="instructions-write-predict_tweet">Instructions: Write <code>predict_tweet</code></h4>
+<p>Predict whether a tweet is positive or negative. * Given a tweet, process it, then extract the features. * Apply the model’s learned weights on the features to get the logits. * Apply the sigmoid to the logits to get the prediction (a value between 0 and 1).</p>
+<p><span class="math display">y_{pred} = sigmoid(\mathbf{x} \cdot \theta)</span></p>
+<div id="ce236b9f" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C4 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> predict_tweet(tweet, freqs, theta):</span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''</span></span>
@@ -933,7 +1045,7 @@ The resulting vector of weights is [7e-08, 0.0005239, -0.00055517]</code></pre>
 <span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> y_pred</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="7eaa05db" class="cell" data-execution_count="22">
+<div id="6a8e196a" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run this cell to test your function</span></span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> tweet <span class="kw">in</span> [<span class="st">'I am happy'</span>, <span class="st">'I am bad'</span>, <span class="st">'this movie should have been great.'</span>, <span class="st">'great'</span>, <span class="st">'great great'</span>, <span class="st">'great great great'</span>, <span class="st">'great great great great'</span>]:</span>
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>( <span class="st">'</span><span class="sc">%s</span><span class="st"> -&gt; </span><span class="sc">%f</span><span class="st">'</span> <span class="op">%</span> (tweet, predict_tweet(tweet, freqs, theta)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -947,10 +1059,8 @@ great great great -&gt; 0.546274
 great great great great -&gt; 0.561562</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/tmp/ipykernel_765521/2209103747.py:3: DeprecationWarning:
-
-Conversion of an array with ndim &gt; 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
-</code></pre>
+<pre><code>/tmp/ipykernel_108676/2209103747.py:3: DeprecationWarning: Conversion of an array with ndim &gt; 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
+  print( '%s -&gt; %f' % (tweet, predict_tweet(tweet, freqs, theta)))</code></pre>
 </div>
 </div>
 <p><strong>Expected Output</strong>:</p>
@@ -961,7 +1071,7 @@ great -&gt; 0.515464
 great great -&gt; 0.530898
 great great great -&gt; 0.546273
 great great great great -&gt; 0.561561</code></pre>
-<div id="45316701" class="cell" data-execution_count="23">
+<div id="add3b501" class="cell" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Feel free to check the sentiment of your own tweet below</span></span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>my_tweet <span class="op">=</span> <span class="st">'I am learning :)'</span></span>
 <span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>predict_tweet(my_tweet, freqs, theta)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -969,9 +1079,18 @@ great great great great -&gt; 0.561561</code></pre>
 <pre><code>array([[0.8163691]])</code></pre>
 </div>
 </div>
+</section>
 <section id="check-performance-using-the-test-set" class="level2">
 <h2 class="anchored" data-anchor-id="check-performance-using-the-test-set">Check performance using the test set</h2>
-After training your model using the training set above, check how your model might perform on real, unseen data, by testing it against the test set. #### Instructions: Implement <code>test_logistic_regression</code> * Given the test data and the weights of your trained model, calculate the accuracy of your logistic regression model. * Use your <code>predict_tweet()</code> function to make predictions on each tweet in the test set. * If the prediction is &gt; 0.5, set the model’s classification <code>y_hat</code> to 1, otherwise set the model’s classification <code>y_hat</code> to 0. * A prediction is accurate when <code>y_hat</code> equals <code>test_y</code>. Sum up all the instances when they are equal and divide by <code>m</code>.
+<p>After training your model using the training set above, check how your model might perform on real, unseen data, by testing it against the test set.</p>
+<section id="instructions-implement-test_logistic_regression" class="level4">
+<h4 class="anchored" data-anchor-id="instructions-implement-test_logistic_regression">Instructions: Implement <code>test_logistic_regression</code></h4>
+<ul>
+<li>Given the test data and the weights of your trained model, calculate the accuracy of your logistic regression model.</li>
+<li>Use your <code>predict_tweet()</code> function to make predictions on each tweet in the test set.</li>
+<li>If the prediction is &gt; 0.5, set the model’s classification <code>y_hat</code> to 1, otherwise set the model’s classification <code>y_hat</code> to 0.</li>
+<li>A prediction is accurate when <code>y_hat</code> equals <code>test_y</code>. Sum up all the instances when they are equal and divide by <code>m</code>.</li>
+</ul>
 <details>
 <summary>
 <font size="3" color="darkgreen"><b>Hints</b></font>
@@ -986,7 +1105,8 @@ Use np.squeeze() to make an (m,1) dimensional array into an (m,) array
 </li>
 </ul>
 <p></p>
-<div id="2bf54cc2" class="cell" data-execution_count="24">
+</details>
+<div id="5f79d2c1" class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C5 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_logistic_regression(test_x, test_y, freqs, theta):</span>
 <span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -1021,24 +1141,25 @@ Use np.squeeze() to make an (m,1) dimensional array into an (m,) array
 <span id="cb50-32"><a href="#cb50-32" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb50-33"><a href="#cb50-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> accuracy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="a39631f2" class="cell" data-execution_count="25">
+<div id="25b985ae" class="cell" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>tmp_accuracy <span class="op">=</span> test_logistic_regression(test_x, test_y, freqs, theta)</span>
 <span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Logistic regression model's accuracy = </span><span class="sc">{</span>tmp_accuracy<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Logistic regression model's accuracy = 0.9950</code></pre>
 </div>
 </div>
+</section>
 <section id="expected-output-5" class="level4">
 <h4 class="anchored" data-anchor-id="expected-output-5">Expected Output:</h4>
 <p><code>0.9950</code><br>
 Pretty good!</p>
 </section>
-</details></section>
+</section>
 </section>
 <section id="part-5-error-analysis" class="level1">
 <h1>Part 5: Error Analysis</h1>
 <p>In this part you will see some tweets that your model misclassified. Why do you think the misclassifications happened? Specifically what kind of tweets does your model misclassify?</p>
-<div id="1355e29c" class="cell" data-execution_count="26">
+<div id="985e6032" class="cell" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Some error analysis done for you</span></span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Label Predicted Tweet'</span>)</span>
 <span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x,y <span class="kw">in</span> <span class="bu">zip</span>(test_x,test_y):</span>
@@ -1070,10 +1191,8 @@ THE PROCESSED TWEET IS: ['park', 'get', 'sunlight']
 1   0.49578796  b'park get sunlight'</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>/tmp/ipykernel_765521/3886259736.py:8: DeprecationWarning:
-
-Conversion of an array with ndim &gt; 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
-</code></pre>
+<pre><code>/tmp/ipykernel_108676/3886259736.py:8: DeprecationWarning: Conversion of an array with ndim &gt; 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
+  print('%d\t%0.8f\t%s' % (y, y_hat, ' '.join(process_tweet(x)).encode('ascii', 'ignore')))</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>THE TWEET IS: @msarosh Uff Itna Miss karhy thy ap :p
@@ -1094,7 +1213,7 @@ THE PROCESSED TWEET IS: ['belov', 'grandmoth']
 </section>
 <section id="part-6-predict-with-your-own-tweet" class="level1">
 <h1>Part 6: Predict with your own tweet</h1>
-<div id="ee71f6e8" class="cell" data-execution_count="27">
+<div id="910ce5db" class="cell" data-execution_count="28">
 <div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Feel free to change the tweet below</span></span>
 <span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>my_tweet <span class="op">=</span> <span class="st">'This is a ridiculously bright movie. The plot was terrible and I was sad until the ending!'</span></span>
 <span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(process_tweet(my_tweet))</span>
@@ -1145,6 +1264,150 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
@@ -1563,6 +1826,38 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 
