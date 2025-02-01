@@ -199,7 +199,7 @@ window.Quarto = {
                           <div class="quarto-categories">
                 <div class="quarto-category">NLP</div>
                 <div class="quarto-category">Coursera</div>
-                <div class="quarto-category">notes</div>
+                <div class="quarto-category">Notes</div>
                 <div class="quarto-category">Probabilistic Models</div>
               </div>
                   </div>
@@ -399,8 +399,7 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
-  <li><a href="#part-of-speech-tagging" id="toc-part-of-speech-tagging" class="nav-link" data-scroll-target="#part-of-speech-tagging">Part of Speech Tagging</a></li>
+  <li><a href="#part-of-speech-tagging" id="toc-part-of-speech-tagging" class="nav-link active" data-scroll-target="#part-of-speech-tagging">Part of Speech Tagging</a></li>
   <li><a href="#lab1-working-with-text-data" id="toc-lab1-working-with-text-data" class="nav-link" data-scroll-target="#lab1-working-with-text-data">Lab1: Working with text data</a></li>
   <li><a href="#markov-chains" id="toc-markov-chains" class="nav-link" data-scroll-target="#markov-chains">Markov Chains</a></li>
   <li><a href="#markov-chains-and-pos-tags" id="toc-markov-chains-and-pos-tags" class="nav-link" data-scroll-target="#markov-chains-and-pos-tags">Markov Chains and POS Tags</a></li>
@@ -413,6 +412,7 @@ window.Quarto = {
   <li><a href="#viterbi-initialization" id="toc-viterbi-initialization" class="nav-link" data-scroll-target="#viterbi-initialization">Viterbi Initialization</a></li>
   <li><a href="#viterbi-forward-pass" id="toc-viterbi-forward-pass" class="nav-link" data-scroll-target="#viterbi-forward-pass">Viterbi: Forward Pass</a></li>
   <li><a href="#viterbi-backward-pass" id="toc-viterbi-backward-pass" class="nav-link" data-scroll-target="#viterbi-backward-pass">Viterbi: Backward Pass</a></li>
+  <li><a href="#assignment" id="toc-assignment" class="nav-link" data-scroll-target="#assignment">Assignment</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c2w2/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -424,13 +424,45 @@ window.Quarto = {
 
 
 
-<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<div class="no-row-height column-margin column-container"><div id="fig-00" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/course-banner.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="img/course-banner.jpg" class="img-fluid figure-img" alt="course banner"></a></p>
+<p><a href="../../images/banner_c2.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="../../images/banner_c2.jpg" class="img-fluid figure-img"></a></p>
 <figcaption>course banner</figcaption>
 </figure>
-</div></div><section id="learning-objectives" class="level2">
-<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1
+</figcaption>
+</figure>
+</div><div id="fig-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" style="@page {size: 16in 9in;  margin: 0; }">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="slides.pdf" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="This week’s slides"><embed src="slides.pdf" style="@page {size: 16in 9in;  margin: 0; }" width="420" height="340"></a></p>
+<figcaption>This week’s slides</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2
+</figcaption>
+</figure>
+</div></div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ul>
 <li>Markov chains</li>
 <li>Hidden Markov models</li>
@@ -439,7 +471,8 @@ window.Quarto = {
 <li>Transition probabilities</li>
 <li>Emission probabilities</li>
 </ul>
-</section>
+</div>
+</div>
 <section id="part-of-speech-tagging" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="part-of-speech-tagging">Part of Speech Tagging</h2>
 <p>Part of Speech Tagging (POS) is the process of assigning a part of speech to a word. By doing so, you will learn the following:</p>
@@ -455,13 +488,13 @@ window.Quarto = {
 <div aria-describedby="fig-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/slide01.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="autocorrect"><img src="img/slide01.png" class="img-fluid figure-img"></a></p>
+<p><a href="img/slide01.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="autocorrect"><img src="img/slide01.png" class="img-fluid figure-img"></a></p>
 <figcaption>autocorrect</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Learning Objectives
+Figure&nbsp;3: Learning Objectives
 </figcaption>
 </figure>
 </div></div><p>You can use part of speech tagging for:</p>
@@ -474,7 +507,7 @@ Figure&nbsp;1: Learning Objectives
 </section>
 <section id="lab1-working-with-text-data" class="level2">
 <h2 class="anchored" data-anchor-id="lab1-working-with-text-data">Lab1: Working with text data</h2>
-<p><a href="lab01.ipynb">Working with text data</a></p>
+<p><a href="../../posts/c2w2/lab01.html">Working with text data</a></p>
 </section>
 <section id="markov-chains" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="markov-chains">Markov Chains</h2>
@@ -484,13 +517,13 @@ Figure&nbsp;1: Learning Objectives
 <div aria-describedby="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/slide02.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="POS Tagging"><img src="img/slide02.png" class="img-fluid figure-img"></a></p>
+<p><a href="img/slide02.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="POS Tagging"><img src="img/slide02.png" class="img-fluid figure-img"></a></p>
 <figcaption>POS Tagging</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: POS Tagging
+Figure&nbsp;4: POS Tagging
 </figcaption>
 </figure>
 </div><div id="fig-03" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -498,13 +531,13 @@ Figure&nbsp;2: POS Tagging
 <div aria-describedby="fig-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/slide03.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="FSM"><img src="img/slide03.png" class="img-fluid figure-img"></a></p>
+<p><a href="img/slide03.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="FSM"><img src="img/slide03.png" class="img-fluid figure-img"></a></p>
 <figcaption>FSM</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3: FSM representation for POS tagging
+Figure&nbsp;5: FSM representation for POS tagging
 </figcaption>
 </figure>
 </div></div>
@@ -522,13 +555,13 @@ Q={q_1, q_2, q_3} \qquad \text{ is the set of all states in your model. }
 <div aria-describedby="fig-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/slide04.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="FSM"><img src="img/slide04.png" class="img-fluid figure-img"></a></p>
+<p><a href="img/slide04.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="FSM"><img src="img/slide04.png" class="img-fluid figure-img"></a></p>
 <figcaption>FSM</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4: Learning Objectives
+Figure&nbsp;6: Learning Objectives
 </figcaption>
 </figure>
 </div></div><p>In the diagram above, the blue circles correspond to the part of speech tags, and the arrows correspond to the transition probabilities from one part of speech to another. You can populate the table on the right from the diagram on the left. The first row in your A matrix corresponds to the initial distribution among all the states. According to the table, the sentence has a 40% chance to start as a noun, 10% chance to start with a verb, and a 50% chance to start with another part of speech tag.</p>
@@ -539,13 +572,13 @@ Figure&nbsp;4: Learning Objectives
 <div aria-describedby="fig-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/slide05.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="FSM"><img src="img/slide05.png" class="img-fluid figure-img"></a></p>
+<p><a href="img/slide05.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="FSM"><img src="img/slide05.png" class="img-fluid figure-img"></a></p>
 <figcaption>FSM</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5: Learning Objectives
+Figure&nbsp;7: Learning Objectives
 </figcaption>
 </figure>
 </div></div></section>
@@ -558,13 +591,13 @@ Figure&nbsp;5: Learning Objectives
 <div aria-describedby="fig-06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/slide06.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="State Transition Graph"><img src="img/slide06.png" class="img-fluid figure-img"></a></p>
+<p><a href="img/slide06.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="State Transition Graph"><img src="img/slide06.png" class="img-fluid figure-img"></a></p>
 <figcaption>State Transition Graph</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6: Emission probabilities
+Figure&nbsp;8: Emission probabilities
 </figcaption>
 </figure>
 </div></div><p>For example, given that you are in a verb state, you can go to other words with certain probabilities. This emission matrix B, will be used with your transition matrix A, to help you identify the part of speech of a word in a sentence. To populate your matrix B, you can just have a labelled dataset and compute the probabilities of going from a POS to each word in your vocabulary. Here is a recap of what you have seen so far:</p>
@@ -574,13 +607,13 @@ Figure&nbsp;6: Emission probabilities
 <div aria-describedby="fig-07-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/slide07.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="HMM"><img src="img/slide07.png" class="img-fluid figure-img"></a></p>
+<p><a href="img/slide07.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="HMM"><img src="img/slide07.png" class="img-fluid figure-img"></a></p>
 <figcaption>HMM</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-07-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7: HMM Summary
+Figure&nbsp;9: HMM Summary
 </figcaption>
 </figure>
 </div></div><p>Note that the sum of each row in your A and B matrix has to be 1. Next, I will show you how you can calculate the probabilities inside these matrices.</p>
@@ -594,13 +627,13 @@ Figure&nbsp;7: HMM Summary
 <div aria-describedby="fig-08-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/slide08.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Transition Probabilities"><img src="img/slide08.png" class="img-fluid figure-img"></a></p>
+<p><a href="img/slide08.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="Transition Probabilities"><img src="img/slide08.png" class="img-fluid figure-img"></a></p>
 <figcaption>Transition Probabilities</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-08-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8: Transition Probabilities
+Figure&nbsp;10: Transition Probabilities
 </figcaption>
 </figure>
 </div></div><p>The number of times that blue is followed by purple is 2 out of 3. We will use the same logic to populate our transition and emission matrices. In the transition matrix we will count the number of times tag <span class="math inline">t_{(i−1)},t{(i)}</span> show up near each other and divide by the total number of times <span class="math inline">t_{(i−1)}</span> shows up. (which is the same as the number of times it shows up followed by anything else).</p>
@@ -610,23 +643,24 @@ Figure&nbsp;8: Transition Probabilities
 <div aria-describedby="fig-09-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/slide09.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="Transition Probabilities"><img src="img/slide09.png" class="img-fluid figure-img"></a></p>
+<p><a href="img/slide09.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="Transition Probabilities"><img src="img/slide09.png" class="img-fluid figure-img"></a></p>
 <figcaption>Transition Probabilities</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-09-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9: Transition Probabilities
+Figure&nbsp;11: Transition Probabilities
 </figcaption>
 </figure>
 </div></div><ol type="1">
-<li><p>calculate co-occrence of tag pairs <span class="math display">
+<li><p>calculate co-occurrence of tag pairs <span id="eq-tag-pair-co-occurrence"><span class="math display">
 C(t_{(i-1)},t_{(i)})
-</span></p></li>
-<li><p>calculate the probabilities using the counts <span class="math display">
+\tag{1}</span></span></p></li>
+<li><p>calculate the probabilities using the counts <span id="eq-tag-pair-probability"><span class="math display">
 P(t_{(i)}|t_{(i-1)}) = \frac{C(t_{(i)}),t_{(i-1)},}{\sum_{i=1}^{N} C(t_{(i-1)})}
-</span></p></li>
+\tag{2}</span></span></p></li>
 </ol>
+<p>Where</p>
 <p><span class="math inline">C(t_{(i−1)} ,t_{(i)})</span> is the count of times tag <span class="math inline">t_{(i-1)}</span> shows up before tag <span class="math inline">i</span>.</p>
 <p>From this you can compute the probability that a tag shows up after another tag.</p>
 </section>
@@ -639,13 +673,13 @@ P(t_{(i)}|t_{(i-1)}) = \frac{C(t_{(i)}),t_{(i-1)},}{\sum_{i=1}^{N} C(t_{(i-1)})}
 <div aria-describedby="fig-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/slide10.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="Transition Probabilities"><img src="img/slide10.png" class="img-fluid figure-img"></a></p>
+<p><a href="img/slide10.png" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="Transition Probabilities"><img src="img/slide10.png" class="img-fluid figure-img"></a></p>
 <figcaption>Transition Probabilities</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;10: Transition Probabilities
+Figure&nbsp;12: Transition Probabilities
 </figcaption>
 </figure>
 </div></div><p>In the table above, you can see that green corresponds to nouns (NN), purple corresponds to verbs (VB), and blue corresponds to other (O). Orange (π) corresponds to the initial state. The numbers inside the matrix correspond to the number of times a part of speech tag shows up right after another one.</p>
@@ -656,19 +690,23 @@ Figure&nbsp;10: Transition Probabilities
 <div aria-describedby="fig-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/slide11.png" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="Transition Probabilities"><img src="img/slide11.png" class="img-fluid figure-img"></a></p>
+<p><a href="img/slide11.png" class="lightbox" data-gallery="quarto-lightbox-gallery-13" title="Transition Probabilities"><img src="img/slide11.png" class="img-fluid figure-img"></a></p>
 <figcaption>Transition Probabilities</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;11: Transition Probabilities
+Figure&nbsp;13: Transition Probabilities
 </figcaption>
 </figure>
 </div></div><p>To generalize:</p>
-<p><span class="math display">
-P(t_{(i)}|t_{(i-1)}) = \frac{C(t_{(i)},t_{(i-1)})}{\sum_{j=1}^{N} C(t_{(i-1)},t_{(j)})}
-</span></p>
+<p><span id="eq-traning-probability"><span class="math display">
+P(t_{(i)} \mid t_{(i-1)}) = \frac{C(t_{(i)},t_{(i-1)})}{\sum_{j=1}^{N} C(t_{(i-1)},t_{(j)})}
+\tag{3}</span></span></p>
+<p>Where:</p>
+<ul>
+<li><span class="math inline">C(t_{(i)},t_{(i-1)})</span> is the count of times tag <span class="math inline">t_{(i-1)}</span> shows up before tag <span class="math inline">i</span>.</li>
+</ul>
 <p>Unfortunately, sometimes you might not see two POS tags in front each other. This will give you a probability of 0. To solve this issue, you will “smooth” it as follows:</p>
 
 <div class="no-row-height column-margin column-container"><div id="fig-12" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -676,16 +714,16 @@ P(t_{(i)}|t_{(i-1)}) = \frac{C(t_{(i)},t_{(i-1)})}{\sum_{j=1}^{N} C(t_{(i-1)},t_
 <div aria-describedby="fig-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/slide12.png" class="lightbox" data-gallery="quarto-lightbox-gallery-13" title="Transition Probabilities"><img src="img/slide12.png" class="img-fluid figure-img"></a></p>
+<p><a href="img/slide12.png" class="lightbox" data-gallery="quarto-lightbox-gallery-14" title="Transition Probabilities"><img src="img/slide12.png" class="img-fluid figure-img"></a></p>
 <figcaption>Transition Probabilities</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;12: Transition Probabilities
+Figure&nbsp;14: Transition Probabilities
 </figcaption>
 </figure>
-</div></div><p>The <span class="math inline">ϵ</span> allows you to not have any two sequences showing up with 0 probability. Why is this important?</p>
+</div></div><p>The <span class="math inline">\epsilon</span> allows you to not have any two sequences showing up with 0 probability. Why is this important?</p>
 </section>
 <section id="populating-the-emission-matrix" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="populating-the-emission-matrix">Populating the Emission Matrix</h2>
@@ -696,44 +734,28 @@ Figure&nbsp;12: Transition Probabilities
 <div aria-describedby="fig-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/slide13.png" class="lightbox" data-gallery="quarto-lightbox-gallery-14" title="The Emission Matrix"><img src="img/slide13.png" class="img-fluid figure-img"></a></p>
+<p><a href="img/slide13.png" class="lightbox" data-gallery="quarto-lightbox-gallery-15" title="The Emission Matrix"><img src="img/slide13.png" class="img-fluid figure-img"></a></p>
 <figcaption>The Emission Matrix</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;13: The Emission Matrix
+Figure&nbsp;15: The Emission Matrix
 </figcaption>
 </figure>
 </div></div><p>To populate the matrix, we will also use smoothing as we have previously used:</p>
 <p><span class="math display">
-P(w_i|t_i) = \frac{C(t_i,w_i)+\epsilon}{\sum_{j=1}^{N} C(t_i,w_j)+ N \times \epsilon} = \frac{C(t_i,w_i)+\epsilon}{\sum_{j=1}^{N} C(t_i)+N\times \epsilon}
+P(w_i \mid t_i) = \frac{C(t_i,w_i)+\epsilon}{\sum_{j=1}^{N} C(t_i,w_j)+ N \times \epsilon} = \frac{C(t_i,w_i)+\epsilon}{\sum_{j=1}^{N} C(t_i)+N\times \epsilon}
 </span></p>
 <p>Where <span class="math inline">C(t_i,w_i)</span> is the count associated with how many times the tag <span class="math inline">t_i</span> is associated with the word <span class="math inline">w_i</span>. The epsilon above is the smoothing parameter. In the next video, we will talk about the Viterbi algorithm and discuss how you can use the transition and emission matrix to come up with probabilities.</p>
 </section>
 <section id="lab2-working-with-text-data" class="level2">
 <h2 class="anchored" data-anchor-id="lab2-working-with-text-data">Lab2: Working with text data</h2>
-<p><a href="lab02.ipynb">Working with text data</a></p>
+<p><a href="../../posts/c2w2/lab02.html">Working with text data</a></p>
 </section>
 <section id="the-viterbi-algorithm" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="the-viterbi-algorithm">The Viterbi Algorithm</h2>
 <p>The Viterbi algorithm makes use of the transition probabilities and the emission probabilities as follows.</p>
-
-<div class="no-row-height column-margin column-container"><div id="fig-14" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/slide14.png" class="lightbox" data-gallery="quarto-lightbox-gallery-15" title="The Emission Matrix"><img src="img/slide14.png" class="img-fluid figure-img"></a></p>
-<figcaption>The Emission Matrix</figcaption>
-</figure>
-</div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;14: The Viterbi Algorithm
-</figcaption>
-</figure>
-</div></div><p>To go from <span class="math inline">π</span> to <span class="math inline">O</span> you need to multiply the corresponding transition probability (0.3) and the corresponding emission probability (0.5), which gives you 0.15. You keep doing that for all the words, until you get the probability of an entire sequence.</p>
 
 <div class="no-row-height column-margin column-container"><div id="fig-14" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -746,7 +768,23 @@ Figure&nbsp;14: The Viterbi Algorithm
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;15: The Viterbi Algorithm
+Figure&nbsp;16: The Viterbi Algorithm
+</figcaption>
+</figure>
+</div></div><p>To go from <span class="math inline">π</span> to <span class="math inline">O</span> you need to multiply the corresponding transition probability (0.3) and the corresponding emission probability (0.5), which gives you 0.15. You keep doing that for all the words, until you get the probability of an entire sequence.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-14" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide14.png" class="lightbox" data-gallery="quarto-lightbox-gallery-17" title="The Emission Matrix"><img src="img/slide14.png" class="img-fluid figure-img"></a></p>
+<figcaption>The Emission Matrix</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;17: The Viterbi Algorithm
 </figcaption>
 </figure>
 </div></div><p>You can then see how you will just pick the sequence with the highest probability. We will show you a systematic way to accomplish this (Viterbi!).</p>
@@ -760,13 +798,13 @@ Figure&nbsp;15: The Viterbi Algorithm
 <div aria-describedby="fig-15-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/slide15.png" class="lightbox" data-gallery="quarto-lightbox-gallery-17" title="The Emission Matrix"><img src="img/slide15.png" class="img-fluid figure-img"></a></p>
+<p><a href="img/slide15.png" class="lightbox" data-gallery="quarto-lightbox-gallery-18" title="The Emission Matrix"><img src="img/slide15.png" class="img-fluid figure-img"></a></p>
 <figcaption>The Emission Matrix</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-15-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;16: The Viterbi Initialization
+Figure&nbsp;18: The Viterbi Initialization
 </figcaption>
 </figure>
 </div></div><p>Now to populate the first column, you just multiply the initial π distribution, for each tag, times <span class="math inline">b_{i,cindex(w_1)}</span>, which is the emission probability of the <em>word 1</em> given the tag <span class="math inline">i</span>. Where the i, corresponds to the tag of the initial distribution and the <span class="math inline">cindex(w_1)</span>, is the index of <strong>word 1</strong> in the emission matrix. And that’s it, you are done with populating the first column of your new C matrix. You will now need to keep track what part of speech you are coming from. Hence we introduce a matrix D, which allows you to store the labels that represent the different states you are going through when finding the most likely sequence of POS tags for the given sequence of words <span class="math inline">w_2 ,…,w_k</span>. At first you set the first column to 0, because you are not coming from any POS tag.</p>
@@ -776,13 +814,13 @@ Figure&nbsp;16: The Viterbi Initialization
 <div aria-describedby="fig-16-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/slide16.png" class="lightbox" data-gallery="quarto-lightbox-gallery-18" title="The Emission Matrix"><img src="img/slide16.png" class="img-fluid figure-img"></a></p>
+<p><a href="img/slide16.png" class="lightbox" data-gallery="quarto-lightbox-gallery-19" title="The Emission Matrix"><img src="img/slide16.png" class="img-fluid figure-img"></a></p>
 <figcaption>The Emission Matrix</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-16-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;17: The Viterbi Initialization
+Figure&nbsp;19: The Viterbi Initialization
 </figcaption>
 </figure>
 </div></div><p>These two matrices will make more sense in the next videos.</p>
@@ -796,13 +834,13 @@ Figure&nbsp;17: The Viterbi Initialization
 <div aria-describedby="fig-17-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/slide17.png" class="lightbox" data-gallery="quarto-lightbox-gallery-19" title="Viterbi: Forward Pass"><img src="img/slide17.png" class="img-fluid figure-img"></a></p>
+<p><a href="img/slide17.png" class="lightbox" data-gallery="quarto-lightbox-gallery-20" title="Viterbi: Forward Pass"><img src="img/slide17.png" class="img-fluid figure-img"></a></p>
 <figcaption>Viterbi: Forward Pass</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-17-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;18: Viterbi: Forward Pass
+Figure&nbsp;20: Viterbi: Forward Pass
 </figcaption>
 </figure>
 </div></div><p>So to populate a cell (i.e.&nbsp;1,2) in the image above, you have to take the max of [kth cells in the previous column, times the corresponding transition probability of the kth POS to the first POS times the emission probability of the first POS and the current word you are looking at]. You do that for all the cells. Take a paper and a pencil, and make sure you understand how it is done.</p>
@@ -819,13 +857,13 @@ Figure&nbsp;18: Viterbi: Forward Pass
 <div aria-describedby="fig-19-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/slide19.png" class="lightbox" data-gallery="quarto-lightbox-gallery-20" title="Viterbi: Forward Pass"><img src="img/slide19.png" class="img-fluid figure-img"></a></p>
+<p><a href="img/slide19.png" class="lightbox" data-gallery="quarto-lightbox-gallery-21" title="Viterbi: Forward Pass"><img src="img/slide19.png" class="img-fluid figure-img"></a></p>
 <figcaption>Viterbi: Forward Pass</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-19-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;19: Viterbi: Forward Pass
+Figure&nbsp;21: Viterbi: Forward Pass
 </figcaption>
 </figure>
 </div></div><p>The equation above just gives you the index of the highest row in the last column of C. Once you have that, you can go ahead and start using your D matrix as follows:</p>
@@ -835,17 +873,21 @@ Figure&nbsp;19: Viterbi: Forward Pass
 <div aria-describedby="fig-20-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/slide20.png" class="lightbox" data-gallery="quarto-lightbox-gallery-21" title="Viterbi: Forward Pass"><img src="img/slide20.png" class="img-fluid figure-img"></a></p>
+<p><a href="img/slide20.png" class="lightbox" data-gallery="quarto-lightbox-gallery-22" title="Viterbi: Forward Pass"><img src="img/slide20.png" class="img-fluid figure-img"></a></p>
 <figcaption>Viterbi: Forward Pass</figcaption>
 </figure>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-20-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;20: Viterbi: Forward Pass
+Figure&nbsp;22: Viterbi: Forward Pass
 </figcaption>
 </figure>
 </div></div><p>Note that since we started at index one, hence the last word (w5) is <span class="math inline">t_1</span>. Then we go to the first row of D and what ever that number is, it indicated the row of the next part of speech tag. Then next part of speech tag indicates the row of the next and so forth. This allows you to reconstruct the POS tags for your sentence.</p>
 <p>You will be implementing this in this week’s programming assignment.</p>
+</section>
+<section id="assignment" class="level2">
+<h2 class="anchored" data-anchor-id="assignment">Assignment</h2>
+<p><a href="../../posts/c2w2/assignment.html">Part-of-speech (POS) tagging</a></p>
 
 
 </section>
