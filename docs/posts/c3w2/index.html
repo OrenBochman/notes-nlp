@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="we cover Neural networks for deep learning, then build a tweet classifier that places tweets into positive or negative sentiment categories, using a DNN.">
 
-<title>Neural Networks for Sentiment Analysis – NLP Specialization</title>
+<title>Recurrent Neural Networks for Language Modeling – NLP Specialization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -94,6 +93,49 @@ div.csl-indent {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -166,18 +208,13 @@ div.csl-indent {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/c3w1/index.html">Sequence Models</a></li><li class="breadcrumb-item"><a href="../../posts/c3w2/index.html">Text Summarization</a></li></ol></nav>
-      <h1 class="title">Neural Networks for Sentiment Analysis</h1>
+      <h1 class="title">Recurrent Neural Networks for Language Modeling</h1>
             <p class="subtitle lead">Sequence Models</p>
-                  <div>
-        <div class="description">
-          we cover Neural networks for deep learning, then build a tweet classifier that places tweets into positive or negative sentiment categories, using a DNN.
-        </div>
-      </div>
-                          <div class="quarto-categories">
+                                <div class="quarto-categories">
                 <div class="quarto-category">NLP</div>
                 <div class="quarto-category">Coursera</div>
-                <div class="quarto-category">notes</div>
-                <div class="quarto-category">Probabilistic Models</div>
+                <div class="quarto-category">Notes</div>
+                <div class="quarto-category">Sequence Models</div>
               </div>
                   </div>
   </div>
@@ -376,7 +413,19 @@ div.csl-indent {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">resources:</a></li>
+  <li><a href="#traditional-language-models" id="toc-traditional-language-models" class="nav-link active" data-scroll-target="#traditional-language-models">Traditional Language models</a></li>
+  <li><a href="#recurrent-neural-networks" id="toc-recurrent-neural-networks" class="nav-link" data-scroll-target="#recurrent-neural-networks">Recurrent Neural Networks</a></li>
+  <li><a href="#application-of-rnns" id="toc-application-of-rnns" class="nav-link" data-scroll-target="#application-of-rnns">Application of RNNs</a></li>
+  <li><a href="#math-in-simple-rnns" id="toc-math-in-simple-rnns" class="nav-link" data-scroll-target="#math-in-simple-rnns">Math in Simple RNNs</a></li>
+  <li><a href="#lab-lecture-notebook-hidden-state-activation" id="toc-lab-lecture-notebook-hidden-state-activation" class="nav-link" data-scroll-target="#lab-lecture-notebook-hidden-state-activation">Lab: Lecture Notebook: Hidden State Activation</a></li>
+  <li><a href="#cost-function-for-rnns" id="toc-cost-function-for-rnns" class="nav-link" data-scroll-target="#cost-function-for-rnns">Cost Function for RNNs</a></li>
+  <li><a href="#implementation-note" id="toc-implementation-note" class="nav-link" data-scroll-target="#implementation-note">Implementation Note</a></li>
+  <li><a href="#lab-working-with-jax-numpy-and-calculating-perplexity" id="toc-lab-working-with-jax-numpy-and-calculating-perplexity" class="nav-link" data-scroll-target="#lab-working-with-jax-numpy-and-calculating-perplexity">Lab: Working with JAX NumPy and Calculating Perplexity</a></li>
+  <li><a href="#gated-recurrent-units" id="toc-gated-recurrent-units" class="nav-link" data-scroll-target="#gated-recurrent-units">Gated Recurrent Units</a></li>
+  <li><a href="#lab-vanilla-rnns-grus-and-the-scan-function" id="toc-lab-vanilla-rnns-grus-and-the-scan-function" class="nav-link" data-scroll-target="#lab-vanilla-rnns-grus-and-the-scan-function">Lab: Vanilla RNNs, GRUs and the scan function</a></li>
+  <li><a href="#lab-creating-a-gru-model-using-trax" id="toc-lab-creating-a-gru-model-using-trax" class="nav-link" data-scroll-target="#lab-creating-a-gru-model-using-trax">Lab: Creating a GRU model using Trax</a></li>
+  <li><a href="#deep-and-bi-directional-rnns" id="toc-deep-and-bi-directional-rnns" class="nav-link" data-scroll-target="#deep-and-bi-directional-rnns">Deep and Bi-directional RNNs</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">Resources:</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c3w2/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -388,18 +437,158 @@ div.csl-indent {
 
 
 
-<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<div class="no-row-height column-margin column-container"><div id="fig-00" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/course-banner.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="img/course-banner.jpg" class="img-fluid figure-img" alt="course banner"></a></p>
+<p><a href="../../images/Course-Logo-3-3.webp" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="../../images/Course-Logo-3-3.webp" class="img-fluid figure-img"></a></p>
 <figcaption>course banner</figcaption>
 </figure>
-</div></div><section id="resources" class="level1">
-<h1>resources:</h1>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1
+</figcaption>
+</figure>
+</div><div id="fig-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" style="@page {size: 16in 9in;  margin: 0; }">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="slides.pdf" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="This week’s slides"><embed src="slides.pdf" style="@page {size: 16in 9in;  margin: 0; }" width="420" height="340"></a></p>
+<figcaption>This week’s slides</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2
+</figcaption>
+</figure>
+</div></div>
+<p>My irreverent notes for Week 2 of the <a href="https://www.coursera.org/learn/sequence-models-in-nlp/home/welcome">Natural Language Processing with Sequence Models</a> Course in the Natural Language Processing Specialization Offered by <a href="DeepLearning.AI">DeepLearning.AI</a> on <a href="https://www.coursera.org/">Coursera</a></p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>N-grams</li>
+<li>Gated recurrent units (GRUs)</li>
+<li>Recurrent neural networks (RNNs)</li>
+</ul>
+</div>
+</div>
+<section id="traditional-language-models" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="traditional-language-models">Traditional Language models</h2>
+<p class="page-columns page-full"><a href="img/slide01.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-3"><div class="no-row-height column-margin column-container"><img src="img/slide01.png" class="img-fluid"></div></a></p>
+<p>In the example above, the second sentence is the one that is most likely to take place as it has the highest probability of happening. To compute the probabilities, you can do the following:</p>
+<p class="page-columns page-full"><a href="img/slide02.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-4"><div class="no-row-height column-margin column-container"><img src="img/slide02.png" class="img-fluid"></div></a></p>
+<p>Large N-grams capture dependencies between distant words and need a lot of space and RAM. Hence, we resort to using different types of alternatives.</p>
+</section>
+<section id="recurrent-neural-networks" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="recurrent-neural-networks">Recurrent Neural Networks</h2>
+<p>Previously, we tried using traditional language models, but it turns out they took a lot of space and RAM. For example, in the sentence below:</p>
+<p class="page-columns page-full"><a href="img/slide03.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-5"><div class="no-row-height column-margin column-container"><img src="img/slide03.png" class="img-fluid"></div></a></p>
+<p>An N-gram (trigram) would only look at “did not” and would try to complete the sentence from there. As a result, the model will not be able to see the beginning of the sentence “I called her but she”. Probably the most likely word is have after “did not”. RNNs help us solve this problem by being able to track dependencies that are much further apart from each other. As the RNN makes its way through a text corpus, it picks up some information as follows:</p>
+<p class="page-columns page-full"><a href="img/slide04.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-6"><div class="no-row-height column-margin column-container"><img src="img/slide04.png" class="img-fluid"></div></a></p>
+<p>Note that as you feed in more information into the model, the previous word’s retention gets weaker, but it is still there. Look at the orange rectangle above and see how it becomes smaller as you make your way through the text. This shows that your model is capable of capturing dependencies and remembers a previous word although it is at the beginning of a sentence or paragraph. Another advantage of RNNs is that a lot of the computation shares parameters.</p>
+</section>
+<section id="application-of-rnns" class="level2">
+<h2 class="anchored" data-anchor-id="application-of-rnns">Application of RNNs</h2>
+<p>RNNs could be used in a variety of tasks ranging from machine translation to caption generation. There are many ways to implement an RNN model:</p>
+<p>One to One: given some scores of a championship, you can predict the winner.</p>
+<p>One to Many: given an image, you can predict what the caption is going to be.</p>
+<p>Many to One: given a tweet, you can predict the sentiment of that tweet.</p>
+<p>Many to Many: given an english sentence, you can translate it to its German equivalent.</p>
+<p>In the next video, you will see the math in simple RNNs.</p>
+</section>
+<section id="math-in-simple-rnns" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="math-in-simple-rnns">Math in Simple RNNs</h2>
+<p>It is best to explain the math behind a simple RNN with a diagram:</p>
+<p class="page-columns page-full"><a href="img/slide05.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-7"><div class="no-row-height column-margin column-container"><img src="img/slide05.png" class="img-fluid"></div></a></p>
+<p>Note that:</p>
+<p><span class="math display">
+h^{&lt;t&gt;} = g(W_{h}[h^{&lt;t-1&gt;}, x^{&lt;t&gt;}] + b_h)
+</span></p>
+<p>Is the same as multiplying <span class="math inline">W_{hh}</span> by <span class="math inline">h</span> and <span class="math inline">W_{hx}</span> by <span class="math inline">x</span>. In other words, you can concatenate it as follows:</p>
+<p><span class="math display">
+h^{&lt;t&gt;} = g(W_{hh}[h^{&lt;t-1&gt;} \oplus W_{hx}x^{&lt;t&gt;}] + b_h)
+</span></p>
+<p>For the prediction at each time step, you can use the following:</p>
+<p><span class="math display">
+\hat{y}^{&lt;t&gt;} = g(W_{yh}h^{&lt;t&gt;} + b_y)
+</span></p>
+<p>Note that you end up training <span class="math inline">W_{hh}</span>, <span class="math inline">W_{hx}</span>, <span class="math inline">W_{yh}</span>, <span class="math inline">b_h</span>, and <span class="math inline">b_y</span>. Here is a visualization of the model.</p>
+<p class="page-columns page-full"><a href="img/slide06.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-8"><div class="no-row-height column-margin column-container"><img src="img/slide06.png" class="img-fluid"></div></a></p>
+</section>
+<section id="lab-lecture-notebook-hidden-state-activation" class="level2">
+<h2 class="anchored" data-anchor-id="lab-lecture-notebook-hidden-state-activation">Lab: Lecture Notebook: Hidden State Activation</h2>
+<p><a href="lab01.qmd">Hidden State Activation</a></p>
+</section>
+<section id="cost-function-for-rnns" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="cost-function-for-rnns">Cost Function for RNNs</h2>
+<p>The cost function used in an RNN is the cross entropy loss. If you were to visualize it</p>
+<p class="page-columns page-full"><a href="img/slide07.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-9"><div class="no-row-height column-margin column-container"><img src="img/slide07.png" class="img-fluid"></div></a></p>
+<p>you are basically summing over the all the classes and then multiplying <span class="math inline">y_j</span> times <span class="math inline">log(\hat{y}_j)</span>. If you were to compute the loss over several time steps, use the following formula:</p>
+<p><span class="math display">
+J = -\frac{1}{T} \sum_{t=1}^{T} \sum_{j=1}^{K} y_j^{&lt;t&gt;} log \hat{y}^{&lt;t&gt;}
+</span></p>
+<p>where <span class="math inline">T</span> is the number of time steps and <span class="math inline">K</span> is the number of classes.</p>
+<p>Note that we are simply summing over all the time steps and dividing by <span class="math inline">T</span>, to get the average cost in each time step. Hence, we are just taking an average through time.</p>
+</section>
+<section id="implementation-note" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="implementation-note">Implementation Note</h2>
+<p>The scan function is built as follows:</p>
+<p class="page-columns page-full"><a href="img/slide06.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-10"><div class="no-row-height column-margin column-container"><img src="img/slide06.png" class="img-fluid"></div></a></p>
+<p>Note, that is basically what an RNN is doing. It takes the initializer, and returns a list of outputs (ys), and uses the current value, to get the next y and the next current value. These type of abstractions allow for much faster computation.</p>
+</section>
+<section id="lab-working-with-jax-numpy-and-calculating-perplexity" class="level2">
+<h2 class="anchored" data-anchor-id="lab-working-with-jax-numpy-and-calculating-perplexity">Lab: Working with JAX NumPy and Calculating Perplexity</h2>
+<p><a href="lab02.qmd">Working with JAX NumPy and Calculating Perplexity</a></p>
+</section>
+<section id="gated-recurrent-units" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="gated-recurrent-units">Gated Recurrent Units</h2>
+<p>Gated recurrent units are very similar to vanilla RNNs, except that they have a “relevance” and “update” gate that allow the model to update and get relevant information. I personally find it easier to understand by looking at the formulas:</p>
+<p class="page-columns page-full"><a href="img/slide07.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-11"><div class="no-row-height column-margin column-container"><img src="img/slide07.png" class="img-fluid"></div></a></p>
+<p>To the left, you have the diagram and equations for a simple RNN. To the right, we explain the GRU. Note that we add 3 layers before computing h and y.</p>
+<p><span class="math display">
+\begin{align*}
+\Gamma_u &amp;= \sigma(W_u[h^{&lt;t-1&gt;}, x^{&lt;t&gt;}]+b_u) \\
+\Gamma_r &amp;= \sigma(W_r[h^{&lt;t-1&gt;}, x^{&lt;t&gt;}]+b_r) \\
+h'^{&lt;t&gt;} &amp;= \tanh(W_h[\Gamma_r*h^{&lt;t-1&gt;}, x^{&lt;t&gt;}]+b_h) \\
+h^{&lt;t&gt;} &amp;= \Gamma_u*h^{&lt;t-1&gt;} + (1-\Gamma_u)*h'^{&lt;t&gt;}
+\end{align*}
+</span></p>
+<p>The first gate <span class="math inline">Γ_u</span> allows you to decide how much you want to update the weights by. The second gate <span class="math inline">Γ_r</span>, helps you find a relevance score. You can compute the new <span class="math inline">h</span> by using the relevance gate. Finally you can compute <span class="math inline">h</span>, using the update gate. GRUs “decide” how to update the hidden state. GRUs help preserve important information.</p>
+</section>
+<section id="lab-vanilla-rnns-grus-and-the-scan-function" class="level2">
+<h2 class="anchored" data-anchor-id="lab-vanilla-rnns-grus-and-the-scan-function">Lab: Vanilla RNNs, GRUs and the scan function</h2>
+<p><a href="lab03.qmd">Vanilla RNNs, GRUs and the scan function</a></p>
+</section>
+<section id="lab-creating-a-gru-model-using-trax" class="level2">
+<h2 class="anchored" data-anchor-id="lab-creating-a-gru-model-using-trax">Lab: Creating a GRU model using Trax</h2>
+<p><a href="lab04.qmd">Creating a GRU model using Trax</a></p>
+</section>
+<section id="deep-and-bi-directional-rnns" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="deep-and-bi-directional-rnns">Deep and Bi-directional RNNs</h2>
+<p>Bi-directional RNNs are important, because knowing what is next in the sentence could give you more context about the sentence itself.</p>
+<p class="page-columns page-full"><a href="img/slide08.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-12"><div class="no-row-height column-margin column-container"><img src="img/slide08.png" class="img-fluid"></div></a></p>
+<p>So you can see, in order to make a prediction <span class="math inline">\hat{y}</span>, you will use the hidden states from both directions and combine them to make one hidden state, you can then proceed as you would with a simple vanilla RNN. When implementing Deep RNNs, you would compute the following.</p>
+<p class="page-columns page-full"><a href="img/slide09.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-13"><div class="no-row-height column-margin column-container"><img src="img/slide09.png" class="img-fluid"></div></a></p>
+<p>Note that at layer <span class="math inline">l</span>, you are using the input from the bottom <span class="math inline">a^{[;-1]}</span> and the hidden state <span class="math inline">h^{&lt;l&gt;}</span> That allows you to get your new h, and then to get your new a, you will train another weight matrix <span class="math inline">W_{a}</span>, which you will multiply by the corresponding h add the bias and then run it through an activation layer.</p>
+</section>
+<section id="resources" class="level2">
+<h2 class="anchored" data-anchor-id="resources">Resources:</h2>
 <ul>
 <li><span class="citation" data-cites="Chadha2020DistilledNotesCourseraDLSpec">(<a href="#ref-Chadha2020DistilledNotesCourseraDLSpec" role="doc-biblioref">Chadha 2020</a>)</span> <a href="https://aman.ai/coursera-nlp/logistic-regression/">Aman Chadha’s Notes</a></li>
 <li><a href="https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization/tree/master/1%20-%20Natural%20Language%20Processing%20with%20Classification%20and%20Vector%20Spaces#testing-logistic-regression">Ibrahim Jelliti’s Notes</a></li>
 </ul>
-<p><a href="slides.pdf" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><embed src="slides.pdf" class="img-fluid"></a></p>
 
 
 
@@ -411,14 +600,14 @@ Chadha, Aman. 2020. <span>“Distilled Notes for the Natural Language Processing
 </div>
 </div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{2020,
   author = {},
-  title = {Neural {Networks} for {Sentiment} {Analysis}},
+  title = {Recurrent {Neural} {Networks} for {Language} {Modeling}},
   date = {2020-10-23},
   url = {https://orenbochman.github.io/notes-nlp/posts/c3w2/},
   langid = {en}
 }
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-2020" class="csl-entry quarto-appendix-citeas" role="listitem">
-<span>“Neural Networks for Sentiment Analysis.”</span> 2020. October 23,
-2020. <a href="https://orenbochman.github.io/notes-nlp/posts/c3w2/">https://orenbochman.github.io/notes-nlp/posts/c3w2/</a>.
+<span>“Recurrent Neural Networks for Language Modeling.”</span> 2020.
+October 23, 2020. <a href="https://orenbochman.github.io/notes-nlp/posts/c3w2/">https://orenbochman.github.io/notes-nlp/posts/c3w2/</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {

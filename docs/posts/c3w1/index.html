@@ -94,6 +94,49 @@ div.csl-indent {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -176,8 +219,9 @@ div.csl-indent {
                           <div class="quarto-categories">
                 <div class="quarto-category">NLP</div>
                 <div class="quarto-category">Coursera</div>
-                <div class="quarto-category">notes</div>
-                <div class="quarto-category">Probabilistic Models</div>
+                <div class="quarto-category">Notes</div>
+                <div class="quarto-category">Sequence Models</div>
+                <div class="quarto-category">Sentiment Analysis</div>
               </div>
                   </div>
   </div>
@@ -376,7 +420,18 @@ div.csl-indent {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">resources:</a></li>
+  <li><a href="#neural-networks-for-sentiment-analysis" id="toc-neural-networks-for-sentiment-analysis" class="nav-link active" data-scroll-target="#neural-networks-for-sentiment-analysis">Neural Networks for Sentiment Analysis</a></li>
+  <li><a href="#trax-neural-networks" id="toc-trax-neural-networks" class="nav-link" data-scroll-target="#trax-neural-networks">Trax: Neural Networks</a></li>
+  <li><a href="#reading-optional-trax-and-jax-docs-and-code" id="toc-reading-optional-trax-and-jax-docs-and-code" class="nav-link" data-scroll-target="#reading-optional-trax-and-jax-docs-and-code">Reading: (Optional) Trax and JAX, docs and code</a></li>
+  <li><a href="#lab-introduction-to-trax" id="toc-lab-introduction-to-trax" class="nav-link" data-scroll-target="#lab-introduction-to-trax">Lab: Introduction to Trax</a></li>
+  <li><a href="#trax-layers" id="toc-trax-layers" class="nav-link" data-scroll-target="#trax-layers">Trax: Layers</a></li>
+  <li><a href="#lab-classes-and-subclasses" id="toc-lab-classes-and-subclasses" class="nav-link" data-scroll-target="#lab-classes-and-subclasses">Lab: Classes and Subclasses</a></li>
+  <li><a href="#dense-and-relu-layer" id="toc-dense-and-relu-layer" class="nav-link" data-scroll-target="#dense-and-relu-layer">Dense and ReLU layer</a></li>
+  <li><a href="#serial-layer" id="toc-serial-layer" class="nav-link" data-scroll-target="#serial-layer">Serial Layer</a></li>
+  <li><a href="#other-layers" id="toc-other-layers" class="nav-link" data-scroll-target="#other-layers">Other Layers</a></li>
+  <li><a href="#training" id="toc-training" class="nav-link" data-scroll-target="#training">Training</a></li>
+  <li><a href="#lab-data-generators" id="toc-lab-data-generators" class="nav-link" data-scroll-target="#lab-data-generators">Lab: Data Generators</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">Resources:</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c3w1/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -388,18 +443,149 @@ div.csl-indent {
 
 
 
-<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<div class="no-row-height column-margin column-container"><div id="fig-00" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/course-banner.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="img/course-banner.jpg" class="img-fluid figure-img" alt="course banner"></a></p>
+<p><a href="../../images/Course-Logo-3-3.webp" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="../../images/Course-Logo-3-3.webp" class="img-fluid figure-img"></a></p>
 <figcaption>course banner</figcaption>
 </figure>
-</div></div><section id="resources" class="level1">
-<h1>resources:</h1>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1
+</figcaption>
+</figure>
+</div><div id="fig-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" style="@page {size: 16in 9in;  margin: 0; }">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="slides.pdf" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="This week’s slides"><embed src="slides.pdf" style="@page {size: 16in 9in;  margin: 0; }" width="420" height="340"></a></p>
+<figcaption>This week’s slides</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2
+</figcaption>
+</figure>
+</div></div>
+<p>My irreverent notes for Week 1 of the <a href="https://www.coursera.org/learn/sequence-models-in-nlp/home/welcome">Natural Language Processing with Sequence Models</a> Course in the Natural Language Processing Specialization Offered by <a href="DeepLearning.AI">DeepLearning.AI</a> on <a href="https://www.coursera.org/">Coursera</a></p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Feature extraction</li>
+<li>Supervised machine learning</li>
+<li>Binary classification</li>
+<li>Text preprocessing</li>
+<li>ReLU</li>
+<li>Python classes</li>
+<li>Trax</li>
+<li>Neural networks</li>
+</ul>
+</div>
+</div>
+<section id="neural-networks-for-sentiment-analysis" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="neural-networks-for-sentiment-analysis">Neural Networks for Sentiment Analysis</h2>
+<p>Previously in the course you did sentiment analysis with logistic regression and naive Bayes. Those models were in a sense more naive, and are not able to catch the sentiment off a tweet like: “I am not happy” or “If only it was a good day”. When using a neural network to predict the sentiment of a sentence, you can use the following. Note that the image below has three outputs, in this case you might want to predict, “positive”, “neutral”, or “negative”.</p>
+<p class="page-columns page-full"><a href="img/slide01.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-3"><div class="no-row-height column-margin column-container"><img src="img/slide01.png" class="img-fluid"></div></a></p>
+<p>Note that the network above has three layers. To go from one layer to another you can use a <span class="math inline">W</span> matrix to propagate to the next layer. Hence, we call this concept of going from the input until the final layer, forward propagation. To represent a tweet, you can use the following:</p>
+<p>Note, that we add zeros for padding to match the size of the longest tweet.</p>
+<p class="page-columns page-full"><a href="img/slide02.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-4"><div class="no-row-height column-margin column-container"><img src="img/slide02.png" class="img-fluid"></div></a></p>
+</section>
+<section id="trax-neural-networks" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="trax-neural-networks">Trax: Neural Networks</h2>
+<p>Trax has several advantages:</p>
+<ul>
+<li>Runs fast on CPUs, GPUs and TPUs</li>
+<li>Parallel computing</li>
+<li>Record algebraic computations for gradient evaluation</li>
+</ul>
+<p>Here is an example of how you can code a neural network in Trax:</p>
+<p class="page-columns page-full"><a href="img/slide03.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-5"><div class="no-row-height column-margin column-container"><img src="img/slide03.png" class="img-fluid"></div></a></p>
+</section>
+<section id="reading-optional-trax-and-jax-docs-and-code" class="level2">
+<h2 class="anchored" data-anchor-id="reading-optional-trax-and-jax-docs-and-code">Reading: (Optional) Trax and JAX, docs and code</h2>
+<p>Official Trax documentation maintained by the Google Brain team:</p>
+<ul>
+<li>https://trax-ml.readthedocs.io/en/latest/</li>
+</ul>
+<p>Trax source code on GitHub:</p>
+<ul>
+<li>https://github.com/google/trax</li>
+</ul>
+<p>JAX library:</p>
+<ul>
+<li>https://jax.readthedocs.io/en/latest/index.html</li>
+</ul>
+</section>
+<section id="lab-introduction-to-trax" class="level2">
+<h2 class="anchored" data-anchor-id="lab-introduction-to-trax">Lab: Introduction to Trax</h2>
+<p><a href="lab01.qmd">Introduction to Trax</a></p>
+</section>
+<section id="trax-layers" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="trax-layers">Trax: Layers</h2>
+<p>Trax makes use of classes. If you are not familiar with classes in python, don’t worry about it, here is an example.</p>
+<p class="page-columns page-full"><a href="img/slide04.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-6"><div class="no-row-height column-margin column-container"><img src="img/slide04.png" class="img-fluid"></div></a></p>
+<p>In the example above, you can see that a class takes in an <code>__init__</code> and a <code>__call__</code> method.</p>
+<p>These methods allow you to initialize your internal variables and allow you to execute your function when called.</p>
+<p>To the right you can see how you can initialize your class. When you call <code>MyClass(7)</code> , you are setting the <span class="math inline">y</span> variable to 7. Now when you call <code>f(3)</code> you are adding 7 + 3.</p>
+<p>You can change the <code>my_method</code> function to do whatever you want, and you can have as many methods as you want in a class.</p>
+</section>
+<section id="lab-classes-and-subclasses" class="level2">
+<h2 class="anchored" data-anchor-id="lab-classes-and-subclasses">Lab: Classes and Subclasses</h2>
+<p><a href="lab02.qmd">Classes and Subclasses</a></p>
+</section>
+<section id="dense-and-relu-layer" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="dense-and-relu-layer">Dense and ReLU layer</h2>
+<p>The Dense layer is the computation of the inner product between a set of trainable weights (weight matrix) and an input vector. The visualization of the dense layer could be seen in the image below.</p>
+<p class="page-columns page-full"><a href="img/slide05.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-7"><div class="no-row-height column-margin column-container"><img src="img/slide05.png" class="img-fluid"></div></a></p>
+<p>The orange box shows the dense layer. An activation layer is the set of blue nodes. Concretely one of the most commonly used activation layers is the rectified linear unit (ReLU).</p>
+<p class="page-columns page-full"><a href="img/slide06.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-8"><div class="no-row-height column-margin column-container"><img src="img/slide06.png" class="img-fluid"></div></a></p>
+<p>ReLU(x) is defined as max(0,x) for any input x.</p>
+</section>
+<section id="serial-layer" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="serial-layer">Serial Layer</h2>
+<p>A serial layer allows you to compose layers in a serial arrangement:</p>
+<p class="page-columns page-full"><a href="img/slide07.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-9"><div class="no-row-height column-margin column-container"><img src="img/slide07.png" class="img-fluid"></div></a></p>
+<p>It is a composition of sublayers. These layers are usually dense layers followed by activation layers.</p>
+</section>
+<section id="other-layers" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="other-layers">Other Layers</h2>
+<p>Other layers could include embedding layers and mean layers. For example, you can learn word embeddings for each word in your vocabulary as follows:</p>
+<p class="page-columns page-full"><a href="img/slide08.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-10"><div class="no-row-height column-margin column-container"><img src="img/slide08.png" class="img-fluid"></div></a></p>
+<p>The mean layer allows you to take the average of the embeddings. You can visualize it as follows:</p>
+<p class="page-columns page-full"><a href="img/slide09.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-11"><div class="no-row-height column-margin column-container"><img src="img/slide09.png" class="img-fluid"></div></a></p>
+<p>This layer does not have any trainable parameters.</p>
+</section>
+<section id="training" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="training">Training</h2>
+<p>In Trax, the function grad allows you to compute the gradient. You can use it as follows:</p>
+<p class="page-columns page-full"><a href="img/slide10.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-12"><div class="no-row-height column-margin column-container"><img src="img/slide10.png" class="img-fluid"></div></a></p>
+<p>Now if you were to evaluate grad_f at a certain value, namely z, it would be the same as computing 6z+1. Now to do the training, it becomes very simple:</p>
+<p class="page-columns page-full"><a href="img/slide11.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-13"><div class="no-row-height column-margin column-container"><img src="img/slide11.png" class="img-fluid"></div></a></p>
+<p>You simply compute the gradients by feeding in y.forward (the latest value of y), the weights, and the input x, and then it does the back-propagation for you in a single line. You can then have the loop that allows you to update the weights (i.e.&nbsp;gradient descent!).</p>
+</section>
+<section id="lab-data-generators" class="level2">
+<h2 class="anchored" data-anchor-id="lab-data-generators">Lab: Data Generators</h2>
+<p><a href="lab03.qmd">Data Generators</a></p>
+</section>
+<section id="resources" class="level1">
+<h1>Resources:</h1>
 <ul>
 <li><span class="citation" data-cites="Chadha2020DistilledNotesCourseraDLSpec">(<a href="#ref-Chadha2020DistilledNotesCourseraDLSpec" role="doc-biblioref">Chadha 2020</a>)</span> <a href="https://aman.ai/coursera-nlp/logistic-regression/">Aman Chadha’s Notes</a></li>
-<li><a href="https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization/tree/master/1%20-%20Natural%20Language%20Processing%20with%20Classification%20and%20Vector%20Spaces#testing-logistic-regression">Ibrahim Jelliti’s Notes</a></li>
+<li><a href="https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization/tree/master/3%20-%20Natural%20Language%20Processing%20with%20Sequence%20Models">Ibrahim Jelliti’s Notes</a></li>
 </ul>
-<p><a href="slides.pdf" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><embed src="slides.pdf" class="img-fluid"></a></p>
 
 
 

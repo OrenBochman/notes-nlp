@@ -8,7 +8,7 @@
 
 <meta name="description" content="we cover Neural networks for deep learning, then build a tweet classifier that places tweets into positive or negative sentiment categories, using a DNN.">
 
-<title>Neural Networks for Sentiment Analysis – NLP Specialization</title>
+<title>Siamese Networks – NLP Specialization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -94,6 +94,49 @@ div.csl-indent {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -166,7 +209,7 @@ div.csl-indent {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/c3w1/index.html">Sequence Models</a></li><li class="breadcrumb-item"><a href="../../posts/c3w4/index.html">Chat Bots</a></li></ol></nav>
-      <h1 class="title">Neural Networks for Sentiment Analysis</h1>
+      <h1 class="title">Siamese Networks</h1>
             <p class="subtitle lead">Sequence Models</p>
                   <div>
         <div class="description">
@@ -177,7 +220,7 @@ div.csl-indent {
                 <div class="quarto-category">NLP</div>
                 <div class="quarto-category">Coursera</div>
                 <div class="quarto-category">notes</div>
-                <div class="quarto-category">Probabilistic Models</div>
+                <div class="quarto-category">Sequence Models</div>
               </div>
                   </div>
   </div>
@@ -376,7 +419,18 @@ div.csl-indent {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">resources:</a></li>
+  <li><a href="#siamese-network" id="toc-siamese-network" class="nav-link active" data-scroll-target="#siamese-network">Siamese Network</a></li>
+  <li><a href="#architecture" id="toc-architecture" class="nav-link" data-scroll-target="#architecture">Architecture</a></li>
+  <li><a href="#lab-creating-a-siamese-model-using-trax" id="toc-lab-creating-a-siamese-model-using-trax" class="nav-link" data-scroll-target="#lab-creating-a-siamese-model-using-trax">Lab: Creating a Siamese Model using Trax</a></li>
+  <li><a href="#cost-function" id="toc-cost-function" class="nav-link" data-scroll-target="#cost-function">Cost Function</a></li>
+  <li><a href="#triplets" id="toc-triplets" class="nav-link" data-scroll-target="#triplets">Triplets</a></li>
+  <li><a href="#computing-the-cost-i" id="toc-computing-the-cost-i" class="nav-link" data-scroll-target="#computing-the-cost-i">Computing the Cost I</a></li>
+  <li><a href="#computing-the-cost-ii" id="toc-computing-the-cost-ii" class="nav-link" data-scroll-target="#computing-the-cost-ii">Computing the Cost II</a></li>
+  <li><a href="#lab-lecture-notebook-modified-triplet-loss" id="toc-lab-lecture-notebook-modified-triplet-loss" class="nav-link" data-scroll-target="#lab-lecture-notebook-modified-triplet-loss">Lab: Lecture Notebook: Modified Triplet Loss</a></li>
+  <li><a href="#one-shot-learning" id="toc-one-shot-learning" class="nav-link" data-scroll-target="#one-shot-learning">One Shot Learning</a></li>
+  <li><a href="#training-testing" id="toc-training-testing" class="nav-link" data-scroll-target="#training-testing">Training / Testing</a></li>
+  <li><a href="#lab-evaluate-a-siamese-model" id="toc-lab-evaluate-a-siamese-model" class="nav-link" data-scroll-target="#lab-evaluate-a-siamese-model">Lab: Evaluate a Siamese Model</a></li>
+  <li><a href="#acknowledgments" id="toc-acknowledgments" class="nav-link" data-scroll-target="#acknowledgments">Acknowledgments</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c3w4/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -388,18 +442,279 @@ div.csl-indent {
 
 
 
-<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<div class="no-row-height column-margin column-container"><div id="fig-00" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/course-banner.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="img/course-banner.jpg" class="img-fluid figure-img" alt="course banner"></a></p>
+<p><a href="../../images/Course-Logo-3-3.webp" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="../../images/Course-Logo-3-3.webp" class="img-fluid figure-img"></a></p>
 <figcaption>course banner</figcaption>
 </figure>
-</div></div><section id="resources" class="level1">
-<h1>resources:</h1>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1
+</figcaption>
+</figure>
+</div><div id="fig-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" style="@page {size: 16in 9in;  margin: 0; }">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="slides.pdf" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="This week’s slides"><embed src="slides.pdf" style="@page {size: 16in 9in;  margin: 0; }" width="420" height="340"></a></p>
+<figcaption>This week’s slides</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2
+</figcaption>
+</figure>
+</div></div>
+<p>My irreverent notes for Week 2 of the <a href="https://www.coursera.org/learn/sequence-models-in-nlp/home/welcome">Natural Language Processing with Sequence Models</a> Course in the Natural Language Processing Specialization Offered by <a href="DeepLearning.AI">DeepLearning.AI</a> on <a href="https://www.coursera.org/">Coursera</a></p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>One shot learning</li>
+<li>Triplet loss</li>
+<li>Cosine similarity</li>
+<li>Siamese networks</li>
+<li>Data generators</li>
+</ul>
+</div>
+</div>
+<section id="siamese-network" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="siamese-network">Siamese Network</h2>
+<p>It is best to describe what a Siamese network is through an example.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-01" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/slide01.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;3: "><img src="img/slide01.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3
+</figcaption>
+</figure>
+</div></div><p>Note that in the first example above, the two sentences mean the same thing but have completely different words. While in the second case, the two sentences mean completely different things but they have very similar words.</p>
+<p>Classification: learns what makes an input what it is.</p>
+<p>Siamese Networks: learns what makes two inputs the same</p>
+<p>Here are a few applications of siamese networks:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-02" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/slide02.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Figure&nbsp;4: "><img src="img/slide02.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4
+</figcaption>
+</figure>
+</div></div></section>
+<section id="architecture" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="architecture">Architecture</h2>
+<p>The model architecture of a typical siamese network could look as follows:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-03" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/slide03.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Figure&nbsp;5: "><img src="img/slide03.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5
+</figcaption>
+</figure>
+</div></div><p>These two sub-networks are sister-networks which come together to produce a similarity score. Not all Siamese networks will be designed to contain LSTMs. One thing to remember is that sub-networks share identical parameters. This means that you only need to train one set of weights and not two.</p>
+<p>The output of each sub-network is a vector. You can then run the output through a cosine similarity function to get the similarity score. In the next video, we will talk about the cost function for such a network.</p>
+</section>
+<section id="lab-creating-a-siamese-model-using-trax" class="level2">
+<h2 class="anchored" data-anchor-id="lab-creating-a-siamese-model-using-trax">Lab: Creating a Siamese Model using Trax</h2>
+<p><a href="lab01.qmd">Creating a Siamese Model using Trax</a></p>
+</section>
+<section id="cost-function" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="cost-function">Cost Function</h2>
+<p>Let us take a close look at the following slide:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-04" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/slide04.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Figure&nbsp;6: "><img src="img/slide04.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6
+</figcaption>
+</figure>
+</div></div><p>Note that when trying to compute the cost for a siamese network we use the triplet loss. The triplet loss usually consists of an Anchor and a Positive example. Note that the anchor and the positive example have a cosine similarity score that is very close to one. On the other hand, the anchor and the negative example have a cosine similarity score close to -1. Now we are ideally trying to optimize the following equation: <span class="math inline">−cos(A,P)+cos(A,N)≤0</span></p>
+<p>Note that if <span class="math inline">cos(A,P)=1</span> is 1 and <span class="math inline">cos(A,N)=−1</span>, then the equation is definitely less than 0. However, as <span class="math inline">cos(A,P)</span> deviates from 1 and <span class="math inline">cos(A,N)</span> deviates from -1, then you can end up getting a cost that is <span class="math inline">&gt; 0</span>. Here is a visualization that would help you understand what is going on. Feel free to play with different numbers.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-05" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/slide05.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Figure&nbsp;7: "><img src="img/slide05.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7
+</figcaption>
+</figure>
+</div></div></section>
+<section id="triplets" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="triplets">Triplets</h2>
+<p>We will now build on top of our previous cost function. To get the full cost function you will add a margin.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-06" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/slide06.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Figure&nbsp;8: "><img src="img/slide06.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8
+</figcaption>
+</figure>
+</div></div><p>Note that we added an <span class="math inline">α</span> in the equation above. This allows you to have a margin of “safety”. When computing the full cost, we take the max of that the outcome of <span class="math inline">−cos(A,P)+cos(A,N)+α</span> and 0. Note, we do not want to take a negative number as a cost.</p>
+<p>Here is a quick summary:</p>
+<ul>
+<li><p><span class="math inline">𝜶</span>: controls how far cos(A,P) is from cos(A,N)</p></li>
+<li><p>Easy negative triplet: cos(A,N) &lt; cos(A,P)</p></li>
+<li><p>Semi-hard negative triplet: cos(A,N) &lt; cos(A,P) &lt; cos(A,N) + 𝜶</p></li>
+<li><p>Hard negative triplet: cos(A,P) &lt; cos(A,N)</p></li>
+</ul>
+</section>
+<section id="computing-the-cost-i" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="computing-the-cost-i">Computing the Cost I</h2>
+<p>To compute the cost, we will prepare the batches as follows:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-07" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-07-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/slide07.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Figure&nbsp;9: "><img src="img/slide07.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-07-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9
+</figcaption>
+</figure>
+</div></div><p>Note that each example, has a similar example to its right, but no other example means the same thing. We will now introduce hard negative mining.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-08" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-08-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/slide08.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="Figure&nbsp;10: "><img src="img/slide08.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-08-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10
+</figcaption>
+</figure>
+</div></div><p>Each horizontal vector corresponds to the encoding of the corresponding question. Now when you multiply the two matrices and compute the cosine, you get the following:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-09" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-09-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/slide09.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="Figure&nbsp;11: "><img src="img/slide09.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-09-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;11
+</figcaption>
+</figure>
+</div></div><p>The diagonal line corresponds to scores of similar sentences, (normally they should be positive). The off-diagonals correspond to cosine scores between the anchor and the negative examples.</p>
+</section>
+<section id="computing-the-cost-ii" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="computing-the-cost-ii">Computing the Cost II</h2>
+<p>Now that you have the matrix with cosine similarity scores, which is the product of two matrices, we go ahead and compute the cost.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-10" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/slide10.png" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="Figure&nbsp;12: "><img src="img/slide10.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12
+</figcaption>
+</figure>
+</div></div><p>We now introduce two concepts, the <strong>mean_neg</strong>, which is the mean negative of all the other off diagonals in the row, and the <strong>closest_neg</strong>, which corresponds to the highest number in the off diagonals.</p>
+<p><span class="math inline">Cost = max(−cos(A,P)+cos(A,N)+α,0)</span></p>
+<p>So we will have two costs now:</p>
+<p><span class="math inline">Cost1 = max(−cos(A,P)+mean_n eg+α,0)</span></p>
+<p><span class="math inline">Cost2 = max(−cos(A,P)+closest_n eg+α,0)</span> ⁡ The full cost is defined as: Cost1 + Cost2.</p>
+</section>
+<section id="lab-lecture-notebook-modified-triplet-loss" class="level2">
+<h2 class="anchored" data-anchor-id="lab-lecture-notebook-modified-triplet-loss">Lab: Lecture Notebook: Modified Triplet Loss</h2>
+<p><a href="lab02.qmd">Modified Triplet Loss</a></p>
+</section>
+<section id="one-shot-learning" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="one-shot-learning">One Shot Learning</h2>
+<p>Imagine you are working in a bank and you need to verify the signature of a check. You can either build a classifier with K possible signatures as an output or you can build a classifier that tells you whether two signatures are the same.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-11" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/slide11.png" class="lightbox" data-gallery="quarto-lightbox-gallery-13" title="Figure&nbsp;13: "><img src="img/slide11.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;13
+</figcaption>
+</figure>
+</div></div><p>Hence, we resort to one shot learning. Instead of retraining your model for every signature, you can just learn a similarity score as follows:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-12" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/slide12.png" class="lightbox" data-gallery="quarto-lightbox-gallery-14" title="Figure&nbsp;14: "><img src="img/slide12.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;14
+</figcaption>
+</figure>
+</div></div></section>
+<section id="training-testing" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="training-testing">Training / Testing</h2>
+<p>After preparing the batches of vectors, you can proceed to multiplying the two matrices.</p>
+<p>Here is a quick recap of the first step:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-13" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/slide13.png" class="lightbox" data-gallery="quarto-lightbox-gallery-15" title="Figure&nbsp;15: "><img src="img/slide13.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15
+</figcaption>
+</figure>
+</div></div><p>The next step is to implement the siamese model as follows:</p>
+<p>Finally when testing:</p>
+<ol type="1">
+<li>Convert two inputs into an array of numbers</li>
+<li>Feed it into your model</li>
+<li>Compare 𝒗1,𝒗2 using cosine similarity</li>
+<li>Test against a threshold τ</li>
+</ol>
+
+<div class="no-row-height column-margin column-container"><div id="fig-14" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/slide14.png" class="lightbox" data-gallery="quarto-lightbox-gallery-16" title="Figure&nbsp;16: "><img src="img/slide14.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;16
+</figcaption>
+</figure>
+</div></div></section>
+<section id="lab-evaluate-a-siamese-model" class="level2">
+<h2 class="anchored" data-anchor-id="lab-evaluate-a-siamese-model">Lab: Evaluate a Siamese Model</h2>
+<p><a href="lab03.qmd">Evaluate a Siamese Model</a></p>
+</section>
+<section id="acknowledgments" class="level2">
+<h2 class="anchored" data-anchor-id="acknowledgments">Acknowledgments</h2>
 <ul>
 <li><span class="citation" data-cites="Chadha2020DistilledNotesCourseraDLSpec">(<a href="#ref-Chadha2020DistilledNotesCourseraDLSpec" role="doc-biblioref">Chadha 2020</a>)</span> <a href="https://aman.ai/coursera-nlp/logistic-regression/">Aman Chadha’s Notes</a></li>
 <li><a href="https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization/tree/master/1%20-%20Natural%20Language%20Processing%20with%20Classification%20and%20Vector%20Spaces#testing-logistic-regression">Ibrahim Jelliti’s Notes</a></li>
 </ul>
-<p><a href="slides.pdf" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><embed src="slides.pdf" class="img-fluid"></a></p>
 
 
 
@@ -411,14 +726,13 @@ Chadha, Aman. 2020. <span>“Distilled Notes for the Natural Language Processing
 </div>
 </div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{2020,
   author = {},
-  title = {Neural {Networks} for {Sentiment} {Analysis}},
+  title = {Siamese {Networks}},
   date = {2020-10-23},
   url = {https://orenbochman.github.io/notes-nlp/posts/c3w4/},
   langid = {en}
 }
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-2020" class="csl-entry quarto-appendix-citeas" role="listitem">
-<span>“Neural Networks for Sentiment Analysis.”</span> 2020. October 23,
-2020. <a href="https://orenbochman.github.io/notes-nlp/posts/c3w4/">https://orenbochman.github.io/notes-nlp/posts/c3w4/</a>.
+<span>“Siamese Networks.”</span> 2020. October 23, 2020. <a href="https://orenbochman.github.io/notes-nlp/posts/c3w4/">https://orenbochman.github.io/notes-nlp/posts/c3w4/</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {

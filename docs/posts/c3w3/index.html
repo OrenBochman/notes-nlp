@@ -8,7 +8,7 @@
 
 <meta name="description" content="we cover Neural networks for deep learning, then build a tweet classifier that places tweets into positive or negative sentiment categories, using a DNN.">
 
-<title>Neural Networks for Sentiment Analysis – NLP Specialization</title>
+<title>LSTMs and Named Entity Recognition – NLP Specialization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -94,6 +94,49 @@ div.csl-indent {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -166,7 +209,7 @@ div.csl-indent {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/c3w1/index.html">Sequence Models</a></li><li class="breadcrumb-item"><a href="../../posts/c3w3/index.html">Question Answering</a></li></ol></nav>
-      <h1 class="title">Neural Networks for Sentiment Analysis</h1>
+      <h1 class="title">LSTMs and Named Entity Recognition</h1>
             <p class="subtitle lead">Sequence Models</p>
                   <div>
         <div class="description">
@@ -176,8 +219,8 @@ div.csl-indent {
                           <div class="quarto-categories">
                 <div class="quarto-category">NLP</div>
                 <div class="quarto-category">Coursera</div>
-                <div class="quarto-category">notes</div>
-                <div class="quarto-category">Probabilistic Models</div>
+                <div class="quarto-category">Notes</div>
+                <div class="quarto-category">Sequence Models</div>
               </div>
                   </div>
   </div>
@@ -376,7 +419,19 @@ div.csl-indent {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">resources:</a></li>
+  <li><a href="#rnns-and-vanishing-gradients" id="toc-rnns-and-vanishing-gradients" class="nav-link active" data-scroll-target="#rnns-and-vanishing-gradients">RNNs and Vanishing Gradients</a></li>
+  <li><a href="#optional-intro-to-optimization-in-deep-learning-gradient-descent" id="toc-optional-intro-to-optimization-in-deep-learning-gradient-descent" class="nav-link" data-scroll-target="#optional-intro-to-optimization-in-deep-learning-gradient-descent">(Optional) Intro to optimization in deep learning: Gradient Descent</a></li>
+  <li><a href="#lab-lecture-notebook-vanishing-gradients" id="toc-lab-lecture-notebook-vanishing-gradients" class="nav-link" data-scroll-target="#lab-lecture-notebook-vanishing-gradients">Lab: Lecture Notebook: Vanishing Gradients</a></li>
+  <li><a href="#introduction-to-lstms" id="toc-introduction-to-lstms" class="nav-link" data-scroll-target="#introduction-to-lstms">Introduction to LSTMs</a></li>
+  <li><a href="#optional-understanding-lstms" id="toc-optional-understanding-lstms" class="nav-link" data-scroll-target="#optional-understanding-lstms">(Optional) Understanding LSTMs</a></li>
+  <li><a href="#lstm-architecture" id="toc-lstm-architecture" class="nav-link" data-scroll-target="#lstm-architecture">LSTM Architecture</a></li>
+  <li><a href="#introduction-to-named-entity-recognition" id="toc-introduction-to-named-entity-recognition" class="nav-link" data-scroll-target="#introduction-to-named-entity-recognition">Introduction to Named Entity Recognition</a></li>
+  <li><a href="#lstm-equations-optional" id="toc-lstm-equations-optional" class="nav-link" data-scroll-target="#lstm-equations-optional">LSTM equations (Optional)</a></li>
+  <li><a href="#training-ners-data-processing" id="toc-training-ners-data-processing" class="nav-link" data-scroll-target="#training-ners-data-processing">Training NERs: Data Processing</a></li>
+  <li><a href="#long-short-term-memory-deep-learning-specialization-c5" id="toc-long-short-term-memory-deep-learning-specialization-c5" class="nav-link" data-scroll-target="#long-short-term-memory-deep-learning-specialization-c5">Long Short-Term Memory (Deep Learning Specialization C5)</a></li>
+  <li><a href="#computing-accuracy" id="toc-computing-accuracy" class="nav-link" data-scroll-target="#computing-accuracy">Computing Accuracy</a></li>
+  <li><a href="#reflections-on-this-unit" id="toc-reflections-on-this-unit" class="nav-link" data-scroll-target="#reflections-on-this-unit">Reflections on this unit</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">Resources:</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c3w3/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -388,36 +443,371 @@ div.csl-indent {
 
 
 
-<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<div class="no-row-height column-margin column-container"><div id="fig-00" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/course-banner.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="img/course-banner.jpg" class="img-fluid figure-img" alt="course banner"></a></p>
+<p><a href="../../images/Course-Logo-3-3.webp" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="../../images/Course-Logo-3-3.webp" class="img-fluid figure-img"></a></p>
 <figcaption>course banner</figcaption>
 </figure>
-</div></div><section id="resources" class="level1">
-<h1>resources:</h1>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1
+</figcaption>
+</figure>
+</div><div id="fig-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" style="@page {size: 16in 9in;  margin: 0; }">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="slides.pdf" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="This week’s slides"><embed src="slides.pdf" style="@page {size: 16in 9in;  margin: 0; }" width="420" height="340"></a></p>
+<figcaption>This week’s slides</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2
+</figcaption>
+</figure>
+</div></div>
+<p>My irreverent notes for Week 3 of the <a href="https://www.coursera.org/learn/sequence-models-in-nlp/home/welcome">Natural Language Processing with Sequence Models</a> Course in the Natural Language Processing Specialization Offered by <a href="DeepLearning.AI">DeepLearning.AI</a> on <a href="https://www.coursera.org/">Coursera</a></p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <ul>
-<li><span class="citation" data-cites="Chadha2020DistilledNotesCourseraDLSpec">(<a href="#ref-Chadha2020DistilledNotesCourseraDLSpec" role="doc-biblioref">Chadha 2020</a>)</span> <a href="https://aman.ai/coursera-nlp/logistic-regression/">Aman Chadha’s Notes</a></li>
-<li><a href="https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization/tree/master/1%20-%20Natural%20Language%20Processing%20with%20Classification%20and%20Vector%20Spaces#testing-logistic-regression">Ibrahim Jelliti’s Notes</a></li>
+<li>Vanishing gradients</li>
+<li>Named entity recognition</li>
+<li>LSTMs</li>
+<li>Feature extraction</li>
+<li>Part-of-speech tagging</li>
+<li>Data generators</li>
 </ul>
-<p><a href="slides.pdf" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><embed src="slides.pdf" class="img-fluid"></a></p>
+</div>
+</div>
+<section id="rnns-and-vanishing-gradients" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="rnns-and-vanishing-gradients">RNNs and Vanishing Gradients</h2>
+<p>Advantages of RNNs RNNs allow us to capture dependancies within a short range and they take up less RAM than other n-gram models.</p>
+<p>Disadvantages of RNNs RNNs struggle with longer term dependencies and are very prone to vanishing or exploding gradients.</p>
+<p class="page-columns page-full"><a href="img/slide01.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-3"><div class="no-row-height column-margin column-container"><img src="img/slide01.png" class="img-fluid"></div></a></p>
+<p>Note that as you are back-propagating through time, you end up getting the following:</p>
+<p class="page-columns page-full"><a href="img/slide02.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-4"><div class="no-row-height column-margin column-container"><img src="img/slide02.png" class="img-fluid"></div></a></p>
+<p>Note that the sigmoid and tanh functions are bounded by 0 and 1 and -1 and 1 respectively. This eventually leads us to a problem. If you have many numbers that are less than |1|, then as you go through many layers, and you take the product of those numbers, you eventually end up getting a gradient that is very close to 0. This introduces the problem of vanishing gradients.</p>
+<p>Solutions to Vanishing Gradient Problems</p>
+</section>
+<section id="optional-intro-to-optimization-in-deep-learning-gradient-descent" class="level2">
+<h2 class="anchored" data-anchor-id="optional-intro-to-optimization-in-deep-learning-gradient-descent">(Optional) Intro to optimization in deep learning: Gradient Descent</h2>
+<p>Check out this blog from Paperspace.io if you’re interested in understanding in more depth some of the challenges in gradient descent.</p>
+<!-- TODO: citation needed -->
+<ul>
+<li><a href="https://arxiv.org/abs/1712.09913">Visual Loss Landscapes For Neural Nets</a> (Paper)</li>
+</ul>
+</section>
+<section id="lab-lecture-notebook-vanishing-gradients" class="level2">
+<h2 class="anchored" data-anchor-id="lab-lecture-notebook-vanishing-gradients">Lab: Lecture Notebook: Vanishing Gradients</h2>
+<p><a href="lab01.qmd">Vanishing Gradients</a></p>
+</section>
+<section id="introduction-to-lstms" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="introduction-to-lstms">Introduction to LSTMs</h2>
+<p>The LSTM allows your model to remember and forget certain inputs. It consists of a cell state and a hidden state with three gates. The gates allow the gradients to flow unchanged. You can think of the three gates as follows:</p>
+<p><strong>Input gate</strong>: tells you how much information to input at any time point.</p>
+<p><strong>Forget gate</strong>: tells you how much information to forget at any time point.</p>
+<p><strong>Output gate</strong>: tells you how much information to pass over at any time point.</p>
+<p>There are many applications you can use LSTMs for, such as:</p>
+<p class="page-columns page-full"><a href="img/slide03.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-5"><div class="no-row-height column-margin column-container"><img src="img/slide03.png" class="img-fluid"></div></a></p>
+</section>
+<section id="optional-understanding-lstms" class="level2">
+<h2 class="anchored" data-anchor-id="optional-understanding-lstms">(Optional) Understanding LSTMs</h2>
+<p>Here’s a classic post on LSTMs with intuitive explanations and diagrams, to complement this week’s material.</p>
+<!-- TODO: citation needed -->
+<p><a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">Understanding LSTM Networks</a></p>
+</section>
+<section id="lstm-architecture" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="lstm-architecture">LSTM Architecture</h2>
+<p>The LSTM architecture could get complicated and don’t worry about it if you do not understand it. I personally prefer looking at the equation, but I will try to give you a visualization for now and later this week we will take a look at the equations.</p>
+<p class="page-columns page-full"><a href="img/slide04.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-6"><div class="no-row-height column-margin column-container"><img src="img/slide04.png" class="img-fluid"></div></a></p>
+<p>Note that there is the cell state and the hidden state, and then there is the output state. The forget gate is the first activation in the drawing above. It makes use of the previous hidden state <span class="math inline">h^{&lt;t_0&gt;}</span> and the input <span class="math inline">x^{&lt;t_0&gt;}</span>. The input gate makes use of the next two activations, the <em>sigmoid</em> and the <em>tanh</em>. Finally the output gate makes use of the last activation and the tanh right above it. This is just an overview of the architecture, we will dive into the details once we introduce the equations.</p>
+</section>
+<section id="introduction-to-named-entity-recognition" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="introduction-to-named-entity-recognition">Introduction to Named Entity Recognition</h2>
+<p>Named Entity Recognition (NER) locates and extracts predefined entities from text. It allows you to find places, organizations, names, time and dates. Here is an example of the model you will be building:</p>
+<p class="page-columns page-full"><a href="img/slide05.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-7"><div class="no-row-height column-margin column-container"><img src="img/slide05.png" class="img-fluid"></div></a></p>
+<p>NER systems are being used in search efficiency, recommendation engines, customer service, automatic trading, and many more.</p>
+</section>
+<section id="lstm-equations-optional" class="level2">
+<h2 class="anchored" data-anchor-id="lstm-equations-optional">LSTM equations (Optional)</h2>
+<p>These are the LSTM equations related to the gates I had previously spoken about:</p>
+<p><span id="eq-lstm-forget"><span class="math display">
+f = \sigma(W_f[h_{t-1}; x_t] + b_f) \qquad \text{Forget}
+\tag{1}</span></span></p>
+<p><span id="eq-lstm-input"><span class="math display">
+i = \sigma(W_i[h_{t-1}; x_t] + b_i) \qquad \text{Input}
+\tag{2}</span></span></p>
+<p><span id="eq-lstm-gate"><span class="math display">
+g = \tanh(W_g[h_{t-1}; x_t] + b_g) \qquad \text{Gate}
+\tag{3}</span></span></p>
+<p><span id="eq-lstm-cell"><span class="math display">
+c_t = f \odot c_{t-1} + i \odot g \qquad \text{Cell State}
+\tag{4}</span></span></p>
+<p><span id="eq-lstm-output"><span class="math display">
+o = \sigma(W_o[h_{t-1}; x_t] + b_o) \qquad \text{Output}
+\tag{5}</span></span></p>
+<p>We can think of:</p>
+<ul>
+<li>The <strong>forget gate</strong> as a gate that tells you how much information to forget,</li>
+<li>The <strong>input gate</strong>, tells you how much information to pick up.</li>
+<li>The <strong>gate gate</strong> as the gate containing information. This is multiplied by the <strong>input gate</strong> (which tells you how much of that information to keep).</li>
+</ul>
+</section>
+<section id="training-ners-data-processing" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="training-ners-data-processing">Training NERs: Data Processing</h2>
+<p>Processing data is one of the most important tasks when training AI algorithms. For NER, you have to:</p>
+<ul>
+<li><p>Convert words and entity classes into arrays:</p></li>
+<li><p>Pad with tokens: Set sequence length to a certain number and use the <pad> token to fill empty spaces</pad></p></li>
+<li><p>Create a data generator:</p></li>
+</ul>
+<p>Once you have that, you can assign each class a number, and each word a number.</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide06.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Data Processing"><img src="img/slide06.png" class="img-fluid figure-img" alt="Data Processing"></a></p>
+<figcaption>Data Processing</figcaption>
+</figure>
+</div></div><p>Training an NER system:</p>
+<ol type="1">
+<li>Create a tensor for each input and its corresponding number</li>
+<li>Put them in a batch ==&gt; 64, 128, 256, 512 …</li>
+<li>Feed it into an LSTM unit</li>
+<li>Run the output through a dense layer</li>
+<li>Predict using a log softmax over K classes</li>
+</ol>
+<p>Here is an example of the architecture:</p>
+<p class="page-columns page-full"><a href="img/slide07.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-9"><div class="no-row-height column-margin column-container"><img src="img/slide07.png" class="img-fluid"></div></a></p>
+<p>Note that this is just one example of an NER system. Different architectures are possible.</p>
+</section>
+<section id="long-short-term-memory-deep-learning-specialization-c5" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="long-short-term-memory-deep-learning-specialization-c5">Long Short-Term Memory (Deep Learning Specialization C5)</h2>
+<p>Note: this section is based on a transcript of the <a href="https://www.coursera.org/learn/nlp-sequence-models/lecture/KXoay/long-short-term-memory-lstm">video</a> from the Deep Learning Specialization.</p>
+<p class="page-columns page-full"><a href="img/meme01.jpg" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-10"><div class="no-row-height column-margin column-container"><img src="img/meme01.jpg" class="img-fluid"></div></a></p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+LSTM from GRU or LSTM from RNNs
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In this video Andrew Ng explains the Long Short-Term Memory (LSTM) as if it was developed from the GRU rather than RNNs. Sure the GRU has one less equation but its just about as complicated as the LSTM … The people who came up with it had 20 years to understand LSTM before they figured these out. We on the other hand have covered neither RNNs not GRUs and have none of that intuition they provide.</p>
+<p>LSTM also have a number of variations, such as the peephole connection, the carousal connection, and the coupled forget and input gates. <span class="emoji" data-emoji="scream">😱</span></p>
+<p>In the other course on Deep Learning, Ng builds things up using a number of videos starting with notation. RNNs, different types of RNNs, and then the LSTM. The vanishing gradient problem with RNN and then the GRUs.</p>
+<p>I find the notation used very annoying but at least it is explained in the other course and seems to be motivated by time series. In Rnns we process the data in two dimensions. One is for the sequence index used in the super script. The other is for applying multiple layers which we don’t seem to consider.</p>
+<p>Rnns learn weights more weights as the sequence grows and though not clear these weights are shared across the RNN units.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Notation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><p><span class="math inline">X^{(i)&lt;t&gt;}</span> is the input at time <span class="math inline">t</span> for the <span class="math inline">i</span>th example.</p></li>
+<li><p><span class="math inline">y^{(i)&lt;t&gt;}</span> is the output at time <span class="math inline">t</span> for the <span class="math inline">i</span>th example.</p></li>
+<li><p><span class="math inline">T_x^{(i)}</span> is the length of the input sequence for the <span class="math inline">i</span>th example.</p></li>
+<li><p><span class="math inline">T_y^{(i)}</span> is the length of the output sequence for the <span class="math inline">i</span>th example.</p></li>
+<li><p>is $T_x^(i) = <span class="math inline">T_y^(i)</span> not necessarily. (e.g.&nbsp;translation can be longer or shorter, while NER can be one to one.). They will be different for different examples.</p></li>
+<li><p>is <span class="math inline">T_x^(i) = T_x^(j)</span> unlikely as the length of the input sequence will vary from example to example.</p></li>
+</ul>
+</div>
+</div>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide08.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="GRU v.s. LSTM"><img src="img/slide08.png" class="img-fluid figure-img" alt="GRU v.s. LSTM"></a></p>
+<figcaption>GRU v.s. LSTM</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide09.png" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="LSTM equations"><img src="img/slide09.png" class="img-fluid figure-img" alt="LSTM equations"></a></p>
+<figcaption>LSTM equations</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide10.png" class="lightbox" data-gallery="quarto-lightbox-gallery-13" title="LSTM Schematic"><img src="img/slide10.png" class="img-fluid figure-img" alt="LSTM Schematic"></a></p>
+<figcaption>LSTM Schematic</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide11.png" class="lightbox" data-gallery="quarto-lightbox-gallery-14" title="LSTM Rollout"><img src="img/slide11.png" class="img-fluid figure-img" alt="LSTM Rollout"></a></p>
+<figcaption>LSTM Rollout</figcaption>
+</figure>
+</div></div>
+
+
+<p>Now that we understand my caveat let’s try to understand by filling the gaps as we go along with what what Ng says and shows!</p>
+<ol type="1">
+<li><p><mark>If you understand the math you are good to go</mark>. Code is just a translation of the math into a programming language. Once you understand the math there are deeper levels of understanding that you can get to but you can’t get there without understanding the math. There are three challenges to understanding the math!</p>
+<ol type="1">
+<li><p>Both the LSTM and GRU are RNNs so they translate sequences to sequences in the general case let’s imagine we are translating english to german. We start with some input x_0 and we output some out put y_0. For the next word we want to use the previous word to help us translate the next word. <mark>This is done by concatenating the current word to the previous (hidden) state</mark>. The first take away</p></li>
+<li><p>RNN have an internal nonlinearity a <span class="math inline">tanh</span> but no gating mechanism. The non-linearity is applied to the hidden state concatenated to the input. The hidden state is thus the long term memory of the RNN. For NER we only need a short context to decide but for translation we need to be aware longer context, perhaps a few sentences back. [RNNS, GRUs and LSTMs also have the non-linearity at their core]. That’s the second take away about the math of LSTMS</p></li>
+<li><p>The vanishing and exploding gradients are not the only issues in RNNs there is also a problem of accessing data from many time steps back. By accessing I mean backpropagating the gradients backwards enough time steps. In the LSTM there are not only pathways that let the state pass on unchanged they also allow the gradients to flow back unchanged similar to ResNets. <mark>So the two path from Hidden state to hidden state and from Internal State to internal state are what allows the LSTM to handle long term gradient gradients better than RNNS. This is particularly true for most cases where there is a ‘short circuit’ allowing these state to persist. And has a stabilizing effect.</mark> That is the third take away from the math of LSTMs.</p></li>
+<li><p>The update, forget, output gates is where the weight and biases are used, thus <mark>this is where the learning is taking place and this is happening in an element-wise manner.</mark> This is the fourth take away from the math of LSTMs.</p></li>
+<li><p>These three gates also control how much of the new data is incorporated into the internal state <span class="math inline">c^{&lt;t&gt;}</span> and the hidden state. <mark>This is referred to as the gating mechanism.</mark> And different variants of LSTM and GRUS make subtle changes to the gating. This is the fifth take away from the math of LSTMs.</p></li>
+<li><p>Information flow in the LST is captured by the dependency between the equations is as follows:</p>
+<ul>
+<li><span class="math inline">f_t, i_t, g_t, o_t</span> the gate uses see the old stat and the new input.</li>
+<li><span class="math inline">c_t</span> the internal state sees <span class="math inline">f_t</span>, <span class="math inline">i_t</span>, and <span class="math inline">g_t</span> and the old state <span class="math inline">c_t</span></li>
+<li><span class="math inline">h_t</span> sees <span class="math inline">o_t</span> and <span class="math inline">c_t</span> which depend on the previous hidden state <span class="math inline">h_{t-1}</span> and the new input <span class="math inline">x_t</span>. To sum up <mark>the gates only depend on the input an the previous hidden state. The internal state depends on the gates and the previous internal state. The next hidden state depends on the internal state and the output gate.</mark>. This is the sixth take away from the math of LSTMs.</li>
+</ul></li>
+</ol></li>
+</ol>
+<p><span id="eq-lstm-colored"><span class="math display">
+\begin{aligned}
+\textcolor{red}{f_t} &amp;= \textcolor{purple}{\sigma}(\textcolor{blue}{W_f}[h_{t-1}; x_t] + \textcolor{blue}{b_f}) \\
+\textcolor{red}{i_t} &amp;= \textcolor{purple}{\sigma}(\textcolor{blue}{W_i}[h_{t-1}; x_t] + \textcolor{blue}{b_i}) \\
+\textcolor{red}{g_t} &amp;= \textcolor{purple}{\tanh}(\textcolor{blue}{W_g}[h_{t-1}; x_t] + \textcolor{blue}{b_g})  \\
+\textcolor{red}{o_t} &amp;= \textcolor{purple}{\sigma}(\textcolor{blue}{W_o}[h_{t-1}; x_t] + \textcolor{blue}{b_o}) \\
+\textcolor{green}{c_t} &amp;= \textcolor{red}{f_t} \textcolor{orange}{\odot} \textcolor{green}{c_{t-1}} + \textcolor{red}{i_t} \textcolor{orange}{\odot} \textcolor{red}{g_t}     \\
+h_t &amp;= \textcolor{red}{o_t} \textcolor{orange}{\odot} \textcolor{purple}{\tanh}(\textcolor{green}{c_t})
+\end{aligned}
+\tag{6}</span></span></p>
+<p>key:</p>
+<ul>
+<li>red for gates</li>
+<li>blue for weights</li>
+<li>orange for element-wise operations</li>
+<li>green for the internal state</li>
+<li>purple for the non-linearity <!-- TODO: highlight this stuff in the math --></li>
+</ul>
+<p>Next level of understanding is to consider the action of the gating machanism and the relation between internal state and hidden state.</p>
+<!-- TODO: try to work through the logic of the gating mechanism -->
+<!-- TODO: does the hidden state change in size as we go through the sequence? -->
+<p>The key things from this unit are that the GRU does not use a forget gate, but uses <span class="math inline">1-\Gamma_u</span> to decide how much of the previous memory cell to keep. In the LSTM, the forget gate instead.</p>
+<p>There are two aspects to understanding these RNNS.</p>
+<p>The equations look like simultaneous equations, in reality they are they have a more complex structure as</p>
+<p>The schematic are emphesise a two other aspects of the LSTM, information flow and gating mechanisms.</p>
+<ul>
+<li>how the equations are wired up to control the information flow and - the idea that we have a gating mechanism that combines the long term memory a in the Hidden state and the uses the memory cell, rather than the hidden state.</li>
+</ul>
+<p>We learned about the <strong>GRU</strong>, or gated recurrent units, and how that can allow you to learn very long range connections in a sequence. The other type of unit that allows you to do this very well is the <strong>LSTM</strong> or the long short term memory units, and this is even more powerful than the GRU. Let’s take a look.</p>
+<p>Here are the equations from the previous video for the GRU. And for the GRU, we had <span class="math inline">a^{&lt;t&gt;} = c^{&lt;t&gt;}</span>, and two gates, the optic gate and the relevance gate, <span class="math inline">\tilde{c}^{&lt;t&gt;}</span>, which is a candidate for replacing the memory cell, and then we use the update gate, <span class="math inline">\Gamma_u</span>, to decide whether or not to update <span class="math inline">c^{&lt;t&gt;}</span> using <span class="math inline">\tilde{c}^{&lt;t&gt;}</span>.</p>
+<p>The LSTM is an even slightly more powerful and more general version of the GRU, and is due to <a href="https://en.wikipedia.org/wiki/Sepp_Hochreiter">Sepp Hochreiter</a> and <a href="https://en.wikipedia.org/wiki/J%C3%BCrgen_Schmidhuber">Jurgen Schmidhuber</a><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>, c.f. <span class="citation" data-cites="Hochreiter1997LSTM">Hochreiter and Schmidhuber (<a href="#ref-Hochreiter1997LSTM" role="doc-biblioref">1997</a>)</span>. And this was a really seminal paper, a huge impact on sequence modelling.</p>
+<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;with many interesting talks online</p></div></div><p>I think this paper is one of the more difficult to read. It goes quite along into theory of vanishing gradients. And so, I think more people have learned about the details of LSTM through maybe other places than from this particular paper even though I think this paper has had a wonderful impact on the Deep Learning community.</p>
+<p>But these are the equations that govern the LSTM. So, we continue to the memory cell, <span class="math inline">c</span>, and the candidate value for updating it, <span class="math inline">\tilde{c}^{&lt;t&gt;}</span>, will be this, and so on. Notice that for the LSTM, we will no longer have the case that <span class="math inline">a^{&lt;t&gt;} =c^{&lt;t&gt;}</span>. So, this is what we use. And so, this is just like the equation on the left except that with now, more specially use <span class="math inline">a^{&lt;t&gt;}</span> there or <span class="math inline">a^{&lt;t-1&gt;}</span> instead of <span class="math inline">c^{&lt;t-1&gt;}</span>. And we’re not using this gamma or this relevance gate. Although you could have a variation of the LSTM where you put that back in, but with the more common version of the LSTM, doesn’t bother with that. And then we will have an update gate, same as before. So, W updates and we’re going to use <span class="math inline">a^{&lt;t-1&gt;}</span> here, <span class="math inline">x^{&lt;t&gt;} + b_u</span>. And one new property of the LSTM is, instead of having one update gate control, both of these terms, we’re going to have two separate terms. So instead of gamma_u and one minus gamma_u, we’re going have <span class="math inline">\Gamma_u</span> here. And forget gate, which we’re going to call <span class="math inline">\Gamma_f</span>. So, this gate, <span class="math inline">\Gamma_f</span>, is going to be sigmoid of pretty much what you’d expect, <span class="math inline">x^{&lt;t&gt;}+ b_f</span>. And then, we’re going to have a new output gate which is <span class="math inline">\sigma(W_o)+ b_o</span>. And then, the update value to the memory so will be <span class="math inline">c^{&lt;t&gt;}=\Gamma_u</span>. <mark>And this asterisk denotes element-wise multiplication. This is a vector-vector element-wise multiplication</mark>, plus, and instead of one minus gamma u, we’re going to have a separate forget gate, <span class="math inline">\Gamma_f * c^{&lt;t-1&gt;}</span>. So this gives the memory cell the option of keeping the old value <span class="math inline">c^{t-1}</span> and then just adding to it, this new value, <span class="math inline">\tilde{c}^{&lt;t&gt;}</span>. So, use a separate update and forget gates. So, this stands for update, forget, and output gate.</p>
+<p>And then finally, instead of <span class="math display">
+a^{&lt;t&gt;} = c^{&lt;t&gt;} \quad \text{(GRU)} \qquad a^{&lt;t&gt;} = \Gamma_0 * \tanh( c^{&lt;t&gt;}) \quad \text{(LSTM)}
+</span>.</p>
+<p>So, these are the equations that govern the LSTM and you can tell it has three gates instead of two. So, it’s a bit more complicated and it places the gates into slightly different places. So, here again are the equations governing the behavior of the LSTM.</p>
+<p>Once again, it’s traditional to explain these things using pictures. So let me draw one here. And if these pictures are too complicated, don’t worry about it. I personally find the equations easier to understand than the picture. But I’ll just show the picture here for the intuitions it conveys. The bigger picture here was very much inspired by a <a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">blog post</a> due to <a href="https://80000hours.org/podcast/episodes/chris-olah-unconventional-career-path/">Chris Ola</a>, titled <strong>Understanding LSTM Network</strong>, and the diagram drawing here is quite similar to one that he drew in his blog post. But the key thing is to take away from this picture are maybe that you use <span class="math inline">a^{&lt;t-1&gt;}</span> and <span class="math inline">x^{&lt;t&gt;}</span> to compute all the gate values. In this picture, you have <span class="math inline">a^{&lt;t-1&gt;}</span>, <span class="math inline">x^{&lt;t&gt;}</span> coming together to compute the forget gate, to compute the update gates, and to compute output gate. And they also go through a tanh to compute <span class="math inline">\tilde{c}^{&lt;t&gt;}</span>. And then these values are combined in these complicated ways with element-wise multiplies and so on, to get <span class="math inline">c^{&lt;t&gt;}</span> from the previous <span class="math inline">c^{&lt;t-1&gt;}</span>. Now, one element of this is interesting as you have a bunch of these in parallel. So, that’s one of them and you connect them. You then connect these temporally. So it does the input <span class="math inline">x^{&lt;1&gt;}</span> then <span class="math inline">x^{&lt;2&gt;}</span>, <span class="math inline">x^{&lt;3&gt;}</span>. So, you can take these units and just hold them up as follows, where the output a at the previous timestep is the input a at the next timestep, the c.&nbsp;I’ve simplified to diagrams a little bit in the bottom. And one cool thing about this you’ll notice is that there’s this line at the top that shows how, so long as you set the forget and the update gate appropriately, it is relatively easy for the LSTM to have some value c_0 and have that be passed all the way to the right to have your, maybe, <span class="math inline">c^{&lt;3&gt;}=c^{&lt;0&gt;}</span>. And this is why the LSTM, as well as the GRU, is very good at memorizing certain values even for a long time, for certain real values stored in the memory cell even for many, many timesteps.</p>
+<p>So, that’s it for the LSTM.</p>
+<p>As you can imagine, there are also a few variations on this that people use. Perhaps, the most common one is that instead of just having the gate values be dependent only on <span class="math inline">a_{t-1}</span>, <span class="math inline">x^{&lt;t&gt;}</span>, sometimes, people also sneak in there the values <span class="math inline">c_{t-1}</span> as well. This is called a <strong>peephole connection</strong>, introduced in <span class="citation" data-cites="Gers2000PeepHole">Gers and Schmidhuber (<a href="#ref-Gers2000PeepHole" role="doc-biblioref">2000</a>)</span> Not a great name maybe but you’ll see, peephole connection. What that means is that the gate values may depend not just on <span class="math inline">a^{&lt;t-1&gt;}</span> and on <span class="math inline">x^{&lt;t&gt;}</span>, but also on the previous memory cell value, and the peephole connection can go into all three of these gates’ computations. So that’s one common variation you see of LSTMs. One technical detail is that these are, say, 100-dimensional vectors. So if you have a 100-dimensional hidden memory cell unit, and so is this. And the, say, fifth element of <span class="math inline">c^{t-1}</span> affects only the fifth element of the corresponding gates, so that relationship is one-to-one, where not every element of the 100-dimensional <span class="math inline">c^{&lt;t-1&gt;}</span> can affect all elements of the case. But instead, the first element of <span class="math inline">c^{&lt;t-1&gt;}</span> affects the first element of the case, second element affects the second element, and so on. But if you ever read the paper and see someone talk about the peephole connection, that’s when they mean that <span class="math inline">c^{&lt;t-1&gt;}</span> is used to affect the gate value as well. So, that’s it for the LSTM.</p>
+<p><mark>When should you use a GRU? And when should you use an LSTM?</mark></p>
+<p>There isn’t widespread consensus in this. And even though I presented GRUs first, in the history of deep learning, LSTMs actually came much earlier, and then GRUs were relatively recent invention that were maybe derived as Pavia’s simplification of the more complicated LSTM model. Researchers have tried both of these models on many different problems, and on different problems, different algorithms will win out. So, there isn’t a universally-superior algorithm which is why I want to show you both of them. But I feel like when I am using these, <mark>the advantage of the GRU is that it’s a simpler model and so it is actually easier to build a much bigger network, it only has two gates, so computationally, it runs a bit faster. So, it scales the building somewhat bigger models</mark> but the LSTM is more powerful and more effective since it has three gates instead of two. If you want to pick one to use, I think LSTM has been the historically more proven choice. So, if you had to pick one, I think most people today will still use the LSTM as the default first thing to try. Although, I think in the last few years, GRUs had been gaining a lot of momentum and I feel like more and more teams are also using GRUs because they’re a bit simpler but often work just as well. It might be easier to scale them to even bigger problems. So, that’s it for LSTMs. Well, either GRUs or LSTMs, you’ll be able to build neural network that can capture much longer range dependencies.</p>
+<p>The correct version of the final equation in the output gate is here:</p>
+<p>https://www.coursera.org/learn/nlp-sequence-models/supplement/xdv6z/long-short-term-memory-lstm-correction</p>
+</section>
+<section id="computing-accuracy" class="level2">
+<h2 class="anchored" data-anchor-id="computing-accuracy">Computing Accuracy</h2>
+<p>To compare the accuracy, just follow the following steps:</p>
+<ul>
+<li>Pass test set through the model</li>
+<li>Get arg max across the prediction array</li>
+<li>Mask padded tokens</li>
+<li>Compare with the true labels.</li>
+</ul>
+</section>
+<section id="reflections-on-this-unit" class="level2">
+<h2 class="anchored" data-anchor-id="reflections-on-this-unit">Reflections on this unit</h2>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Main Research Questions
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>What is the vanishing and exploding gradient problem in RNNs?</li>
+<li>How can we measure the ability of RNN to access data from many time steps back?</li>
+<li>What is the nature of the hidden state in RNNs?</li>
+</ol>
+<ul>
+<li>short term memory</li>
+</ul>
+<ol type="1">
+<li>What is the nature of the internal state in RNNs?</li>
+</ol>
+<ul>
+<li>long term memory</li>
+</ul>
+<ol type="1">
+<li>How are gradients updated in the LSTMs?</li>
+<li>what is the constant error carousel in LSTMs?</li>
+<li>how does it solve the vanishing gradient problem?</li>
+<li>How does gating work in LSTMs?</li>
+<li>Are the gates binary?</li>
+<li>what is the idea behind a peekhole LSTM <!-- TODO: review the paper --></li>
+<li>what is the idea of the bLSTM <!-- TODO: review the paper --></li>
+<li>Are all LSTMs stacked, cam we have a single layer LSTM?</li>
+</ol>
+</div>
+</div>
+</section>
+<section id="resources" class="level2">
+<h2 class="anchored" data-anchor-id="resources">Resources:</h2>
+<ul>
+<li><p><span class="citation" data-cites="Chadha2020DistilledNotesCourseraDLSpec">(<a href="#ref-Chadha2020DistilledNotesCourseraDLSpec" role="doc-biblioref">Chadha 2020</a>)</span> <a href="https://aman.ai/coursera-nlp/logistic-regression/">Aman Chadha’s Notes</a></p></li>
+<li><p><a href="https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization/tree/master/1%20-%20Natural%20Language%20Processing%20with%20Classification%20and%20Vector%20Spaces#testing-logistic-regression">Ibrahim Jelliti’s Notes</a></p></li>
+<li><p><a href="https://www.digitalocean.com/community/tutorials/intro-to-optimization-in-deep-learning-gradient-descent">Intro to optimization in deep learning: Gradient Descent</a> (Tutorial) Ayoosh Kathuria</p></li>
+<li><p><a href="https://arxiv.org/abs/1712.09913">Visual Loss Landscapes For Neural Nets</a> (Paper)</p></li>
+<li><p><a href="https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10">Article on Learning Rate Schedules</a> by Hafidz Zulkifli.</p></li>
+<li><p><a href="https://arxiv.org/abs/1704.00109">Stochastic Weight Averaging</a> (Paper)</p></li>
+<li><p><a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">Understanding LSTM Networks</a></p></li>
+<li><p><a href="http://karpathy.github.io/2015/05/21/rnn-effectiveness/">The Unreasonable Effectiveness of Recurrent Neural Networks</a> by Andrej Karpathy</p></li>
+<li><p><a href="https://medium.datadriveninvestor.com/how-do-lstm-networks-solve-the-problem-of-vanishing-gradients-a6784971a577"></a></p></li>
+</ul>
 
 
 
 </section>
 
+
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-Chadha2020DistilledNotesCourseraDLSpec" class="csl-entry" role="listitem">
 Chadha, Aman. 2020. <span>“Distilled Notes for the Natural Language Processing Specialization on Coursera (Offered by Deeplearning.ai).”</span> <a href="https://www.aman.ai" class="uri">https://www.aman.ai</a>. <a href="https://www.aman.ai">www.aman.ai</a>.
 </div>
+<div id="ref-Gers2000PeepHole" class="csl-entry" role="listitem">
+Gers, Felix Alexander, and Jürgen Schmidhuber. 2000. <span>“Recurrent Nets That Time and Count.”</span> <em>Proceedings of the IEEE-INNS-ENNS International Joint Conference on Neural Networks. IJCNN 2000. Neural Computing: New Challenges and Perspectives for the New Millennium</em> 3: 189–194 vol.3. <a href="https://api.semanticscholar.org/CorpusID:36867983">https://api.semanticscholar.org/CorpusID:36867983</a>.
+</div>
+<div id="ref-Hochreiter1997LSTM" class="csl-entry" role="listitem">
+Hochreiter, Sepp, and Jürgen Schmidhuber. 1997. <span>“Long Short-Term Memory.”</span> <em>Neural Computation</em> 9 (8): 1735–80. <a href="https://doi.org/10.1162/neco.1997.9.8.1735">https://doi.org/10.1162/neco.1997.9.8.1735</a>.
+</div>
 </div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{2020,
   author = {},
-  title = {Neural {Networks} for {Sentiment} {Analysis}},
+  title = {LSTMs and {Named} {Entity} {Recognition}},
   date = {2020-10-23},
   url = {https://orenbochman.github.io/notes-nlp/posts/c3w3/},
   langid = {en}
 }
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-2020" class="csl-entry quarto-appendix-citeas" role="listitem">
-<span>“Neural Networks for Sentiment Analysis.”</span> 2020. October 23,
+<span>“LSTMs and Named Entity Recognition.”</span> 2020. October 23,
 2020. <a href="https://orenbochman.github.io/notes-nlp/posts/c3w3/">https://orenbochman.github.io/notes-nlp/posts/c3w3/</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
