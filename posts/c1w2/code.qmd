@@ -1,0 +1,76 @@
+---
+title: Probability and Bayes Rule
+subtitle: Classification & Vector Spaces
+description: "Concepts, code snippets, and slide commentaries for this week's lesson of the  Course notes from the deeplearning.ai natural language programming specialization."
+date: 2020-10-23
+categories: 
+  - NLP 
+  - Coursera 
+  - code
+  - Conditional Probability
+  - Bayes rule
+  - Naïve Bayes
+  - Laplace smoothing
+  - Log-likelihood
+  - classification 
+  - sentiment analysis task
+image: course-banner.jpg
+---
+
+```{python}
+import pandas as pd
+import string 
+raw_tweets=[
+  "I am happy because I am learning NLP",
+  "I am sad, I am not learning NLP",
+  "I am happy, not sad",
+  "I am sad, not happy",
+]
+def clean(tweet:str):
+  return  tweet.translate(str.maketrans('', '', string.punctuation)).lower()
+tweets = [clean(tweet) for tweet in raw_tweets]
+labels=['+','-','+','-']
+df = pd.DataFrame({'tweets': tweets, 'labels': labels})
+df
+```
+
+
+```{python}
+import numpy as np
+from collections import Counter
+p_freq,n_freq = Counter(), Counter()
+#print( df[df.labels == '+']['tweets'].to_list())
+[p_freq.update(tweet.split()) for tweet in df[df.labels == '+']['tweets'].to_list()]
+[n_freq.update(tweet.split()) for tweet in df[df.labels == '-']['tweets'].to_list()]
+print(p_freq)
+print(n_freq)
+vocab = list(set(p_freq.keys()).union(set(n_freq.keys())))
+pos_freq = [p_freq[word] for word in vocab ]
+neg_freq = [n_freq[word] for word in vocab ]
+vocab_df=pd.DataFrame({'vocab':vocab,'pos_freq':pos_freq,'neg_freq':neg_freq})
+vocab_df['p_pos']=vocab_df.pos_freq/vocab_df.pos_freq.sum()
+vocab_df['p_neg']=vocab_df.neg_freq/vocab_df.neg_freq.sum()
+vocab_df['p_pos_sm']=(vocab_df.pos_freq+1)/(vocab_df.pos_freq.sum()+vocab_df.shape[1])
+vocab_df['p_neg_sm']=(vocab_df.neg_freq+1)/(vocab_df.neg_freq.sum()+vocab_df.shape[1])
+vocab_df['ratio']= vocab_df.p_pos_sm/vocab_df.p_neg_sm
+vocab_df['lambda']= np.log(vocab_df.p_pos_sm/vocab_df.p_neg_sm)
+pd.set_option('display.float_format', '{:.2f}'.format)
+vocab_df
+print(vocab_df.shape)
+```
+
+
+```{python}
+#| label: tbl-planet-measures
+#| tbl-cap: Planets
+from IPython.display import Markdown
+from tabulate import tabulate
+table = [["Sun",696000,1989100000],
+         ["Earth",6371,5973.6],
+         ["Moon",1737,73.5],
+         ["Mars",3390,641.85]]
+Markdown(tabulate(
+  table, 
+  headers=["Planet","R (km)", "mass (x 10^29 kg)"]
+))
+```

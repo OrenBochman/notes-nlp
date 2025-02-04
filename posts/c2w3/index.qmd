@@ -1,0 +1,481 @@
+---
+title: "Autocomplete and Language Models"
+subtitle: "Probabilistic Models"
+description: "Extract features from text into numerical vectors, then build a binary classifier for tweets using logistic regression!"
+date: 2020-10-23
+categories: 
+  - NLP 
+  - Coursera 
+  - Notes
+  - Probabilistic Models
+---
+
+::: {#fig-00 .column-margin}
+![course banner](/images/banner_c2.jpg)
+:::
+
+::: {#fig-slide-deck .column-margin}
+![This week's slides](slides.pdf){width="420px" height="340px" style="@page {size: 16in 9in;  margin: 0; }"}
+:::
+
+These are my notes for Week 3 notes for the [Natural Language Processing with Probabilistic Models](https://www.coursera.org/learn/probabilistic-models-in-nlp/home/welcome) Course in the Natural Language Processing Specialization Offered by DeepLearning.AI on Coursera.
+
+
+::: {.callout-important}
+## Learning Objectives
+
+- Conditional probabilities
+- Text pre-processing
+- Language modeling
+- Perplexity
+- K-smoothing
+- N-grams
+- Backoff
+- Tokenization
+
+:::
+
+::: {.callout-info}
+## TL;DR - Autocomplete and Language Models
+
+![Language Models in a nutshell](/images/in_a_nutshell.jpg)
+
+This week we learn how to model a language using N-grams. Starting from the definition of conditional probability we develop the probabilities of sequences of words. Next we add start and end of sentences tokens to our word sequence model. Next we add tokens to represent **out of vocabulary** words. Then we tackle sparsity by  implementing **smoothing** and **backoff**. Finally we consider how to evaluate our language model.
+
+In the labs we preprocess a corpus to create an N-gram language model. We then build the language model and evaluate it using perplexity.
+
+In the assignment for this week, we build a language model to generate autocomplete a text fragment. We will also evaluate the perplexity of the model.
+
+:::
+
+## N-Grams Overview
+
+Recall how Firth suggested a distributional view of semantics?  
+
+Previously we used a vector space model to represent this idea. Now we dive deeper and develop a model for distributional semantics using probabilities of sequences of words. Once we can estimate these probabilities we can predict the next word in a sentence.
+
+N-gram refer to howe we model the a sequence of N words. For example, a bigram model would model the probability of a word given the previous word. A trigram model would model the probability of a word given the previous bigram. And so on. These probabilities are derived by counting frequencies in a corpus of texts. 
+
+N-grams are fundamental and give you a foundation that will allow you to understand more complicated models in the specialization. They form the theoretical under pinning for the next two courses.
+
+
+N-grams models allow us to predict the probabilities of certain words happening in a specific sequence. Using that, you can build an auto-correct or even a search suggestion tool. 
+
+Other applications of N-gram language modeling include: 
+
+- Speech recognition
+- Spelling correction
+- Augmentative communication
+
+::: {#fig-01 .column-margin}
+![caption](img/slide01.png)
+
+Description
+:::
+
+This week you are going to learn to:
+
+- Process a text corpus to N-gram language model
+- Handle out of vocabulary words
+- Implement smoothing for previously unseen N-grams
+- Language model evaluation
+
+
+
+## N-grams and Probabilities
+
+Before we start computing probabilities of certain sequences, we need to first define what is an N-gram language model:
+
+::: {#fig-02 .column-margin}
+![caption](img/slide02.png)
+
+Description
+:::
+
+Now given the those definitions, we can label a sentence as follows: 
+
+::: {#fig-03 .column-margin}
+![caption](img/slide03.png)
+
+Description
+:::
+
+In other notation you can write: 
+
+$$
+w_1^m = w_1 w_2 w_3 ... w_m
+$$
+$$
+w_1^3 = w_1 w_2 w_3
+$$
+$$
+w_{m-2}^m = w_{m-2} w_{m-1} w_m
+$$
+
+Given the following corpus: I am happy because I am learning.
+
+Size of corpus m = 7. 
+
+$$
+P(I) = \frac{1}{7}
+$$
+
+$$
+P(happy) = \frac{1}{7}
+$$
+
+To generalize, the probability of a unigram is 
+
+$$
+P(w) = \frac{C(w)}{m}
+$$
+
+Where C(w) is the count of the word in the corpus and m is the size of the corpus.
+
+### Bigram Probability:
+
+::: {#fig-04 .column-margin}
+![caption](img/slide04.png)
+
+Description
+:::
+
+### Trigram Probability:
+
+To compute the probability of a trigram:
+$$
+P(w_3 | w_1^2) = \frac{C(w_1^2 w_3)}{C(w_1^2)}
+$$
+
+$$
+C(w_1^2 w_3) = C(w_1 w_2 w_3) = C(w_1^3)
+$$
+
+N-gram Probability:
+
+$$
+P(w_n | w_1^{n-1}) = \frac{C(w_1^{n-1} w_n)}{C(w_1^{n-1})}
+$$
+
+$$
+C(w_1^{n-1} w_n) = C(w_1^n)
+$$
+
+## Sequence Probabilities
+
+You just saw how to compute sequence probabilities, their short comings, and finally how to approximate N-gram probabilities. In doing so, you try to approximate the probability of a sentence. For example, what is the probability of the following sentence: *The teacher drinks tea*. To compute it, you will make use of the following: 
+
+$$
+P(B|A) = \frac{P(A,B)}{P(A)} \Rightarrow P(A,B) = P(A)P(B|A)
+$$
+
+$$
+P(A,B,C,D) = P(A)P(B|A)P(C|A,B)P(D|A,B,C)
+$$
+
+
+To compute the probability of a sequence, you can compute the following:
+
+$$
+P(\text{The teacher drinks tea}) = P(\text{The})P(\text{teacher}|\text{The})P(\text{drinks}|\text{The teacher})P(\text{tea}|\text{The teacher drinks})
+$$
+
+
+One of the main issues with computing the probabilities above is the corpus rarely contains the exact same phrases as the ones you computed your probabilities on. Hence, you can easily end up getting a probability of 0. The Markov assumption indicates that only the last word matters. Hence: 
+
+$$
+\text{Bigram} \qquad P(w_n | w_1^{n-1}) \approx P(w_n | w_{n-1})
+$$
+
+$$
+\text{Trigram} \qquad P(w_n | w_1^{n-1}) \approx P(w_n | w_{n-2}^{n-1})
+$$
+
+$$
+\text{N-gram} \qquad P(w_n | w_1^{n-1}) \approx P(w_n | w_{n-N+1}^{n-1})
+$$
+
+You can model the entire sentence as follows: 
+
+$$
+P(w_1^n) = P(w_1)P(w_2|w_1)P(w_3|w_2)P(w_4|w_3) ... P(w_n|w_{n-1}) = \prod_{i=1}^{n} P(w_i|w_{i-1})
+$$
+
+$$
+P(w_1^n) = P(w_1)P(w_2|w_1)P(w_3|w_2)P(w_4|w_3) ... P(w_n|w_{n-1}) = \prod_{i=1}^{n} P(w_i|w_{i-1})
+$$
+
+## Starting and Ending Sentences
+
+We usually start and end a sentence with the following tokens respectively: \<s> \</s>. 
+
+When computing probabilities using a unigram, you can append an \<s> in the beginning of the sentence. To generalize to an N-gram language model, you can add N-1 start tokens \<s>. 
+
+For the end of sentence token \</s>, you only need one even if it is an N-gram. Here is an example: 
+
+::: {#fig-08 .column-margin}
+![caption](img/slide08.png)
+
+Description
+:::
+
+Make sure you know how to compute the probabilities above! 
+
+## Lecture notebook: Corpus preprocessing for N-grams
+
+[lab 1 Corpus preprocessing for N-grams](lab01.qmd)
+
+## The N-gram Language Model
+
+::: {#fig-09 .column-margin}
+![Count matrix](img/slide09.png)
+
+Count Matrix
+:::
+
+::: {#fig-10 .column-margin}
+![Probability matrix](img/slide10.png)
+
+Probability Matrix
+:::
+
+::: {#fig-11 .column-margin}
+![Language model](img/slide11.png)
+
+Language model
+:::
+
+::: {#fig-12 .column-margin}
+![Log probability](img/slide12.png)
+
+Log probability
+:::
+
+We covered a lot of concepts in the previous video.  You have seen: 
+
+- Count matrix c.f @fig-09
+- Probability matrix c.f @fig-10
+- Language model c.f. @fig-11
+- Log probability c.f @fig-12 to avoid underflow
+- Generative language model c.f. @fig-13
+
+In the count matrix:
+
+- Rows correspond to the unique corpus N-1 grams. 
+- Columns correspond to the unique corpus words. 
+
+Here is an example of the count matrix of a bigram. 
+
+
+To convert it into a probability matrix, you can use the following formula:
+
+$$
+P(w_n \mid w^{n-1}_{n-N+1}) = \frac{C(w^{n-1}_{n-N+1}, w_n)}{C(w^{n-1}_{n-N+1})}
+$$ {#eq-n-gram-prob}
+
+$$
+sum(row) = \sum_{w \in V} C(w^{n-1}_{n-N+1}, w) = C(w^{n-1}_{n-N+1})
+$$ {#eq-row-sum}
+
+
+Now given the probability matrix, you can generate the language model. You can compute the sentence probability and the next word prediction. 
+
+To compute the probability of a sequence, you needed to compute: 
+
+$$
+\begin{align*}
+P(w_1^n) &= P(w_1)P(w_2|w_1)P(w_3|w_2)P(w_4|w_3) \ldots P(w_n|w_{n-1})  \\
+&= \prod_{i=1}^{n} P(w_i | w_{i-1})
+\end{align*}
+$$ {#eq-sequence-prob}
+
+To avoid underflow, you can multiply by the log. 
+
+$$ 
+\begin{align*}
+\log P(w_1^n) &= \log P(w_1) + \log P(w_2|w_1) + \log P(w_3|w_2) + \ldots+ \log P(w_n|w_{n-1}) \\
+& = \sum_{i=1}^{n} \log P(w_i|w_{i-1})
+\end{align*}
+$$ {#eq-log-sequence-prob}
+
+Finally, you can create a generative language model.
+
+
+::: {#fig-13 .column-margin}
+![Generative language model](img/slide13.png)
+
+Generative language model
+:::
+
+## Lecture notebook: Building the language model
+
+[lab 2 Building the language model](lab02.qmd)
+
+## Language Model Evaluation
+
+Splitting the Data
+We will now discuss the train/val/test splits and perplexity.
+
+| |Smaller Corpora: | Larger Corpora: | Use
+|---|---|---|
+| train | 80% | 98% | Train the model |
+| test | 10% | 1%   | Evaluate the model |
+| val | 10% | 1%    | Tune hyperparameters |
+
+: Train/Val/Test splits {tbl-splitting-data}
+
+There are two main methods for splitting the data: 
+
+::: {#fig-14 .column-margin}
+![caption](img/slide14.png)
+
+Count Matrix
+:::
+
+## Perplexity
+
+Perplexity is used to tell us whether a set of sentences look like they were written by humans rather than by a simple program choosing words at random. A text that is written by humans is more likely to have lower perplexity, where a text generated by random word choice would have a higher perplexity.
+
+Concretely, here are the formulas to calculate perplexity. 
+
+$$
+PP(W) = P(s_1, s_2, \ldots, s_m)^{-\frac{1}{m}}
+$$
+
+$$
+PP(W) = \sqrt{ \prod_{i=1}^{m} \prod_{j=1}^{|s_i|} \frac{1}{P(w_j^{(i)} | w_{j-1}^{(i)})}}
+$$
+
+
+​$w_j^{(i)}$ corresponds to the jth word in the ith sentence. If you were to concatenate all the sentences then $w_i$ is the ith word in the test set. To compute the log perplexity, you go from:
+ 
+$$
+PP(W) = \sqrt{ \prod_{i=1}^{m} \frac{1}{P(w_i | w_{i-1})}}
+$$
+
+To 
+
+$$
+log PP(W) = -\frac{1}{m} \sum_{i=1}^{m} \log_2 P(w_i | w_{i-1})
+$$
+
+## Out of Vocabulary Words
+
+Many times, you will be dealing with unknown words in the corpus. So how do you choose your vocabulary? What is a vocabulary?
+
+A vocabulary is a set of unique words supported by your language model. In some tasks like speech recognition or question answering, you will encounter and generate words only from a fixed set of words. Hence, a **closed vocabulary**.  
+
+**Open vocabulary** means that you may encounter words from outside the vocabulary, like a name of a new city in the training set. Here is one recipe that would allow you to handle unknown words. 
+
+- Create vocabulary V
+- Replace any word in corpus and not in V by \<UNK>
+- Count the probabilities with \<UNK> as with any other word
+
+::: {#fig-15 .column-margin}
+![caption](img/slide15.png)
+
+Count Matrix
+:::
+
+
+The example above shows how you can use min_frequency and replace all the words that show up fewer times than min_frequency by UNK. You can then treat UNK as a regular word. 
+
+### Criteria to create the vocabulary
+
+- Min word frequency f
+- Max |V|, include words by frequency
+- Use \<UNK> sparingly (Why?)
+- Perplexity -  only compare LMs with the same V
+
+
+
+## Out of Vocabulary Words
+
+## Smoothing
+
+
+::: {#fig-16 .column-margin}
+![Problem](img/slide16.png)
+
+Missing N-grams
+:::
+
+The three main concepts covered here are dealing with missing n-grams, smoothing, and Backoff and interpolation. 
+
+
+::: {#fig-17 .column-margin}
+![Smoothing](img/slide17.png)
+
+Add One Smoothing, Add K Smoothing
+:::
+
+$$
+P(w_n | w^{n-1}_{n-N+1}) = \frac{C(w^{n-1}_{n-N+1}, w_n)}{C(w^{n-1}_{n-N+1})} \qquad \text{can be 0}
+$$ {#eq-n-gram-prob}
+
+Hence we can add-1 smoothing as follows to fix that problem: 
+
+$$
+P(w_n | w_{n-1}) = \frac{C(w_{n-1}, w_n) + 1}{\sum_{w \in V} (C(w_{n-1}, w) + 1)} = \frac{C(w_{n-1}, w_n) + 1}{C(w_{n-1}) + V} \qquad
+$$ {#eq-add-one-smoothing}
+
+Add-k smoothing is very similar: 
+
+$$
+P(w_n | w_{n-1}) = \frac{C(w_{n-1}, w_n) + k}{\sum_{w \in V} (C(w_{n-1}, w) + k)} =\frac{C(w_{n-1}, w_n) + k}{C(w_{n-1}) + k\times V} \qquad
+$$ {#eq-add-k-smoothing}
+
+::: {#fig-18 .column-margin}
+![Backoff](img/slide18.png)
+
+Backoff 
+:::
+
+When using back-off:
+
+- If N-gram missing => use (N-1)-gram, …: Using the lower level N-grams (i.e. (N-1)-gram, (N-2)-gram, down to unigram) distorts the probability distribution. Especially for smaller corpora, some probability needs to be discounted from higher level N-grams to use it for lower level N-grams.
+
+- Probability discounting e.g. Katz backoff: makes use of discounting. 
+
+- "Stupid" backoff: If the higher order N-gram probability is missing, the lower order N-gram probability is used, just multiplied by a constant. A constant of about 0.4 was experimentally shown to work well.
+
+Here is a [visualization](@fig-18) of the backoff process.
+
+
+You can also use interpolation when computing probabilities as follows: 
+
+$$
+\hat{P}(w_n | w_{n-2} W_{n-1}) = \lambda_1 \times P(w_n | w_{n-2} w_{n-1}) + \lambda_2 \times P(w_n | w_{n-1}) + \lambda_3 \times P(w_n) \qquad
+$$ {#eq-interpolation}
+
+Where 
+
+$$
+\sum_i \lambda_i = 1
+$$
+
+
+## Week Summary
+
+
+This week you learned the following concepts
+
+- N-Grams and probabilities
+- Approximate sentence probability from N-Grams
+- Build a language model from a corpus
+- Fix missing information
+- Out of vocabulary words with \<UNK>
+- Missing N-Gram in corpus with smoothing, backoff and interpolation
+- Evaluate language model with perplexity
+- Coding assignment! 
+
+## Lecture notebook: Language model generalization
+
+[Autocomplete](lab03.qmd)
+
+# Resources:
+
+
+- [@Chadha2020DistilledNotesCourseraDLSpec] [Aman Chadha's Notes](https://aman.ai/coursera-nlp/logistic-regression/)
+- [Ibrahim Jelliti's Notes](https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization/tree/master/1%20-%20Natural%20Language%20Processing%20with%20Classification%20and%20Vector%20Spaces#testing-logistic-regression)
+

@@ -1,0 +1,537 @@
+---
+title: "Word embeddings with neural networks"
+subtitle: "Probabilistic Models"
+description: "Extract features from text into numerical vectors, then build a binary classifier for tweets using logistic regression!"
+date: 2020-10-23
+categories: 
+  - NLP 
+  - Coursera 
+  - notes
+  - Probabilistic Models
+---
+
+::: {#fig-00 .column-margin}
+![course banner](/images/banner_c2.jpg)
+:::
+
+::: {#fig-slide-deck .column-margin}
+![This week's slides](slides.pdf){width="420px" height="340px" style="@page {size: 16in 9in;  margin: 0; }"}
+:::
+
+These are my notes for Week 4 notes for the [Natural Language Processing with Probabilistic Models](https://www.coursera.org/learn/probabilistic-models-in-nlp/home/welcome) Course in the Natural Language Processing Specialization Offered by DeepLearning.AI on Coursera.
+
+
+::: {.callout-important}
+## Learning Objectives
+
+- Gradient descent
+- One-hot vectors
+- Neural networks
+- Word embeddings
+- Continuous bag-of-words model
+- Text pre-processing
+- Tokenization
+- Data generators
+
+:::
+
+## Overview
+
+Word embeddings are used in most NLP applications. Whenever you are dealing with text, you first have to find a way to encode the words as numbers. Word embedding are a very common technique that allows you to do so. Here are a few applications of word embeddings that you should be able to implement by the time you complete the specialization.
+
+::: {#fig-01 .column-margin}
+![applications](img/slide01.png)
+
+Basic Applications of word embeddings
+:::
+
+::: {#fig-02 .column-margin}
+![applications](img/slide02.png)
+
+Advanced applications of word embeddings
+:::
+
+
+By the end of this week you will be able to: 
+
+- Identify the key concepts of word representations
+- Generate word embeddings
+- Prepare text for machine learning
+- Implement the continuous bag-of-words model
+
+## Basic Word Representations
+
+::: {#fig-03 .column-margin}
+![](img/slide03.png)
+
+One-hot vectors
+:::
+
+::: {#fig-04 .column-margin}
+![](img/slide04.png)
+
+One-hot vectors
+:::
+
+Basic word representations could be classified into the following:
+
+- Integers
+- One-hot vectors
+- Word embeddings
+
+To the left, you have an example where you use integers to represent a word. The issue there is that there is no reason why one word corresponds to a bigger number than another. To fix this problem we introduce one hot vectors (diagram on the right). To implement one hot vectors, you have to initialize a vector of zeros of dimension V  and then put a 1 in the index corresponding to the word you are representing.
+
+The **pros** of one-hot vectors:  simple and require no implied ordering. 
+
+The **cons** of one-hot vectors: huge and encode no meaning. 
+
+
+
+## Word Embeddings
+
+::: {#fig-05 .column-margin}
+![](img/slide05.png)
+
+Meaning as vectors in 1D
+:::
+
+::: {#fig-06 .column-margin}
+![](img/slide06.png)
+
+Meaning as vectors in 2D
+:::
+
+From the plot above, you can see that when encoding a word in 2D, similar words tend to be found next to each other. Perhaps the first coordinate represents whether a word is positive or negative. The second coordinate tell you whether the word is abstract or concrete. This is just an example, in the real world you will find embeddings with hundreds of dimensions. You can think of each coordinate as a number telling you something about the word. 
+
+The pros:
+
+- Low dimensions (less than V)
+- Allow you to encode meaning
+
+
+
+## How to Create Word Embeddings?
+
+::: {#fig-07 .column-margin}
+![](img/slide07.png)
+
+Meaning as vectors in 2D
+:::
+
+To create word embeddings you always need a corpus of text, and an embedding method.
+
+The context of a word tells you what type of words tend to occur near that specific word. The context is important as this is what will give meaning to each word embedding.
+
+Embeddings
+There are many types of possible methods that allow you to learn the word embeddings. The machine learning model performs a learning task, and the main by-products of this task are the word embeddings. The task could be to learn to predict a word based on the surrounding words in a sentence of the corpus, as in the case of the continuous bag-of-words.
+
+The task is self-supervised: it is both unsupervised in the sense that the input data — the corpus — is unlabelled, and supervised in the sense that the data itself provides the necessary context which would ordinarily make up the labels. 
+
+When training word vectors, there are some parameters you need to tune. (i.e. the dimension of the word vector)
+
+
+## Word Embedding Methods
+
+Classical Methods
+
+- word2vec (Google, 2013)
+- Continuous bag-of-words (CBOW): the model learns to predict the center word given some context words.
+- Continuous skip-gram / Skip-gram with negative sampling (SGNS): the model learns to predict the words surrounding a given input word.
+- Global Vectors (GloVe) (Stanford, 2014): factorizes the logarithm of the corpus's word co-occurrence matrix,  similar to the count matrix you’ve used before.
+- fastText (Facebook, 2016): based on the skip-gram model and takes into account the structure of words by representing words as an n-gram of characters. It supports out-of-vocabulary (OOV) words.
+
+Deep learning, contextual embeddings
+
+In these more advanced models, words have different embeddings depending on their context. You can download pre-trained embeddings for the following models. 
+
+- BERT (Google, 2018):
+- ELMo (Allen Institute for AI, 2018)
+- GPT-2 (OpenAI, 2018)
+
+
+
+## Continuous Bag-of-Words Model
+
+::: {#fig-08 .column-margin}
+![](img/slide08.png)
+
+Meaning as vectors in 2D
+:::
+
+::: {#fig-09 .column-margin}
+![](img/slide09.png)
+
+Meaning as vectors in 2D
+:::
+
+
+::: {#fig-10 .column-margin}
+![](img/slide10.png)
+
+Meaning as vectors in 2D
+:::
+
+
+Continuous Bag of Words Model
+To create word embeddings, you need a corpus and a learning algorithm. The by-product of this task would be a set of word embeddings. In the case of the continuous bag-of-words model, the objective of the task is to predict a missing word based on the surrounding words.
+
+
+Here is a visualization that shows you how the models works.
+
+
+As you can see, the window size in the image above is 5. The context size, C, is 2. C usually tells you how many words before or after the center word the model will use to make the prediction. Here is another visualization that shows an overview of the model. 
+
+## Cleaning and Tokenization
+
+::: {#fig-11 .column-margin}
+![](img/slide11.png)
+
+Meaning as vectors in 2D
+:::
+
+::: {#fig-12 .column-margin}
+![](img/slide12.png)
+
+Meaning as vectors in 2D
+:::
+
+Before implementing any natural language processing algorithm, you might want to clean the data and tokenize it. Here are a few things to keep track of when handling your data.
+
+
+You can clean data using python as follows: 
+
+
+You can add as many conditions as you want in the lines corresponding to the green rectangle above. 
+
+
+## Sliding Window of words in Python
+
+::: {#fig-13 .column-margin}
+![](img/slide13.png)
+
+Sliding Window of words in Python
+:::
+
+The code above shows you a function which takes in two parameters. 
+
+Words: a list of words.
+
+C: the context size.
+
+We first start by setting i to C. Then we single out the center_word, and the context_words. We then yield those and increment i. 
+
+
+## Transforming Words into Vectors
+
+::: {#fig-14 .column-margin}
+![](img/slide14.png)
+
+Transforming Words into Vectors
+:::
+
+As you can see, we started with one-hot vectors for the context words and and we transform them into a single vector by taking an average. As a result you end up having the following vectors that you can use for your training. 
+
+::: {#fig-15 .column-margin}
+![](img/slide15.png)
+
+Sliding Window of words in Python
+:::
+
+## Lecture Notebook - Data Preparation
+
+[](lab01.qmd)
+
+## Architecture of the CBOW Model
+
+The architecture for the CBOW model could be described as follows
+
+::: {#fig-16 .column-margin}
+![](img/slide16.png)
+
+Architecture for the CBOW Model
+:::
+
+You have an input, X, which is the average of all context vectors. You then multiply it by $W_1$ and add $b1$. 
+The result goes through a ReLU function to give you your hidden layer. That layer is then multiplied by 
+$W_2$ and you add $b_2$. The result goes through a softmax which gives you a distribution over V, vocabulary words. 
+You pick the vocabulary word that corresponds to the arg-max of the output. 
+
+## Architecture of the CBOW Model: Dimensions
+
+
+The equations for the previous model are: 
+
+$$ 
+z_1 = W_1 x + b_1
+$$
+
+$$
+h = ReLU(z_1)
+$$
+
+$$
+z_2 = W_2 h + b_2
+$$
+
+$$
+\hat{y} = softmax(z_2)
+$$
+
+Here, you can see the dimensions: 
+
+
+::: {#fig-17 .column-margin}
+![](img/slide17.png)
+
+Architecture for the CBOW Model
+:::
+
+Make sure you go through the matrix multiplications and understand why the dimensions make sense. 
+
+
+## Architecture of the CBOW Model: Dimensions 2
+
+When dealing with batch input, you can stack the examples as columns. You can then proceed to multiply the matrices as follows: 
+
+::: {#fig-18 .column-margin}
+![](img/slide18.png)
+
+Dimensions Batch Input
+:::
+
+
+In the diagram above, you can see the dimensions of each matrix. Note that your $\hat{Y}$ is of dimension V by m. Each column is the prediction of the column corresponding to the context words.  So the first column in $\hat{Y}$ is the prediction corresponding to the first column of X.
+
+
+## Architecture of the CBOW Model: Activation Functions
+
+### ReLU funciton
+
+The rectified linear unit (ReLU), is one of the most popular activation functions. When you feed a vector, namely x, into a ReLU function. You end up taking 
+$x=max(0,x)$. This is a drawing that shows ReLU.
+
+
+::: {#fig-19 .column-margin}
+![](img/slide19.png)
+
+Dimensions Batch Input
+:::
+
+### Softmax function
+
+The softmax function takes a vector and transforms it into a probability distribution. For example, given the following vector z, you can transform it into a probability distribution as follows. 
+
+::: {#fig-20 .column-margin}
+![](img/slide20.png)
+
+Dimensions Batch Input
+:::
+
+
+As you can see, you can compute 
+$$
+\hat{y} = \frac{e^{z_i}}{\sum_{j=1}^V e^{z_j}}
+$$
+
+## Lecture Notebook - Intro to CBOW model
+
+[](lab02.qmd)
+
+## Training a CBOW Model: Cost Function
+
+The cost function for the CBOW model is a cross-entropy loss defined as: 
+
+$$
+J = -\sum_{k=1}^V y_k log(\hat{y}_k)
+$$ {eq-cbow-cost}
+
+
+Here is an example where you use the equation above. 
+
+::: {#fig-21 .column-margin}
+![](img/slide21.png)
+
+Dimensions Batch Input
+:::
+
+Why is the cost 4.61 in the example above? 
+
+## Training a CBOW Model: Forward Propagation
+
+Training a CBOW Model: Forward Propagation
+Forward propagation is defined as: 
+
+$$
+Z_1 = W_1 X + B_1
+$$
+
+
+$$
+H = ReLU(Z_1)
+$$
+
+
+$$
+Z_2 = W_2 H + B_2
+$$
+
+
+$$
+\hat{Y} = softmax(Z_2)
+$$
+
+In the image below you start from the left and you forward propagate all the way to the right.
+
+::: {#fig-22 .column-margin}
+![](img/slide22.png)
+
+Dimensions Batch Input
+:::
+
+To calculate the loss of a batch, you have to compute the following: 
+
+$$
+J_{batch} = -\frac{1}{m} \sum_{i=1}^m \sum_{j=1}^V y_j(i) log(\hat{y}^j(i))
+$$
+
+ 
+
+Given, your predicted center word matrix, and actual center word matrix, you can compute the loss.
+
+::: {#fig-23 .column-margin}
+![](img/slide23.png)
+
+Dimensions Batch Input
+:::
+
+## Training a CBOW Model: Backpropagation and Gradient Descent
+
+::: {#fig-24 .column-margin}
+![](img/slide24.png)
+
+Dimensions Batch Input
+:::
+
+::: {#fig-25 .column-margin}
+![](img/slide25.png)
+
+Dimensions Batch Input
+:::
+
+Training a CBOW Model: Backpropagation and Gradient Descent
+Backpropagation: calculate partial derivatives of cost with respect to weights and biases.
+
+When computing the back-prop in this model, you need to compute the following:
+
+$$
+\frac{\partial J_{batch}}{\partial W_1}, \frac{\partial J_{batch}}{\partial W_2}, \frac{\partial J_{batch}}{\partial B_1}, \frac{\partial J_{batch}}{\partial B_2}
+$$ 
+
+Gradient descent: update weights and biases
+
+Now to update the weights you can iterate as follows:
+
+$$
+W_1 := W_1 - \alpha \frac{\partial J_{batch}}{\partial W_1}
+$$
+
+$$
+W_2 := W_2 - \alpha \frac{\partial J_{batch}}{\partial W_2}
+$$
+
+$$
+B_1 := B_1 - \alpha \frac{\partial J_{batch}}{\partial B_1}
+$$
+
+$$
+B_2 := B_2 - \alpha \frac{\partial J_{batch}}{\partial B_2}
+$$
+
+A smaller alpha allows for more gradual updates to the weights and biases, whereas a larger number allows for a faster update of the weights. If $α$ is too large, you might not learn anything, if it is too small, your model will take forever to train. 
+
+
+
+## Lecture Notebook - Training the CBOW model
+
+[](lab03.qmd)
+
+## Extracting Word Embedding Vectors
+There are two options to extract word embeddings after training the continuous bag of words model. You can use $W_1$ as follows: 
+
+::: {#fig-26 .column-margin}
+![](img/slide26.png)
+
+Dimensions Batch Input
+:::
+
+If you were to use $W_1$, each column will correspond to the embeddings of a specific word. You can also use $W_2$ as follows:
+
+::: {#fig-27 .column-margin}
+![](img/slide27.png)
+
+Dimensions Batch Input
+:::
+
+The final option is to take an average of both matrices as follows: 
+
+::: {#fig-28 .column-margin}
+![](img/slide28.png)
+
+Dimensions Batch Input
+:::
+
+
+## Lecture Notebook - Word Embeddings
+
+[](lab04.qmd)
+
+## Lecture notebook: Word embeddings step by step
+
+[](lab05.qmd)
+
+## Evaluating Word Embeddings: Intrinsic Evaluation
+
+Intrinsic evaluation allows you to test relationships between words. It allows you to capture semantic analogies as, “France” is to “Paris” as “Italy” is to <?> and also syntactic analogies as “seen” is to “saw” as “been” is to <?>. 
+
+Ambiguous cases could be much harder to track: 
+::: {#fig-28 .column-margin}
+![](img/slide28.png)
+
+Dimensions Batch Input
+:::
+
+Here are a few  ways that allow to use intrinsic evaluation.
+
+::: {#fig-29 .column-margin}
+![](img/slide29.png)
+
+Dimensions Batch Input
+:::
+
+::: {#fig-30 .column-margin}
+![](img/slide30.png)
+
+Dimensions Batch Input
+:::
+
+## Evaluating Word Embeddings: Extrinsic Evaluation
+
+Extrinsic evaluation tests word embeddings on external tasks like named entity recognition, parts-of-speech tagging, etc. 
+
+- Evaluates actual usefulness of embeddings
+- Time Consuming
+- More difficult to trouble shoot
+
+So now you know both intrinsic and extrinsic evaluation. 
+
+## Conclusion
+
+This week we learned the following concepts.
+
+- Data preparation
+- Word representations
+- Continuous bag-of-words model
+- Evaluation
+
+You have all the foundations now. From now on, you will start using some advanced AI libraries in the next courses. Congratulations and good luck with the assignment 
+

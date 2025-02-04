@@ -1,0 +1,217 @@
+---
+title: "Siamese Networks"
+subtitle: "Sequence Models"
+description: "we cover Neural networks for deep learning, then build a tweet classifier that places tweets into positive or negative sentiment categories, using a DNN."
+date: 2020-10-23
+categories: 
+  - NLP 
+  - Coursera 
+  - notes
+  - Sequence Models
+---
+
+
+::: {#fig-00 .column-margin}
+![course banner](/images/Course-Logo-3-3.webp){.column-margin}
+:::
+
+::: {#fig-slide-deck .column-margin}
+![This week's slides](slides.pdf){width="420px" height="340px" style="@page {size: 16in 9in;  margin: 0; }"}
+:::
+
+My irreverent notes for Week 2 of the [Natural Language Processing with Sequence Models](https://www.coursera.org/learn/sequence-models-in-nlp/home/welcome) Course in the Natural Language Processing Specialization Offered by [DeepLearning.AI](DeepLearning.AI) on [Coursera](https://www.coursera.org/)
+
+
+::: {.callout-important}
+## Learning Objectives
+
+- One shot learning
+- Triplet loss
+- Cosine similarity
+- Siamese networks
+- Data generators
+
+:::
+
+## Siamese Network
+It is best to describe what a Siamese network is through an example. 
+
+::: {#fig-01 .column-margin}
+![](img/slide01.png)
+
+:::
+
+Note that in the first example above, the two sentences mean the same thing but have completely different words. While in the second case, the two sentences mean completely different things but they have very similar words. 
+
+Classification: learns what makes an input what it is.
+
+Siamese Networks: learns what makes two inputs the same
+
+Here are a few applications of siamese networks: 
+
+
+::: {#fig-02 .column-margin}
+![](img/slide02.png)
+
+:::
+
+## Architecture
+
+The model architecture of a typical siamese network could look as follows: 
+
+::: {#fig-03 .column-margin}
+![](img/slide03.png)
+
+:::
+
+These two sub-networks are sister-networks which come together to produce a similarity score. Not all Siamese networks will be designed to contain LSTMs. One thing to remember is that sub-networks share identical parameters. This means that you only need to train one set of weights and not two. 
+
+The output of each sub-network is a vector. You can then run the output through a cosine similarity function to get the similarity score. In the next video, we will talk about the cost function for such a network.
+
+## Lab: Creating a Siamese Model using Trax
+
+[Creating a Siamese Model using Trax](lab01.qmd)
+
+## Cost Function
+
+Let us take a close look at the following slide: 
+
+
+::: {#fig-04 .column-margin}
+![](img/slide04.png)
+
+:::
+
+Note that when trying to compute the cost for a siamese network we use the triplet loss. The triplet loss usually consists of an Anchor and a Positive example. Note that the anchor and the positive example have a cosine similarity score that is very close to one. On the other hand, the anchor and the negative example have a cosine similarity score close to -1. Now we are ideally trying to optimize the following equation: $−cos(A,P)+cos(A,N)≤0$
+
+Note that if $cos(A,P)=1$ is 1 and $cos(A,N)=−1$, then the equation is definitely less than 0. However, as $cos(A,P)$ deviates from 1 and $cos(A,N)$ deviates from -1, then you can end up getting a cost that is $> 0$. Here is a visualization that would help you understand what is going on. Feel free to play with different numbers. 
+
+
+::: {#fig-05 .column-margin}
+![](img/slide05.png)
+
+::: 
+
+## Triplets
+
+We will now build on top of our previous cost function. To get the full cost function you will add a margin. 
+
+::: {#fig-06 .column-margin}
+![](img/slide06.png)
+
+:::
+
+Note that we added an $α$ in the equation above. This allows you to have a margin of "safety".  When computing the full cost, we take the max of that the outcome of $−cos(A,P)+cos(A,N)+α$ and 0. Note, we do not want to take a negative number as a cost. 
+
+Here is a quick summary:
+
+- $𝜶$: controls how far cos(A,P) is from cos(A,N)
+
+- Easy negative triplet: cos(A,N) < cos(A,P)
+- Semi-hard negative triplet:  cos(A,N) < cos(A,P) < cos(A,N) + 𝜶 
+- Hard negative triplet: cos(A,P) < cos(A,N)
+
+## Computing the Cost I
+
+To compute the cost, we will prepare the batches as follows: 
+
+::: {#fig-07 .column-margin}
+![](img/slide07.png)
+
+:::
+
+Note that each example, has a similar example to its right, but no other example means the same thing. We will now introduce hard negative mining. 
+
+
+::: {#fig-08 .column-margin}
+![](img/slide08.png)
+
+::: 
+
+Each horizontal vector corresponds to the encoding of the corresponding question. Now when you multiply the two matrices and compute the cosine, you get the following: 
+
+::: {#fig-09 .column-margin}
+![](img/slide09.png)
+
+:::
+
+The diagonal line corresponds to scores of similar sentences, (normally they should be positive). The off-diagonals correspond to cosine scores between the anchor and the negative examples. 
+
+## Computing the Cost II
+
+Now that you have the matrix with cosine similarity scores, which is the product of two matrices, we go ahead and compute the cost. 
+
+::: {#fig-10 .column-margin}
+![](img/slide10.png)
+
+:::
+
+We now introduce two concepts, the **mean_neg**, which is the mean negative of all the other off diagonals in the row, and the **closest_neg**, which corresponds to the highest number in the off diagonals. 
+
+$Cost = max(−cos(A,P)+cos(A,N)+α,0)$
+
+So we will have two costs now: 
+
+$Cost1 = max(−cos(A,P)+mean_n eg+α,0)$
+
+$Cost2 = max(−cos(A,P)+closest_n eg+α,0)$
+⁡
+The full cost is defined as: Cost1 + Cost2. 
+
+
+## Lab: Lecture Notebook: Modified Triplet Loss
+
+[Modified Triplet Loss](lab02.qmd)
+
+
+## One Shot Learning
+
+Imagine you are working in a bank and you need to verify the signature of a check. You can either build a classifier with K possible signatures as an output or you can build a classifier that tells you whether two signatures are the same. 
+
+::: {#fig-11 .column-margin}
+![](img/slide11.png)
+
+:::
+
+
+Hence, we resort to one shot learning. Instead of retraining your model for every signature, you can just learn a similarity score as follows: 
+
+::: {#fig-12 .column-margin}
+![](img/slide12.png)
+
+:::
+
+## Training / Testing
+
+After preparing the batches of vectors, you can proceed to multiplying the two matrices. 
+
+Here is a quick recap of the first step: 
+
+::: {#fig-13 .column-margin}
+![](img/slide13.png)
+
+:::
+
+The next step is to implement the siamese model as follows: 
+
+Finally when testing: 
+
+1. Convert two inputs into an array of numbers
+2. Feed it into your model
+3. Compare 𝒗1,𝒗2 using cosine similarity
+4. Test against a threshold τ
+
+::: {#fig-14 .column-margin}
+![](img/slide14.png)
+
+:::
+
+## Lab: Evaluate a Siamese Model
+
+[Evaluate a Siamese Model](lab03.qmd)
+
+## Acknowledgments
+
+
+- [@Chadha2020DistilledNotesCourseraDLSpec] [Aman Chadha's Notes](https://aman.ai/coursera-nlp/logistic-regression/)
+- [Ibrahim Jelliti's Notes](https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization/tree/master/1%20-%20Natural%20Language%20Processing%20with%20Classification%20and%20Vector%20Spaces#testing-logistic-regression)
