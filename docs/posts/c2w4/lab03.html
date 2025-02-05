@@ -498,12 +498,12 @@ window.Quarto = {
 
 
 
-<div class="no-row-height column-margin column-container"><div id="fig-00" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div class="no-row-height column-margin column-container"><div id="fig-00" class="nolightbox quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="../../images/banner_c2.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="../../images/banner_c2.jpg" class="img-fluid figure-img"></a></p>
+<p><a href="../../images/Course-Logo-2-3.webp" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="../../images/Course-Logo-2-3.webp" class="img-fluid figure-img"></a></p>
 <figcaption>course banner</figcaption>
 </figure>
 </div>
@@ -525,13 +525,20 @@ Figure&nbsp;1
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> utils2 <span class="im">import</span> get_dict</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="forward-propagation" class="level2">
+<section id="forward-propagation" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="forward-propagation">Forward propagation</h2>
 <p>Let’s dive into the neural network itself, which is shown below with all the dimensions and formulas you’ll need.</p>
-<div style="width:image width px; font-size:100%; text-align:center;">
-<img src="cbow_model_dimensions_single_input.png" alt="alternate text" width="width" height="height" style="width:839;height:349;"> Figure 2
+
+<div class="no-row-height column-margin column-container"><div id="fig-02" class="quarto-float quarto-figure quarto-figure-center anchored" style="width:839;height:349;">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/cbow_model_dimensions_single_input.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: "><img src="img/cbow_model_dimensions_single_input.png" id="fig-02" class="img-fluid figure-img" style="width:839;height:349;"></a>
 </div>
-<p>Set <span class="math inline">N</span> equal to 3. Remember that <span class="math inline">N</span> is a hyperparameter of the CBOW model that represents the size of the word embedding vectors, as well as the size of the hidden layer.</p>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2
+</figcaption>
+</figure>
+</div></div><p>Set <span class="math inline">N</span> equal to 3. Remember that <span class="math inline">N</span> is a hyperparameter of the CBOW model that represents the size of the word embedding vectors, as well as the size of the hidden layer.</p>
 <p>Also set <span class="math inline">V</span> equal to 5, which is the size of the vocabulary we have used so far.</p>
 <div id="1999a66e" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the size of the word embedding vectors and save it in the variable 'N'</span></span>
@@ -712,10 +719,12 @@ y:
 <section id="values-of-the-hidden-layer" class="level3">
 <h3 class="anchored" data-anchor-id="values-of-the-hidden-layer">Values of the hidden layer</h3>
 <p>Now that you have initialized all the variables that you need for forward propagation, you can calculate the values of the hidden layer using the following formulas:</p>
-<p><span class="math display">\begin{align}
+<p><span class="math display">
+\begin{align}
 \mathbf{z_1} = \mathbf{W_1}\mathbf{x} + \mathbf{b_1}  \tag{1} \\
 \mathbf{h} = \mathrm{ReLU}(\mathbf{z_1})  \tag{2} \\
-\end{align}</span></p>
+\end{align}
+</span></p>
 <p>First, you can calculate the value of <span class="math inline">\mathbf{z_1}</span>.</p>
 <div id="32337e4b" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute z1 (values of first hidden layer before applying the ReLU function)</span></span>
@@ -752,10 +761,12 @@ y:
 <section id="values-of-the-output-layer" class="level3">
 <h3 class="anchored" data-anchor-id="values-of-the-output-layer">Values of the output layer</h3>
 <p>Here are the formulas you need to calculate the values of the output layer, represented by the vector <span class="math inline">\mathbf{\hat y}</span>:</p>
-<p><span class="math display">\begin{align}
+<p><span class="math display">
+\begin{align}
 \mathbf{z_2} &amp;= \mathbf{W_2}\mathbf{h} + \mathbf{b_2}   \tag{3} \\
 \mathbf{\hat y} &amp;= \mathrm{softmax}(\mathbf{z_2})   \tag{4} \\
-\end{align}</span></p>
+\end{align}
+</span></p>
 <p><strong>First, calculate <span class="math inline">\mathbf{z_2}</span>.</strong></p>
 <div id="a1d8d9e4" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute z2 (values of the output layer before applying the softmax function)</span></span>
@@ -814,8 +825,9 @@ Here’s how you could implement this in Python:
 <p>
 <code>print(Ind2word[np.argmax(y_hat)])</code>
 </p>
+</details>
 <p>Well done, you’ve completed the forward propagation phase!</p>
-</details></section>
+</section>
 </section>
 <section id="cross-entropy-loss" class="level2">
 <h2 class="anchored" data-anchor-id="cross-entropy-loss">Cross-entropy loss</h2>
@@ -862,6 +874,7 @@ Here’s how you could implement this in Python:
 <font size="3" color="darkgreen"><b>Hint 1</b></font>
 </summary>
 <pre><code>&lt;p&gt;To multiply two numpy matrices (such as &lt;code&gt;y&lt;/code&gt; and &lt;code&gt;y_hat&lt;/code&gt;) element-wise, you can simply use the &lt;code&gt;*&lt;/code&gt; operator.&lt;/p&gt;</code></pre>
+</details>
 <details>
 <summary>
 <font size="3" color="darkgreen"><b>Hint 2</b></font>
@@ -869,6 +882,7 @@ Here’s how you could implement this in Python:
 <p>
 Once you have a vector equal to the element-wise multiplication of <code>y</code> and <code>y_hat</code>, you can use <code>np.sum</code> to calculate the sum of the elements of this vector.
 </p>
+</details>
 <details>
 <summary>
 <font size="3" color="darkgreen"><b>Solution</b></font>
@@ -876,6 +890,7 @@ Once you have a vector equal to the element-wise multiplication of <code>y</code
 <p>
 <code>loss = np.sum(-np.log(y_hat)*y)</code>
 </p>
+</details>
 <p>Don’t forget to run the cell containing the <code>cross_entropy_loss</code> function once it is solved.</p>
 <p><strong>Now use this function to calculate the loss with the actual values of <span class="math inline">\mathbf{y}</span> and <span class="math inline">\mathbf{\hat y}</span>.</strong></p>
 <div id="8f8bab27" class="cell" data-execution_count="21">
@@ -889,22 +904,26 @@ Once you have a vector equal to the element-wise multiplication of <code>y</code
 <pre><code>1.4650152923611106</code></pre>
 <p>This value is neither good nor bad, which is expected as the neural network hasn’t learned anything yet.</p>
 <p>The actual learning will start during the next phase: backpropagation.</p>
-</details></details></details></section>
+</section>
 <section id="backpropagation" class="level2">
 <h2 class="anchored" data-anchor-id="backpropagation">Backpropagation</h2>
 <p>The formulas that you will implement for backpropagation are the following.</p>
-<p><span class="math display">\begin{align}
+<p><span class="math display">
+\begin{align}
 \frac{\partial J}{\partial \mathbf{W_1}} &amp;= \rm{ReLU}\left ( \mathbf{W_2^\top} (\mathbf{\hat{y}} - \mathbf{y})\right )\mathbf{x}^\top \tag{7}\\
 \frac{\partial J}{\partial \mathbf{W_2}} &amp;= (\mathbf{\hat{y}} - \mathbf{y})\mathbf{h^\top} \tag{8}\\
 \frac{\partial J}{\partial \mathbf{b_1}} &amp;= \rm{ReLU}\left ( \mathbf{W_2^\top} (\mathbf{\hat{y}} - \mathbf{y})\right ) \tag{9}\\
 \frac{\partial J}{\partial \mathbf{b_2}} &amp;= \mathbf{\hat{y}} - \mathbf{y} \tag{10}
-\end{align}</span></p>
+\end{align}
+</span></p>
 <blockquote class="blockquote">
 <p>Note: these formulas are slightly simplified compared to the ones in the lecture as you’re working on a single training example, whereas the lecture provided the formulas for a batch of examples. In the assignment you’ll be implementing the latter.</p>
 </blockquote>
 <p>Let’s start with an easy one.</p>
 <p><strong>Calculate the partial derivative of the loss function with respect to <span class="math inline">\mathbf{b_2}</span>, and store the result in <code>grad_b2</code>.</strong></p>
-<p><span class="math display">\frac{\partial J}{\partial \mathbf{b_2}} = \mathbf{\hat{y}} - \mathbf{y} \tag{10}</span></p>
+<p><span class="math display">
+\frac{\partial J}{\partial \mathbf{b_2}} = \mathbf{\hat{y}} - \mathbf{y} \tag{10}
+</span></p>
 <div id="d18b3ecf" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute vector with partial derivatives of loss function with respect to b2</span></span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>grad_b2 <span class="op">=</span> y_hat <span class="op">-</span> y</span>
@@ -926,7 +945,9 @@ Once you have a vector equal to the element-wise multiplication of <code>y</code
        [ 0.18236353],
        [ 0.20891502]])</code></pre>
 <p><strong>Next, calculate the partial derivative of the loss function with respect to <span class="math inline">\mathbf{W_2}</span>, and store the result in <code>grad_W2</code>.</strong></p>
-<p><span class="math display">\frac{\partial J}{\partial \mathbf{W_2}} = (\mathbf{\hat{y}} - \mathbf{y})\mathbf{h^\top} \tag{8}</span></p>
+<p><span class="math display">
+\frac{\partial J}{\partial \mathbf{W_2}} = (\mathbf{\hat{y}} - \mathbf{y})\mathbf{h^\top} \tag{8}
+</span></p>
 <blockquote class="blockquote">
 <p>Hint: use <code>.T</code> to get a transposed matrix, e.g.&nbsp;<code>h.T</code> returns <span class="math inline">\mathbf{h^\top}</span>.</p>
 </blockquote>
@@ -969,7 +990,9 @@ Once you have a vector equal to the element-wise multiplication of <code>y</code
        [0.        ],
        [0.17045858]])</code></pre>
 <p><strong>Finally, calculate the partial derivative of the loss with respect to <span class="math inline">\mathbf{W_1}</span>, and store it in <code>grad_W1</code>.</strong></p>
-<p><span class="math display">\frac{\partial J}{\partial \mathbf{W_1}} = \rm{ReLU}\left ( \mathbf{W_2^\top} (\mathbf{\hat{y}} - \mathbf{y})\right )\mathbf{x}^\top \tag{7}</span></p>
+<p><span class="math display">
+\frac{\partial J}{\partial \mathbf{W_1}} = \rm{ReLU}\left ( \mathbf{W_2^\top} (\mathbf{\hat{y}} - \mathbf{y})\right )\mathbf{x}^\top \tag{7}
+</span></p>
 <div id="d439646d" class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute matrix with partial derivatives of loss function with respect to W1</span></span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>grad_W1 <span class="op">=</span> np.dot(relu(np.dot(W2.T, y_hat <span class="op">-</span> y)), x.T)</span>
@@ -1007,12 +1030,14 @@ size of grad_b2: (5, 1) (Vx1)</code></pre>
 <section id="gradient-descent" class="level2">
 <h2 class="anchored" data-anchor-id="gradient-descent">Gradient descent</h2>
 <p>During the gradient descent phase, you will update the weights and biases by subtracting <span class="math inline">\alpha</span> times the gradient from the original matrices and vectors, using the following formulas.</p>
-<p><span class="math display">\begin{align}
+<p><span class="math display">
+\begin{align}
 \mathbf{W_1} &amp;:= \mathbf{W_1} - \alpha \frac{\partial J}{\partial \mathbf{W_1}} \tag{11}\\
 \mathbf{W_2} &amp;:= \mathbf{W_2} - \alpha \frac{\partial J}{\partial \mathbf{W_2}} \tag{12}\\
 \mathbf{b_1} &amp;:= \mathbf{b_1} - \alpha \frac{\partial J}{\partial \mathbf{b_1}} \tag{13}\\
 \mathbf{b_2} &amp;:= \mathbf{b_2} - \alpha \frac{\partial J}{\partial \mathbf{b_2}} \tag{14}\\
-\end{align}</span></p>
+\end{align}
+</span></p>
 <p>First, let set a value for <span class="math inline">\alpha</span>.</p>
 <div id="529cbed5" class="cell" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define alpha</span></span>
