@@ -75,6 +75,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -108,7 +111,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-sidebar floating nav-fixed">
+<body class="nav-sidebar floating nav-fixed slimcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -430,21 +433,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c2w1/lab02.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-body" id="quarto-document-content">
+<main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
 
 
 
 
 
-<p>Estimated Time: 20 minutes <br> # Candidates from String Edits Create a list of candidate strings by applying an edit operation <br> ### Imports and Data</p>
-<div id="b1496720" class="cell" data-execution_count="2">
+
+<div class="no-row-height column-margin column-container"><div id="fig-00" class="nolightbox quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="../../images/Course-Logo-2-3.webp" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="../../images/Course-Logo-2-3.webp" class="img-fluid figure-img"></a></p>
+<figcaption>course banner</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1
+</figcaption>
+</figure>
+</div></div><p>Estimated Time: 20 minutes <br> # Candidates from String Edits Create a list of candidate strings by applying an edit operation <br> ### Imports and Data</p>
+<div id="9d2d5249" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># data</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>word <span class="op">=</span> <span class="st">'dearz'</span> <span class="co"># 🦌</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="splits" class="level3">
 <h3 class="anchored" data-anchor-id="splits">Splits</h3>
 <p>Find all the ways you can split a word into 2 parts !</p>
-<div id="89c7fbfb" class="cell" data-execution_count="3">
+<div id="d5375973" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># splits with a loop</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>splits_a <span class="op">=</span> []</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(word)<span class="op">+</span><span class="dv">1</span>):</span>
@@ -461,7 +479,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 ['dearz', '']</code></pre>
 </div>
 </div>
-<div id="db8983e3" class="cell" data-execution_count="4">
+<div id="c7f00f40" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># same splits, done using a list comprehension</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>splits_b <span class="op">=</span> [(word[:i], word[i:]) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(word) <span class="op">+</span> <span class="dv">1</span>)]</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -480,7 +498,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="delete-edit" class="level3">
 <h3 class="anchored" data-anchor-id="delete-edit">Delete Edit</h3>
 <p>Delete a letter from each string in the <code>splits</code> list. <br> What this does is effectivly delete each possible letter from the original word being edited.</p>
-<div id="958adcfc" class="cell" data-execution_count="5">
+<div id="a588f51e" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># deletes with a loop</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>splits <span class="op">=</span> splits_a</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>deletes <span class="op">=</span> []</span>
@@ -499,7 +517,7 @@ dear  &lt;-- delete  z</code></pre>
 </div>
 </div>
 <p>It’s worth taking a closer look at how this is excecuting a ‘delete’. <br> Taking the first item from the <code>splits</code> list :</p>
-<div id="d581b14c" class="cell" data-execution_count="6">
+<div id="354a589c" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># breaking it down</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'word : '</span>, word)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>one_split <span class="op">=</span> splits[<span class="dv">0</span>]</span>
@@ -520,7 +538,7 @@ L + R[1:] :  earz  &lt;-- delete  d</code></pre>
 </div>
 </div>
 <p>So the end result transforms <strong>‘dearz’</strong> to <strong>‘earz’</strong> by deleting the first character. <br> And you use a <strong>loop</strong> (code block above) or a <strong>list comprehension</strong> (code block below) to do <br> this for the entire <code>splits</code> list.</p>
-<div id="72f6df8a" class="cell" data-execution_count="7">
+<div id="d1d93258" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># deletes with a list comprehension</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>splits <span class="op">=</span> splits_a</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>deletes <span class="op">=</span> [L <span class="op">+</span> R[<span class="dv">1</span>:] <span class="cf">for</span> L, R <span class="kw">in</span> splits <span class="cf">if</span> R]</span>
@@ -543,7 +561,7 @@ dear</code></pre>
 <section id="ungraded-exercise" class="level3">
 <h3 class="anchored" data-anchor-id="ungraded-exercise">Ungraded Exercise</h3>
 <p>You now have a list of <strong><em>candidate strings</em></strong> created after performing a <strong>delete</strong> edit. <br> Next step will be to filter this list for <strong><em>candidate words</em></strong> found in a vocabulary. <br> Given the example vocab below, can you think of a way to create a list of candidate words ? <br> Remember, you already have a list of candidate strings, some of which are certainly not actual words you might find in your vocabulary ! <br> <br> So from the above list <strong>earz, darz, derz, deaz, dear</strong>. <br> You’re really only interested in <strong>dear</strong>.</p>
-<div id="fd0c5abc" class="cell" data-execution_count="8">
+<div id="3de94eb9" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>vocab <span class="op">=</span> [<span class="st">'dean'</span>,<span class="st">'deer'</span>,<span class="st">'dear'</span>,<span class="st">'fries'</span>,<span class="st">'and'</span>,<span class="st">'coke'</span>]</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>edits <span class="op">=</span> <span class="bu">list</span>(deletes)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1167,6 +1185,38 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"fade","descPosition":"right","loop":true,"openEffect":"fade","selector":".lightbox","skin":"my-css-class"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

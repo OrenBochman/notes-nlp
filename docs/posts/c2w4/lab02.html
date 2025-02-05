@@ -494,12 +494,12 @@ window.Quarto = {
 
 
 
-<div class="no-row-height column-margin column-container"><div id="fig-00" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div class="no-row-height column-margin column-container"><div id="fig-00" class="nolightbox quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="../../images/banner_c2.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="../../images/banner_c2.jpg" class="img-fluid figure-img"></a></p>
+<p><a href="../../images/Course-Logo-2-3.webp" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="../../images/Course-Logo-2-3.webp" class="img-fluid figure-img"></a></p>
 <figcaption>course banner</figcaption>
 </figure>
 </div>
@@ -510,7 +510,7 @@ Figure&nbsp;1
 </figure>
 </div></div><p>In this lecture notebook you will be given an introduction to the continuous bag-of-words model, its activation functions and some considerations when working with Numpy.</p>
 <p>Let’s dive into it!</p>
-<div id="e083f93a" class="cell" data-execution_count="1">
+<div id="f20da748" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="the-continuous-bag-of-words-model" class="level1">
@@ -530,7 +530,7 @@ Figure&nbsp;1
 \mathbf{h} &amp;= \mathrm{ReLU}(\mathbf{z_1})  \tag{2} \\
 \end{align}</span></p>
 <p>Let’s fix a value for <span class="math inline">\mathbf{z_1}</span> as a working example.</p>
-<div id="f1f19906" class="cell" data-execution_count="2">
+<div id="66a52368" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a random seed so all random outcomes can be reproduced</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">10</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -550,12 +550,12 @@ Figure&nbsp;1
 <p>Notice that using numpy’s <code>random.rand</code> function returns a numpy array filled with values taken from a uniform distribution over [0, 1). Numpy allows vectorization so each value is multiplied by 10 and then substracted 5.</p>
 <p>To get the ReLU of this vector, you want all the negative values to become zeros.</p>
 <p>First create a copy of this vector.</p>
-<div id="00b197ab" class="cell" data-execution_count="3">
+<div id="3c951711" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create copy of vector and save it in the 'h' variable</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>h <span class="op">=</span> z_1.copy()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now determine which of its values are negative.</p>
-<div id="d8a9a460" class="cell" data-execution_count="4">
+<div id="3e3cd187" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Determine which values met the criteria (this is possible because of vectorization)</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>h <span class="op">&lt;</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
@@ -567,12 +567,12 @@ Figure&nbsp;1
 </div>
 </div>
 <p>You can now simply set all of the values which are negative to 0.</p>
-<div id="e13e4290" class="cell" data-execution_count="5">
+<div id="78d2b18d" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Slice the array or vector. This is the same as applying ReLU to it</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>h[h <span class="op">&lt;</span> <span class="dv">0</span>] <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>And that’s it: you have the ReLU of <span class="math inline">\mathbf{z_1}</span>!</p>
-<div id="1594c5bf" class="cell" data-execution_count="6">
+<div id="9664239b" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the vector after ReLU</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>h</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
@@ -584,7 +584,7 @@ Figure&nbsp;1
 </div>
 </div>
 <p><strong>Now implement ReLU as a function.</strong></p>
-<div id="f7f72e60" class="cell" data-execution_count="7">
+<div id="6a96a306" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the 'relu' function that will include the steps previously seen</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> relu(z):</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> z.copy()</span>
@@ -592,7 +592,7 @@ Figure&nbsp;1
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>And check that it’s working.</strong></p>
-<div id="90eda8a2" class="cell" data-execution_count="8">
+<div id="4ceb3c3a" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a new vector and save it in the 'z' variable</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> np.array([[<span class="op">-</span><span class="fl">1.25459881</span>], [ <span class="fl">4.50714306</span>], [ <span class="fl">2.31993942</span>], [ <span class="fl">0.98658484</span>], [<span class="op">-</span><span class="fl">3.4398136</span> ]])</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -623,7 +623,7 @@ Figure&nbsp;1
 <p>To calculate softmax of a vector <span class="math inline">\mathbf{z}</span>, the <span class="math inline">i</span>-th component of the resulting vector is given by:</p>
 <p><span class="math display"> \textrm{softmax}(\textbf{z})_i = \frac{e^{z_i} }{\sum\limits_{j=1}^{V} e^{z_j} }  \tag{5} </span></p>
 <p>Let’s work through an example.</p>
-<div id="8e56f92f" class="cell" data-execution_count="9">
+<div id="b94cb7b6" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a new vector and save it in the 'z' variable</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> np.array([<span class="dv">9</span>, <span class="dv">8</span>, <span class="dv">11</span>, <span class="dv">10</span>, <span class="fl">8.5</span>])</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -634,7 +634,7 @@ Figure&nbsp;1
 </div>
 </div>
 <p>You’ll need to calculate the exponentials of each element, both for the numerator and for the denominator.</p>
-<div id="104c3d41" class="cell" data-execution_count="10">
+<div id="232ed271" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Save exponentials of the values in a new vector</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>e_z <span class="op">=</span> np.exp(z)</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -646,7 +646,7 @@ Figure&nbsp;1
 </div>
 </div>
 <p>The denominator is equal to the sum of these exponentials.</p>
-<div id="a052ce0d" class="cell" data-execution_count="11">
+<div id="dd2ede06" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the sum of the exponentials</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>sum_e_z <span class="op">=</span> np.<span class="bu">sum</span>(e_z)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -657,7 +657,7 @@ Figure&nbsp;1
 </div>
 </div>
 <p>And the value of the first element of <span class="math inline">\textrm{softmax}(\textbf{z})</span> is given by:</p>
-<div id="3a9421a1" class="cell" data-execution_count="12">
+<div id="b5d9daec" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print softmax value of the first element in the original vector</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>e_z[<span class="dv">0</span>]<span class="op">/</span>sum_e_z</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="12">
@@ -666,7 +666,7 @@ Figure&nbsp;1
 </div>
 <p>This is for one element. You can use numpy’s vectorized operations to calculate the values of all the elements of the <span class="math inline">\textrm{softmax}(\textbf{z})</span> vector in one go.</p>
 <p><strong>Implement the softmax function.</strong></p>
-<div id="784f20ff" class="cell" data-execution_count="13">
+<div id="ddbcddb5" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the 'softmax' function that will include the steps previously seen</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> softmax(z):</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    e_z <span class="op">=</span> np.exp(z)</span>
@@ -674,7 +674,7 @@ Figure&nbsp;1
 <span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> e_z <span class="op">/</span> sum_e_z</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>Now check that it works.</strong></p>
-<div id="d9ffb36b" class="cell" data-execution_count="14">
+<div id="751648e8" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print softmax values for original vector</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>softmax([<span class="dv">9</span>, <span class="dv">8</span>, <span class="dv">11</span>, <span class="dv">10</span>, <span class="fl">8.5</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
@@ -684,7 +684,7 @@ Figure&nbsp;1
 <p>Expected output:</p>
 <pre><code>array([0.08276948, 0.03044919, 0.61158833, 0.22499077, 0.05020223])</code></pre>
 <p>Notice that the sum of all these values is equal to 1.</p>
-<div id="07920065" class="cell" data-execution_count="15">
+<div id="5f85140f" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assert that the sum of the softmax values is equal to 1</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>np.<span class="bu">sum</span>(softmax([<span class="dv">9</span>, <span class="dv">8</span>, <span class="dv">11</span>, <span class="dv">10</span>, <span class="fl">8.5</span>])) <span class="op">==</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="15">
@@ -697,7 +697,7 @@ Figure&nbsp;1
 <h2 class="anchored" data-anchor-id="dimensions-1-d-arrays-vs-2-d-column-vectors">Dimensions: 1-D arrays vs 2-D column vectors</h2>
 <p>Before moving on to implement forward propagation, backpropagation, and gradient descent in the next lecture notebook, let’s have a look at the dimensions of the vectors you’ve been handling until now.</p>
 <p>Create a vector of length <span class="math inline">V</span> filled with zeros.</p>
-<div id="6696e634" class="cell" data-execution_count="16">
+<div id="c61e0f48" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define V. Remember this was the size of the vocabulary in the previous lecture notebook</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>V <span class="op">=</span> <span class="dv">5</span></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -711,7 +711,7 @@ Figure&nbsp;1
 </div>
 </div>
 <p>This is a 1-dimensional array, as revealed by the <code>.shape</code> property of the array.</p>
-<div id="bdeec669" class="cell" data-execution_count="17">
+<div id="fad427fd" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print vector's shape</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>x_array.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="17">
@@ -720,7 +720,7 @@ Figure&nbsp;1
 </div>
 <p>To perform matrix multiplication in the next steps, you actually need your column vectors to be represented as a matrix with one column. In numpy, this matrix is represented as a 2-dimensional array.</p>
 <p>The easiest way to convert a 1D vector to a 2D column matrix is to set its <code>.shape</code> property to the number of rows and one column, as shown in the next cell.</p>
-<div id="f335b68e" class="cell" data-execution_count="18">
+<div id="72b75128" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy vector</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>x_column_vector <span class="op">=</span> x_array.copy()</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -738,7 +738,7 @@ Figure&nbsp;1
 </div>
 </div>
 <p>The shape of the resulting “vector” is:</p>
-<div id="d33e036f" class="cell" data-execution_count="19">
+<div id="31322b82" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print vector's shape</span></span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>x_column_vector.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="19">

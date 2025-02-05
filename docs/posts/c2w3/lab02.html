@@ -75,6 +75,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -151,7 +154,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-sidebar floating nav-fixed">
+<body class="nav-sidebar floating nav-fixed slimcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -218,13 +221,13 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-right">
+    <div class="quarto-title column-body">
       
                       </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page-right">
+  <div class="quarto-title-meta column-body">
 
       
       <div>
@@ -464,18 +467,33 @@ window.Quarto = {
         
     </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
+<main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
 
 
 
 
 
-<p><a name="building-language-model"></a> # Building the language model</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-00" class="nolightbox quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="../../images/Course-Logo-2-3.webp" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="../../images/Course-Logo-2-3.webp" class="img-fluid figure-img"></a></p>
+<figcaption>course banner</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1
+</figcaption>
+</figure>
+</div></div><p><a name="building-language-model"></a> # Building the language model</p>
 <p><a name="count-matrix"></a> ### Count matrix</p>
 <p>To calculate the n-gram probability, you will need to count frequencies of n-grams and n-gram prefixes in the training dataset. In some of the code assignment exercises, you will store the n-gram frequencies in a dictionary.</p>
 <p>In other parts of the assignment, you will build a count matrix that keeps counts of (n-1)-gram prefix followed by all possible last words in the vocabulary.</p>
 <p>The following code shows how to check, retrieve and update counts of n-grams in the word count dictionary.</p>
-<div id="d918dbb1" class="cell" data-execution_count="2">
+<div id="897744ab" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># manipulate n_gram count dictionary</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>n_gram_counts <span class="op">=</span> {</span>
@@ -504,7 +522,7 @@ n-gram ('i', 'am', 'learning') found</code></pre>
 </div>
 </div>
 <p>The next code snippet shows how to merge two tuples in Python. That will be handy when creating the n-gram from the prefix and the last word.</p>
-<div id="aac6d534" class="cell" data-execution_count="3">
+<div id="7f909725" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># concatenate tuple for prefix and tuple with the last word to create the n_gram</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>prefix <span class="op">=</span> (<span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'happy'</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>word <span class="op">=</span> <span class="st">'because'</span></span>
@@ -517,7 +535,7 @@ n-gram ('i', 'am', 'learning') found</code></pre>
 </div>
 </div>
 <p>In the lecture, you’ve seen that the count matrix could be made in a single pass through the corpus. Here is one approach to do that.</p>
-<div id="3a961e99" class="cell" data-execution_count="4">
+<div id="d74595f5" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> defaultdict</span>
@@ -584,7 +602,7 @@ n-gram ('i', 'am', 'learning') found</code></pre>
 </div>
 <p><a name="probability-matrix"></a> ### Probability matrix The next step is to build a probability matrix from the count matrix.</p>
 <p>You can use an object dataframe from library pandas and its methods <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.sum.html?highlight=sum#pandas.DataFrame.sum">sum</a> and <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.div.html">div</a> to normalize the cell counts with the sum of the respective rows.</p>
-<div id="16ecfbdb" class="cell" data-execution_count="5">
+<div id="defd5d70" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create the probability matrix from the count matrix</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>row_sums <span class="op">=</span> count_matrix.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># delete each row by its sum</span></span>
@@ -601,7 +619,7 @@ n-gram ('i', 'am', 'learning') found</code></pre>
 </div>
 </div>
 <p>The probability matrix now helps you to find a probability of an input trigram.</p>
-<div id="3544ecee" class="cell" data-execution_count="6">
+<div id="01b3c394" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># find the probability of a trigram in the probability matrix</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>trigram <span class="op">=</span> (<span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'happy'</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -624,7 +642,7 @@ trigram_probability: 0.5</code></pre>
 </div>
 <p>In the code assignment, you will be searching for the most probable words starting with a prefix. You can use the method <a href="https://docs.python.org/3/library/stdtypes.html#str.startswith">str.startswith</a> to test if a word starts with a prefix.</p>
 <p>Here is a code snippet showing how to use this method.</p>
-<div id="68ccc5c4" class="cell" data-execution_count="7">
+<div id="b269a67d" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># lists all words in vocabulary starting with a given prefix</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>vocabulary <span class="op">=</span> [<span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'happy'</span>, <span class="st">'because'</span>, <span class="st">'learning'</span>, <span class="st">'.'</span>, <span class="st">'have'</span>, <span class="st">'you'</span>, <span class="st">'seen'</span>,<span class="st">'it'</span>, <span class="st">'?'</span>]</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>starts_with <span class="op">=</span> <span class="st">'ha'</span></span>
@@ -643,7 +661,7 @@ have</code></pre>
 <p><a name="language-model-evaluation"></a> ## Language model evaluation <a name="train-validation-test-split"></a> ### Train/validation/test split In the videos, you saw that to evaluate language models, you need to keep some of the corpus data for validation and testing.</p>
 <p>The choice of the test and validation data should correspond as much as possible to the distribution of the data coming from the actual application. If nothing but the input corpus is known, then random sampling from the corpus is used to define the test and validation subset.</p>
 <p>Here is a code similar to what you’ll see in the code assignment. The following function allows you to randomly sample the input data and return train/validation/test subsets in a split given by the method parameters.</p>
-<div id="d82c7c47" class="cell" data-execution_count="8">
+<div id="bfa5506b" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we only need train and validation %, test is the remainder</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_validation_test_split(data, train_percent, validation_percent):</span>
@@ -711,7 +729,7 @@ PP(W)=\sqrt[M]{\prod_{i=1}^{m}{\frac{1}{P(w_i|w_{i-1})}}}
 \sqrt[M]{\frac{1}{x}} = x^{-\frac{1}{M}}
 \end{equation*}</span></p>
 <p>Here is a code that will help you with the formula.</p>
-<div id="a9a0402d" class="cell" data-execution_count="9">
+<div id="552369aa" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># to calculate the exponent, use the following syntax</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="dv">10</span> <span class="op">**</span> (<span class="op">-</span><span class="dv">250</span>)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="dv">100</span></span>
@@ -1316,6 +1334,38 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"fade","descPosition":"right","loop":true,"openEffect":"fade","selector":".lightbox","skin":"my-css-class"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

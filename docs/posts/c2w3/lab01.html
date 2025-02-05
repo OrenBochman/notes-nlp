@@ -498,12 +498,12 @@ window.Quarto = {
 
 
 
-<div class="no-row-height column-margin column-container"><div id="fig-00" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div class="no-row-height column-margin column-container"><div id="fig-00" class="nolightbox quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="../../images/banner_c2.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="../../images/banner_c2.jpg" class="img-fluid figure-img"></a></p>
+<p><a href="../../images/Course-Logo-2-3.webp" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="../../images/Course-Logo-2-3.webp" class="img-fluid figure-img"></a></p>
 <figcaption>course banner</figcaption>
 </figure>
 </div>
@@ -517,7 +517,7 @@ Figure&nbsp;1
 <p>The input corpus in this week’s assignment is a continuous text that needs some preprocessing so that you can start calculating the n-gram probabilities.</p>
 <p>Some common preprocessing steps for the language models include: - lowercasing the text - remove special characters - split text to list of sentences - split sentence into list words</p>
 <p>Can you note the similarities and differences among the preprocessing steps shown during the Course 1 of this specialization?</p>
-<div id="1c75f4e7" class="cell" data-execution_count="1">
+<div id="c85e8053" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> nltk               <span class="co"># NLP toolkit</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re                 <span class="co"># Library for Regular expression operations</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -535,7 +535,7 @@ Figure&nbsp;1
 <h3 class="anchored" data-anchor-id="lowercase">Lowercase</h3>
 <p>Words at the beginning of a sentence and names start with a capital letter. However, when counting words, you want to treat them the same as if they appeared in the middle of a sentence.</p>
 <p>You can do that by converting the text to lowercase using [str.lowercase] (https://docs.python.org/3/library/stdtypes.html?highlight=split#str.lower).</p>
-<div id="6e09b83f" class="cell" data-execution_count="2">
+<div id="166f0431" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># change the corpus to lowercase</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>corpus <span class="op">=</span> <span class="st">"Learning% makes 'me' happy. I am happy be-cause I am learning! :)"</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>corpus <span class="op">=</span> corpus.lower()</span>
@@ -551,7 +551,7 @@ Figure&nbsp;1
 <h3 class="anchored" data-anchor-id="special-characters">Remove special charactes</h3>
 <p>Some of the characters may need to be removed from the corpus before we start processing the text to find n-grams.</p>
 <p>Often, the special characters such as double quotes ‘“’ or dash ‘-’ are removed, and the interpunction such as full stop ‘.’ or question mark ‘?’ are left in the corpus.</p>
-<div id="173d39e8" class="cell" data-execution_count="3">
+<div id="1e5bb8a6" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># remove special characters</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>corpus <span class="op">=</span> <span class="st">"learning% makes 'me' happy. i am happy be-cause i am learning! :)"</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>corpus <span class="op">=</span> re.sub(<span class="vs">r"[^a-zA-Z0-9.?! ]+"</span>, <span class="st">""</span>, corpus)</span>
@@ -567,7 +567,7 @@ Figure&nbsp;1
 <p>In the assignment, the sentences in the corpus are separated by a special delimiter . You will need to split the corpus into an array of sentences using this delimiter. One way to do that is by using the <a href="https://docs.python.org/3/library/stdtypes.html?highlight=split#str.split">str.split</a> method.</p>
 <p>The following examples illustrate how to use this method. The code shows: - how to split a string containing a date into an array of date parts - how to split a string with time into an array containing hours, minutes and seconds</p>
 <p>Also, note what happens if there are several back-to-back delimiters like between “May” and “9”.</p>
-<div id="fc8e0c8f" class="cell" data-execution_count="4">
+<div id="9fab13ee" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># split text by a delimiter to array</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>input_date<span class="op">=</span><span class="st">"Sat May  9 07:33:35 CEST 2020"</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -590,7 +590,7 @@ time parts = ['07', '33', '35']</code></pre>
 <p>Once you have a list of sentences, the next step is to split each sentence into a list of words.</p>
 <p>This process could be done in several ways, even using the str.split method described above, but we will use the NLTK library <a href="https://www.nltk.org/">nltk</a> to help us with that.</p>
 <p>In the code assignment, you will use the method <a href="https://www.nltk.org/api/nltk.tokenize.html#nltk.tokenize.punkt.PunktLanguageVars.word_tokenize">word_tokenize</a> to split your sentence into a list of words. Let us try the method in an example.</p>
-<div id="a6746305" class="cell" data-execution_count="5">
+<div id="ee0151c2" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tokenize the sentence into an array of words</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>sentence <span class="op">=</span> <span class="st">'i am happy because i am learning.'</span></span>
@@ -601,7 +601,7 @@ time parts = ['07', '33', '35']</code></pre>
 </div>
 </div>
 <p>Now that the sentence is tokenized, you can work with each word in the sentence separately. This will be useful later when creating and counting N-grams. In the following code example, you will see how to find the length of each word.</p>
-<div id="c8e91837" class="cell" data-execution_count="6">
+<div id="e60a20e3" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># find length of each word in the tokenized sentence</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>sentence <span class="op">=</span> [<span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'happy'</span>, <span class="st">'because'</span>, <span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'learning'</span>, <span class="st">'.'</span>]</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>word_lengths <span class="op">=</span> [(word, <span class="bu">len</span>(word)) <span class="cf">for</span> word <span class="kw">in</span> sentence] <span class="co"># Create a list with the word lengths using a list comprehension</span></span>
@@ -620,7 +620,7 @@ time parts = ['07', '33', '35']</code></pre>
 <p>The next step is to build n-grams from the tokenized sentences.</p>
 <p>A sliding window of size n-words can generate the n-grams. The window scans the list of words starting at the sentence beginning, moving by a step of one word until it reaches the end of the sentence.</p>
 <p>Here is an example method that prints all trigrams in the given sentence.</p>
-<div id="3fb60bb5" class="cell" data-execution_count="7">
+<div id="29b50f2f" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sentence_to_trigram(tokenized_sentence):</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Prints all trigrams in the given tokenized sentence.</span></span>
@@ -658,7 +658,7 @@ time parts = ['07', '33', '35']</code></pre>
 P(w_n|w_1^{n-1})=\frac{C(w_1^n)}{C(w_1^{n-1})}
 \end{equation*}</span></p>
 <p>The following code shows how to get an (n-1)-gram prefix from n-gram on an example of getting trigram from a 4-gram.</p>
-<div id="a0296720" class="cell" data-execution_count="8">
+<div id="017a8f91" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get trigram prefix from a 4-gram</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>fourgram <span class="op">=</span> [<span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'happy'</span>,<span class="st">'because'</span>]</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>trigram <span class="op">=</span> fourgram[<span class="dv">0</span>:<span class="op">-</span><span class="dv">1</span>] <span class="co"># Get the elements from 0, included, up to the last element, not included.</span></span>
@@ -677,7 +677,7 @@ P(w_n|w_1^{n-1})=\frac{C(w_1^n)}{C(w_1^{n-1})}
 </ul>
 <p>For n-grams, we must prepend n-1 of characters at the begining of the sentence.</p>
 <p>Let us have a look at how you can implement this in code.</p>
-<div id="35c5bac8" class="cell" data-execution_count="9">
+<div id="e66ef138" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># when working with trigrams, you need to prepend 2 &lt;s&gt; and append one &lt;/s&gt;</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">3</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>tokenized_sentence <span class="op">=</span> [<span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'happy'</span>, <span class="st">'because'</span>, <span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'learning'</span>, <span class="st">'.'</span>]</span>

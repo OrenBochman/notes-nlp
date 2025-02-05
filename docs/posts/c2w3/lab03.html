@@ -75,6 +75,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -151,7 +154,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-sidebar floating nav-fixed">
+<body class="nav-sidebar floating nav-fixed slimcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -218,13 +221,13 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-right">
+    <div class="quarto-title column-body">
       
                       </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page-right">
+  <div class="quarto-title-meta column-body">
 
       
       <div>
@@ -464,16 +467,31 @@ window.Quarto = {
         
     </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-right" id="quarto-document-content">
+<main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
 
 
 
 
 
-<p><a name="oov-words"></a> # Out of vocabulary words (OOV) <a name="vocabulary"></a> ### Vocabulary In the video about the out of vocabulary words, you saw that the first step in dealing with the unknown words is to decide which words belong to the vocabulary.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-00" class="nolightbox quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="../../images/Course-Logo-2-3.webp" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="../../images/Course-Logo-2-3.webp" class="img-fluid figure-img"></a></p>
+<figcaption>course banner</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1
+</figcaption>
+</figure>
+</div></div><p><a name="oov-words"></a> # Out of vocabulary words (OOV) <a name="vocabulary"></a> ### Vocabulary In the video about the out of vocabulary words, you saw that the first step in dealing with the unknown words is to decide which words belong to the vocabulary.</p>
 <p>In the code assignment, you will try the method based on minimum frequency - all words appearing in the training set with frequency &gt;= minimum frequency are added to the vocabulary.</p>
 <p>Here is a code for the other method, where the target size of the vocabulary is known in advance and the vocabulary is filled with words based on their frequency in the training set.</p>
-<div id="b417918e" class="cell" data-execution_count="2">
+<div id="d93bfe46" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># build the vocabulary from M most frequent words</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># use Counter object from the collections library to find M most common words</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
@@ -497,7 +515,7 @@ window.Quarto = {
 </div>
 </div>
 <p>Now that the vocabulary is ready, you can use it to replace the OOV words with <span class="math inline">&lt;UNK&gt;</span> as you saw in the lecture.</p>
-<div id="8a3d2b7a" class="cell" data-execution_count="3">
+<div id="7732d0c3" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test if words in the input sentences are in the vocabulary, if OOV, print &lt;UNK&gt;</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sentence <span class="op">=</span> [<span class="st">'am'</span>, <span class="st">'i'</span>, <span class="st">'learning'</span>]</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>output_sentence <span class="op">=</span> []</span>
@@ -518,7 +536,7 @@ output sentence: ['&lt;UNK&gt;', '&lt;UNK&gt;', 'learning']</code></pre>
 </div>
 <p>When building the vocabulary in the code assignment, you will need to know how to iterate through the word counts dictionary.</p>
 <p>Here is an example of a similar task showing how to go through all the word counts and print out only the words with the frequency equal to f.&nbsp;</p>
-<div id="b2a1002c" class="cell" data-execution_count="4">
+<div id="8a256f02" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># iterate through all word counts and print words with given frequency f</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> <span class="dv">3</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -534,7 +552,7 @@ learning</code></pre>
 </div>
 <p>As mentioned in the videos, if there are many <span class="math inline">&lt;UNK&gt;</span> replacements in your train and test set, you may get a very low perplexity even though the model itself wouldn’t be very helpful.</p>
 <p>Here is a sample code showing this unwanted effect.</p>
-<div id="acf7bcb8" class="cell" data-execution_count="5">
+<div id="cfe46b5e" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># many &lt;unk&gt; low perplexity </span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>training_set <span class="op">=</span> [<span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'happy'</span>, <span class="st">'because'</span>,<span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'learning'</span>, <span class="st">'.'</span>]</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>training_set_unk <span class="op">=</span> [<span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'&lt;UNK&gt;'</span>, <span class="st">'&lt;UNK&gt;'</span>,<span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'&lt;UNK&gt;'</span>, <span class="st">'&lt;UNK&gt;'</span>]</span>
@@ -573,7 +591,7 @@ perplexity for the training set with &lt;UNK&gt;: 1.0</code></pre>
 <p>Add-k smoothing was described as a method for smoothing of the probabilities for previously unseen n-grams.</p>
 <p>Here is an example code that shows how to implement add-k smoothing but also highlights a disadvantage of this method. The downside is that n-grams not previously seen in the training dataset get too high probability.</p>
 <p>In the code output bellow you’ll see that a phrase that is in the training set gets the same probability as an unknown phrase.</p>
-<div id="35c92ef2" class="cell" data-execution_count="6">
+<div id="87ba0390" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_k_smooting_probability(k, vocabulary_size, n_gram_count, n_gram_prefix_count):</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    numerator <span class="op">=</span> n_gram_count <span class="op">+</span> k</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    denominator <span class="op">=</span> n_gram_prefix_count <span class="op">+</span> k <span class="op">*</span> vocabulary_size</span>
@@ -598,7 +616,7 @@ probability_unknown_trigram: 0.2</code></pre>
 </div>
 <p><a name="backoff"></a> ### Back-off Back-off is a model generalization method that leverages information from lower order n-grams in case information about the high order n-grams is missing. For example, if the probability of an trigram is missing, use bigram information and so on.</p>
 <p>Here you can see an example of a simple back-off technique.</p>
-<div id="f8818edc" class="cell" data-execution_count="7">
+<div id="630be00a" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pre-calculated probabilities of all types of n-grams</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>trigram_probabilities <span class="op">=</span> {(<span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'happy'</span>): <span class="dv">0</span>}</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>bigram_probabilities <span class="op">=</span> {( <span class="st">'am'</span>, <span class="st">'happy'</span>): <span class="fl">0.3</span>}</span>
@@ -648,7 +666,7 @@ probability for trigram ('are', 'you', 'happy') estimated as 0.06400000000000002
 </div>
 <p><a name="interpolation"></a> ### Interpolation The other method for using probabilities of lower order n-grams is the interpolation. In this case, you use weighted probabilities of n-grams of all orders every time, not just when high order information is missing.</p>
 <p>For example, you always combine trigram, bigram and unigram probability. You can see how this in the following code snippet.</p>
-<div id="106eb12b" class="cell" data-execution_count="8">
+<div id="23e8cbbb" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pre-calculated probabilities of all types of n-grams</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>trigram_probabilities <span class="op">=</span> {(<span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'happy'</span>): <span class="fl">0.15</span>}</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>bigram_probabilities <span class="op">=</span> {( <span class="st">'am'</span>, <span class="st">'happy'</span>): <span class="fl">0.3</span>}</span>
@@ -1282,6 +1300,38 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"fade","descPosition":"right","loop":true,"openEffect":"fade","selector":".lightbox","skin":"my-css-class"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

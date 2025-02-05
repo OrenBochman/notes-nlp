@@ -523,12 +523,12 @@ window.Quarto = {
 
 
 
-<div class="no-row-height column-margin column-container"><div id="fig-00" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div class="no-row-height column-margin column-container"><div id="fig-00" class="nolightbox quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="../../images/banner_c2.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="../../images/banner_c2.jpg" class="img-fluid figure-img"></a></p>
+<p><a href="../../images/Course-Logo-2-3.webp" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="../../images/Course-Logo-2-3.webp" class="img-fluid figure-img"></a></p>
 <figcaption>course banner</figcaption>
 </figure>
 </div>
@@ -540,14 +540,14 @@ Figure&nbsp;1
 </div></div><p>In this ungraded notebook, you’ll try out all the individual techniques that you learned about in the lecture. Practicing on small examples will prepare you for the graded assignment, where you will combine the techniques in more advanced ways to create word embeddings from a real-life corpus.</p>
 <p>This notebook is made of two main parts: data preparation, and the continuous bag-of-words (CBOW) model.</p>
 <p>To get started, import and initialize all the libraries you will need.</p>
-<div id="27e90dfc" class="cell" data-execution_count="1">
+<div id="ac0fff3b" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>{sys.executable} <span class="op">-</span>m pip install emoji</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Requirement already satisfied: emoji in /home/oren/work/notes/notes-nlp/.venv/lib/python3.10/site-packages (1.4.1)</code></pre>
 </div>
 </div>
-<div id="c1b63830" class="cell" data-execution_count="2">
+<div id="5d768719" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> nltk</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nltk.tokenize <span class="im">import</span> word_tokenize</span>
@@ -576,11 +576,11 @@ Figure&nbsp;1
 <section id="cleaning-and-tokenization" class="level2">
 <h2 class="anchored" data-anchor-id="cleaning-and-tokenization">Cleaning and tokenization</h2>
 <p>To demonstrate the cleaning and tokenization process, consider a corpus that contains emojis and various punctuation signs.</p>
-<div id="17ff5b98" class="cell" data-execution_count="3">
+<div id="c83756cf" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>corpus <span class="op">=</span> <span class="st">'Who ❤️ "word embeddings" in 2020? I do!!!'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>First, replace all interrupting punctuation signs — such as commas and exclamation marks — with periods.</p>
-<div id="ff042d42" class="cell" data-execution_count="4">
+<div id="304cd37e" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Corpus:  </span><span class="sc">{</span>corpus<span class="sc">}</span><span class="ss">'</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> re.sub(<span class="vs">r'[,!?;-]+'</span>, <span class="st">'.'</span>, corpus)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'After cleaning punctuation:  </span><span class="sc">{</span>data<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -590,7 +590,7 @@ After cleaning punctuation:  Who ❤️ "word embeddings" in 2020. I do.</code><
 </div>
 </div>
 <p>Next, use NLTK’s tokenization engine to split the corpus into individual tokens.</p>
-<div id="76c5252e" class="cell" data-execution_count="5">
+<div id="916da575" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Initial string:  </span><span class="sc">{</span>data<span class="sc">}</span><span class="ss">'</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> nltk.word_tokenize(data)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'After tokenization:  </span><span class="sc">{</span>data<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -600,7 +600,7 @@ After tokenization:  ['Who', '❤️', '``', 'word', 'embeddings', "''", 'in', '
 </div>
 </div>
 <p>Finally, as you saw in the lecture, get rid of numbers and punctuation other than periods, and convert all the remaining tokens to lowercase.</p>
-<div id="977aac00" class="cell" data-execution_count="6">
+<div id="bb5a4c23" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Initial list of tokens:  </span><span class="sc">{</span>data<span class="sc">}</span><span class="ss">'</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> [ ch.lower() <span class="cf">for</span> ch <span class="kw">in</span> data</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>         <span class="cf">if</span> ch.isalpha()</span>
@@ -615,7 +615,7 @@ After cleaning:  ['who', '❤️', 'word', 'embeddings', 'in', '.', 'i', 'do', '
 </div>
 <p>Note that the heart emoji is considered as a token just like any normal word.</p>
 <p>Now let’s streamline the cleaning and tokenization process by wrapping the previous steps in a function.</p>
-<div id="6fdb7258" class="cell" data-execution_count="7">
+<div id="5700433b" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> tokenize(corpus):</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> re.sub(<span class="vs">r'[,!?;-]+'</span>, <span class="st">'.'</span>, corpus)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> nltk.word_tokenize(data)  <span class="co"># tokenize string to words</span></span>
@@ -627,7 +627,7 @@ After cleaning:  ['who', '❤️', 'word', 'embeddings', 'in', '.', 'i', 'do', '
 <span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Apply this function to the corpus that you’ll be working on in the rest of this notebook: “I am happy because I am learning”</p>
-<div id="097f5b7f" class="cell" data-execution_count="8">
+<div id="5613e2ab" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>corpus <span class="op">=</span> <span class="st">'I am happy because I&nbsp;am learning'</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Corpus:  </span><span class="sc">{</span>corpus<span class="sc">}</span><span class="ss">'</span>)</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>words <span class="op">=</span> tokenize(corpus)</span>
@@ -638,7 +638,7 @@ Words (tokens):  ['i', 'am', 'happy', 'because', 'i', 'am', 'learning']</code></
 </div>
 </div>
 <p><strong>Now try it out yourself with your own sentence.</strong></p>
-<div id="da67eb4e" class="cell" data-execution_count="9">
+<div id="23017f60" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>tokenize(<span class="st">"Now it's your turn: try with your own sentence!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="9">
 <pre><code>['now', 'it', 'your', 'turn', 'try', 'with', 'your', 'own', 'sentence', '.']</code></pre>
@@ -649,7 +649,7 @@ Words (tokens):  ['i', 'am', 'happy', 'because', 'i', 'am', 'learning']</code></
 <h2 class="anchored" data-anchor-id="sliding-window-of-words">Sliding window of words</h2>
 <p>Now that you have transformed the corpus into a list of clean tokens, you can slide a window of words across this list. For each window you can extract a center word and the context words.</p>
 <p>The <code>get_windows</code> function in the next cell was introduced in the lecture.</p>
-<div id="02f13c8d" class="cell" data-execution_count="10">
+<div id="76a0b2aa" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_windows(words, C):</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    i <span class="op">=</span> C</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> i <span class="op">&lt;</span> <span class="bu">len</span>(words) <span class="op">-</span> C:</span>
@@ -660,7 +660,7 @@ Words (tokens):  ['i', 'am', 'happy', 'because', 'i', 'am', 'learning']</code></
 </div>
 <p>The first argument of this function is a list of words (or tokens). The second argument, <code>C</code>, is the context half-size. Recall that for a given center word, the context words are made of <code>C</code> words to the left and <code>C</code> words to the right of the center word.</p>
 <p>Here is how you can use this function to extract context words and center words from a list of tokens. These context and center words will make up the training set that you will use to train the CBOW model.</p>
-<div id="253adac0" class="cell" data-execution_count="11">
+<div id="76047b17" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x, y <span class="kw">in</span> get_windows(</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>            [<span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'happy'</span>, <span class="st">'because'</span>, <span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'learning'</span>],</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>            <span class="dv">2</span></span>
@@ -678,7 +678,7 @@ Words (tokens):  ['i', 'am', 'happy', 'because', 'i', 'am', 'learning']</code></
 <li><p>and the center word to be predicted: “happy”.</p></li>
 </ul>
 <p><strong>Now try it out yourself. In the next cell, you can change both the sentence and the context half-size.</strong></p>
-<div id="19f53614" class="cell" data-execution_count="12">
+<div id="89acfb4f" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x, y <span class="kw">in</span> get_windows(tokenize(<span class="st">"Now it's your turn: try with your own sentence!"</span>), <span class="dv">1</span>):</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'</span><span class="sc">{</span>x<span class="sc">}</span><span class="ch">\t</span><span class="sc">{</span>y<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -700,38 +700,38 @@ Words (tokens):  ['i', 'am', 'happy', 'because', 'i', 'am', 'learning']</code></
 <h3 class="anchored" data-anchor-id="mapping-words-to-indices-and-indices-to-words">Mapping words to indices and indices to words</h3>
 <p>The center words will be represented as one-hot vectors, and the vectors that represent context words are also based on one-hot vectors.</p>
 <p>To create one-hot word vectors, you can start by mapping each unique word to a unique integer (or index). We have provided a helper function, <code>get_dict</code>, that creates a Python dictionary that maps words to integers and back.</p>
-<div id="42af4cd8" class="cell" data-execution_count="13">
+<div id="e3de578f" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>word2Ind, Ind2word <span class="op">=</span> get_dict(words)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Here’s the dictionary that maps words to numeric indices.</p>
-<div id="5629fae1" class="cell" data-execution_count="14">
+<div id="59d0d2b3" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>word2Ind</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
 <pre><code>{'am': 0, 'because': 1, 'happy': 2, 'i': 3, 'learning': 4}</code></pre>
 </div>
 </div>
 <p>You can use this dictionary to get the index of a word.</p>
-<div id="2293886b" class="cell" data-execution_count="15">
+<div id="3740c061" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Index of the word 'i':  "</span>,word2Ind[<span class="st">'i'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Index of the word 'i':   3</code></pre>
 </div>
 </div>
 <p>And conversely, here’s the dictionary that maps indices to words.</p>
-<div id="f4ad9e09" class="cell" data-execution_count="16">
+<div id="aeb359ed" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>Ind2word</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="16">
 <pre><code>{0: 'am', 1: 'because', 2: 'happy', 3: 'i', 4: 'learning'}</code></pre>
 </div>
 </div>
-<div id="08f93552" class="cell" data-execution_count="17">
+<div id="4df6a687" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Word which has index 2:  "</span>,Ind2word[<span class="dv">2</span>] )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Word which has index 2:   happy</code></pre>
 </div>
 </div>
 <p>Finally, get the length of either of these dictionaries to get the size of the vocabulary of your corpus, in other words the number of different words making up the corpus.</p>
-<div id="41b89332" class="cell" data-execution_count="18">
+<div id="412cdad2" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>V <span class="op">=</span> <span class="bu">len</span>(word2Ind)</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Size of vocabulary: "</span>, V)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -743,7 +743,7 @@ Words (tokens):  ['i', 'am', 'happy', 'because', 'i', 'am', 'learning']</code></
 <h3 class="anchored" data-anchor-id="getting-one-hot-word-vectors">Getting one-hot word vectors</h3>
 <p>Recall from the lecture that you can easily convert an integer, <span class="math inline">n</span>, into a one-hot vector.</p>
 <p>Consider the word “happy”. First, retrieve its numeric index.</p>
-<div id="e2b063a8" class="cell" data-execution_count="19">
+<div id="21c046ea" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> word2Ind[<span class="st">'happy'</span>]</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>n</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="19">
@@ -751,7 +751,7 @@ Words (tokens):  ['i', 'am', 'happy', 'because', 'i', 'am', 'learning']</code></
 </div>
 </div>
 <p>Now create a vector with the size of the vocabulary, and fill it with zeros.</p>
-<div id="4e0f4d91" class="cell" data-execution_count="20">
+<div id="e71d68b3" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>center_word_vector <span class="op">=</span> np.zeros(V)</span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>center_word_vector</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="20">
@@ -759,25 +759,25 @@ Words (tokens):  ['i', 'am', 'happy', 'because', 'i', 'am', 'learning']</code></
 </div>
 </div>
 <p>You can confirm that the vector has the right size.</p>
-<div id="a2d08e2a" class="cell" data-execution_count="21">
+<div id="4b11f679" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(center_word_vector) <span class="op">==</span> V</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="21">
 <pre><code>True</code></pre>
 </div>
 </div>
 <p>Next, replace the 0 of the <span class="math inline">n</span>-th element with a 1.</p>
-<div id="95070d04" class="cell" data-execution_count="22">
+<div id="6b92f97b" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>center_word_vector[n] <span class="op">=</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>And you have your one-hot word vector.</p>
-<div id="f827b427" class="cell" data-execution_count="23">
+<div id="101ceabb" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>center_word_vector</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="23">
 <pre><code>array([0., 0., 1., 0., 0.])</code></pre>
 </div>
 </div>
 <p><strong>You can now group all of these steps in a convenient function, which takes as parameters: a word to be encoded, a dictionary that maps words to indices, and the size of the vocabulary.</strong></p>
-<div id="21f82716" class="cell" data-execution_count="24">
+<div id="d6d4da1a" class="cell" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> word_to_one_hot_vector(word, word2Ind, V):</span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># </span><span class="re">BEGIN</span><span class="co"> your code here</span></span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    one_hot_vector <span class="op">=</span> np.zeros(V)</span>
@@ -786,14 +786,14 @@ Words (tokens):  ['i', 'am', 'happy', 'because', 'i', 'am', 'learning']</code></
 <span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> one_hot_vector</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Check that it works as intended.</p>
-<div id="c22f9090" class="cell" data-execution_count="25">
+<div id="2f3a45b0" class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>word_to_one_hot_vector(<span class="st">'happy'</span>, word2Ind, V)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="25">
 <pre><code>array([0., 0., 1., 0., 0.])</code></pre>
 </div>
 </div>
 <p><strong>What is the word vector for “learning”?</strong></p>
-<div id="78d9267d" class="cell" data-execution_count="26">
+<div id="133e4575" class="cell" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">BEGIN</span><span class="co"> your code here</span></span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>word_to_one_hot_vector(<span class="st">'learning'</span>, word2Ind, V)</span>
 <span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">END</span><span class="co"> your code here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -808,11 +808,11 @@ Words (tokens):  ['i', 'am', 'happy', 'because', 'i', 'am', 'learning']</code></
 <h3 class="anchored" data-anchor-id="getting-context-word-vectors">Getting context word vectors</h3>
 <p>To create the vectors that represent context words, you will calculate the average of the one-hot vectors representing the individual words.</p>
 <p>Let’s start with a list of context words.</p>
-<div id="ac1fcdde" class="cell" data-execution_count="27">
+<div id="53fee791" class="cell" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>context_words <span class="op">=</span> [<span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'because'</span>, <span class="st">'i'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Using Python’s list comprehension construct and the <code>word_to_one_hot_vector</code> function that you created in the previous section, you can create a list of one-hot vectors representing each of the context words.</p>
-<div id="ae54db45" class="cell" data-execution_count="28">
+<div id="389f8158" class="cell" data-execution_count="28">
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>context_words_vectors <span class="op">=</span> [word_to_one_hot_vector(w, word2Ind, V) <span class="cf">for</span> w <span class="kw">in</span> context_words]</span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>context_words_vectors</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="28">
@@ -823,7 +823,7 @@ Words (tokens):  ['i', 'am', 'happy', 'because', 'i', 'am', 'learning']</code></
 </div>
 </div>
 <p>And you can now simply get the average of these vectors using numpy’s <code>mean</code> function, to get the vector representation of the context words.</p>
-<div id="cf93d960" class="cell" data-execution_count="29">
+<div id="5bab4461" class="cell" data-execution_count="29">
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>np.mean(context_words_vectors, axis<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="29">
 <pre><code>array([0.25, 0.25, 0.  , 0.5 , 0.  ])</code></pre>
@@ -831,7 +831,7 @@ Words (tokens):  ['i', 'am', 'happy', 'because', 'i', 'am', 'learning']</code></
 </div>
 <p>Note the <code>axis=0</code> parameter that tells <code>mean</code> to calculate the average of the rows (if you had wanted the average of the columns, you would have used <code>axis=1</code>).</p>
 <p><strong>Now create the <code>context_words_to_vector</code> function that takes in a list of context words, a word-to-index dictionary, and a vocabulary size, and outputs the vector representation of the context words.</strong></p>
-<div id="14a1f731" class="cell" data-execution_count="30">
+<div id="8c2cd0a3" class="cell" data-execution_count="30">
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> context_words_to_vector(context_words, word2Ind, V):</span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># </span><span class="re">BEGIN</span><span class="co"> your code here</span></span>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>    context_words_vectors <span class="op">=</span> [word_to_one_hot_vector(w, word2Ind, V) <span class="cf">for</span> w <span class="kw">in</span> context_words]</span>
@@ -840,14 +840,14 @@ Words (tokens):  ['i', 'am', 'happy', 'because', 'i', 'am', 'learning']</code></
 <span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> context_words_vectors</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>And check that you obtain the same output as the manual approach above.</p>
-<div id="39fc5c06" class="cell" data-execution_count="31">
+<div id="69507b0c" class="cell" data-execution_count="31">
 <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>context_words_to_vector([<span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'because'</span>, <span class="st">'i'</span>], word2Ind, V)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="31">
 <pre><code>array([0.25, 0.25, 0.  , 0.5 , 0.  ])</code></pre>
 </div>
 </div>
 <p><strong>What is the vector representation of the context words “am happy i am”?</strong></p>
-<div id="c0e145bb" class="cell" data-execution_count="32">
+<div id="810bf932" class="cell" data-execution_count="32">
 <div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">BEGIN</span><span class="co"> your code here</span></span>
 <span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>context_words_to_vector([<span class="st">'am'</span>, <span class="st">'happy'</span>, <span class="st">'i'</span>, <span class="st">'am'</span>], word2Ind, V)</span>
 <span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">END</span><span class="co"> your code here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -862,14 +862,14 @@ Words (tokens):  ['i', 'am', 'happy', 'because', 'i', 'am', 'learning']</code></
 <section id="building-the-training-set" class="level2">
 <h2 class="anchored" data-anchor-id="building-the-training-set">Building the training set</h2>
 <p>You can now combine the functions that you created in the previous sections, to build a training set for the CBOW model, starting from the following tokenized corpus.</p>
-<div id="455a71a0" class="cell" data-execution_count="33">
+<div id="c89f68e3" class="cell" data-execution_count="33">
 <div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>words</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="33">
 <pre><code>['i', 'am', 'happy', 'because', 'i', 'am', 'learning']</code></pre>
 </div>
 </div>
 <p>To do this you need to use the sliding window function (<code>get_windows</code>) to extract the context words and center words, and you then convert these sets of words into a basic vector representation using <code>word_to_one_hot_vector</code> and <code>context_words_to_vector</code>.</p>
-<div id="ddf90e65" class="cell" data-execution_count="34">
+<div id="519ffb53" class="cell" data-execution_count="34">
 <div class="sourceCode cell-code" id="cb62"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> context_words, center_word <span class="kw">in</span> get_windows(words, <span class="dv">2</span>):  <span class="co"># reminder: 2 is the context half-size</span></span>
 <span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Context words:  </span><span class="sc">{</span>context_words<span class="sc">}</span><span class="ss"> -&gt; </span><span class="sc">{</span>context_words_to_vector(context_words, word2Ind, V)<span class="sc">}</span><span class="ss">'</span>)</span>
 <span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Center word:  </span><span class="sc">{</span>center_word<span class="sc">}</span><span class="ss"> -&gt; </span><span class="sc">{</span>word_to_one_hot_vector(center_word, word2Ind, V)<span class="sc">}</span><span class="ss">'</span>)</span>
@@ -887,13 +887,13 @@ Center word:  i -&gt; [0. 0. 0. 1. 0.]
 </div>
 </div>
 <p>In this practice notebook you’ll be performing a single iteration of training using a single example, but in this week’s assignment you’ll train the CBOW model using several iterations and batches of example. Here is how you would use a Python generator function (remember the <code>yield</code> keyword from the lecture?) to make it easier to iterate over a set of examples.</p>
-<div id="3ecdcb0b" class="cell" data-execution_count="35">
+<div id="7f531255" class="cell" data-execution_count="35">
 <div class="sourceCode cell-code" id="cb64"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_training_example(words, C, word2Ind, V):</span>
 <span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> context_words, center_word <span class="kw">in</span> get_windows(words, C):</span>
 <span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">yield</span> context_words_to_vector(context_words, word2Ind, V), word_to_one_hot_vector(center_word, word2Ind, V)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The output of this function can be iterated on to get successive context word vectors and center word vectors, as demonstrated in the next cell.</p>
-<div id="73d70a64" class="cell" data-execution_count="36">
+<div id="9fa14957" class="cell" data-execution_count="36">
 <div class="sourceCode cell-code" id="cb65"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> context_words_vector, center_word_vector <span class="kw">in</span> get_training_example(words, <span class="dv">2</span>, word2Ind, V):</span>
 <span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Context words vector:  </span><span class="sc">{</span>context_words_vector<span class="sc">}</span><span class="ss">'</span>)</span>
 <span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Center word vector:  </span><span class="sc">{</span>center_word_vector<span class="sc">}</span><span class="ss">'</span>)</span>
@@ -939,7 +939,7 @@ Center word vector:  [0. 0. 0. 1. 0.]
 \mathbf{h} &amp;= \mathrm{ReLU}(\mathbf{z_1})  \tag{2} \\
 \end{align}</span></p>
 <p>Let’s fix a value for <span class="math inline">\mathbf{z_1}</span> as a working example.</p>
-<div id="2a6dfa9f" class="cell" data-execution_count="37">
+<div id="fd298147" class="cell" data-execution_count="37">
 <div class="sourceCode cell-code" id="cb67"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">10</span>)</span>
 <span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>z_1 <span class="op">=</span> <span class="dv">10</span><span class="op">*</span>np.random.rand(<span class="dv">5</span>, <span class="dv">1</span>)<span class="op">-</span><span class="dv">5</span></span>
 <span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>z_1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -953,11 +953,11 @@ Center word vector:  [0. 0. 0. 1. 0.]
 </div>
 <p>To get the ReLU of this vector, you want all the negative values to become zeros.</p>
 <p>First create a copy of this vector.</p>
-<div id="776982de" class="cell" data-execution_count="38">
+<div id="fffbc94b" class="cell" data-execution_count="38">
 <div class="sourceCode cell-code" id="cb69"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>h <span class="op">=</span> z_1.copy()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now determine which of its values are negative.</p>
-<div id="51663422" class="cell" data-execution_count="39">
+<div id="e47b3c45" class="cell" data-execution_count="39">
 <div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>h <span class="op">&lt;</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="39">
 <pre><code>array([[False],
@@ -968,11 +968,11 @@ Center word vector:  [0. 0. 0. 1. 0.]
 </div>
 </div>
 <p>You can now simply set all of the values which are negative to 0.</p>
-<div id="d15d8150" class="cell" data-execution_count="40">
+<div id="7d0abdaf" class="cell" data-execution_count="40">
 <div class="sourceCode cell-code" id="cb72"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>h[h <span class="op">&lt;</span> <span class="dv">0</span>] <span class="op">=</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>And that’s it: you have the ReLU of <span class="math inline">\mathbf{z_1}</span>!</p>
-<div id="4e57ca68" class="cell" data-execution_count="41">
+<div id="06897031" class="cell" data-execution_count="41">
 <div class="sourceCode cell-code" id="cb73"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>h</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="41">
 <pre><code>array([[2.71320643],
@@ -983,7 +983,7 @@ Center word vector:  [0. 0. 0. 1. 0.]
 </div>
 </div>
 <p><strong>Now implement ReLU as a function.</strong></p>
-<div id="34dd51cb" class="cell" data-execution_count="42">
+<div id="73cfb829" class="cell" data-execution_count="42">
 <div class="sourceCode cell-code" id="cb75"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> relu(z):</span>
 <span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># </span><span class="re">BEGIN</span><span class="co"> your code here</span></span>
 <span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> z.copy()</span>
@@ -993,7 +993,7 @@ Center word vector:  [0. 0. 0. 1. 0.]
 <span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>And check that it’s working.</strong></p>
-<div id="35d23d18" class="cell" data-execution_count="43">
+<div id="d6fdd71e" class="cell" data-execution_count="43">
 <div class="sourceCode cell-code" id="cb76"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> np.array([[<span class="op">-</span><span class="fl">1.25459881</span>], [ <span class="fl">4.50714306</span>], [ <span class="fl">2.31993942</span>], [ <span class="fl">0.98658484</span>], [<span class="op">-</span><span class="fl">3.4398136</span> ]])</span>
 <span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>relu(z)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="43">
@@ -1021,7 +1021,7 @@ Center word vector:  [0. 0. 0. 1. 0.]
 <p>To calculate softmax of a vector <span class="math inline">\mathbf{z}</span>, the <span class="math inline">i</span>-th component of the resulting vector is given by:</p>
 <p><span class="math display"> \textrm{softmax}(\textbf{z})_i = \frac{e^{z_i} }{\sum\limits_{j=1}^{V} e^{z_j} }  \tag{5} </span></p>
 <p>Let’s work through an example.</p>
-<div id="fc223c58" class="cell" data-execution_count="44">
+<div id="10c0b2a7" class="cell" data-execution_count="44">
 <div class="sourceCode cell-code" id="cb79"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> np.array([<span class="dv">9</span>, <span class="dv">8</span>, <span class="dv">11</span>, <span class="dv">10</span>, <span class="fl">8.5</span>])</span>
 <span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>z</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="44">
@@ -1029,7 +1029,7 @@ Center word vector:  [0. 0. 0. 1. 0.]
 </div>
 </div>
 <p>You’ll need to calculate the exponentials of each element, both for the numerator and for the denominator.</p>
-<div id="b45b7c45" class="cell" data-execution_count="45">
+<div id="491cdb6c" class="cell" data-execution_count="45">
 <div class="sourceCode cell-code" id="cb81"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a>e_z <span class="op">=</span> np.exp(z)</span>
 <span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>e_z</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="45">
@@ -1038,7 +1038,7 @@ Center word vector:  [0. 0. 0. 1. 0.]
 </div>
 </div>
 <p>The denominator is equal to the sum of these exponentials.</p>
-<div id="9cdf4232" class="cell" data-execution_count="46">
+<div id="e6d314b8" class="cell" data-execution_count="46">
 <div class="sourceCode cell-code" id="cb83"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>sum_e_z <span class="op">=</span> np.<span class="bu">sum</span>(e_z)</span>
 <span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a>sum_e_z</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="46">
@@ -1046,7 +1046,7 @@ Center word vector:  [0. 0. 0. 1. 0.]
 </div>
 </div>
 <p>And the value of the first element of <span class="math inline">\textrm{softmax}(\textbf{z})</span> is given by:</p>
-<div id="357764f5" class="cell" data-execution_count="47">
+<div id="1e313021" class="cell" data-execution_count="47">
 <div class="sourceCode cell-code" id="cb85"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a>e_z[<span class="dv">0</span>]<span class="op">/</span>sum_e_z</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="47">
 <pre><code>np.float64(0.08276947985173956)</code></pre>
@@ -1054,7 +1054,7 @@ Center word vector:  [0. 0. 0. 1. 0.]
 </div>
 <p>This is for one element. You can use numpy’s vectorized operations to calculate the values of all the elements of the <span class="math inline">\textrm{softmax}(\textbf{z})</span> vector in one go.</p>
 <p><strong>Implement the softmax function.</strong></p>
-<div id="aa83512c" class="cell" data-execution_count="48">
+<div id="21fc6da2" class="cell" data-execution_count="48">
 <div class="sourceCode cell-code" id="cb87"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> softmax(z):</span>
 <span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># </span><span class="re">BEGIN</span><span class="co"> your code here</span></span>
 <span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a>    e_z <span class="op">=</span> np.exp(z)</span>
@@ -1063,7 +1063,7 @@ Center word vector:  [0. 0. 0. 1. 0.]
 <span id="cb87-6"><a href="#cb87-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># </span><span class="re">END</span><span class="co"> your code here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>Now check that it works.</strong></p>
-<div id="ebe777bf" class="cell" data-execution_count="49">
+<div id="91cf76f8" class="cell" data-execution_count="49">
 <div class="sourceCode cell-code" id="cb88"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a>softmax([<span class="dv">9</span>, <span class="dv">8</span>, <span class="dv">11</span>, <span class="dv">10</span>, <span class="fl">8.5</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="49">
 <pre><code>array([0.08276948, 0.03044919, 0.61158833, 0.22499077, 0.05020223])</code></pre>
@@ -1077,7 +1077,7 @@ Center word vector:  [0. 0. 0. 1. 0.]
 <h2 class="anchored" data-anchor-id="dimensions-1-d-arrays-vs-2-d-column-vectors">Dimensions: 1-D arrays vs 2-D column vectors</h2>
 <p>Before moving on to implement forward propagation, backpropagation, and gradient descent, let’s have a look at the dimensions of the vectors you’ve been handling until now.</p>
 <p>Create a vector of length <span class="math inline">V</span> filled with zeros.</p>
-<div id="5f23a773" class="cell" data-execution_count="50">
+<div id="030a5c3f" class="cell" data-execution_count="50">
 <div class="sourceCode cell-code" id="cb91"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a>x_array <span class="op">=</span> np.zeros(V)</span>
 <span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a>x_array</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="50">
@@ -1085,7 +1085,7 @@ Center word vector:  [0. 0. 0. 1. 0.]
 </div>
 </div>
 <p>This is a 1-dimensional array, as revealed by the <code>.shape</code> property of the array.</p>
-<div id="01334a08" class="cell" data-execution_count="51">
+<div id="230df4f1" class="cell" data-execution_count="51">
 <div class="sourceCode cell-code" id="cb93"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a>x_array.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="51">
 <pre><code>(5,)</code></pre>
@@ -1093,7 +1093,7 @@ Center word vector:  [0. 0. 0. 1. 0.]
 </div>
 <p>To perform matrix multiplication in the next steps, you actually need your column vectors to be represented as a matrix with one column. In numpy, this matrix is represented as a 2-dimensional array.</p>
 <p>The easiest way to convert a 1D vector to a 2D column matrix is to set its <code>.shape</code> property to the number of rows and one column, as shown in the next cell.</p>
-<div id="a2948be9" class="cell" data-execution_count="52">
+<div id="69ce117b" class="cell" data-execution_count="52">
 <div class="sourceCode cell-code" id="cb95"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a>x_column_vector <span class="op">=</span> x_array.copy()</span>
 <span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a>x_column_vector.shape <span class="op">=</span> (V, <span class="dv">1</span>)  <span class="co"># alternatively ... = (x_array.shape[0], 1)</span></span>
 <span id="cb95-3"><a href="#cb95-3" aria-hidden="true" tabindex="-1"></a>x_column_vector</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1106,7 +1106,7 @@ Center word vector:  [0. 0. 0. 1. 0.]
 </div>
 </div>
 <p>The shape of the resulting “vector” is:</p>
-<div id="19b8b534" class="cell" data-execution_count="53">
+<div id="3acad382" class="cell" data-execution_count="53">
 <div class="sourceCode cell-code" id="cb97"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a>x_column_vector.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="53">
 <pre><code>(5, 1)</code></pre>
@@ -1121,14 +1121,14 @@ Center word vector:  [0. 0. 0. 1. 0.]
 <img src="cbow_model_dimensions_single_input.png?2" alt="alternate text" width="width" height="height" style="width:839;height:349;"> Figure 2
 </div>
 <p>Set <span class="math inline">N</span> equal to 3. Remember that <span class="math inline">N</span> is a hyperparameter of the CBOW model that represents the size of the word embedding vectors, as well as the size of the hidden layer.</p>
-<div id="0b8703fe" class="cell" data-execution_count="54">
+<div id="339988bb" class="cell" data-execution_count="54">
 <div class="sourceCode cell-code" id="cb99"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="dv">3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="initialization-of-the-weights-and-biases" class="level3">
 <h3 class="anchored" data-anchor-id="initialization-of-the-weights-and-biases">Initialization of the weights and biases</h3>
 <p>Before you start training the neural network, you need to initialize the weight matrices and bias vectors with random values.</p>
 <p>In the assignment you will implement a function to do this yourself using <code>numpy.random.rand</code>. In this notebook, we’ve pre-populated these matrices and vectors for you.</p>
-<div id="aa6aa1cd" class="cell" data-execution_count="55">
+<div id="c7b6b421" class="cell" data-execution_count="55">
 <div class="sourceCode cell-code" id="cb100"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a>W1 <span class="op">=</span> np.array([[ <span class="fl">0.41687358</span>,  <span class="fl">0.08854191</span>, <span class="op">-</span><span class="fl">0.23495225</span>,  <span class="fl">0.28320538</span>,  <span class="fl">0.41800106</span>],</span>
 <span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a>               [ <span class="fl">0.32735501</span>,  <span class="fl">0.22795148</span>, <span class="op">-</span><span class="fl">0.23951958</span>,  <span class="fl">0.4117634</span> , <span class="op">-</span><span class="fl">0.23924344</span>],</span>
 <span id="cb100-3"><a href="#cb100-3" aria-hidden="true" tabindex="-1"></a>               [ <span class="fl">0.26637602</span>, <span class="op">-</span><span class="fl">0.23846886</span>, <span class="op">-</span><span class="fl">0.37770863</span>, <span class="op">-</span><span class="fl">0.11399446</span>,  <span class="fl">0.34008124</span>]])</span>
@@ -1150,7 +1150,7 @@ Center word vector:  [0. 0. 0. 1. 0.]
 <span id="cb100-19"><a href="#cb100-19" aria-hidden="true" tabindex="-1"></a>               [<span class="op">-</span><span class="fl">0.07017815</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>Check that the dimensions of these matrices match those shown in the figure above.</strong></p>
-<div id="d0403cb4" class="cell" data-execution_count="56">
+<div id="debd6f5d" class="cell" data-execution_count="56">
 <div class="sourceCode cell-code" id="cb101"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">BEGIN</span><span class="co"> your code here</span></span>
 <span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'V (vocabulary size): </span><span class="sc">{</span>V<span class="sc">}</span><span class="ss">'</span>)</span>
 <span id="cb101-3"><a href="#cb101-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'N (embedding size / size of the hidden layer): </span><span class="sc">{</span>N<span class="sc">}</span><span class="ss">'</span>)</span>
@@ -1175,14 +1175,14 @@ size of b2: (5, 1) (Vx1)</code></pre>
 <blockquote class="blockquote">
 <p>You don’t need to worry about the Python syntax, but there are some explanations below if you want to know what’s happening behind the scenes.</p>
 </blockquote>
-<div id="c318a748" class="cell" data-execution_count="57">
+<div id="8d948761" class="cell" data-execution_count="57">
 <div class="sourceCode cell-code" id="cb103"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a>training_examples <span class="op">=</span> get_training_example(words, <span class="dv">2</span>, word2Ind, V)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <blockquote class="blockquote">
 <p><code>get_training_examples</code>, which uses the <code>yield</code> keyword, is known as a generator. When run, it builds an iterator, which is a special type of object that… you can iterate on (using a <code>for</code> loop for instance), to retrieve the successive values that the function generates.</p>
 <p>In this case <code>get_training_examples</code> <code>yield</code>s training examples, and iterating on <code>training_examples</code> will return the successive training examples.</p>
 </blockquote>
-<div id="f87e4353" class="cell" data-execution_count="58">
+<div id="414894e1" class="cell" data-execution_count="58">
 <div class="sourceCode cell-code" id="cb104"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a>x_array, y_array <span class="op">=</span> <span class="bu">next</span>(training_examples)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <blockquote class="blockquote">
@@ -1190,21 +1190,21 @@ size of b2: (5, 1) (Vx1)</code></pre>
 <p>In this notebook <code>next</code> is used because you will only be performing one iteration of training. In this week’s assignment with the full training over several iterations you’ll use regular <code>for</code> loops with the iterator that supplies the training examples.</p>
 </blockquote>
 <p>The vector representing the context words, which will be fed into the neural network, is:</p>
-<div id="6f4b4773" class="cell" data-execution_count="59">
+<div id="e060d47e" class="cell" data-execution_count="59">
 <div class="sourceCode cell-code" id="cb105"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a>x_array</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="59">
 <pre><code>array([0.25, 0.25, 0.  , 0.5 , 0.  ])</code></pre>
 </div>
 </div>
 <p>The one-hot vector representing the center word to be predicted is:</p>
-<div id="cc088ff7" class="cell" data-execution_count="60">
+<div id="ebd9878b" class="cell" data-execution_count="60">
 <div class="sourceCode cell-code" id="cb107"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a>y_array</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="60">
 <pre><code>array([0., 0., 1., 0., 0.])</code></pre>
 </div>
 </div>
 <p>Now convert these vectors into matrices (or 2D arrays) to be able to perform matrix multiplication on the right types of objects, as explained above.</p>
-<div id="18fc3cd0" class="cell" data-execution_count="61">
+<div id="2343826b" class="cell" data-execution_count="61">
 <div class="sourceCode cell-code" id="cb109"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb109-1"><a href="#cb109-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> x_array.copy()</span>
 <span id="cb109-2"><a href="#cb109-2" aria-hidden="true" tabindex="-1"></a>x.shape <span class="op">=</span> (V, <span class="dv">1</span>)</span>
 <span id="cb109-3"><a href="#cb109-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'x'</span>)</span>
@@ -1240,14 +1240,14 @@ y
 \mathbf{h} = \mathrm{ReLU}(\mathbf{z_1})  \tag{2} \\
 \end{align}</span></p>
 <p>First, you can calculate the value of <span class="math inline">\mathbf{z_1}</span>.</p>
-<div id="85b17d99" class="cell" data-execution_count="62">
+<div id="735386a6" class="cell" data-execution_count="62">
 <div class="sourceCode cell-code" id="cb111"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a>z1 <span class="op">=</span> np.dot(W1, x) <span class="op">+</span> b1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <blockquote class="blockquote">
 <p>&nbsp;<code>np.dot</code> is numpy’s function for matrix multiplication.</p>
 </blockquote>
 <p>As expected you get an <span class="math inline">N</span> by 1 matrix, or column vector with <span class="math inline">N</span> elements, where <span class="math inline">N</span> is equal to the embedding size, which is 3 in this example.</p>
-<div id="6c2272b5" class="cell" data-execution_count="63">
+<div id="9c2d0462" class="cell" data-execution_count="63">
 <div class="sourceCode cell-code" id="cb112"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a>z1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="63">
 <pre><code>array([[ 0.36483875],
@@ -1256,7 +1256,7 @@ y
 </div>
 </div>
 <p>You can now take the ReLU of <span class="math inline">\mathbf{z_1}</span> to get <span class="math inline">\mathbf{h}</span>, the vector with the values of the hidden layer.</p>
-<div id="5aa13cf0" class="cell" data-execution_count="64">
+<div id="8891a868" class="cell" data-execution_count="64">
 <div class="sourceCode cell-code" id="cb114"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb114-1"><a href="#cb114-1" aria-hidden="true" tabindex="-1"></a>h <span class="op">=</span> relu(z1)</span>
 <span id="cb114-2"><a href="#cb114-2" aria-hidden="true" tabindex="-1"></a>h</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="64">
@@ -1275,7 +1275,7 @@ y
 \mathbf{\hat y} &amp;= \mathrm{softmax}(\mathbf{z_2})   \tag{4} \\
 \end{align}</span></p>
 <p><strong>First, calculate <span class="math inline">\mathbf{z_2}</span>.</strong></p>
-<div id="257d7f91" class="cell" data-execution_count="65">
+<div id="84e1478b" class="cell" data-execution_count="65">
 <div class="sourceCode cell-code" id="cb116"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb116-1"><a href="#cb116-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">BEGIN</span><span class="co"> your code here</span></span>
 <span id="cb116-2"><a href="#cb116-2" aria-hidden="true" tabindex="-1"></a>z2 <span class="op">=</span> np.dot(W2, h) <span class="op">+</span> b2</span>
 <span id="cb116-3"><a href="#cb116-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">END</span><span class="co"> your code here</span></span>
@@ -1297,7 +1297,7 @@ y
        [-0.19919612]])</code></pre>
 <p>This is a <span class="math inline">V</span> by 1 matrix, where <span class="math inline">V</span> is the size of the vocabulary, which is 5 in this example.</p>
 <p><strong>Now calculate the value of <span class="math inline">\mathbf{\hat y}</span>.</strong></p>
-<div id="09f63bb2" class="cell" data-execution_count="66">
+<div id="470228ea" class="cell" data-execution_count="66">
 <div class="sourceCode cell-code" id="cb119"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">BEGIN</span><span class="co"> your code here</span></span>
 <span id="cb119-2"><a href="#cb119-2" aria-hidden="true" tabindex="-1"></a>y_hat <span class="op">=</span> softmax(z2)</span>
 <span id="cb119-3"><a href="#cb119-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">END</span><span class="co"> your code here</span></span>
@@ -1342,7 +1342,7 @@ Here’s how you could implement this in Python:
 <p>Remember that you are working on a single training example, not on a batch of examples, which is why you are using <em>loss</em> and not <em>cost</em>, which is the generalized form of loss.</p>
 </blockquote>
 <p>First let’s recall what the prediction was.</p>
-<div id="71ea2f2d" class="cell" data-execution_count="67">
+<div id="5535bca2" class="cell" data-execution_count="67">
 <div class="sourceCode cell-code" id="cb122"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb122-1"><a href="#cb122-1" aria-hidden="true" tabindex="-1"></a>y_hat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="67">
 <pre><code>array([[0.18519074],
@@ -1353,7 +1353,7 @@ Here’s how you could implement this in Python:
 </div>
 </div>
 <p>And the actual target value is:</p>
-<div id="11dab75b" class="cell" data-execution_count="68">
+<div id="8c6ec740" class="cell" data-execution_count="68">
 <div class="sourceCode cell-code" id="cb124"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb124-1"><a href="#cb124-1" aria-hidden="true" tabindex="-1"></a>y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="68">
 <pre><code>array([[0.],
@@ -1379,7 +1379,7 @@ Here’s how you could implement this in Python:
 <p>
 Once you have a vector equal to the element-wise multiplication of <code>y</code> and <code>y_hat</code>, you can use <code>np.sum</code> to calculate the sum of the elements of this vector.
 </p>
-<div id="61d774b4" class="cell" data-execution_count="69">
+<div id="210f4153" class="cell" data-execution_count="69">
 <div class="sourceCode cell-code" id="cb127"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb127-1"><a href="#cb127-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cross_entropy_loss(y_predicted, y_actual):</span>
 <span id="cb127-2"><a href="#cb127-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># </span><span class="re">BEGIN</span><span class="co"> your code here</span></span>
 <span id="cb127-3"><a href="#cb127-3" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">=</span> np.<span class="bu">sum</span>(<span class="op">-</span>np.log(y_hat)<span class="op">*</span>y)</span>
@@ -1387,7 +1387,7 @@ Once you have a vector equal to the element-wise multiplication of <code>y</code
 <span id="cb127-5"><a href="#cb127-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> loss</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>Now use this function to calculate the loss with the actual values of <span class="math inline">\mathbf{y}</span> and <span class="math inline">\mathbf{\hat y}</span>.</strong></p>
-<div id="f8f52d58" class="cell" data-execution_count="70">
+<div id="6ac85e0b" class="cell" data-execution_count="70">
 <div class="sourceCode cell-code" id="cb128"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb128-1"><a href="#cb128-1" aria-hidden="true" tabindex="-1"></a>cross_entropy_loss(y_hat, y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="70">
 <pre><code>np.float64(1.4650152923611108)</code></pre>
@@ -1413,7 +1413,7 @@ Once you have a vector equal to the element-wise multiplication of <code>y</code
 <p>Let’s start with an easy one.</p>
 <p><strong>Calculate the partial derivative of the loss function with respect to <span class="math inline">\mathbf{b_2}</span>, and store the result in <code>grad_b2</code>.</strong></p>
 <p><span class="math display">\frac{\partial J}{\partial \mathbf{b_2}} = \mathbf{\hat{y}} - \mathbf{y} \tag{10}</span></p>
-<div id="aeb48407" class="cell" data-execution_count="71">
+<div id="025dc4ae" class="cell" data-execution_count="71">
 <div class="sourceCode cell-code" id="cb131"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">BEGIN</span><span class="co"> your code here</span></span>
 <span id="cb131-2"><a href="#cb131-2" aria-hidden="true" tabindex="-1"></a>grad_b2 <span class="op">=</span> y_hat <span class="op">-</span> y</span>
 <span id="cb131-3"><a href="#cb131-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">END</span><span class="co"> your code here</span></span>
@@ -1438,7 +1438,7 @@ Once you have a vector equal to the element-wise multiplication of <code>y</code
 <blockquote class="blockquote">
 <p>Hint: use <code>.T</code> to get a transposed matrix, e.g.&nbsp;<code>h.T</code> returns <span class="math inline">\mathbf{h^\top}</span>.</p>
 </blockquote>
-<div id="4577abaf" class="cell" data-execution_count="72">
+<div id="97093298" class="cell" data-execution_count="72">
 <div class="sourceCode cell-code" id="cb134"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb134-1"><a href="#cb134-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">BEGIN</span><span class="co"> your code here</span></span>
 <span id="cb134-2"><a href="#cb134-2" aria-hidden="true" tabindex="-1"></a>grad_W2 <span class="op">=</span> np.dot(y_hat <span class="op">-</span> y, h.T)</span>
 <span id="cb134-3"><a href="#cb134-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">END</span><span class="co"> your code here</span></span>
@@ -1460,7 +1460,7 @@ Once you have a vector equal to the element-wise multiplication of <code>y</code
        [ 0.07622029,  0.13310045,  0.        ]])</code></pre>
 <p><strong>Now calculate the partial derivative with respect to <span class="math inline">\mathbf{b_1}</span> and store the result in <code>grad_b1</code>.</strong></p>
 <p><span class="math display">\frac{\partial J}{\partial \mathbf{b_1}} = \rm{ReLU}\left ( \mathbf{W_2^\top} (\mathbf{\hat{y}} - \mathbf{y})\right ) \tag{9}</span></p>
-<div id="a4a51546" class="cell" data-execution_count="73">
+<div id="797e6afc" class="cell" data-execution_count="73">
 <div class="sourceCode cell-code" id="cb137"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb137-1"><a href="#cb137-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">BEGIN</span><span class="co"> your code here</span></span>
 <span id="cb137-2"><a href="#cb137-2" aria-hidden="true" tabindex="-1"></a>grad_b1 <span class="op">=</span> relu(np.dot(W2.T, y_hat <span class="op">-</span> y))</span>
 <span id="cb137-3"><a href="#cb137-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">END</span><span class="co"> your code here</span></span>
@@ -1478,7 +1478,7 @@ Once you have a vector equal to the element-wise multiplication of <code>y</code
        [0.17045858]])</code></pre>
 <p><strong>Finally, calculate the partial derivative of the loss with respect to <span class="math inline">\mathbf{W_1}</span>, and store it in <code>grad_W1</code>.</strong></p>
 <p><span class="math display">\frac{\partial J}{\partial \mathbf{W_1}} = \rm{ReLU}\left ( \mathbf{W_2^\top} (\mathbf{\hat{y}} - \mathbf{y})\right )\mathbf{x}^\top \tag{7}</span></p>
-<div id="0d536666" class="cell" data-execution_count="74">
+<div id="236a5728" class="cell" data-execution_count="74">
 <div class="sourceCode cell-code" id="cb140"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb140-1"><a href="#cb140-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">BEGIN</span><span class="co"> your code here</span></span>
 <span id="cb140-2"><a href="#cb140-2" aria-hidden="true" tabindex="-1"></a>grad_W1 <span class="op">=</span> np.dot(relu(np.dot(W2.T, y_hat <span class="op">-</span> y)), x.T)</span>
 <span id="cb140-3"><a href="#cb140-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">END</span><span class="co"> your code here</span></span>
@@ -1495,7 +1495,7 @@ Once you have a vector equal to the element-wise multiplication of <code>y</code
        [0.        , 0.        , 0.        , 0.        , 0.        ],
        [0.04261464, 0.04261464, 0.        , 0.08522929, 0.        ]])</code></pre>
 <p>Before moving on to gradient descent, double-check that all the matrices have the expected dimensions.</p>
-<div id="021e94d9" class="cell" data-execution_count="75">
+<div id="01f94d87" class="cell" data-execution_count="75">
 <div class="sourceCode cell-code" id="cb143"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb143-1"><a href="#cb143-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">BEGIN</span><span class="co"> your code here</span></span>
 <span id="cb143-2"><a href="#cb143-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'V (vocabulary size): </span><span class="sc">{</span>V<span class="sc">}</span><span class="ss">'</span>)</span>
 <span id="cb143-3"><a href="#cb143-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'N (embedding size / size of the hidden layer): </span><span class="sc">{</span>N<span class="sc">}</span><span class="ss">'</span>)</span>
@@ -1524,15 +1524,15 @@ size of grad_b2: (5, 1) (Vx1)</code></pre>
 \mathbf{b_2} &amp;:= \mathbf{b_2} - \alpha \frac{\partial J}{\partial \mathbf{b_2}} \tag{14}\\
 \end{align}</span></p>
 <p>First, let set a value for <span class="math inline">\alpha</span>.</p>
-<div id="770d2fee" class="cell" data-execution_count="76">
+<div id="57b63166" class="cell" data-execution_count="76">
 <div class="sourceCode cell-code" id="cb145"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb145-1"><a href="#cb145-1" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.03</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The updated weight matrix <span class="math inline">\mathbf{W_1}</span> will be:</p>
-<div id="22b18ffb" class="cell" data-execution_count="77">
+<div id="5258f0f4" class="cell" data-execution_count="77">
 <div class="sourceCode cell-code" id="cb146"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb146-1"><a href="#cb146-1" aria-hidden="true" tabindex="-1"></a>W1_new <span class="op">=</span> W1 <span class="op">-</span> alpha <span class="op">*</span> grad_W1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s compare the previous and new values of <span class="math inline">\mathbf{W_1}</span>:</p>
-<div id="0646cd4a" class="cell" data-execution_count="78">
+<div id="e871f696" class="cell" data-execution_count="78">
 <div class="sourceCode cell-code" id="cb147"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb147-1"><a href="#cb147-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'old value of W1:'</span>)</span>
 <span id="cb147-2"><a href="#cb147-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(W1)</span>
 <span id="cb147-3"><a href="#cb147-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>()</span>
@@ -1557,7 +1557,7 @@ new value of W1:
 \mathbf{b_1} &amp;:= \mathbf{b_1} - \alpha \frac{\partial J}{\partial \mathbf{b_1}} \tag{13}\\
 \mathbf{b_2} &amp;:= \mathbf{b_2} - \alpha \frac{\partial J}{\partial \mathbf{b_2}} \tag{14}\\
 \end{align}</span></p>
-<div id="d1d63384" class="cell" data-execution_count="79">
+<div id="f0ecce1a" class="cell" data-execution_count="79">
 <div class="sourceCode cell-code" id="cb149"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb149-1"><a href="#cb149-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">BEGIN</span><span class="co"> your code here</span></span>
 <span id="cb149-2"><a href="#cb149-2" aria-hidden="true" tabindex="-1"></a>W2_new <span class="op">=</span> W2 <span class="op">-</span> alpha <span class="op">*</span> grad_W2</span>
 <span id="cb149-3"><a href="#cb149-3" aria-hidden="true" tabindex="-1"></a>b1_new <span class="op">=</span> b1 <span class="op">-</span> alpha <span class="op">*</span> grad_b1</span>
@@ -1625,7 +1625,7 @@ b2_new
 <p>Note: in this practice notebook the values of the word embedding vectors are meaningless after a single iteration with just one training example, but here’s how you would proceed after the training process is complete.</p>
 </blockquote>
 <p>For example <span class="math inline">\mathbf{W_1}</span> is this matrix:</p>
-<div id="4222ea15" class="cell" data-execution_count="80">
+<div id="531a3f90" class="cell" data-execution_count="80">
 <div class="sourceCode cell-code" id="cb152"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb152-1"><a href="#cb152-1" aria-hidden="true" tabindex="-1"></a>W1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="80">
 <pre><code>array([[ 0.41687358,  0.08854191, -0.23495225,  0.28320538,  0.41800106],
@@ -1635,7 +1635,7 @@ b2_new
 </div>
 <p>The first column, which is a 3-element vector, is the embedding vector of the first word of your vocabulary. The second column is the word embedding vector for the second word, and so on.</p>
 <p>The first, second, etc. words are ordered as follows.</p>
-<div id="97dd5806" class="cell" data-execution_count="81">
+<div id="cf955478" class="cell" data-execution_count="81">
 <div class="sourceCode cell-code" id="cb154"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb154-1"><a href="#cb154-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(V):</span>
 <span id="cb154-2"><a href="#cb154-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(Ind2word[i])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1647,7 +1647,7 @@ learning</code></pre>
 </div>
 </div>
 <p>So the word embedding vectors corresponding to each word are:</p>
-<div id="a9038f19" class="cell" data-execution_count="82">
+<div id="b6fd7111" class="cell" data-execution_count="82">
 <div class="sourceCode cell-code" id="cb156"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb156-1"><a href="#cb156-1" aria-hidden="true" tabindex="-1"></a><span class="co"># loop through each word of the vocabulary</span></span>
 <span id="cb156-2"><a href="#cb156-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> word <span class="kw">in</span> word2Ind:</span>
 <span id="cb156-3"><a href="#cb156-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># extract the column corresponding to the index of the word in the vocabulary</span></span>
@@ -1666,7 +1666,7 @@ learning: [ 0.41800106 -0.23924344  0.34008124]</code></pre>
 <section id="option-2-extract-embedding-vectors-from-mathbfw_2" class="level3">
 <h3 class="anchored" data-anchor-id="option-2-extract-embedding-vectors-from-mathbfw_2">Option 2: extract embedding vectors from <span class="math inline">\mathbf{W_2}</span></h3>
 <p>The second option is to take <span class="math inline">\mathbf{W_2}</span> transposed, and take its columns as the word embedding vectors just like you did for <span class="math inline">\mathbf{W_1}</span>.</p>
-<div id="39c9cdbe" class="cell" data-execution_count="83">
+<div id="ed26e244" class="cell" data-execution_count="83">
 <div class="sourceCode cell-code" id="cb158"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb158-1"><a href="#cb158-1" aria-hidden="true" tabindex="-1"></a>W2.T</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="83">
 <pre><code>array([[-0.22182064,  0.08476603,  0.1871551 ,  0.07055222,  0.33480474],
@@ -1674,7 +1674,7 @@ learning: [ 0.41800106 -0.23924344  0.34008124]</code></pre>
        [ 0.13310965,  0.1772054 , -0.1790735 ,  0.36107434, -0.43959196]])</code></pre>
 </div>
 </div>
-<div id="772196de" class="cell" data-execution_count="84">
+<div id="3ee56acc" class="cell" data-execution_count="84">
 <div class="sourceCode cell-code" id="cb160"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb160-1"><a href="#cb160-1" aria-hidden="true" tabindex="-1"></a><span class="co"># loop through each word of the vocabulary</span></span>
 <span id="cb160-2"><a href="#cb160-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> word <span class="kw">in</span> word2Ind:</span>
 <span id="cb160-3"><a href="#cb160-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># extract the column corresponding to the index of the word in the vocabulary</span></span>
@@ -1694,7 +1694,7 @@ learning: [ 0.33480474 -0.39423389 -0.43959196]</code></pre>
 <h3 class="anchored" data-anchor-id="option-3-extract-embedding-vectors-from-mathbfw_1-and-mathbfw_2">Option 3: extract embedding vectors from <span class="math inline">\mathbf{W_1}</span> and <span class="math inline">\mathbf{W_2}</span></h3>
 <p>The third option, which is the one you will use in this week’s assignment, uses the average of <span class="math inline">\mathbf{W_1}</span> and <span class="math inline">\mathbf{W_2^\top}</span>.</p>
 <p><strong>Calculate the average of <span class="math inline">\mathbf{W_1}</span> and <span class="math inline">\mathbf{W_2^\top}</span>, and store the result in <code>W3</code>.</strong></p>
-<div id="70d2f3bc" class="cell" data-execution_count="85">
+<div id="46cf87d9" class="cell" data-execution_count="85">
 <div class="sourceCode cell-code" id="cb162"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb162-1"><a href="#cb162-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">BEGIN</span><span class="co"> your code here</span></span>
 <span id="cb162-2"><a href="#cb162-2" aria-hidden="true" tabindex="-1"></a>W3 <span class="op">=</span> (W1<span class="op">+</span>W2.T)<span class="op">/</span><span class="dv">2</span></span>
 <span id="cb162-3"><a href="#cb162-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="re">END</span><span class="co"> your code here</span></span>
@@ -1711,7 +1711,7 @@ learning: [ 0.33480474 -0.39423389 -0.43959196]</code></pre>
        [-0.05136565,  0.15459171, -0.15029611,  0.19580601, -0.31673866],
        [ 0.19974284, -0.03063173, -0.27839106,  0.12353994, -0.04975536]])</code></pre>
 <p>Extracting the word embedding vectors works just like the two previous options, by taking the columns of the matrix you’ve just created.</p>
-<div id="f4e0eccf" class="cell" data-execution_count="86">
+<div id="2ddc32a7" class="cell" data-execution_count="86">
 <div class="sourceCode cell-code" id="cb165"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb165-1"><a href="#cb165-1" aria-hidden="true" tabindex="-1"></a><span class="co"># loop through each word of the vocabulary</span></span>
 <span id="cb165-2"><a href="#cb165-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> word <span class="kw">in</span> word2Ind:</span>
 <span id="cb165-3"><a href="#cb165-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># extract the column corresponding to the index of the word in the vocabulary</span></span>

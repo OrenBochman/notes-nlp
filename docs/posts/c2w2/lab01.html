@@ -456,10 +456,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<div class="no-row-height column-margin column-container"><div id="fig-00" class="nolightbox quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/course-banner.jpg" class="lightbox" data-gallery="slides" title="course banner"><img src="img/course-banner.jpg" class="img-fluid figure-img" alt="course banner"></a></p>
+<p><a href="../../images/Course-Logo-2-3.webp" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="../../images/Course-Logo-2-3.webp" class="img-fluid figure-img"></a></p>
 <figcaption>course banner</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1
+</figcaption>
 </figure>
 </div></div><p>In this lecture notebook you will create a vocabulary from a tagged dataset and learn how to deal with words that are not present in this vocabulary when working with other text sources.</p>
 <p>Aside from this you will also learn how to:</p>
@@ -468,7 +477,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>work with defaultdict</li>
 <li>work with string data</li>
 </ul>
-<div id="30b2ae5b" class="cell" data-execution_count="2">
+<div id="d773a0b2" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> string</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> defaultdict</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -477,13 +486,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>A tagged dataset taken from the Wall Street Journal is provided in the file <code>WSJ_02-21.pos</code>.</p>
 <p>To read this file you can use Python’s context manager by using the <code>with</code> keyword and specifying the name of the file you wish to read. To actually save the contents of the file into memory you will need to use the <code>readlines()</code> method and store its return value in a variable.</p>
 <p>Python’s context managers are great because you don’t need to explicitly close the connection to the file, this is done under the hood:</p>
-<div id="9082df51" class="cell" data-execution_count="3">
+<div id="994b468d" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read lines from 'WSJ_02-21.pos' file and save them into the 'lines' variable</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">"WSJ_02-21.pos"</span>, <span class="st">'r'</span>) <span class="im">as</span> f:</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    lines <span class="op">=</span> f.readlines()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>To check the contents of the dataset you can print the first 5 lines:</p>
-<div id="03681b9d" class="cell" data-execution_count="4">
+<div id="bad6b7ea" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print columns for reference</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\t\t</span><span class="st">Word"</span>, <span class="st">"</span><span class="ch">\t</span><span class="st">Tag</span><span class="ch">\n</span><span class="st">"</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -508,7 +517,7 @@ line number 5: review   NN
 <p>Each line within the dataset has a word followed by its corresponding tag. However since the printing was done using a formatted string it can be inferred that the <strong>word</strong> and the <strong>tag</strong> are separated by a tab (or some spaces) and there is a newline at the end of each line (notice that there is a space between each line).</p>
 <p>If you want to understand the meaning of these tags you can take a look <a href="https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html">here</a>.</p>
 <p>To better understand how the information is structured in the dataset it is recommended to print an unformatted version of it:</p>
-<div id="7c223ab6" class="cell" data-execution_count="5">
+<div id="7cc7c8e9" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print first line (unformatted)</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>lines[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
@@ -521,13 +530,13 @@ line number 5: review   NN
 <h3 class="anchored" data-anchor-id="creating-a-vocabulary">Creating a vocabulary</h3>
 <p>Now that you understand how the dataset is structured, you will create a vocabulary out of it. A vocabulary is made up of every word that appeared at least 2 times in the dataset. For this, follow these steps: - Get only the words from the dataset - Use a defaultdict to count the number of times each word appears - Filter the dict to only include words that appeared at least 2 times - Create a list out of the filtered dict - Sort the list</p>
 <p>For step 1 you can use the fact that every word and tag are separated by a tab and that words always come first. Using list comprehension the words list can be created like this:</p>
-<div id="9a8ff7f0" class="cell" data-execution_count="6">
+<div id="0f39344d" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the words from each line in the dataset</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>words <span class="op">=</span> [line.split(<span class="st">'</span><span class="ch">\t</span><span class="st">'</span>)[<span class="dv">0</span>] <span class="cf">for</span> line <span class="kw">in</span> lines]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Step 2 can be done easily by leveraging <code>defaultdict</code>. In case you aren’t familiar with defaultdicts they are a special kind of dictionaries that <strong>return the “zero” value of a type if you try to access a key that does not exist</strong>. Since you want the frequencies of words, you should define the defaultdict with a type of <code>int</code>.</p>
 <p>Now you don’t need to worry about the case when the word is not present within the dictionary because getting the value for that key will simply return a zero. Isn’t that cool?</p>
-<div id="4af97762" class="cell" data-execution_count="7">
+<div id="ade90dff" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define defaultdict of type 'int'</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>freq <span class="op">=</span> defaultdict(<span class="bu">int</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -536,12 +545,12 @@ line number 5: review   NN
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    freq[word] <span class="op">+=</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Filtering the <code>freq</code> dictionary can be done using list comprehensions again (aren’t they handy?). You should filter out words that appeared only once and also words that are just a newline character:</p>
-<div id="4be89f68" class="cell" data-execution_count="8">
+<div id="71180e09" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the vocabulary by filtering the 'freq' dictionary</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>vocab <span class="op">=</span> [k <span class="cf">for</span> k, v <span class="kw">in</span> freq.items() <span class="cf">if</span> (v <span class="op">&gt;</span> <span class="dv">1</span> <span class="kw">and</span> k <span class="op">!=</span> <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Finally, the <code>sort</code> method will take care of the final step. Notice that it changes the list directly so you don’t need to reassign the <code>vocab</code> variable:</p>
-<div id="998b35a5" class="cell" data-execution_count="9">
+<div id="287f96b1" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort the vocabulary</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>vocab.sort()</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -585,7 +594,7 @@ East</code></pre>
 </ul>
 <p>If a word fails to fall under any condition then its token will be a plain <code>--unk--</code>. The conditions will be evaluated in the same order as listed here. So if a word contains a punctuation character but does not contain digits, it will fall under the second condition. To achieve this behaviour some if/elif statements can be used along with early returns.</p>
 <p>This function is implemented next. Notice that the <code>any()</code> function is being heavily used. It returns <code>True</code> if at least one of the cases it evaluates is <code>True</code>.</p>
-<div id="6955c441" class="cell" data-execution_count="10">
+<div id="670088e7" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> assign_unk(word):</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Assign tokens to unknown words</span></span>
@@ -640,7 +649,7 @@ East</code></pre>
 <p>This function should check if a line is empty and if so, it should return a placeholder word and tag, <code>--n--</code> and <code>--s--</code> respectively.</p>
 <p>If not, it should process the line to return the correct word and tag pair, considering if a word is unknown in which scenario the function <code>assign_unk()</code> should be used.</p>
 <p>The function is implemented next. Notice That the <code>split()</code> method can be used without specifying the delimiter, in which case it will default to any whitespace.</p>
-<div id="fe99d038" class="cell" data-execution_count="11">
+<div id="99e85770" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_word_tag(line, vocab):</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If line is empty return placeholders for word and tag</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> line.split():</span>
@@ -656,21 +665,21 @@ East</code></pre>
 <span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> word, tag</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now you can try this function with some examples to test that it is working as intended:</p>
-<div id="68d95b81" class="cell" data-execution_count="12">
+<div id="1541022e" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>get_word_tag(<span class="st">'</span><span class="ch">\n</span><span class="st">'</span>, vocab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="11">
 <pre><code>('--n--', '--s--')</code></pre>
 </div>
 </div>
 <p>Since this line only includes a newline character it returns a placeholder word and tag.</p>
-<div id="38846f0d" class="cell" data-execution_count="13">
+<div id="7f770379" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>get_word_tag(<span class="st">'In</span><span class="ch">\t</span><span class="st">IN</span><span class="ch">\n</span><span class="st">'</span>, vocab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="12">
 <pre><code>('In', 'IN')</code></pre>
 </div>
 </div>
 <p>This one is a valid line and the function does a fair job at returning the correct (word, tag) pair.</p>
-<div id="8e075833" class="cell" data-execution_count="14">
+<div id="ace20554" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>get_word_tag(<span class="st">'tardigrade</span><span class="ch">\t</span><span class="st">NN</span><span class="ch">\n</span><span class="st">'</span>, vocab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="13">
 <pre><code>('--unk--', 'NN')</code></pre>
@@ -678,7 +687,7 @@ East</code></pre>
 </div>
 <p>This line includes a noun that is not present in the vocabulary.</p>
 <p>The <code>assign_unk</code> function fails to detect that it is a noun so it returns an <code>unknown token</code>.</p>
-<div id="64d48d1a" class="cell" data-execution_count="15">
+<div id="23bb0b50" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>get_word_tag(<span class="st">'scrutinize</span><span class="ch">\t</span><span class="st">VB</span><span class="ch">\n</span><span class="st">'</span>, vocab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
 <pre><code>('--unk_verb--', 'VB')</code></pre>

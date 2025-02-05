@@ -111,7 +111,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-sidebar floating nav-fixed">
+<body class="nav-sidebar floating nav-fixed slimcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -438,26 +438,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c2w1/lab01.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-body" id="quarto-document-content">
+<main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
 
 
 
 
 
-<p>Estimated Time: 10 minutes</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-00" class="nolightbox quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="../../images/Course-Logo-2-3.webp" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="../../images/Course-Logo-2-3.webp" class="img-fluid figure-img"></a></p>
+<figcaption>course banner</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1
+</figcaption>
+</figure>
+</div></div><p>Estimated Time: 10 minutes</p>
 <section id="vocabulary-creation" class="level1">
 <h1>Vocabulary Creation</h1>
 <p>Create a tiny vocabulary from a tiny corpus</p>
 <p>It’s time to start small !</p>
 <section id="imports-and-data" class="level3">
 <h3 class="anchored" data-anchor-id="imports-and-data">Imports and Data</h3>
-<div id="c870fffb" class="cell" data-execution_count="2">
+<div id="bdbe99c2" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># imports</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re <span class="co"># regular expression library; for tokenization of words</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter <span class="co"># collections library; counter: dict subclass for counting hashable objects</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt <span class="co"># for data visualization</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="92ca4388" class="cell" data-execution_count="3">
+<div id="20bb73d4" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the tiny corpus of text ! </span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'red pink pink blue blue yellow ORANGE BLUE BLUE PINK'</span> <span class="co"># 🌈</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(text)</span>
@@ -470,7 +485,7 @@ string length :  52</code></pre>
 </section>
 <section id="preprocessing" class="level3">
 <h3 class="anchored" data-anchor-id="preprocessing">Preprocessing</h3>
-<div id="a51fcdec" class="cell" data-execution_count="4">
+<div id="7c2cb9cb" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># convert all letters to lower case</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>text_lowercase <span class="op">=</span> text.lower()</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(text_lowercase)</span>
@@ -480,7 +495,7 @@ string length :  52</code></pre>
 string length :  52</code></pre>
 </div>
 </div>
-<div id="cf42a0bf" class="cell" data-execution_count="5">
+<div id="5fcd3c78" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># some regex to tokenize the string to words and return them in a list</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>words <span class="op">=</span> re.findall(<span class="vs">r'\w+'</span>, text_lowercase)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(words)</span>
@@ -494,13 +509,13 @@ count :  10</code></pre>
 <section id="create-vocabulary" class="level3">
 <h3 class="anchored" data-anchor-id="create-vocabulary">Create Vocabulary</h3>
 <p>Option 1 : A set of distinct words from the text</p>
-<div id="e53331fc" class="cell" data-execution_count="6">
+<div id="422f42ba" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create vocab</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>vocab <span class="op">=</span> <span class="bu">set</span>(words)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(vocab)</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'count : '</span>,<span class="bu">len</span>(vocab))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>{'red', 'yellow', 'pink', 'orange', 'blue'}
+<pre><code>{'red', 'yellow', 'orange', 'pink', 'blue'}
 count :  5</code></pre>
 </div>
 </div>
@@ -508,7 +523,7 @@ count :  5</code></pre>
 <section id="add-information-with-word-counts" class="level3">
 <h3 class="anchored" data-anchor-id="add-information-with-word-counts">Add Information with Word Counts</h3>
 <p>Option 2 : Two alternatives for including the word count as well</p>
-<div id="6cfdc3a9" class="cell" data-execution_count="7">
+<div id="f16a32f8" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create vocab including word count</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>counts_a <span class="op">=</span> <span class="bu">dict</span>()</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> w <span class="kw">in</span> words:</span>
@@ -520,7 +535,7 @@ count :  5</code></pre>
 count :  5</code></pre>
 </div>
 </div>
-<div id="b4714dce" class="cell" data-execution_count="8">
+<div id="79fc655a" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create vocab including word count using collections.Counter</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>counts_b <span class="op">=</span> <span class="bu">dict</span>()</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>counts_b <span class="op">=</span> Counter(words)</span>
@@ -531,7 +546,7 @@ count :  5</code></pre>
 count :  5</code></pre>
 </div>
 </div>
-<div id="45a48ef2" class="cell" data-execution_count="9">
+<div id="6d416415" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># barchart of sorted word counts</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> {<span class="st">'blue'</span>: counts_b[<span class="st">'blue'</span>], <span class="st">'pink'</span>: counts_b[<span class="st">'pink'</span>], <span class="st">'red'</span>: counts_b[<span class="st">'red'</span>], <span class="st">'yellow'</span>: counts_b[<span class="st">'yellow'</span>], <span class="st">'orange'</span>: counts_b[<span class="st">'orange'</span>]}</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>plt.bar(<span class="bu">range</span>(<span class="bu">len</span>(d)), <span class="bu">list</span>(d.values()), align<span class="op">=</span><span class="st">'center'</span>, color<span class="op">=</span>d.keys())</span>
@@ -539,7 +554,7 @@ count :  5</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><a href="lab01_files/figure-html/cell-9-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="lab01_files/figure-html/cell-9-output-1.png" width="571" height="411" class="figure-img"></a></p>
+<p><a href="lab01_files/figure-html/cell-9-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="lab01_files/figure-html/cell-9-output-1.png" width="571" height="411" class="figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -550,7 +565,7 @@ count :  5</code></pre>
 <p>Note that <code>counts_b</code>, above, returned by <code>collections.Counter</code> is sorted by word count</p>
 <p>Can you modify the tiny corpus of <strong><em>text</em></strong> so that a new color appears between <strong><em>pink</em></strong> and <strong><em>red</em></strong> in <code>counts_b</code> ?</p>
 <p>Do you need to run all the cells again, or just specific ones ?</p>
-<div id="2da5fc8a" class="cell" data-execution_count="10">
+<div id="87c163ce" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'counts_b : '</span>, counts_b)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'count : '</span>, <span class="bu">len</span>(counts_b))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
