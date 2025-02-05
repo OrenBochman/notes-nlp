@@ -188,7 +188,7 @@ In this section, we will find the words that are not ambiguous.
 - In the `WSJ` corpus, $86$% of the token are unambiguous (meaning they have only one tag) 
 - About $14\%$ are ambiguous (meaning that they have more than one tag)
 
-![](img/pos.png){ style="width:400px;height:250px; group="slides"}
+![](img/pos.png){ style="width:400px;height:250px;" group="slides"}
 
 Before we start predicting the tags of each word, we will need to compute a few dictionaries that will help we to generate the tables. 
 
@@ -792,14 +792,16 @@ Both matrices will be initialized to zero except for column zero of `best_probs`
 
 Here is how to initialize column 0 of `best_probs`:
 
-- The probability of the best path going from the start index to a given POS tag indexed by integer $i$ is denoted by $\textrm{best_probs}[s_{idx}, i]$.
+- The probability of the best path going from the start index to a given POS tag indexed by integer $i$ is denoted by $\textrm{best\_probs}[s_{idx}, i]$ .
 - This is estimated as the probability that the start tag transitions to the POS denoted by index $i$: $\mathbf{A}[s_{idx}, i]$ AND that the POS tag denoted by $i$ emits the first word of the given corpus, which is $\mathbf{B}[i, vocab[corpus[0]]]$.
 - Note that vocab[corpus[0]] refers to the first word of the corpus (the word at position 0 of the corpus). 
 - **vocab** is a dictionary that returns the unique integer that refers to that particular word.
 
 Conceptually, it looks like this:
 
-$\textrm{best_probs}[s_{idx}, i] = \mathbf{A}[s_{idx}, i] \times \mathbf{B}[i, corpus[0] ]$
+$$
+\textrm{best\_probs}[s_{idx}, i] = \mathbf{A}[s_{idx}, i] \times \mathbf{B}[i, corpus[0] ]
+$$
 
 
 In order to avoid multiplying and storing small values on the computer, we'll take the log of the product, which becomes the sum of two logs:
@@ -811,9 +813,9 @@ Also, to avoid taking the log of 0 (which is defined as negative infinity), the 
 
 So the implementation to initialize $best\_probs$ looks like this:
 
-$ if A[s_{idx}, i] <> 0 : best\_probs[i,0] = log(A[s_{idx}, i]) + log(B[i, vocab[corpus[0]]])$
+$if A[s_{idx}, i] <> 0 : best\_probs[i,0] = log(A[s_{idx}, i]) + log(B[i, vocab[corpus[0]]])$
 
-$ if A[s_{idx}, i] == 0 : best\_probs[i,0] = float('-inf')$
+$if A[s_{idx}, i] == 0 : best\_probs[i,0] = float('-inf')$
 
 Please use [math.log](https://docs.python.org/3/library/math.html) to compute the natural logarithm.
 

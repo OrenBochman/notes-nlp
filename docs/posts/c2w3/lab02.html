@@ -8,7 +8,7 @@
 
 <meta name="author" content="Oren Bochman">
 
-<title>lab02 – NLP Specialization</title>
+<title>Building the language model – NLP Specialization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -213,7 +213,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Probabilistic Models</li><li class="breadcrumb-item"><a href="../../posts/c2w3/index.html">Autocomplete &amp; Language Models</a></li><li class="breadcrumb-item"><a href="../../posts/c2w3/lab02.html">L2 - Building the language model</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -222,9 +222,16 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      
-                      </div>
+    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Probabilistic Models</li><li class="breadcrumb-item"><a href="../../posts/c2w3/index.html">Autocomplete &amp; Language Models</a></li><li class="breadcrumb-item"><a href="../../posts/c2w3/lab02.html">L2 - Building the language model</a></li></ol></nav>
+      <h1 class="title">Building the language model</h1>
+            <p class="subtitle lead">Probabilistic Models</p>
+                                <div class="quarto-categories">
+                <div class="quarto-category">NLP</div>
+                <div class="quarto-category">Coursera</div>
+                <div class="quarto-category">Notes</div>
+                <div class="quarto-category">Probabilistic Models</div>
+              </div>
+                  </div>
   </div>
     
   
@@ -240,7 +247,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Wednesday, February 5, 2025</p>
+        <p class="date">Saturday, October 24, 2020</p>
       </div>
     </div>
     
@@ -262,148 +269,320 @@ window.Quarto = {
           </a> 
       </div>
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Logistic Regression</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../posts/c1w1/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Logistic Regression</span></a>
+ <span class="menu-text">Notes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../posts/c1w1/lab01.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">L1 Preprocessing</span></a>
+ <span class="menu-text">L1 - Preprocessing</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../posts/c1w1/lab02.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">L2 Frequencies</span></a>
+ <span class="menu-text">L2 - Frequencies</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../posts/c1w1/lab03.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">L3 Visualizing tweets</span></a>
+ <span class="menu-text">L3 - Visualizing tweets</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../posts/c1w1/assignment.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">A1 Logistic Regression</span></a>
+ <span class="menu-text">A1 - Logistic Regression</span></a>
   </div>
 </li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Probability &amp; Bayes Rule</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../posts/c1w2/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Probability and Bayes Rule</span></a>
+ <span class="menu-text">Notes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../posts/c1w2/lab01.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">L1 Visualizing Naive Bayes</span></a>
+ <span class="menu-text">L1 - Visualizing Naive Bayes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../posts/c1w2/assignment.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">A2 Logistic Regression</span></a>
+ <span class="menu-text">A2 - Logistic Regression</span></a>
   </div>
 </li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Vector Space Models &amp; PCA</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../posts/c1w3/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Vector Space Models and PCA</span></a>
+ <span class="menu-text">Notes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../posts/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">L1 Linear algebra with NumPy</span></a>
+ <span class="menu-text">L1 - Linear algebra with NumPy</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../posts/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">L2 Manipulating word embeddings</span></a>
+ <span class="menu-text">L2 - Manipulating word embeddings</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../posts/c1w3/assignment.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">A3 Hello Vectors</span></a>
+ <span class="menu-text">A3 - Hello Vectors</span></a>
   </div>
 </li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">MT &amp; Document Search via KNN</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../posts/c1w4/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Machine Translation and Document Search via KNN</span></a>
+ <span class="menu-text">Notes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../posts/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">L1 Vector manipulation</span></a>
+ <span class="menu-text">L1 - Vector manipulation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../posts/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">L2 Hash functions and multiplanes</span></a>
+ <span class="menu-text">L2 - Hash functions and multiplanes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../posts/c1w3/assignment.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">A4 Naive Machine Translation and LSH</span></a>
+ <span class="menu-text">A4 - Naive Machine Translation and LSH</span></a>
   </div>
 </li>
       </ul>
   </li>
+      </ul>
+  </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
  <span class="menu-text">Probabilistic Models</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">Autocorrect &amp; Dynamic Programming</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../posts/c2w1/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Autocorrect and Dynamic Programming</span></a>
+ <span class="menu-text">Notes</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../posts/c2w2/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Part of Speech Tagging and Hidden Markov Models</span></a>
+  <a href="../../posts/c2w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Building the vocabulary</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../posts/c2w3/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Autocomplete and Language Models</span></a>
+  <a href="../../posts/c2w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Candidates from String Edits</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../posts/c2w4/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Word embeddings with neural networks</span></a>
+  <a href="../../posts/c2w1/assignment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">A1 - Auto Correct</span></a>
   </div>
 </li>
       </ul>
   </li>
-        <li class="sidebar-item sidebar-item-section">
+          <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Sequence Models</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">POS tagging &amp; HMMS</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vocabulary with unknowns</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Working with tags and Numpy</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w2/assignment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">A2 - POS tagging</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true">
+ <span class="menu-text">Autocomplete &amp; Language Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - N-grams Corpus preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w3/lab02.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">L2 - Building the language model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w3/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Out of vocabulary words</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w3/assignment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">A3 - Auto-Complete</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false">
+ <span class="menu-text">Word embeddings with neural networks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Data preparation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Intro to CBOW</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w4/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Training the CBOW</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w4/assignment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">A4 - Word embeddings</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true">
+ <span class="menu-text">Sequence Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../posts/c3w1/index.html" class="sidebar-item-text sidebar-link">
@@ -432,13 +611,13 @@ window.Quarto = {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="true">
  <span class="menu-text">NLP with Attention Models</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../posts/c4w1/index.html" class="sidebar-item-text sidebar-link">
@@ -470,8 +649,20 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#count-matrix" id="toc-count-matrix" class="nav-link active" data-scroll-target="#count-matrix">Count matrix</a></li>
+  <li><a href="#probability-matrix" id="toc-probability-matrix" class="nav-link" data-scroll-target="#probability-matrix">Probability matrix</a></li>
+  <li><a href="#language-model-evaluation" id="toc-language-model-evaluation" class="nav-link" data-scroll-target="#language-model-evaluation">Language model evaluation</a>
+  <ul class="collapse">
+  <li><a href="#train-validation-test-split" id="toc-train-validation-test-split" class="nav-link" data-scroll-target="#train-validation-test-split">Train/validation/test split</a></li>
+  <li><a href="#perplexity" id="toc-perplexity" class="nav-link" data-scroll-target="#perplexity">Perplexity</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c2w3/lab02.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
@@ -495,12 +686,12 @@ window.Quarto = {
 Figure&nbsp;1
 </figcaption>
 </figure>
-</div></div><p><a name="building-language-model"></a> # Building the language model</p>
-<p><a name="count-matrix"></a> ### Count matrix</p>
-<p>To calculate the n-gram probability, you will need to count frequencies of n-grams and n-gram prefixes in the training dataset. In some of the code assignment exercises, you will store the n-gram frequencies in a dictionary.</p>
-<p>In other parts of the assignment, you will build a count matrix that keeps counts of (n-1)-gram prefix followed by all possible last words in the vocabulary.</p>
+</div></div><section id="count-matrix" class="level3">
+<h3 class="anchored" data-anchor-id="count-matrix">Count matrix</h3>
+<p>To calculate the n-gram probability, we will need to count frequencies of n-grams and n-gram prefixes in the training dataset. In some of the code assignment exercises, we will store the n-gram frequencies in a dictionary.</p>
+<p>In other parts of the assignment, we will build a count matrix that keeps counts of (n-1)-gram prefix followed by all possible last words in the vocabulary.</p>
 <p>The following code shows how to check, retrieve and update counts of n-grams in the word count dictionary.</p>
-<div id="897744ab" class="cell" data-execution_count="1">
+<div id="897744ab" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># manipulate n_gram count dictionary</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>n_gram_counts <span class="op">=</span> {</span>
@@ -529,7 +720,7 @@ n-gram ('i', 'am', 'learning') found</code></pre>
 </div>
 </div>
 <p>The next code snippet shows how to merge two tuples in Python. That will be handy when creating the n-gram from the prefix and the last word.</p>
-<div id="7f909725" class="cell" data-execution_count="2">
+<div id="7f909725" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># concatenate tuple for prefix and tuple with the last word to create the n_gram</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>prefix <span class="op">=</span> (<span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'happy'</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>word <span class="op">=</span> <span class="st">'because'</span></span>
@@ -542,7 +733,7 @@ n-gram ('i', 'am', 'learning') found</code></pre>
 </div>
 </div>
 <p>In the lecture, you’ve seen that the count matrix could be made in a single pass through the corpus. Here is one approach to do that.</p>
-<div id="d74595f5" class="cell" data-execution_count="3">
+<div id="d74595f5" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> defaultdict</span>
@@ -607,9 +798,12 @@ n-gram ('i', 'am', 'learning') found</code></pre>
 (am, learning)      0.0      0.0  0.0  0.0       0.0  1.0</code></pre>
 </div>
 </div>
-<p><a name="probability-matrix"></a> ### Probability matrix The next step is to build a probability matrix from the count matrix.</p>
-<p>You can use an object dataframe from library pandas and its methods <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.sum.html?highlight=sum#pandas.DataFrame.sum">sum</a> and <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.div.html">div</a> to normalize the cell counts with the sum of the respective rows.</p>
-<div id="defd5d70" class="cell" data-execution_count="4">
+</section>
+<section id="probability-matrix" class="level3">
+<h3 class="anchored" data-anchor-id="probability-matrix">Probability matrix</h3>
+<p>The next step is to build a probability matrix from the count matrix.</p>
+<p>We can use an object dataframe from library pandas and its methods <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.sum.html?highlight=sum#pandas.DataFrame.sum">sum</a> and <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.div.html">div</a> to normalize the cell counts with the sum of the respective rows.</p>
+<div id="defd5d70" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create the probability matrix from the count matrix</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>row_sums <span class="op">=</span> count_matrix.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># delete each row by its sum</span></span>
@@ -625,8 +819,8 @@ n-gram ('i', 'am', 'learning') found</code></pre>
 (am, learning)      0.0      0.0  0.0  0.0       0.0  1.0</code></pre>
 </div>
 </div>
-<p>The probability matrix now helps you to find a probability of an input trigram.</p>
-<div id="01b3c394" class="cell" data-execution_count="5">
+<p>The probability matrix now helps we to find a probability of an input trigram.</p>
+<div id="01b3c394" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># find the probability of a trigram in the probability matrix</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>trigram <span class="op">=</span> (<span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'happy'</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -647,9 +841,9 @@ word: happy
 trigram_probability: 0.5</code></pre>
 </div>
 </div>
-<p>In the code assignment, you will be searching for the most probable words starting with a prefix. You can use the method <a href="https://docs.python.org/3/library/stdtypes.html#str.startswith">str.startswith</a> to test if a word starts with a prefix.</p>
+<p>In the code assignment, we will be searching for the most probable words starting with a prefix. We can use the method <a href="https://docs.python.org/3/library/stdtypes.html#str.startswith">str.startswith</a> to test if a word starts with a prefix.</p>
 <p>Here is a code snippet showing how to use this method.</p>
-<div id="b269a67d" class="cell" data-execution_count="6">
+<div id="b269a67d" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># lists all words in vocabulary starting with a given prefix</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>vocabulary <span class="op">=</span> [<span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'happy'</span>, <span class="st">'because'</span>, <span class="st">'learning'</span>, <span class="st">'.'</span>, <span class="st">'have'</span>, <span class="st">'you'</span>, <span class="st">'seen'</span>,<span class="st">'it'</span>, <span class="st">'?'</span>]</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>starts_with <span class="op">=</span> <span class="st">'ha'</span></span>
@@ -665,10 +859,15 @@ happy
 have</code></pre>
 </div>
 </div>
-<p><a name="language-model-evaluation"></a> ## Language model evaluation <a name="train-validation-test-split"></a> ### Train/validation/test split In the videos, you saw that to evaluate language models, you need to keep some of the corpus data for validation and testing.</p>
+</section>
+<section id="language-model-evaluation" class="level2">
+<h2 class="anchored" data-anchor-id="language-model-evaluation">Language model evaluation</h2>
+<section id="train-validation-test-split" class="level3">
+<h3 class="anchored" data-anchor-id="train-validation-test-split">Train/validation/test split</h3>
+<p>In the videos, we saw that to evaluate language models, we need to keep some of the corpus data for validation and testing.</p>
 <p>The choice of the test and validation data should correspond as much as possible to the distribution of the data coming from the actual application. If nothing but the input corpus is known, then random sampling from the corpus is used to define the test and validation subset.</p>
-<p>Here is a code similar to what you’ll see in the code assignment. The following function allows you to randomly sample the input data and return train/validation/test subsets in a split given by the method parameters.</p>
-<div id="bfa5506b" class="cell" data-execution_count="7">
+<p>Here is a code similar to what you’ll see in the code assignment. The following function allows we to randomly sample the input data and return train/validation/test subsets in a split given by the method parameters.</p>
+<div id="bfa5506b" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we only need train and validation %, test is the remainder</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_validation_test_split(data, train_percent, validation_percent):</span>
@@ -726,7 +925,9 @@ split 98/1/1:
 </code></pre>
 </div>
 </div>
-<p><a name="perplexity"></a> ### Perplexity</p>
+</section>
+<section id="perplexity" class="level3">
+<h3 class="anchored" data-anchor-id="perplexity">Perplexity</h3>
 <p>In order to implement the perplexity formula, you’ll need to know how to implement m-th order root of a variable.</p>
 <p><span class="math display">\begin{equation*}
 PP(W)=\sqrt[M]{\prod_{i=1}^{m}{\frac{1}{P(w_i|w_{i-1})}}}
@@ -735,8 +936,8 @@ PP(W)=\sqrt[M]{\prod_{i=1}^{m}{\frac{1}{P(w_i|w_{i-1})}}}
 <p><span class="math display">\begin{equation*}
 \sqrt[M]{\frac{1}{x}} = x^{-\frac{1}{M}}
 \end{equation*}</span></p>
-<p>Here is a code that will help you with the formula.</p>
-<div id="552369aa" class="cell" data-execution_count="8">
+<p>Here is a code that will help we with the formula.</p>
+<div id="552369aa" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># to calculate the exponent, use the following syntax</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="dv">10</span> <span class="op">**</span> (<span class="op">-</span><span class="dv">250</span>)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="dv">100</span></span>
@@ -749,15 +950,19 @@ PP(W)=\sqrt[M]{\prod_{i=1}^{m}{\frac{1}{P(w_i|w_{i-1})}}}
 <p>That’s all for the lab for “N-gram language model” lesson of week 3.</p>
 
 
+</section>
+</section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2025,
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2020,
   author = {Bochman, Oren},
-  date = {2025-02-05},
+  title = {Building the Language Model},
+  date = {2020-10-24},
   url = {https://orenbochman.github.io/notes-nlp/posts/c2w3/lab02.html},
   langid = {en}
 }
-</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2025" class="csl-entry quarto-appendix-citeas" role="listitem">
-Bochman, Oren. 2025. February 5, 2025. <a href="https://orenbochman.github.io/notes-nlp/posts/c2w3/lab02.html">https://orenbochman.github.io/notes-nlp/posts/c2w3/lab02.html</a>.
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2020" class="csl-entry quarto-appendix-citeas" role="listitem">
+Bochman, Oren. 2020. <span>“Building the Language Model.”</span> October
+24, 2020. <a href="https://orenbochman.github.io/notes-nlp/posts/c2w3/lab02.html">https://orenbochman.github.io/notes-nlp/posts/c2w3/lab02.html</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -1335,7 +1540,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c2w3/lab02.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c2w3/lab02.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p>This page is built with 💛 and <a href="https://quarto.org/">Quarto</a>.</p>
 </div>

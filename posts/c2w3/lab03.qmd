@@ -1,4 +1,12 @@
 ---
+date: 2020-10-25
+title: "Out of vocabulary words (OOV)"
+subtitle: "Probabilistic Models"
+categories: 
+  - NLP 
+  - Coursera 
+  - Notes
+  - Probabilistic Models
 jupyter: python3
 ---
 
@@ -6,11 +14,8 @@ jupyter: python3
 ![course banner](/images/Course-Logo-2-3.webp)
 :::
 
+### Vocabulary {#vocabulary}
 
-<a name="oov-words"></a>
-# Out of vocabulary words (OOV)
-<a name="vocabulary"></a>
-### Vocabulary
 In the video about the out of vocabulary words, we saw that the first step in dealing with the unknown words is to decide which words belong to the vocabulary. 
 
 In the code assignment, we will try the method based on minimum frequency - all words appearing in the training set with frequency >= minimum frequency are added to the vocabulary.
@@ -107,8 +112,8 @@ print(f"perplexity for the training set: {perplexity}")
 print(f"perplexity for the training set with <UNK>: {perplexity_unk}")
 ```
 
-<a name="smoothing"></a>
-### Smoothing
+
+### Smoothing {#smoothing}
 
 Add-k smoothing was described as a method for smoothing of the probabilities for previously unseen n-grams. 
 
@@ -136,8 +141,9 @@ print(f"probability_known_trigram: {probability_known_trigram}")
 print(f"probability_unknown_trigram: {probability_unknown_trigram}")
 ```
 
-<a name="backoff"></a>
-### Back-off
+
+### Back-off {#backoff}
+
 Back-off is a model generalization method that leverages information from lower order n-grams in case information about the high order n-grams is missing. For example, if the probability of an trigram is missing, use bigram information and so on.
 
 Here we can see an example of a simple back-off technique.
@@ -182,8 +188,8 @@ else:
 print(f"probability for trigram {trigram} estimated as {probability_hat_trigram}")
 ```
 
-<a name="interpolation"></a>
-### Interpolation
+### Interpolation {#interpolation}
+
 The other method for using probabilities of lower order n-grams is the interpolation. In this case, we use weighted probabilities of n-grams of all orders every time, not just when high order information is missing. 
 
 For example, we always combine trigram, bigram and unigram probability. We can see how this in the following code snippet.

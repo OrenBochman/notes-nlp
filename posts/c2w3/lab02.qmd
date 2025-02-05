@@ -1,4 +1,12 @@
 ---
+date: 2020-10-24
+title: "Building the language model"
+subtitle: "Probabilistic Models"
+categories: 
+  - NLP 
+  - Coursera 
+  - Notes
+  - Probabilistic Models
 jupyter: python3
 ---
 
@@ -6,11 +14,8 @@ jupyter: python3
 ![course banner](/images/Course-Logo-2-3.webp)
 :::
 
-<a name="building-language-model"></a>
-# Building the language model
 
-<a name="count-matrix"></a>
-### Count matrix
+### Count matrix {#count-matrix}
 
 To calculate the n-gram probability, we will need to count frequencies of n-grams and n-gram prefixes in the training dataset. In some of the code assignment exercises, we will store the n-gram frequencies in a dictionary. 
 
@@ -114,8 +119,9 @@ bigrams, vocabulary, count_matrix = single_pass_trigram_count_matrix(corpus)
 print(count_matrix)
 ```
 
-<a name="probability-matrix"></a>
-### Probability matrix
+
+### Probability matrix {#probability-matrix}
+
 The next step is to build a probability matrix from the count matrix. 
 
 We can use an object dataframe from library pandas and its methods [sum](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.sum.html?highlight=sum#pandas.DataFrame.sum) and [div](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.div.html) to normalize the cell counts with the sum of the respective rows. 
@@ -163,10 +169,11 @@ for word in vocabulary:
         print(word)
 ```
 
-<a name="language-model-evaluation"></a>
-## Language model evaluation
-<a name="train-validation-test-split"></a>
-### Train/validation/test split
+
+## Language model evaluation {#language-model-evaluation}
+
+### Train/validation/test split {#train-validation-test-split}
+
 In the videos, we saw that to evaluate language models, we need to keep some of the corpus data for validation and testing.
 
 The choice of the test and validation data should correspond as much as possible to the distribution of the data coming from the actual application. If nothing but the input corpus is known, then random sampling from the corpus is used to define the test and validation subset. 
@@ -220,8 +227,8 @@ print("split 98/1/1:\n",f"train data:{train_data}\n", f"validation data:{validat
       f"test data:{test_data}\n")
 ```
 
-<a name="perplexity"></a>
-### Perplexity
+
+### Perplexity {#perplexity}
 
 In order to implement the perplexity formula, you'll need to know how to implement m-th order root of a variable.
 
