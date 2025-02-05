@@ -454,7 +454,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <figcaption>course banner</figcaption>
 </figure>
 </div></div><p>For this lecture notebook you will be using Trax’s layers. These are the building blocks for creating neural networks with Trax.</p>
-<div id="af62c7ec" class="cell" data-execution_count="1">
+<div id="af62c7ec" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> trax</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> trax <span class="im">import</span> layers <span class="im">as</span> tl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -466,7 +466,7 @@ E0000 00:00:1738773692.526991  546416 cuda_blas.cc:1418] Unable to register cuBL
 </div>
 <p>Trax allows to define neural network architectures by stacking layers (similarly to other libraries such as Keras). For this the <code>Serial()</code> is often used as it is a combinator that allows to stack layers serially using function composition.</p>
 <p>Next you can see a simple vanilla NN architecture containing 1 hidden(dense) layer with 128 cells and output (dense) layer with 10 cells on which we apply the final layer of logsoftmax.</p>
-<div id="c80e2545" class="cell" data-execution_count="2">
+<div id="c80e2545" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mlp <span class="op">=</span> tl.Serial(</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  tl.Dense(<span class="dv">128</span>),</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  tl.Relu(),</span>
@@ -476,7 +476,7 @@ E0000 00:00:1738773692.526991  546416 cuda_blas.cc:1418] Unable to register cuBL
 </div>
 <p>Each of the layers within the <code>Serial</code> combinator layer is considered a sublayer. Notice that unlike similar libraries, <strong>in Trax the activation functions are considered layers.</strong> To know more about the <code>Serial</code> layer check the docs <a href="https://trax-ml.readthedocs.io/en/latest/trax.layers.html#trax.layers.combinators.Serial">here</a>.</p>
 <p>You can try printing this object:</p>
-<div id="92f0eb4d" class="cell" data-execution_count="3">
+<div id="92f0eb4d" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mlp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Serial[
@@ -501,7 +501,7 @@ E0000 00:00:1738773692.526991  546416 cuda_blas.cc:1418] Unable to register cuBL
 <li><a href="https://trax-ml.readthedocs.io/en/latest/trax.layers.html#trax.layers.core.LogSoftmax"><code>LogSoftMax</code></a> Log Softmax function.</li>
 </ul>
 <p>Putting everything together the GRU model will look like this:</p>
-<div id="c8e63b76" class="cell" data-execution_count="4">
+<div id="c8e63b76" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mode <span class="op">=</span> <span class="st">'train'</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>vocab_size <span class="op">=</span> <span class="dv">256</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>model_dimension <span class="op">=</span> <span class="dv">512</span></span>
@@ -517,7 +517,7 @@ E0000 00:00:1738773692.526991  546416 cuda_blas.cc:1418] Unable to register cuBL
 </div>
 <p>Next is a helper function that prints information for every layer (sublayer within <code>Serial</code>):</p>
 <p><em>Try changing the parameters defined before the GRU model and see how it changes!</em></p>
-<div id="09a2c90c" class="cell" data-execution_count="5">
+<div id="09a2c90c" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> show_layers(model, layer_prefix<span class="op">=</span><span class="st">"Serial.sublayers"</span>):</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Total layers: </span><span class="sc">{</span><span class="bu">len</span>(model.sublayers)<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(model.sublayers)):</span>

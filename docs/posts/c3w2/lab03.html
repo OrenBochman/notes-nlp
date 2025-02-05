@@ -152,7 +152,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-sidebar floating nav-fixed">
+<body class="nav-sidebar floating nav-fixed slimcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -221,7 +221,14 @@ window.Quarto = {
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Vanilla RNNs, GRUs and the <code>scan</code> function</h1>
-                      </div>
+            <p class="subtitle lead">Sequence Models</p>
+                                <div class="quarto-categories">
+                <div class="quarto-category">NLP</div>
+                <div class="quarto-category">Coursera</div>
+                <div class="quarto-category">Lab</div>
+                <div class="quarto-category">Sequence Models</div>
+              </div>
+                  </div>
   </div>
     
   
@@ -483,26 +490,32 @@ window.Quarto = {
 <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c3w2/lab03.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-body" id="quarto-document-content">
+<main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
 
 
 
 
 
-<p>In this notebook, you will learn how to define the forward method for vanilla RNNs and GRUs. Additionally, you will see how to define and use the function <code>scan</code> to compute forward propagation for RNNs.</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../images/Course-Logo-3-3.webp" class="nolightbox img-fluid figure-img"></p>
+<figcaption>course banner</figcaption>
+</figure>
+</div></div><p>In this notebook, you will learn how to define the forward method for vanilla RNNs and GRUs. Additionally, you will see how to define and use the function <code>scan</code> to compute forward propagation for RNNs.</p>
 <p>By completing this notebook, you will:</p>
 <ul>
 <li>Be able to define the forward method for vanilla RNNs and GRUs</li>
 <li>Be able to define the <code>scan</code> function to perform forward propagation for RNNs</li>
 <li>Understand how forward propagation is implemented for RNNs.</li>
 </ul>
-<div id="99f1c2a7" class="cell" data-execution_count="1">
+<div id="99f1c2a7" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> random</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> perf_counter</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>An implementation of the <code>sigmoid</code> function is provided below so you can use it in this notebook.</p>
-<div id="8d1e8c85" class="cell" data-execution_count="2">
+<div id="8d1e8c85" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sigmoid(x): <span class="co"># Sigmoid function</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fl">1.0</span> <span class="op">/</span> (<span class="fl">1.0</span> <span class="op">+</span> np.exp(<span class="op">-</span>x))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -514,7 +527,7 @@ window.Quarto = {
 <li>Hidden state size (<code>h_dim</code>) : (16,1)</li>
 </ul>
 <p>The weights <code>w_</code> and biases <code>b_</code> are initialized with dimensions (<code>h_dim</code>, <code>emb + h_dim</code>) and (<code>h_dim</code>, 1). We expect the hidden state <code>h_t</code> to be a column vector with size (<code>h_dim</code>,1) and the initial hidden state <code>h_0</code> is a vector of zeros.</p>
-<div id="f29607ec" class="cell" data-execution_count="3">
+<div id="f29607ec" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>random.seed(<span class="dv">10</span>)                 <span class="co"># Random seed, so your results match ours</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>emb <span class="op">=</span> <span class="dv">128</span>                       <span class="co"># Embedding size</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> <span class="dv">256</span>                         <span class="co"># Number of variables in the sequences</span></span>
@@ -544,7 +557,7 @@ h^{&lt;t&gt;}=g(W_{h}[h^{&lt;t-1&gt;},x^{&lt;t&gt;}] + b_h)
 \label{eq: ytRNN}
 \end{equation}</span></p>
 <p>where <span class="math inline">[h^{&lt;t-1&gt;},x^{&lt;t&gt;}]</span> means that <span class="math inline">h^{&lt;t-1&gt;}</span> and <span class="math inline">x^{&lt;t&gt;}</span> are concatenated together. In the next cell we provide the implementation of the forward method for a vanilla RNN.</p>
-<div id="a2fc6db7" class="cell" data-execution_count="4">
+<div id="a2fc6db7" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> forward_V_RNN(inputs, weights): <span class="co"># Forward propagation for a a single vanilla RNN cell</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    x, h_t <span class="op">=</span> inputs</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -577,7 +590,7 @@ c^{&lt;t&gt;}=\tanh{(W_h[\Gamma_r*h^{&lt;t-1&gt;},x^{&lt;t&gt;}]+b_h)}
 h^{&lt;t&gt;}=\Gamma_u*c^{&lt;t&gt;}+(1-\Gamma_u)*h^{&lt;t-1&gt;}
 \end{equation}</span></p>
 <p>In the next cell, please implement the forward method for a GRU cell by computing the update <code>u</code> and relevance <code>r</code> gates, and the candidate hidden state <code>c</code>.</p>
-<div id="f595b2ac" class="cell" data-execution_count="5">
+<div id="f595b2ac" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> forward_GRU(inputs, weights): <span class="co"># Forward propagation for a single GRU cell</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    x, h_t <span class="op">=</span> inputs</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -607,7 +620,7 @@ h^{&lt;t&gt;}=\Gamma_u*c^{&lt;t&gt;}+(1-\Gamma_u)*h^{&lt;t-1&gt;}
 <span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> h_t, h_t</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Run the following cell to check your implementation.</p>
-<div id="67d05c91" class="cell" data-execution_count="6">
+<div id="67d05c91" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>forward_GRU([X[<span class="dv">1</span>],h_0], weights)[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
 <pre><code>array([[ 9.77779014e-01],
@@ -658,7 +671,7 @@ Expected output:
 <li><code>h_0</code> : the initial hidden state</li>
 </ul>
 <p><code>scan</code> goes through all the elements <code>x</code> in <code>elems</code>, calls the function <code>fn</code> with arguments ([<code>x</code>, <code>h_t</code>],<code>weights</code>), stores the computed hidden state <code>h_t</code> and appends the result to a list <code>ys</code>. Complete the following cell by calling <code>fn</code> with arguments ([<code>x</code>, <code>h_t</code>],<code>weights</code>).</p>
-<div id="fa1afc1e" class="cell" data-execution_count="7">
+<div id="fa1afc1e" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> scan(fn, elems, weights, h_0<span class="op">=</span><span class="va">None</span>): <span class="co"># Forward propagation for RNNs</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    h_t <span class="op">=</span> h_0</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    ys <span class="op">=</span> []</span>
@@ -673,7 +686,7 @@ Expected output:
 <section id="part-3-comparison-between-vanilla-rnns-and-grus" class="level1">
 <h1>Part 3: Comparison between vanilla RNNs and GRUs</h1>
 <p>You have already seen how forward propagation is computed for vanilla RNNs and GRUs. As a quick recap, you need to have a forward method for the recurrent cell and a function like <code>scan</code> to go through all the elements from a sequence using a forward method. You saw that GRUs performed more computations than vanilla RNNs, and you can check that they have 3 times more parameters. In the next two cells, we compute forward propagation for a sequence with 256 time steps (<code>T</code>) for an RNN and a GRU with the same hidden state <code>h_t</code> size (<code>h_dim</code>=16).</p>
-<div id="3eb20126" class="cell" data-execution_count="8">
+<div id="3eb20126" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># vanilla RNNs</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>tic <span class="op">=</span> perf_counter()</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>ys, h_T <span class="op">=</span> scan(forward_V_RNN, X, weights, h_0)</span>
@@ -684,7 +697,7 @@ Expected output:
 <pre><code>It took 1.50ms to run the forward method for the vanilla RNN.</code></pre>
 </div>
 </div>
-<div id="da40b04d" class="cell" data-execution_count="9">
+<div id="da40b04d" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># GRUs</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>tic <span class="op">=</span> perf_counter()</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>ys, h_T <span class="op">=</span> scan(forward_GRU, X, weights, h_0)</span>
