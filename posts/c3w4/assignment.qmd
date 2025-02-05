@@ -74,8 +74,10 @@ You will process the data first and then pad in a similar way you have done in t
 
 
 <a name='1'></a>
+
 # Part 1: Importing the Data
 <a name='1.1'></a>
+
 ### 1.1 Loading in the data
 
 You will be using the Quora question answer dataset to build a model that could identify similar questions. This is a useful task because you don't want to have several versions of the same question posted. Several times when teaching I end up responding to similar questions on piazza, or on other community forums. This data set has been labeled for you. Run the cell below to import some of the packages you will be using. 
@@ -235,6 +237,7 @@ print('Test set length: ', len(Q1_test) )
 ```
 
 <a name='1.2'></a>
+
 ### 1.2 Converting a question to a tensor
 
 You will now convert every question to a tensor, or an array of numbers, using your vocabulary built above.
@@ -282,6 +285,7 @@ print("The length of the validation set is: ", len(val_Q1))
 ```
 
 <a name='1.3'></a>
+
 ### 1.3 Understanding the iterator 
 
 Most of the time in Natural Language Processing, and AI in general we use batches when training our data sets. If you were to use stochastic gradient descent with one example at a time, it will take you forever to build a model. In this example, we show you how you can build a data generator that takes in $Q1$ and $Q2$ and returns a batch of size `batch_size`  in the following format $([q1_1, q1_2, q1_3, ...]$, $[q2_1, q2_2,q2_3, ...])$. The tuple consists of two arrays and each array has `batch_size` questions. Again, $q1_i$ and $q2_i$ are duplicates, but they are not duplicates with any other elements in the batch. 
@@ -291,6 +295,7 @@ Most of the time in Natural Language Processing, and AI in general we use batche
 The command ```next(data_generator)```returns the next batch. This iterator returns the data in a format that you could directly use in your model when computing the feed-forward of your algorithm. This iterator returns a pair of arrays of questions. 
 
 <a name='ex01'></a>
+
 ### Exercise 01
 
 **Instructions:**  
@@ -410,14 +415,16 @@ Now that you have your generator, you can just call it and it will return tensor
 
 
 <a name='2'></a>
+
 # Part 2: Defining the Siamese model
 
 <a name='2.1'></a>
 
 ### 2.1 Understanding Siamese Network 
+
 A Siamese network is a neural network which uses the same weights while working in tandem on two different input vectors to compute comparable output vectors.The Siamese network you are about to implement looks like this:
 
-<img src = "siamese.png" style="width:600px;height:300px;"/>
+<img src = "img/siamese.png" style="width:600px;height:300px;"/>
 
 You get the question embedding, run it through an LSTM layer, normalize $v_1$ and $v_2$, and finally use a triplet loss (explained below) to get the corresponding cosine similarity for each pair of questions. As usual, you will start by importing the data set. The triplet loss makes use of a baseline (anchor) input that is compared to a positive (truthy) input and a negative (falsy) input. The distance from the baseline (anchor) input to the positive (truthy) input is minimized, and the distance from the baseline (anchor) input to the negative (falsy) input is maximized. In math equations, you are trying to maximize the following.
 
@@ -428,6 +435,7 @@ $\alpha$ is a margin; you can think about it as a safety net, or by how much you
 <br>
 
 <a name='ex02'></a>
+
 ### Exercise 02
 
 **Instructions:** Implement the `Siamese` function below. You should be using all the objects explained below. 
@@ -533,16 +541,18 @@ Parallel_in2_out2[
 You will now implement the `TripletLoss`.<br>
 As explained in the lecture, loss is composed of two terms. One term utilizes the mean of all the non duplicates, the second utilizes the *closest negative*. Our loss expression is then:
  
+$$
 \begin{align}
  \mathcal{Loss_1(A,P,N)} &=\max \left( -cos(A,P)  + mean_{neg} +\alpha, 0\right) \\
  \mathcal{Loss_2(A,P,N)} &=\max \left( -cos(A,P)  + closest_{neg} +\alpha, 0\right) \\
 \mathcal{Loss(A,P,N)} &= mean(Loss_1 + Loss_2) \\
 \end{align}
-
+$$
 
 Further, two sets of instructions are provided. The first set provides a brief description of the task. If that set proves insufficient, a more detailed set can be displayed.  
 
 <a name='ex03'></a>
+
 ### Exercise 03
 
 **Instructions (Brief):** Here is a list of things you should do: <br>
@@ -557,11 +567,15 @@ Further, two sets of instructions are provided. The first set provides a brief d
     <font size="3" color="darkgreen"><b>More Detailed Instructions </b></font>
 </summary>
 We'll describe the algorithm using a detailed example. Below, V1, V2 are the output of the normalization blocks in our model. Here we will use a batch_size of 4 and a d_model of 3. As explained in lecture, the inputs, Q1, Q2 are arranged so that corresponding inputs are duplicates while non-corresponding entries are not. The outputs will have the same pattern.
-<img src = "C3_W4_triploss1.png" style="width:1021px;height:229px;"/>
+
+<img src = "img/C3_W4_triploss1.png" style="width:1021px;height:229px;"/>
+
 This testcase arranges the outputs, v1,v2, to highlight different scenarios. Here, the first two outputs V1[0], V2[0] match exactly - so the model is generating the same vector for Q1[0] and Q2[0] inputs. The second outputs differ, circled in orange, we set, V2[1] is set to match V2[**2**], simulating a model which is generating very poor results. V1[3] and V2[3] match exactly again while V1[4] and V2[4] are set to be exactly wrong - 180 degrees from each other, circled in blue. 
 
 The first step is to compute the cosine similarity matrix or `score` in the code. As explained in lecture, this is $$V_1 V_2^T$$ This is generated with `fastnp.dot`.
-<img src = "C3_W4_triploss2.png" style="width:959px;height:236px;"/>
+
+<img src = "img/C3_W4_triploss2.png" style="width:959px;height:236px;"/>
+
 The clever arrangement of inputs creates the data needed for positive *and* negative examples without having to run all pair-wise combinations. Because Q1[n] is a duplicate of only Q2[n], other combinations are explicitly created negative examples or *Hard Negative* examples. The matrix multiplication efficiently produces the cosine similarity of all positive/negative combinations as shown above on the left side of the diagram. 'Positive' are the results of duplicate examples and 'negative' are the results of explicitly created negative examples. The results for our test case are as expected, V1[0]V2[0] match producing '1' while our other 'positive' cases (in green) don't match well, as was arranged. The V2[2] was set to match V1[3] producing a poor match at `score[2,2]` and an undesired 'negative' case of a '1' shown in grey. 
 
 With the similarity matrix (`score`) we can begin to implement the loss equations. First, we can extract $$cos(A,P)$$ by utilizing `fastnp.diagonal`. The goal is to grab all the green entries in the diagram above. This is `positive` in the code.
@@ -577,9 +591,7 @@ Now, we can compute loss using the two equations above and `fastnp.maximum`. Thi
 `triple_loss` is the `fastnp.mean` of the sum of the two individual losses.
 
 Once you have this code matching the expected results, you can clip out the section between ### START CODE HERE and ### END CODE HERE it out and insert it into TripletLoss below.
-
- 
-<\details>  
+</details> 
 
 ```{python}
 #| colab: {}
@@ -767,7 +779,9 @@ model.init_from_file('model.pkl.gz')
 ```
 
 <a name='4.2'></a>
+
 ### 4.2 Classify
+
 To determine the accuracy of the model, we will utilize the test set that was configured earlier. While in training we used only positive examples, the test data, Q1_test, Q2_test and y_test, is setup as pairs of questions, some of which are duplicates some are not. 
 This routine will run all the test question pairs through the model, compute the cosine simlarity of each pair, threshold it and compare the result to  y_test - the correct response from the data set. The results are accumulated to produce an accuracy.
 
