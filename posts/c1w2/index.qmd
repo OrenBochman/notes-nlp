@@ -1,27 +1,28 @@
 ---
+date: 2020-10-23
 title: "Probability and Bayes Rule"
 subtitle: "Classification & Vector Spaces"
 description: "The theory behind Bayes' rule for conditional probabilities, and its application toward building a Naive Bayes tweet classifier"
-date: 2020-10-23
 categories: 
   - NLP 
   - Coursera 
-  - notes  
-  - Conditional Probability
-  - Bayes rule
-  - Naïve Bayes
-  - Laplace smoothing
-  - Log-likelihood
-  - Sentiment analysis task
   - Classification & Vector Spaces
-image: course-banner.jpg
+  - Notes  
+  - Naïve Bayes
+  - Sentiment analysis task
+keywords: 
+  - Bayes rule
+  - Conditional Probability
+  - Log-likelihood
+  - Laplace smoothing
 ---
 
-![course banner](/images/banner_c1.jpg){.column-margin}
+![course banner](/images/Course-Logo-1-3.webp){#fig-00 .column-margin .nolightbox}
 
 ::: {#fig-slide-deck .column-margin}
-![This week's slides](slides.pdf){width="420px" height="340px" style="@page {size: 16in 9in;  margin: 0; }"}
+![This week's slides](slides.pdf){width="420px" height="340px" style="@page {size: 16in 9in;  margin: 0;  group="slides"}"}
 :::
+
 Since I majored in Mathematics, I glossed over many details when I took the initial notes, since the course caters to all levels of students. When I migrated the notes from OneNotes to the web, I updated and reviewed the current course material and at times additional notes by [@Chadha2020NLP] and [@jelliti2020nlp]. I have tried to add my own insights from other sources, books I read or others courses I have taken. 
 
 ::: callout-note
@@ -29,7 +30,9 @@ Since I majored in Mathematics, I glossed over many details when I took the init
 # Naïve Bayes
 **Naïve Bayes** is a probabilistic algorithm commonly used in *machine learning* for *classification* problems. It's based on *Bayes' theorem*, which is a fundamental concept in *probability theory*. Naïve Bayes assumes that all the features of the input data are independent of each other, which is why it's called "naïve."
 :::
+
 The following two results are due to [@NIPS2001_7b7a53e2] by way of [Naive_Bayes_classifier](https://en.wikipedia.org/wiki/Naive_Bayes_classifier#cite_note-pair-17) wikipedia article.
+
 Another detail that can help you make sense of this lesson is the following result relating Naïve Bayes to Logistic Regression which we covered last week.
 In the case of discrete inputs like indicator or frequency features for discrete events, naive Bayes classifiers form a  generative-discriminative pair with multinomial logistic regression classifiers: each naive Bayes classifier can be considered a way of fitting a probability model that optimizes the joint likelihood $p (C,x)$, while logistic regression fits the same probability model to optimize the conditional $p(C ∣ x)$.
 
@@ -62,7 +65,7 @@ This is exactly a logistic regression classifier.
 
 # Introduction
 
-![our corpus](img/slide_020.png){.column-margin}
+![our corpus](img/slide_020.png){.column-margin group="slides"}
 
 We start with a corpus of 20 tweets that we want to categorize as having either **positive** `+` or **negative** `-` sentiment, but not both.
 
@@ -90,20 +93,20 @@ $$
 P(-) = 1- P(+)=0.35 
 $$
 
-## Probabiliy for a specific word's sentiment
+## Probability for a specific word's sentiment
 
 Within that corpus, the word `happy` is sometimes labeled `+` and in other cases, `-`. This indicates that some negative tweets contain the word `happy`.
 Shown below is a graphical representation of this "overlap". Let's explore how we may represent this graphically using a [venn diagram](https://en.wikipedia.org/wiki/Venn_diagram) and then derive a probability-based representation.
 
-![Tweets with "Happy"](img/slide_021.png){.column-margin}
+![Tweets with "Happy"](img/slide_021.png){.column-margin group="slides"}
 
 First, we need to estimate the probability of the event B: "tweets containing the word happy"
 
 $$
-P(B) = P(Happy)=\frac{N_{happy}}{N}=\frac{4}{20}=0.2
+P(B) = P(\text{happy})=\frac{N_\text{happy}}{N}=\frac{4}{20}=0.2
 $$
 
-![Venn diagram for defining probabilities from events](img/slide_026.png){.column-margin}
+![Venn diagram for defining probabilities from events](img/slide_026.png){.column-margin group="slides"}
 
 To compute the probability of 2 events happening like `happy` **and** `+` in the picture you would be looking at the intersection, or overlap of the two events, In this case, the red and the blue boxes overlap in three boxes, So the answer is:
 $$
@@ -138,10 +141,10 @@ Conditional probabilities help us reduce the sample search space by restricting 
 
 ## what is $P(+|happy)$
 
--   We start with the Venn diagram for the $P(A|B)$. ![Venn diagram for $P(A \mid B)$](img/slide_028.png){.column-margin}
+-   We start with the Venn diagram for the $P(A|B)$. ![Venn diagram for $P(A \mid B)$](img/slide_028.png){.column-margin group="slides"}
 -   Where we restricted the diagram to just A the subset of happy tweets.
 -   And we just want those tweets that are also `+` i.e. (B).
--   all we need is to plug in the counts from our count chart. ![Counts for $P(A \mid B)$](img/slide_029.png){.column-margin}
+-   all we need is to plug in the counts from our count chart. ![Counts for $P(A \mid B)$](img/slide_029.png){.column-margin group="slides"}
 -   which we now estimate
 $$
 P(A \mid B) = P(Positive \mid happy) = \frac{3}{4} = 0.75
@@ -149,9 +152,9 @@ $$
 
 ## what is $P(happy|+)$
 -   We start with the Venn diagram for the $P(B|A)$
--   where we have restricted the diagram to just B the subset of `+` tweets. ![Venn diagram for the $P(B \mid A)$](img/slide_030.png){.column-margin}
+-   where we have restricted the diagram to just B the subset of `+` tweets. ![Venn diagram for the $P(B \mid A)$](img/slide_030.png){.column-margin group="slides"}
 -   and we just want from those the tweets that are also `happy` i.e. (A).
--   and the counts for $P(B|A)$ ![Counts for $P(B\mid A)$](img/slide_031.png){.column-margin}
+-   and the counts for $P(B|A)$ ![Counts for $P(B\mid A)$](img/slide_031.png){.column-margin group="slides"}
 -   which we now estimate
 $$
 P(B \mid A) = P(happy \mid Positive) = \frac{3}{13} = 0.231
@@ -159,7 +162,7 @@ $$
 
 # Bayes' rule
 
-![Venn diagram for defining probabilities from events](img/slide_026.png){.column-margin}
+![Venn diagram for defining probabilities from events](img/slide_026.png){.column-margin group="slides"}
 
 From this, we can now write:
 
@@ -213,13 +216,12 @@ where we call:
 
 Here is a sample corpus
 
-::: {#table-tweets }
+::: { }
 |[+]{ style="color:blue"} tweets| [-]{ style="color:red"} tweets |
 |---------------|-------------------|
 |[I am happy because I am learning NLP]{ style="color:blue"} |[I am sad, I am not learning NLP]{ style="color:red"} |
 |[I am happy]{ style="color:blue"} |[I am sad]{ style="color:red"} |
-And these are the class frequencies and probabilities
-Table of tweets
+: And these are the class frequencies and probabilities {#tbl-tweets}
 :::
 
 ```{python}
@@ -280,7 +282,7 @@ Markdown(tabulate(
 ```
 
 
-::: {#tbl-vocab layout-ncol=2 }
+::: {layout-ncol=2 }
 
 | word     |  +   |  -   |
 |----------|:----:|:----:|
@@ -292,8 +294,8 @@ Markdown(tabulate(
 | NLP      |  1   |  1   |
 | sad      |  1   |  2   |
 | not      |  1   |  2   |
-| Nclass   |  13  | 12   | 
 : Frequency Table {#tbl-first}
+
 | word     |  +   |  -   |
 |----------|:----:|:----:|
 | I        | 0.24 | 0.25 |
@@ -304,20 +306,21 @@ Markdown(tabulate(
 | NLP      | 0.08 | 0.08 |
 | sad      | 0.08 | 0.17 |
 | not      | 0.08 | 0.17 |
-: $P(w_i|class)$ table {#tbl-second}
-Probabilities
+: Probabilities Table {#tbl-second}
+
+
 :::
 
 Let's motivate the Naïve Bayes inference condition rule for binary classification:
 
 To build a classifier, we will first start by creating conditional probabilities given the table;
 
-![Naïve Bayes](img/slide_032.png){.column-margin}
+![Naïve Bayes](img/slide_032.png){.column-margin group="slides"}
 
 -   We want to find if given our prior knowledge of $P(+)$ and $P(-)$ if a new tweet has + or - sentiment.
 -   To do that we will estimate $p(+|T)$ and $p(-|T)$ and then decide based on which is greater than 0.5.
 
-![Table of probabilities](img/slide_033.png){.column-margin}
+![Table of probabilities](img/slide_033.png){.column-margin group="slides"}
 
 We can use the Bayes rule:
 
@@ -395,7 +398,7 @@ the ratio of the probability that a word appears in a positive tweet and that it
 A probability distribution can take zero values at certain points i.e. for certain inputs. `Smoothing` is a family of techniques for improving our estimate of conditional class probabilities to estimate probabilities for missing words. The name smoothing comes from the fact that these techniques tend to make distributions more uniform, by adjusting low probabilities such as zero probabilities upward, and high probabilities downward. Not only do smoothing methods generally prevent zero probabilities, but they also attempt to improve the accuracy of the model as a whole. Whenever a probability is estimated from a few counts, smoothing has the potential to improve estimation.
 :::
 
-![Laplace smoothing](img/slide_076.png){.column-margin}
+![Laplace smoothing](img/slide_076.png){.column-margin group="slides"}
 
 The course introduces smoothing here since sparsity breaks the naive Bayes model. But smoothing and filtering are big topics in NLP and Data Science. I have added some extra info drawn from  [@jurafsky2000speech]
 
@@ -420,7 +423,7 @@ where:
 
 Note: that we added a 1 in the numerator and since there are $|V|$ words to normalize we add $|V|$ in the denominator so that all the probabilities sum up to 1.
 
-::: {#tbl-vocab layout-ncol=2 }
+::: {layout-ncol=2 }
 
 | word     |  +   |  -   |
 |----------|:----:|:----:|
@@ -433,7 +436,7 @@ Note: that we added a 1 in the numerator and since there are $|V|$ words to norm
 | sad      | 0.08 | 0.17 |
 | not      | 0.08 | 0.17 |
 
-: $P(w_i|class)$ no smoothing {#tbl-unsmoothed}
+: $P(w_i \mid class)$ no smoothing {#tbl-unsmoothed}
 
 | word     |  +   |  -   |
 |----------|:----:|:----:|
@@ -445,9 +448,7 @@ Note: that we added a 1 in the numerator and since there are $|V|$ words to norm
 | NLP      | 0.10 | 0.10 |
 | sad      | 0.10 | 0.15 |
 | not      | 0.10 | 0.15 |
-
-: $P(w_i|class)$ with smoothing {#tbl-smoothing}
-Probabilities
+: $P(w_i \mid class)$ with smoothing {#tbl-smoothing}
 :::
  
 ## Additive smoothing:
@@ -458,12 +459,11 @@ $$
 
 ## More alternatives to Laplacian smoothing
 
-![Good Turing smoothing](img/slide_035.png){.column-margin}
+![Good Turing smoothing](img/slide_035.png){.column-margin group="slides"}
 
-- `Kneser-Ney smoothing` [@NEY19941] which corrects better for smaller data sets. ![Kneser-Ney smoothing](img/slide_034.png){.column-margin}
-- `Good-Turing smoothing` [@good1953population] which uses order statistics to give even better estimates. 
-
-with a survey of the subject here: [@chen1996empirical](https://dash.harvard.edu/bitstream/handle/1/25104739/tr-10-98.pdf;jsessionid=CC44A707FD117F63DB2870EA0CE00370?sequence=1)
+- **Kneser-Ney smoothing** c.f. [@NEY19941] which corrects better for smaller data sets. ![Kneser-Ney smoothing](img/slide_034.png){.column-margin group="slides"}
+- **Good-Turing smoothing** c.f. [@good1953population] which uses order statistics to give even better estimates. 
+- with a survey of the subject here: [@chen1996empirical] 
 
 # Ratio of probabilities
 
@@ -512,19 +512,19 @@ Where $D_{+}$ and $D_{-}$ correspond to the number Of negative documents respect
 To train a naïve Bayes classifier, we should perform the following steps:
 
 1.  Get or annotate a dataset with positive and negative tweets
-2.  preprocess the tweets. ![Training](img/slide_045.jpg){.column-margin}
+2.  preprocess the tweets. ![Training](img/slide_045.jpg){.column-margin group="slides"}
     -   Tokenize sentences
     -   Remove punctuation, URLs and names
     -   Remove stop words
     -   Stem words    
-3.  Compute the vocaulary: freq(word, class) ![Training](img/slide_046.jpg){.column-margin}
-4.  Use Laplacian smoothing to estimate word class probabilites $P(w|+)$ and $P(w|-)$. ![Training](img/slide_047.jpg){.column-margin}
-5.  Compute $\lambda(w) = \log \frac{p(w|+)}{p(w|-)}$ ![Training](img/slide_048.jpg){.column-margin}
-6.  Compute $logprior = \log \frac{p(w|+)}{p(w|-)}$ Where $D_{+}$ and $D_{-}$ correspond to the number Of negative documents respectively.
+3.  Compute the vocabulary: freq(word, class) ![Training](img/slide_046.jpg){.column-margin group="slides"}
+4.  Use Laplacian smoothing to estimate word class probabilites $P(w|+)$ and $P(w|-)$. ![Training](img/slide_047.jpg){.column-margin group="slides"}
+5.  Compute $\lambda(w) = \log \frac{p(w|+)}{p(w|-)}$ ![Training](img/slide_048.jpg){.column-margin group="slides"}
+6.  Compute $\log(prior) = \log \frac{p(w|+)}{p(w|-)}$ Where $D_{+}$ and $D_{-}$ correspond to the number Of negative documents respectively.
 
 # Testing Naïve Bayes 
 
-![Inference](img/slide_050.jpg){.column-margin}
+![Inference](img/slide_050.jpg){.column-margin group="slides"}
 
 Let's work on applying the Naïve Bayes classifier on validation examples to compute the model's accuracy. The steps involved in testing a Naïve Bayes model for sentiment analysis are as follows:
 

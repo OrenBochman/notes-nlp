@@ -12,11 +12,11 @@ categories:
 ---
 
 ::: {#fig-00 .column-margin}
-![course banner](/images/Course-Logo-3-3.webp){.column-margin}
+![course banner](/images/Course-Logo-3-3.webp){.column-margin group="slides"}
 :::
 
 ::: {#fig-slide-deck .column-margin}
-![This week's slides](slides.pdf){width="420px" height="340px" style="@page {size: 16in 9in;  margin: 0; }"}
+![This week's slides](slides.pdf){width="420px" height="340px" style="@page {size: 16in 9in;  margin: 0;  group="slides"}"}
 :::
 
 My irreverent notes for Week 1 of the [Natural Language Processing with Sequence Models](https://www.coursera.org/learn/sequence-models-in-nlp/home/welcome) Course in the Natural Language Processing Specialization Offered by [DeepLearning.AI](DeepLearning.AI) on [Coursera](https://www.coursera.org/)
@@ -40,7 +40,7 @@ My irreverent notes for Week 1 of the [Natural Language Processing with Sequence
 
 Previously in the course you did sentiment analysis with logistic regression and naive Bayes. Those models were in a sense more naive, and are not able to catch the sentiment off a tweet like: "I am not happy " or "If only it was a good day". When using a neural network to predict the sentiment of a sentence, you can use the following. Note that the image below has three outputs, in this case you might want to predict, "positive", "neutral ", or "negative". 
 
-![](img/slide01.png){.column-margin}
+![](img/slide01.png){.column-margin group="slides"}
 
 Note that the network above has three layers. To go from one layer to another you can use a 
 $W$ matrix to propagate to the next layer. Hence, we call this concept of going from the input until the final layer, forward propagation. To represent a tweet, you can use the following: 
@@ -48,7 +48,7 @@ $W$ matrix to propagate to the next layer. Hence, we call this concept of going 
 
 Note, that we add zeros for padding to match the size of the longest tweet. 
 
-![](img/slide02.png){.column-margin}
+![](img/slide02.png){.column-margin group="slides"}
 
 
 ## Trax: Neural Networks
@@ -61,7 +61,7 @@ Trax has several advantages:
 
 Here is an example of how you can code a neural network in Trax: 
 
-![](img/slide03.png){.column-margin}
+![](img/slide03.png){.column-margin group="slides"}
 
 ## Reading: (Optional) Trax and JAX, docs and code
 
@@ -85,7 +85,7 @@ JAX library:
 
 Trax makes use of classes. If you are not familiar with classes in python, don't worry about it, here is an example. 
 
-![](img/slide04.png){.column-margin}
+![](img/slide04.png){.column-margin group="slides"}
 
 
 In the example above, you can see that a class takes in an `__init__` and a `__call__` method. 
@@ -104,11 +104,11 @@ You can change the `my_method` function to do whatever you want, and you can hav
 
 The Dense layer is the computation of the inner product between a set of trainable weights (weight matrix) and an input vector.  The visualization of the dense layer could be seen in the image below. 
 
-![](img/slide05.png){.column-margin}
+![](img/slide05.png){.column-margin group="slides"}
 
 The orange box shows the dense layer. An activation layer is the set of blue nodes. Concretely one of the most commonly used activation layers is the rectified linear unit (ReLU).
 
-![](img/slide06.png){.column-margin}
+![](img/slide06.png){.column-margin group="slides"}
 
 ReLU(x) is defined as max(0,x) for any input x. 
 
@@ -117,7 +117,7 @@ ReLU(x) is defined as max(0,x) for any input x.
 
 A serial layer allows you to compose layers in a serial arrangement:
 
-![](img/slide07.png){.column-margin}
+![](img/slide07.png){.column-margin group="slides"}
 
 It is a composition of sublayers. These layers are usually dense layers followed by activation layers. 
 
@@ -125,11 +125,11 @@ It is a composition of sublayers. These layers are usually dense layers followed
 
 Other layers could include embedding layers and mean layers. For example, you can learn word embeddings for each word in your vocabulary as follows: 
 
-![](img/slide08.png){.column-margin}
+![](img/slide08.png){.column-margin group="slides"}
 
 The mean layer allows you to take the average of the embeddings. You can visualize it as follows: 
 
-![](img/slide09.png){.column-margin}
+![](img/slide09.png){.column-margin group="slides"}
 
 This layer does not have any trainable parameters. 
 
@@ -137,12 +137,12 @@ This layer does not have any trainable parameters.
 
 In Trax, the function grad allows you to compute the gradient. You can use it as follows: 
 
-![](img/slide10.png){.column-margin}
+![](img/slide10.png){.column-margin group="slides"}
 
 Now if you were to evaluate grad_f at a certain value, namely z, it would be the same as computing 6z+1.  Now to do the training, it becomes very simple: 
 
 
-![](img/slide11.png){.column-margin}
+![](img/slide11.png){.column-margin group="slides"}
 
 
 You simply compute the gradients by feeding in y.forward (the latest value of y), the weights, and the input x, and then it does the back-propagation for you in a single line. You can then have the loop that allows you to update the weights (i.e. gradient descent!).
