@@ -516,26 +516,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="installing-trax">Installing Trax</h2>
 <p>Trax has dependencies on JAX and some libraries like JAX which are yet to be supported in <a href="https://github.com/google/jax/blob/1bc5896ee4eab5d7bb4ec6f161d8b2abb30557be/README.md#installation">Windows</a> but work well in Ubuntu and MacOS. We would suggest that if you are working on Windows, try to install Trax on WSL2.</p>
 <p>Official maintained documentation - <a href="https://trax-ml.readthedocs.io/en/latest/">trax-ml</a> not to be confused with this <a href="https://trax.readthedocs.io/en/latest/index.html">TraX</a></p>
-<div id="fcb0aaec" class="cell" data-execution_count="2">
+<div id="b2f7ad9f" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!pip install trax==1.3.1 Use this version for this notebook </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="imports" class="level2">
 <h2 class="anchored" data-anchor-id="imports">Imports</h2>
-<div id="48e9356a" class="cell" data-tags="[]" data-execution_count="3">
+<div id="7f3b8c3a" class="cell" data-tags="[]" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np  <span class="co"># regular ol' numpy</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> trax <span class="im">import</span> layers <span class="im">as</span> tl  <span class="co"># core building block</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> trax <span class="im">import</span> shapes  <span class="co"># data signatures: dimensionality and type</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> trax <span class="im">import</span> fastmath  <span class="co"># uses jax, offers numpy on steroids</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>2025-02-05 15:33:48.710339: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+<pre><code>2025-02-05 21:54:57.883692: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
 WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-E0000 00:00:1738762428.771770  458013 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
-E0000 00:00:1738762428.791235  458013 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered</code></pre>
+E0000 00:00:1738785297.899560  613536 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1738785297.904994  613536 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered</code></pre>
 </div>
 </div>
-<div id="16d711e8" class="cell" data-tags="[]" data-execution_count="4">
+<div id="a00fde3a" class="cell" data-tags="[]" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Trax version 1.3.1 or better </span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip <span class="bu">list</span> <span class="op">|</span> grep trax</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -552,7 +552,7 @@ E0000 00:00:1738762428.791235  458013 cuda_blas.cc:1418] Unable to register cuBL
 <h3 class="anchored" data-anchor-id="relu-layer">Relu Layer</h3>
 <p>First I’ll show you how to build a relu activation function as a layer. A layer like this is one of the simplest types. Notice there is no object initialization so it works just like a math function.</p>
 <p><strong>Note: Activation functions are also layers in Trax, which might look odd if you have been using other frameworks for a longer time.</strong></p>
-<div id="7a5beca0" class="cell" data-tags="[]" data-execution_count="5">
+<div id="696a2ac5" class="cell" data-tags="[]" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Layers</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a relu trax layer</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>relu <span class="op">=</span> tl.Relu()</span>
@@ -589,7 +589,7 @@ y : [0 0 0 1 2]</code></pre>
 <section id="concatenate-layer" class="level3">
 <h3 class="anchored" data-anchor-id="concatenate-layer">Concatenate Layer</h3>
 <p>Now I’ll show you how to build a layer that takes 2 inputs. Notice the change in the expected inputs property from 1 to 2.</p>
-<div id="ed137c2c" class="cell" data-tags="[]" data-execution_count="6">
+<div id="b729e8d1" class="cell" data-tags="[]" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a concatenate trax layer</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>concat <span class="op">=</span> tl.Concatenate()</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Properties --"</span>)</span>
@@ -627,7 +627,7 @@ y : [-10. -20. -30.   1.   2.   3.]</code></pre>
 <section id="layers-are-configurable" class="level2">
 <h2 class="anchored" data-anchor-id="layers-are-configurable">Layers are Configurable</h2>
 <p>You can change the default settings of layers. For example, you can change the expected inputs for a concatenate layer from 2 to 3 using the optional parameter <code>n_items</code>.</p>
-<div id="93bf3a48" class="cell" data-tags="[]" data-execution_count="7">
+<div id="4806518f" class="cell" data-tags="[]" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Configure a concatenate layer</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>concat_3 <span class="op">=</span> tl.Concatenate(n_items<span class="op">=</span><span class="dv">3</span>)  <span class="co"># configure the layer's expected inputs</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Properties --"</span>)</span>
@@ -664,7 +664,7 @@ y : [-10.   -20.   -30.     1.     2.     3.     0.99   1.98   2.97]</code></pre
 </div>
 </div>
 <p><strong>Note: At any point,if you want to refer the function help/ look up the <a href="https://trax-ml.readthedocs.io/en/latest/">documentation</a> or use help function.</strong></p>
-<div id="9a056bf4" class="cell" data-execution_count="8">
+<div id="fcf015ea" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#help(tl.Concatenate) #Uncomment this to see the function docstring with explaination</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
@@ -672,12 +672,12 @@ y : [-10.   -20.   -30.     1.     2.     3.     0.99   1.98   2.97]</code></pre
 <h2 class="anchored" data-anchor-id="layers-can-have-weights">Layers can have Weights</h2>
 <p>Some layer types include mutable weights and biases that are used in computation and training. Layers of this type require initialization before use.</p>
 <p>For example the <code>LayerNorm</code> layer calculates normalized data, that is also scaled by weights and biases. During initialization you pass the data shape and data type of the inputs, so the layer can initialize compatible arrays of weights and biases.</p>
-<div id="49f76633" class="cell" data-execution_count="9">
+<div id="e3051284" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Uncomment any of them to see information regarding the function</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># help(tl.LayerNorm)</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># help(shapes.signature)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="e1597a55" class="cell" data-tags="[]" data-execution_count="10">
+<div id="be23fe36" class="cell" data-tags="[]" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Layer initialization</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>norm <span class="op">=</span> tl.LayerNorm()</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># You first must know what the input data will look like</span></span>
@@ -737,7 +737,7 @@ y : [-1.3416404  -0.44721344  0.44721344  1.3416404 ]</code></pre>
 <section id="custom-layers" class="level2">
 <h2 class="anchored" data-anchor-id="custom-layers">Custom Layers</h2>
 <p>This is where things start getting more interesting! You can create your own custom layers too and define custom functions for computations by using <code>tl.Fn</code>. Let me show you how.</p>
-<div id="6d4188d5" class="cell" data-execution_count="11">
+<div id="728f2197" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="bu">help</span>(tl.Fn)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Help on function Fn in module trax.layers.base:
@@ -769,7 +769,7 @@ Fn(name, f, n_out=1)
 </code></pre>
 </div>
 </div>
-<div id="c9d75ca0" class="cell" data-tags="[]" data-execution_count="12">
+<div id="365f6dfe" class="cell" data-tags="[]" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a custom layer</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co"># In this example you will create a layer to calculate the input times 2</span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -822,11 +822,11 @@ y : [2 4 6]</code></pre>
 <h3 class="anchored" data-anchor-id="serial-combinator">Serial Combinator</h3>
 <p>This is the most common and easiest to use. For example could build a simple neural network by combining layers into a single layer using the <code>Serial</code> combinator. This new layer then acts just like a single layer, so you can inspect intputs, outputs and weights. Or even combine it into another layer! Combinators can then be used as trainable models. <em>Try adding more layers</em></p>
 <p><strong>Note:As you must have guessed, if there is serial combinator, there must be a parallel combinator as well. Do try to explore about combinators and other layers from the trax documentation and look at the repo to understand how these layers are written.</strong></p>
-<div id="b553fe04" class="cell" data-execution_count="13">
+<div id="157cd417" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># help(tl.Serial)</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># help(tl.Parallel)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="91f78f7a" class="cell" data-tags="[]" data-execution_count="14">
+<div id="3c615701" class="cell" data-tags="[]" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Serial combinator</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>serial <span class="op">=</span> tl.Serial(</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    tl.LayerNorm(),         <span class="co"># normalize input</span></span>
@@ -905,7 +905,7 @@ y : [0.        0.        0.        1.4142132 2.8284264]</code></pre>
 <h2 class="anchored" data-anchor-id="jax">JAX</h2>
 <p>Just remember to lookout for which numpy you are using, the regular ol’ numpy or Trax’s JAX compatible numpy. Both tend to use the alias np so watch those import blocks.</p>
 <p><strong>Note:There are certain things which are still not possible in fastmath.numpy which can be done in numpy so you will see in assignments we will switch between them to get our work done.</strong></p>
-<div id="b3c82aac" class="cell" data-tags="[]" data-execution_count="15">
+<div id="c8457d90" class="cell" data-tags="[]" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Numpy vs fastmath.numpy have different data types</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Regular ol' numpy</span></span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>x_numpy <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>])</span>
