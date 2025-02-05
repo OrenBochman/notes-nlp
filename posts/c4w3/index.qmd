@@ -1,55 +1,57 @@
 ---
 date: 2021-04-14
-title: "Week 3 Question Answering"
-subtitle: NLP with Attention Models
-description: "This week of the NLP Specialization, we will uncover the field of Neural Question Answering. We will build advanced models like T5 and BERT to accurately answer questions based on given contexts. We will fine-tune these models to optimize their performance. We will gain practical experience in building question-answering systems. By the end of this week, we will have the skills to develop state-of-the-art NLP models to provide accurate answers to a wide range of questions."
+title: "Week 3 - Question Answering"
+subtitle: "NLP with Attention Models"
+description: "This week we will dive into Neural Question Answering. We will build advanced models like T5 and BERT to accurately answer questions based on given contexts. We will fine-tune these models to optimize their performance. We will gain practical experience in building question-answering systems."
 categories:
+  - Attention
+  - Coursera 
+  - Deep Learning Algorithms
+  - NLP
+  - Notes
   - NLP with Attention Models
   - Neural Machine Translation
-  - Coursera 
-  - Notes
-  - NLP
-  - Deep Learning Algorithms
-  - transformer
-  - teacher forcing
-  - positional encoding
-  - BERT
-  - T5
-  - Transformer decoder
-  - Attention
-  - Dot product attention
-  - Self attention
-  - Causal attention
-  - Multi-head attention
+  - Transformer
+  - Teacher forcing
+  - Positional encoding
   - Question answering task
+keywords:
+  - BERT
+  - Causal attention
+  - Dot product attention
+  - Multi-head attention
+  - Self attention
+  - Transformer decoder
+  - T5
 ---
 
-![deeplearning.ai](/images/Course-Logo-4-1.webp){.column-margin .nolightbox}
+![course banner](/images/Course-Logo-4-1.webp){.column-margin .nolightbox}
 
 ## Question Answering {#sec-question-answering}
 
-Notes for: NLP with Attention Models Week 3
+::: {#sup-slide-deck .column-margin group="slides"}
+![This week's slides](slides.pdf){width="420px" height="340px" style="@page {size: 16in 9in;  margin: 0;}" group="slides"}
+:::
 
-Natural Language Processing with Attention Models - Question Answering
+My notes for Week 3 of the [Natural Language Processing with Attention Labels](https://www.coursera.org/learn/attention-models-in-nlp/home/info) Course in the Natural Language Processing Specialization Offered by [DeepLearning.AI](DeepLearning.AI) on [Coursera](https://www.coursera.org/)
 
 ::: {.callout-note}
 ## Learning Objectives: {#nte-learning-objectives}
 
-* [ ] Gain intuition for how transfer learning works in the context of NLP
-* [ ]  Identify two approaches to transfer learning
-* [ ] Discuss the evolution of language models from CBOW to T5 and Bert
-* [ ] Fine-tune BERT on a dataset
-* [ ] Implement context-based question answering with T5
-* [ ] Interpret the GLUE benchmark
+- [x] [Gain intuition for how transfer learning works in the context of NLP]{#sec-video2-transfer-learning-nlp}
+- [x] [Identify two approaches to transfer learning]{#sec-video2-transfer-learning-nlp}
+- [x] [Discuss the evolution of language models from CBOW to T5 and Bert]{#sec-video3-elmo-gpt-bert-t5}
+- [x] [Fine-tune BERT on a dataset]{#sec-video4-bert}
+- [x] [Implement context-based question answering with T5]{#sec-video7-transformer-t5}
+- [x] [Interpret the GLUE benchmark]{#sec-video9-glue-benchmark}
+
 :::
 
-<!-- ## TLDR: Neural Network engineering -->
-
-## Video 1 : Week 3 Overview {#sec-video1-week3-overview}
+## Overview {#sec-overview}
 
 ![week-3](img/V1-001-week-3.png){.column-margin group="slides"}
-In this week you are going to learn about **transfer learning**.
-More specifically you will understand how **T5** and **BERT** actually work.
+In this week we are going to learn about **transfer learning**.
+More specifically we will understand how **T5** and **BERT** actually work.
 
 ![question-answering](img/V1-002-question-answering.png){.column-margin group="slides"}
 
@@ -62,7 +64,7 @@ context based
 	: given a document and a question the model extracts an answer or generates an answer
  
 closed book
-	: the model picks an answer from servral options (classifier)
+	: the model picks an answer from several options (classifier)
 
 :::
 
@@ -74,17 +76,17 @@ closed book
 ![transfer-learning](img/V1-005-transfer-learning.png){.column-margin group="slides"}
 
 ![transfer-learning-tasks](img/V1-006-transfer-learning-tasks.png){.column-margin group="slides"}
-You can see how a model initially trained on some type of sentiment classification, could now be used for question answering. One other model that has state of the art makes use of multi tasking. 
+We can see how a model initially trained on some type of sentiment classification, could now be used for question answering. One other model that has state of the art makes use of multi tasking. 
 For example, the same model could be used for sentiment analysis, question answering, and many other things.
 
 ![goals](img/V1-007-goals.png){.column-margin group="slides"}
 
 These new types of models make use of a lot of data. For example the C4 (colossal cleaned crawled corpus) is about 800 GB when all of the english wikipedia is just 13 GB! 
 
-> C4 is a colossal, cleaned version of Common Crawl's web crawl corpus. It was based on Common Crawl dataset: https://commoncrawl.org. It was used to train the T5 text-to-text Transformer models.
-> Introduced by Raffel et al. in Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer
+> C4 is a colossal, cleaned version of Common Crawl's web crawl corpus. It was based on [Common Crawl dataset](https://commoncrawl.org). It was used to train the T5 text-to-text Transformer models.
+> Introduced by @raffel2023exploringlimitstransferlearning  in  a paper titled "Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer"
 > The dataset can be downloaded in a pre-processed form from [allennlp](https://github.com/allenai/allennlp/discussions/5056).
-> [C4 $ papers with code](https://paperswithcode.com/dataset/c4)
+> [C4 at papers with code](https://paperswithcode.com/dataset/c4)
 
 
 ## Video 2 : Transfer Learning in NLP {#sec-video2-transfer-learning-nlp}
@@ -117,15 +119,15 @@ There are three main advantages to transfer learning:
 
 * Reduce training time
 * Improve predictions
-* Allows you to use smaller datasets
+* Allows we to use smaller datasets
 
-Two methods that you can use for transfer learning are the following:
+Two methods that we can use for transfer learning are the following:
 
 - pre-training
 - fine tuning
 
-In **feature based**, you can train word embeddings by running a different model and then using those features (i.e. word vectors) on a different task. 
-When **fine tuning**, you can use the exact same model and just run it on a different task. Sometimes when fine tuning, you can keep the model weights fixed and just add a new layer that you will train. Other times you can slowly unfreeze the layers one at a time. You can also use unlabelled data when pre-training, by masking words and trying to predict which word was masked.
+In **feature based**, we can train word embeddings by running a different model and then using those features (i.e. word vectors) on a different task. 
+When **fine tuning**, we can use the exact same model and just run it on a different task. Sometimes when fine tuning, we can keep the model weights fixed and just add a new layer that we will train. Other times we can slowly unfreeze the layers one at a time. We can also use unlabelled data when pre-training, by masking words and trying to predict which word was masked.
 
 For example, in the drawing above we try to predict the word "friend". This allows your model to get a grasp of the overall structure of the data and to help the model learn some relationships within the words of a sentence
 
@@ -169,7 +171,7 @@ The models mentioned in the previous video were discovered in the following orde
 
 ![t5-encoder-decoder](img/V3-039-t5-encoder-decoder.png){.column-margin group="slides"}
 
-In CBOW, you want to encode a word as a vector. To do this we used the context before the word and the context after the word and we use that model to learn and creates features for the word. CBOW however uses a fixed window C (for the context).
+In CBOW, we want to encode a word as a vector. To do this we used the context before the word and the context after the word and we use that model to learn and creates features for the word. CBOW however uses a fixed window C (for the context).
 
 the main isused with CBOW are:
 
@@ -217,7 +219,7 @@ So we can now flesh out the table
 
 lets dive deeper into BERT
 
-There are two steps in the BERT framework: pre-training and fine-tuning. During pre-training, the model is trained on unlabeled data over different pre-training tasks.  For fine tuning, the BERT model is first initialized with the pre-trained parameters, and all of the parameters are fine-tuned using labeled data from the downstream tasks. For example, in the figure above, you get the corresponding embeddings for the input words, you run it through a few transformer blocks, and then you make the prediction at each time point $T_i$.
+There are two steps in the BERT framework: pre-training and fine-tuning. During pre-training, the model is trained on unlabeled data over different pre-training tasks.  For fine tuning, the BERT model is first initialized with the pre-trained parameters, and all of the parameters are fine-tuned using labeled data from the downstream tasks. For example, in the figure above, we get the corresponding embeddings for the input words, we run it through a few transformer blocks, and then we make the prediction at each time point $T_i$.
 
 
 
@@ -252,13 +254,13 @@ Does it try to predict them all at once or each one by considering input as cont
 ![BERT-the-input](img/V5-061-BERT-the-input.png){.column-margin group="slides"}
 
 The input embeddings are the sum of the token embeddings, the segmentation embeddings and the position embeddings.
-The input embeddings: you have a CLS token to indicate the beginning of the sentence and a sep to indicate the end of the sentence
-The segment embeddings: allows you to indicate whether it is sentence a or b.
-Positional embeddings: allows you to indicate the word's position in the sentence.
+The input embeddings: we have a CLS token to indicate the beginning of the sentence and a sep to indicate the end of the sentence
+The segment embeddings: allows we to indicate whether it is sentence a or b.
+Positional embeddings: allows we to indicate the word's position in the sentence.
 
 ![BERT-the-output](img/V5-062-BERT-the-output.png){.column-margin group="slides"}
 
-The C token in the image above could be used for classification purposes. The unlabeled sentence A/B pair will depend on what you are trying to predict, it could range from question answering to sentiment. (in which case the second sentence could be just empty). 
+The C token in the image above could be used for classification purposes. The unlabeled sentence A/B pair will depend on what we are trying to predict, it could range from question answering to sentiment. (in which case the second sentence could be just empty). 
 
 ![BERT-objectives](img/V5-063-BERT-objectives.png){.column-margin group="slides"}
 
@@ -271,14 +273,14 @@ The BERT objective is defined as follows:
 
 ![BERT-fine-tuning-outline](img/V6-070-BERT-fine-tuning-outline.png){.column-margin group="slides"}
 
-Once you have a pre-trained model, you can fine tune it on different tasks. 
+Once we have a pre-trained model, we can fine tune it on different tasks. 
 
 
 ![inputs](img/V6-071-inputs.png){.column-margin group="slides"}
 
-For example, given a hypothesis, you can identify the premise. Given a question, you can find the answer. You can also use it for named entity recognition. Here is a summary of the inputs.
+For example, given a hypothesis, we can identify the premise. Given a question, we can find the answer. We can also use it for named entity recognition. Here is a summary of the inputs.
 
-- You can replace sentences A/B
+- We can replace sentences A/B
 - Paraphrase from sentence A
 - Question/passage
 - Hypothesis premise pairs in entailment
@@ -300,16 +302,16 @@ For example, given a hypothesis, you can identify the premise. Given a question,
 
 One of the major techniques that allowed the T5 model to reach state of the art is the concept of masking:
 
-For example, you represent the "for inviting" with $<X>$ and last with $<Y>$ then the model predicts what the X should be and what the Y should be. This is exactly what we saw in the BERT loss. You can also mask out a few positions, not just one. The loss is only on the mask for BERT, for T5 it is on the target. 
+For example, we represent the "for inviting" with $<X>$ and last with $<Y>$ then the model predicts what the X should be and what the Y should be. This is exactly what we saw in the BERT loss. We can also mask out a few positions, not just one. The loss is only on the mask for BERT, for T5 it is on the target. 
 
 
 ![T5-architecture](img/V7-076-T5-architecture.png){.column-margin group="slides"}
 
-So we start with the basic encoder-decoder representation.  There you have a fully visible attention in the encoder and then causal attention in the decoder.  So light gray lines correspond to causal masking. And dark gray lines correspond to the fully visible masking. 
+So we start with the basic encoder-decoder representation.  There we have a fully visible attention in the encoder and then causal attention in the decoder.  So light gray lines correspond to causal masking. And dark gray lines correspond to the fully visible masking. 
 
-In the middle we have the language model which consists of a single transformer layer stack. And it's being fed the concatenation of the inputs and the target. So it uses causal masking throughout as you can see because they're all gray lines. And you have $X_1$ going inside, you get $X_2$, $X_2$ goes into the model and you get $X3$ and so forth. 
+In the middle we have the language model which consists of a single transformer layer stack. And it's being fed the concatenation of the inputs and the target. So it uses causal masking throughout as we can see because they're all gray lines. And we have $X_1$ going inside, we get $X_2$, $X_2$ goes into the model and we get $X3$ and so forth. 
 
-To the right, we have prefix language model which corresponds to allowing fully visible masking over the inputs as you can see with the dark arrows. And then causal masking in the rest.
+To the right, we have prefix language model which corresponds to allowing fully visible masking over the inputs as we can see with the dark arrows. And then causal masking in the rest.
 
 
 ## Video 8: Lecture Multi-Task Training Strategy {#sec-video8-multi-task-training-strategy}
@@ -322,7 +324,7 @@ To the right, we have prefix language model which corresponds to allowing fully 
 
 This is a reminder of how the T5 model works:
 
-You can see that you only have to add a small prefix to the input and the model as a result will solve the task for you. There are many tasks that the t5 model can do for you.
+We can see that we only have to add a small prefix to the input and the model as a result will solve the task for you. There are many tasks that the t5 model can do for you.
 It is possible to formulate most NLP tasks in a “text-to-text” format – that is, a task where the model is fed some text for context or conditioning and is then asked to produce some output text. This framework provides a consistent training objective both for pre-training and fine-tuning. Specifically, the model is trained with a maximum likelihood objective (using “teacher forcing” ) regardless of the task.
 
 ### Training data strategies {#sec-training-data-strategies}
@@ -331,10 +333,10 @@ Examples-proportional mixing
 : sample in proportion to the size of each task’s dataset
 
 Temperature scaled mixing
-: adjust the "temperature”" of the mixing rates. This temperature parameter allows you to weight certain examples more than others. To implement temperature scaling with temperature T, we raise each task’s mixing rate rm to the power of 1⁄T and renormalize the rates so that they sum to 1. When T = 1, this approach is equivalent to examples-proportional mixing and as T increases the proportions become closer to equal mixing
+: adjust the "temperature”" of the mixing rates. This temperature parameter allows we to weight certain examples more than others. To implement temperature scaling with temperature T, we raise each task’s mixing rate rm to the power of 1⁄T and renormalize the rates so that they sum to 1. When T = 1, this approach is equivalent to examples-proportional mixing and as T increases the proportions become closer to equal mixing
 
 Equal mixing
-: In this case, you sample examples from each task with equal probability. Specifically, each example in each batch is sampled uniformly at random from one of the datasets you train on.
+: In this case, we sample examples from each task with equal probability. Specifically, each example in each batch is sampled uniformly at random from one of the datasets we train on.
 
 
 ![io-format](img/V8-083-io-format.png){.column-margin group="slides"}
@@ -349,7 +351,7 @@ Equal mixing
 
 ![fine-tuning](img/V8-088-fine-tuning.png){.column-margin group="slides"}
 
-You can see how fine tuning on a specific task could work even though you were pre-training on different tasks.
+We can see how fine tuning on a specific task could work even though we were pre-training on different tasks.
 
 ## Video 9: GLUE Benchmark {#sec-video9-glue-benchmark}
 
@@ -365,12 +367,12 @@ General Language Understanding Evaluation (GLUE) is contains:
 * Datasets with different genres, and of different sizes and difficulties
 * Leaderboard
 
-Currently T5 is state of the art according to this GLUE benchmark and  you will be implementing it for homework this week! This GLUE bench mark is used for research purposes, it is model agnostic, and relies on models that make use of transfer learning.
+Currently T5 is state of the art according to this GLUE benchmark and  we will be implementing it for homework this week! This GLUE bench mark is used for research purposes, it is model agnostic, and relies on models that make use of transfer learning.
 
 ## Video 10: Question Answering {#sec-video10-question-answering}
 
 ![BERT-feed-forward-block](img/V9-093-BERT-feed-forward-block.png){.column-margin group="slides"}
-You will be implementing an encoder this week. Last week you implemented the decoder. So here it is: 
+We will be implementing an encoder this week. Last week we implemented the decoder. So here it is: 
 
 ![BERT-encoder-Block](img/V9-094-BERT-encoder-Block.png){.column-margin group="slides"}
 
@@ -385,9 +387,9 @@ You will be implementing an encoder this week. Last week you implemented the dec
 ![t5-question](img/V9-099-t5-question.png){.column-margin group="slides"}
 
 
-You can see there is a feed forward and the encoder-block above. It makes use of two residual connections, layer normalization, and dropout. 
+We can see there is a feed forward and the encoder-block above. It makes use of two residual connections, layer normalization, and dropout. 
 
-The steps you will follow to implement it are:
+The steps we will follow to implement it are:
 
 - Load a pre-trained model
 - Process data to get the required inputs and outputs: "question: Q context: C" as input and "A" as target
@@ -492,8 +494,8 @@ T5	like BERT does  Transfer learning + fine tuning.
 	classification, MT, NE, Sentiment
 	
 	 
-	So you can see over here you have fully visible attention in the encoder and then causal attention in the decoder. 
-	And then you have the general encoder-decoder representation just as 
+	So we can see over here we have fully visible attention in the encoder and then causal attention in the decoder. 
+	And then we have the general encoder-decoder representation just as 
 	notation. 
 	So light gray lines correspond to causal masking. 
 	And dark gray lines correspond to the fully visible masking. 
@@ -501,19 +503,19 @@ T5	like BERT does  Transfer learning + fine tuning.
 	In the middle over here what we have, 
 	we have the language model which consists of a single transformer layer stack. 
 	And it's being fed the concatenation of the inputs and the target. 
-	So it uses causal masking throughout as you can see because they're 
+	So it uses causal masking throughout as we can see because they're 
 	all gray lines. 
-	And you have X1 going inside over here, get at X2, 
+	And we have X1 going inside over here, get at X2, 
 	X2 goes into the model X3 and so forth. 
 	Now over here to the right, 
 	we have prefix language model which corresponds to allowing fully 
-	visible masking over the inputs as you can see here in the dark arrows. 
+	visible masking over the inputs as we can see here in the dark arrows. 
 	And then causal masking in the rest.
 	Play video starting at :3:2 and follow transcript3:02
-	So as you can see over here, it's doing causal masking. 
+	So as we can see over here, it's doing causal masking. 
 	So the model architecture, it uses encoder/decoder stack. 
 	It has 12 transformer blocks each. 
-	So you can think of it as a dozen eggs and then 220 million parameters. 
+	So we can think of it as a dozen eggs and then 220 million parameters. 
 	So in summary, you've seen prefix language model attention. 
 	You've seen the model architecture for T5. 
 	And you've seen how the pre-training is done similar to birds, but 
@@ -541,7 +543,7 @@ T5	like BERT does  Transfer learning + fine tuning.
 
 1. [Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer] (Raffel et al, 2019)  
 1. [Reformer: The Efficient Transformer] (Kitaev et al, 2020)
-1. [Attention Is All You Need] (Vaswani et al, 2017)
+1. [Attention Is All We Need] (Vaswani et al, 2017)
 1. [Deep contextualized word representations] (Peters et al, 2018)
 1. [BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding] (Devlin et al, 2018)
 1. [Finetuning Pretrained Transformers into RNNs] (Kasai et all 2021)
@@ -581,7 +583,7 @@ https://youtu.be/hAvtJ516Mw4
 
 [Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer]: https://arxiv.org/abs/1910.10683
 [Reformer: The Efficient Transformer]: https://arxiv.org/abs/2001.04451
-[Attention Is All You Need]: https://arxiv.org/abs/1706.03762 
+[Attention Is All We Need]: https://arxiv.org/abs/1706.03762 
 [Deep contextualized word representations]: https://arxiv.org/pdf/1802.05365.pdf
 [The Illustrated Transformer]: http://jalammar.github.io/illustrated-transformer/
 [The Illustrated GPT-2]: http://jalammar.github.io/illustrated-gpt2/

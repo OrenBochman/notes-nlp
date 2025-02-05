@@ -43,11 +43,11 @@ RNNs struggle with longer term dependencies and are very prone to vanishing or e
 
 ![](img/slide01){.column-margin group="slides"}
 
-Note that as you are back-propagating through time, you end up getting the following: 
+Note that as we are back-propagating through time, we end up getting the following: 
   
 ![](img/slide02){.column-margin group="slides"}
 
-Note that the sigmoid and tanh functions are bounded by 0 and 1 and -1 and 1 respectively. This eventually leads us to a problem. If you have many numbers that are less than |1|, then as you go through many layers, and you take the product of those numbers, you eventually end up getting a gradient that is very close to 0. This introduces the problem of vanishing gradients. 
+Note that the sigmoid and tanh functions are bounded by 0 and 1 and -1 and 1 respectively. This eventually leads us to a problem. If we have many numbers that are less than |1|, then as we go through many layers, and we take the product of those numbers, we eventually end up getting a gradient that is very close to 0. This introduces the problem of vanishing gradients. 
 
 Solutions to Vanishing Gradient Problems
 
@@ -65,15 +65,15 @@ Check out this blog from Paperspace.io if you're interested in understanding in 
 [Vanishing Gradients](lab01.qmd)
 
 ## Introduction to LSTMs
-The LSTM allows your model to remember and forget certain inputs. It consists of a cell state and a hidden state with three gates. The gates allow the gradients to flow unchanged. You can think of the three gates as follows: 
+The LSTM allows your model to remember and forget certain inputs. It consists of a cell state and a hidden state with three gates. The gates allow the gradients to flow unchanged. We can think of the three gates as follows: 
 
-**Input gate**: tells you how much information to input at any time point. 
+**Input gate**: tells we how much information to input at any time point. 
 
-**Forget gate**: tells you how much information to forget at any time point. 
+**Forget gate**: tells we how much information to forget at any time point. 
 
-**Output gate**: tells you how much information to pass over at any time point. 
+**Output gate**: tells we how much information to pass over at any time point. 
 
-There are many applications you can use LSTMs for, such as:
+There are many applications we can use LSTMs for, such as:
 
 ![](img/slide03){.column-margin group="slides"}
 
@@ -86,7 +86,7 @@ Here's a classic post on LSTMs with intuitive explanations and diagrams, to comp
 [Understanding LSTM Networks](https://colah.github.io/posts/2015-08-Understanding-LSTMs/)
 
 ## LSTM Architecture
-The LSTM architecture could get complicated and don't worry about it if you do not understand it. I personally prefer looking at the equation, but I will try to give you a visualization for now and later this week we will take a look at the equations. 
+The LSTM architecture could get complicated and don't worry about it if we do not understand it. I personally prefer looking at the equation, but I will try to give we a visualization for now and later this week we will take a look at the equations. 
 
 ![](img/slide04){.column-margin group="slides"}
 
@@ -95,7 +95,7 @@ Note that there is the cell state and the hidden state, and then there is the ou
 
 ## Introduction to Named Entity Recognition
 
-Named Entity Recognition (NER) locates and extracts predefined entities from text. It allows you to find places, organizations, names, time and dates. Here is an example of the model you will be building: 
+Named Entity Recognition (NER) locates and extracts predefined entities from text. It allows we to find places, organizations, names, time and dates. Here is an example of the model we will be building: 
 
 ![](img/slide05){.column-margin group="slides"}
 
@@ -132,14 +132,14 @@ $$ {#eq-lstm-output}
 
 We can think of:
 
-- The **forget gate** as a gate that tells you how much information to forget, 
-- The **input gate**, tells you how much information to pick up. 
-- The **gate gate** as the gate containing information. This is multiplied by the **input gate** (which tells you how much of that information to keep). 
+- The **forget gate** as a gate that tells we how much information to forget, 
+- The **input gate**, tells we how much information to pick up. 
+- The **gate gate** as the gate containing information. This is multiplied by the **input gate** (which tells we how much of that information to keep). 
 
 ## Training NERs: Data Processing
 
 
-Processing data is one of the most important tasks when training AI algorithms. For NER, you have to:
+Processing data is one of the most important tasks when training AI algorithms. For NER, we have to:
 
 - Convert words and entity classes into arrays: 
 
@@ -147,7 +147,7 @@ Processing data is one of the most important tasks when training AI algorithms. 
 
 - Create a data generator:
 
-Once you have that, you can assign each class a number, and each word a number.
+Once we have that, we can assign each class a number, and each word a number.
 
 ![Data Processing](img/slide06){.column-margin group="slides"}
 
@@ -214,7 +214,7 @@ Rnns learn weights more weights as the sequence grows and though not clear these
 
 Now that we understand my caveat let's try to understand by filling the gaps as we go along with what what Ng says and shows!
 
-1. [If you understand the math you are good to go]{.mark}. Code is just a translation of the math into a programming language. Once you understand the math there are deeper levels of understanding that you can get to but you can't get there without understanding the math. There are three challenges to understanding the math!
+1. [If we understand the math we are good to go]{.mark}. Code is just a translation of the math into a programming language. Once we understand the math there are deeper levels of understanding that we can get to but we can't get there without understanding the math. There are three challenges to understanding the math!
 
    1. Both the LSTM and GRU are RNNs so they translate sequences to sequences in the general case let's imagine we are translating english to german. We start with some input x_0 and we output some out put y_0. For the next word we want to use the previous word to help us translate the next word. [This is done by concatenating the current word to the previous (hidden) state]{.mark}. The first take away
    2. RNN have an internal nonlinearity a $tanh$ but no gating mechanism. The non-linearity is applied to the hidden state concatenated to the input. The hidden state is thus the long term memory of the RNN. For NER we only need a short context to decide but for translation we need to be aware longer context, perhaps a few sentences back. [RNNS, GRUs and LSTMs also have the non-linearity at their core]. That's the second take away about the math of LSTMS
@@ -265,7 +265,7 @@ The schematic are emphesise a two other aspects of the LSTM, information flow an
 - how the equations are wired up to control the information flow and - the idea that we have a gating mechanism that combines the long term memory a in the Hidden state and the uses the memory cell, rather than the hidden state.
 
 
-We learned about the **GRU**, or gated recurrent units, and how that can allow you to learn very long range connections in a sequence. The other type of unit that allows you to do this very well is the **LSTM** or the long short term memory units, and this is even more powerful than the GRU. Let's take a look.
+We learned about the **GRU**, or gated recurrent units, and how that can allow we to learn very long range connections in a sequence. The other type of unit that allows we to do this very well is the **LSTM** or the long short term memory units, and this is even more powerful than the GRU. Let's take a look.
 
 Here are the equations from the previous video for the GRU. And for the GRU, we had $a^{<t>} = c^{<t>}$, and two gates, the optic gate and the relevance gate, $\tilde{c}^{<t>}$, which is a candidate for replacing the memory cell, and then we use the update gate, $\Gamma_u$, to decide whether or not to update $c^{<t>}$ using $\tilde{c}^{<t>}$.
 
@@ -273,24 +273,24 @@ The LSTM is an even slightly more powerful and more general version of the GRU, 
 
 I think this paper is one of the more difficult to read. It goes quite along into theory of vanishing gradients. And so, I think more people have learned about the details of LSTM through maybe other places than from this particular paper even though I think this paper has had a wonderful impact on the Deep Learning community. 
 
-But these are the equations that govern the LSTM. So, we continue to the memory cell, $c$, and the candidate value for updating it, $\tilde{c}^{<t>}$, will be this, and so on. Notice that for the LSTM, we will no longer have the case that $a^{<t>} =c^{<t>}$. So, this is what we use. And so, this is just like the equation on the left except that with now, more specially use $a^{<t>}$ there or $a^{<t-1>}$ instead of $c^{<t-1>}$. And we're not using this gamma or this relevance gate. Although you could have a variation of the LSTM where you put that back in, but with the more common version of the LSTM, doesn't bother with that. And then we will have an update gate, same as before. So, W updates and we're going to use $a^{<t-1>}$ here, $x^{<t>} + b_u$. And one new property of the LSTM is, instead of having one update gate control, both of these terms, we're going to have two separate terms. So instead of gamma_u and one minus gamma_u, we're going have $\Gamma_u$ here. And forget gate, which we're going to call $\Gamma_f$. So, this gate, $\Gamma_f$, is going to be sigmoid of pretty much what you'd expect, $x^{<t>}+ b_f$. And then, we're going to have a new output gate which is $\sigma(W_o)+ b_o$. And then, the update value to the memory so will be $c^{<t>}=\Gamma_u$. [And this asterisk denotes element-wise multiplication. This is a vector-vector element-wise multiplication]{.mark}, plus, and instead of one minus gamma u, we're going to have a separate forget gate, $\Gamma_f * c^{<t-1>}$. So this gives the memory cell the option of keeping the old value $c^{t-1}$ and then just adding to it, this new value, $\tilde{c}^{<t>}$. So, use a separate update and forget gates. So, this stands for update, forget, and output gate. 
+But these are the equations that govern the LSTM. So, we continue to the memory cell, $c$, and the candidate value for updating it, $\tilde{c}^{<t>}$, will be this, and so on. Notice that for the LSTM, we will no longer have the case that $a^{<t>} =c^{<t>}$. So, this is what we use. And so, this is just like the equation on the left except that with now, more specially use $a^{<t>}$ there or $a^{<t-1>}$ instead of $c^{<t-1>}$. And we're not using this gamma or this relevance gate. Although we could have a variation of the LSTM where we put that back in, but with the more common version of the LSTM, doesn't bother with that. And then we will have an update gate, same as before. So, W updates and we're going to use $a^{<t-1>}$ here, $x^{<t>} + b_u$. And one new property of the LSTM is, instead of having one update gate control, both of these terms, we're going to have two separate terms. So instead of gamma_u and one minus gamma_u, we're going have $\Gamma_u$ here. And forget gate, which we're going to call $\Gamma_f$. So, this gate, $\Gamma_f$, is going to be sigmoid of pretty much what you'd expect, $x^{<t>}+ b_f$. And then, we're going to have a new output gate which is $\sigma(W_o)+ b_o$. And then, the update value to the memory so will be $c^{<t>}=\Gamma_u$. [And this asterisk denotes element-wise multiplication. This is a vector-vector element-wise multiplication]{.mark}, plus, and instead of one minus gamma u, we're going to have a separate forget gate, $\Gamma_f * c^{<t-1>}$. So this gives the memory cell the option of keeping the old value $c^{t-1}$ and then just adding to it, this new value, $\tilde{c}^{<t>}$. So, use a separate update and forget gates. So, this stands for update, forget, and output gate. 
 
 And then finally, instead of
 $$
 a^{<t>} = c^{<t>} \quad \text{(GRU)} \qquad a^{<t>} = \Gamma_0 * \tanh( c^{<t>}) \quad \text{(LSTM)}
 $$. 
 
-So, these are the equations that govern the LSTM and you can tell it has three gates instead of two. So, it's a bit more complicated and it places the gates into slightly different places. So, here again are the equations governing the behavior of the LSTM. 
+So, these are the equations that govern the LSTM and we can tell it has three gates instead of two. So, it's a bit more complicated and it places the gates into slightly different places. So, here again are the equations governing the behavior of the LSTM. 
 
-Once again, it's traditional to explain these things using pictures. So let me draw one here. And if these pictures are too complicated, don't worry about it. I personally find the equations easier to understand than the picture. But I'll just show the picture here for the intuitions it conveys. The bigger picture here was very much inspired by a [blog post](https://colah.github.io/posts/2015-08-Understanding-LSTMs/) due to [Chris Ola](https://80000hours.org/podcast/episodes/chris-olah-unconventional-career-path/), titled **Understanding LSTM Network**, and the diagram drawing here is quite similar to one that he drew in his blog post. But the key thing is to take away from this picture are maybe that you use $a^{<t-1>}$ and $x^{<t>}$ to compute all the gate values. In this picture, you have $a^{<t-1>}$, $x^{<t>}$ coming together to compute the forget gate, to compute the update gates, and to compute output gate. And they also go through a tanh to compute $\tilde{c}^{<t>}$. And then these values are combined in these complicated ways with element-wise multiplies and so on, to get $c^{<t>}$ from the previous $c^{<t-1>}$. Now, one element of this is interesting as you have a bunch of these in parallel. So, that's one of them and you connect them. You then connect these temporally. So it does the input $x^{<1>}$ then $x^{<2>}$, $x^{<3>}$. So, you can take these units and just hold them up as follows, where the output a at the previous timestep is the input a at the next timestep, the c. I've simplified to diagrams a little bit in the bottom. And one cool thing about this you'll notice is that there's this line at the top that shows how, so long as you set the forget and the update gate appropriately, it is relatively easy for the LSTM to have some value c_0 and have that be passed all the way to the right to have your, maybe, $c^{<3>}=c^{<0>}$. And this is why the LSTM, as well as the GRU, is very good at memorizing certain values even for a long time, for certain real values stored in the memory cell even for many, many timesteps. 
+Once again, it's traditional to explain these things using pictures. So let me draw one here. And if these pictures are too complicated, don't worry about it. I personally find the equations easier to understand than the picture. But I'll just show the picture here for the intuitions it conveys. The bigger picture here was very much inspired by a [blog post](https://colah.github.io/posts/2015-08-Understanding-LSTMs/) due to [Chris Ola](https://80000hours.org/podcast/episodes/chris-olah-unconventional-career-path/), titled **Understanding LSTM Network**, and the diagram drawing here is quite similar to one that he drew in his blog post. But the key thing is to take away from this picture are maybe that we use $a^{<t-1>}$ and $x^{<t>}$ to compute all the gate values. In this picture, we have $a^{<t-1>}$, $x^{<t>}$ coming together to compute the forget gate, to compute the update gates, and to compute output gate. And they also go through a tanh to compute $\tilde{c}^{<t>}$. And then these values are combined in these complicated ways with element-wise multiplies and so on, to get $c^{<t>}$ from the previous $c^{<t-1>}$. Now, one element of this is interesting as we have a bunch of these in parallel. So, that's one of them and we connect them. We then connect these temporally. So it does the input $x^{<1>}$ then $x^{<2>}$, $x^{<3>}$. So, we can take these units and just hold them up as follows, where the output a at the previous timestep is the input a at the next timestep, the c. I've simplified to diagrams a little bit in the bottom. And one cool thing about this you'll notice is that there's this line at the top that shows how, so long as we set the forget and the update gate appropriately, it is relatively easy for the LSTM to have some value c_0 and have that be passed all the way to the right to have your, maybe, $c^{<3>}=c^{<0>}$. And this is why the LSTM, as well as the GRU, is very good at memorizing certain values even for a long time, for certain real values stored in the memory cell even for many, many timesteps. 
 
 So, that's it for the LSTM. 
 
-As you can imagine, there are also a few variations on this that people use. Perhaps, the most common one is that instead of just having the gate values be dependent only on $a_{t-1}$, $x^{<t>}$, sometimes, people also sneak in there the values $c_{t-1}$ as well. This is called a **peephole connection**, introduced in @Gers2000PeepHole Not a great name maybe but you'll see, peephole connection. What that means is that the gate values may depend not just on $a^{<t-1>}$ and on $x^{<t>}$, but also on the previous memory cell value, and the peephole connection can go into all three of these gates' computations. So that's one common variation you see of LSTMs. One technical detail is that these are, say, 100-dimensional vectors. So if you have a 100-dimensional hidden memory cell unit, and so is this. And the, say, fifth element of $c^{t-1}$ affects only the fifth element of the corresponding gates, so that relationship is one-to-one, where not every element of the 100-dimensional $c^{<t-1>}$ can affect all elements of the case. But instead, the first element of $c^{<t-1>}$ affects the first element of the case, second element affects the second element, and so on. But if you ever read the paper and see someone talk about the peephole connection, that's when they mean that $c^{<t-1>}$ is used to affect the gate value as well. So, that's it for the LSTM. 
+As we can imagine, there are also a few variations on this that people use. Perhaps, the most common one is that instead of just having the gate values be dependent only on $a_{t-1}$, $x^{<t>}$, sometimes, people also sneak in there the values $c_{t-1}$ as well. This is called a **peephole connection**, introduced in @Gers2000PeepHole Not a great name maybe but you'll see, peephole connection. What that means is that the gate values may depend not just on $a^{<t-1>}$ and on $x^{<t>}$, but also on the previous memory cell value, and the peephole connection can go into all three of these gates' computations. So that's one common variation we see of LSTMs. One technical detail is that these are, say, 100-dimensional vectors. So if we have a 100-dimensional hidden memory cell unit, and so is this. And the, say, fifth element of $c^{t-1}$ affects only the fifth element of the corresponding gates, so that relationship is one-to-one, where not every element of the 100-dimensional $c^{<t-1>}$ can affect all elements of the case. But instead, the first element of $c^{<t-1>}$ affects the first element of the case, second element affects the second element, and so on. But if we ever read the paper and see someone talk about the peephole connection, that's when they mean that $c^{<t-1>}$ is used to affect the gate value as well. So, that's it for the LSTM. 
 
-[When should you use a GRU? And when should you use an LSTM?]{.mark} 
+[When should we use a GRU? And when should we use an LSTM?]{.mark} 
 
-There isn't widespread consensus in this. And even though I presented GRUs first, in the history of deep learning, LSTMs actually came much earlier, and then GRUs were relatively recent invention that were maybe derived as Pavia's simplification of the more complicated LSTM model. Researchers have tried both of these models on many different problems, and on different problems, different algorithms will win out. So, there isn't a universally-superior algorithm which is why I want to show you both of them. But I feel like when I am using these, [the advantage of the GRU is that it's a simpler model and so it is actually easier to build a much bigger network, it only has two gates, so computationally, it runs a bit faster. So, it scales the building somewhat bigger models]{.mark} but the LSTM is more powerful and more effective since it has three gates instead of two. If you want to pick one to use, I think LSTM has been the historically more proven choice. So, if you had to pick one, I think most people today will still use the LSTM as the default first thing to try. Although, I think in the last few years, GRUs had been gaining a lot of momentum and I feel like more and more teams are also using GRUs because they're a bit simpler but often work just as well. It might be easier to scale them to even bigger problems. So, that's it for LSTMs. Well, either GRUs or LSTMs, you'll be able to build neural network that can capture much longer range dependencies.
+There isn't widespread consensus in this. And even though I presented GRUs first, in the history of deep learning, LSTMs actually came much earlier, and then GRUs were relatively recent invention that were maybe derived as Pavia's simplification of the more complicated LSTM model. Researchers have tried both of these models on many different problems, and on different problems, different algorithms will win out. So, there isn't a universally-superior algorithm which is why I want to show we both of them. But I feel like when I am using these, [the advantage of the GRU is that it's a simpler model and so it is actually easier to build a much bigger network, it only has two gates, so computationally, it runs a bit faster. So, it scales the building somewhat bigger models]{.mark} but the LSTM is more powerful and more effective since it has three gates instead of two. If we want to pick one to use, I think LSTM has been the historically more proven choice. So, if we had to pick one, I think most people today will still use the LSTM as the default first thing to try. Although, I think in the last few years, GRUs had been gaining a lot of momentum and I feel like more and more teams are also using GRUs because they're a bit simpler but often work just as well. It might be easier to scale them to even bigger problems. So, that's it for LSTMs. Well, either GRUs or LSTMs, you'll be able to build neural network that can capture much longer range dependencies.
 
 The correct version of the final equation in the output gate is here: 
 

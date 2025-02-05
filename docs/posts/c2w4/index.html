@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Oren Bochman">
 <meta name="description" content="Extract features from text into numerical vectors, then build a binary classifier for tweets using logistic regression!">
 
 <title>Word embeddings with neural networks – NLP Specialization</title>
@@ -208,6 +209,12 @@ window.Quarto = {
   
   <div class="quarto-title-meta column-body">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Oren Bochman </p>
+            </div>
+    </div>
       
       <div>
       <div class="quarto-title-meta-heading">Published</div>
@@ -536,7 +543,7 @@ Learning Objectives
 </div>
 <section id="overview" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="overview">Overview</h2>
-<p>Word embeddings are used in most NLP applications. Whenever you are dealing with text, you first have to find a way to encode the words as numbers. Word embedding are a very common technique that allows you to do so. Here are a few applications of word embeddings that you should be able to implement by the time you complete the specialization.</p>
+<p>Word embeddings are used in most NLP applications. Whenever we are dealing with text, we first have to find a way to encode the words as numbers. Word embedding are a very common technique that allows we to do so. Here are a few applications of word embeddings that we should be able to implement by the time we complete the specialization.</p>
 
 <div class="no-row-height column-margin column-container"><div id="fig-01" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -567,7 +574,7 @@ Figure&nbsp;4: Advanced applications of word embeddings
 </figcaption>
 </figure>
 </div></div>
-<p>By the end of this week you will be able to:</p>
+<p>By the end of this week we will be able to:</p>
 <ul>
 <li>Identify the key concepts of word representations</li>
 <li>Generate word embeddings</li>
@@ -603,7 +610,7 @@ Figure&nbsp;6: One-hot vectors
 <li>One-hot vectors</li>
 <li>Word embeddings</li>
 </ul>
-<p>To the left, you have an example where you use integers to represent a word. The issue there is that there is no reason why one word corresponds to a bigger number than another. To fix this problem we introduce one hot vectors (diagram on the right). To implement one hot vectors, you have to initialize a vector of zeros of dimension V and then put a 1 in the index corresponding to the word you are representing.</p>
+<p>To the left, we have an example where we use integers to represent a word. The issue there is that there is no reason why one word corresponds to a bigger number than another. To fix this problem we introduce one hot vectors (diagram on the right). To implement one hot vectors, we have to initialize a vector of zeros of dimension V and then put a 1 in the index corresponding to the word we are representing.</p>
 <p>The <strong>pros</strong> of one-hot vectors: simple and require no implied ordering.</p>
 <p>The <strong>cons</strong> of one-hot vectors: huge and encode no meaning.</p>
 </section>
@@ -629,11 +636,11 @@ Figure&nbsp;8: Meaning as vectors in 2D
 </figcaption>
 </figure>
 </div></div>
-<p>From the plot above, you can see that when encoding a word in 2D, similar words tend to be found next to each other. Perhaps the first coordinate represents whether a word is positive or negative. The second coordinate tell you whether the word is abstract or concrete. This is just an example, in the real world you will find embeddings with hundreds of dimensions. You can think of each coordinate as a number telling you something about the word.</p>
+<p>From the plot above, we can see that when encoding a word in 2D, similar words tend to be found next to each other. Perhaps the first coordinate represents whether a word is positive or negative. The second coordinate tell we whether the word is abstract or concrete. This is just an example, in the real world we will find embeddings with hundreds of dimensions. We can think of each coordinate as a number telling we something about the word.</p>
 <p>The pros:</p>
 <ul>
 <li>Low dimensions (less than V)</li>
-<li>Allow you to encode meaning</li>
+<li>Allow we to encode meaning</li>
 </ul>
 </section>
 <section id="how-to-create-word-embeddings" class="level2 page-columns page-full">
@@ -648,11 +655,11 @@ Figure&nbsp;8: Meaning as vectors in 2D
 Figure&nbsp;9: Meaning as vectors in 2D
 </figcaption>
 </figure>
-</div></div><p>To create word embeddings you always need a corpus of text, and an embedding method.</p>
-<p>The context of a word tells you what type of words tend to occur near that specific word. The context is important as this is what will give meaning to each word embedding.</p>
-<p>Embeddings There are many types of possible methods that allow you to learn the word embeddings. The machine learning model performs a learning task, and the main by-products of this task are the word embeddings. The task could be to learn to predict a word based on the surrounding words in a sentence of the corpus, as in the case of the continuous bag-of-words.</p>
+</div></div><p>To create word embeddings we always need a corpus of text, and an embedding method.</p>
+<p>The context of a word tells we what type of words tend to occur near that specific word. The context is important as this is what will give meaning to each word embedding.</p>
+<p>Embeddings There are many types of possible methods that allow we to learn the word embeddings. The machine learning model performs a learning task, and the main by-products of this task are the word embeddings. The task could be to learn to predict a word based on the surrounding words in a sentence of the corpus, as in the case of the continuous bag-of-words.</p>
 <p>The task is self-supervised: it is both unsupervised in the sense that the input data — the corpus — is unlabelled, and supervised in the sense that the data itself provides the necessary context which would ordinarily make up the labels.</p>
-<p>When training word vectors, there are some parameters you need to tune. (i.e.&nbsp;the dimension of the word vector)</p>
+<p>When training word vectors, there are some parameters we need to tune. (i.e.&nbsp;the dimension of the word vector)</p>
 </section>
 <section id="word-embedding-methods" class="level2">
 <h2 class="anchored" data-anchor-id="word-embedding-methods">Word Embedding Methods</h2>
@@ -665,7 +672,7 @@ Figure&nbsp;9: Meaning as vectors in 2D
 <li>fastText (Facebook, 2016): based on the skip-gram model and takes into account the structure of words by representing words as an n-gram of characters. It supports out-of-vocabulary (OOV) words.</li>
 </ul>
 <p>Deep learning, contextual embeddings</p>
-<p>In these more advanced models, words have different embeddings depending on their context. You can download pre-trained embeddings for the following models.</p>
+<p>In these more advanced models, words have different embeddings depending on their context. We can download pre-trained embeddings for the following models.</p>
 <ul>
 <li>BERT (Google, 2018):</li>
 <li>ELMo (Allen Institute for AI, 2018)</li>
@@ -704,9 +711,9 @@ Figure&nbsp;12: Meaning as vectors in 2D
 </figure>
 </div></div>
 
-<p>Continuous Bag of Words Model To create word embeddings, you need a corpus and a learning algorithm. The by-product of this task would be a set of word embeddings. In the case of the continuous bag-of-words model, the objective of the task is to predict a missing word based on the surrounding words.</p>
-<p>Here is a visualization that shows you how the models works.</p>
-<p>As you can see, the window size in the image above is 5. The context size, C, is 2. C usually tells you how many words before or after the center word the model will use to make the prediction. Here is another visualization that shows an overview of the model.</p>
+<p>Continuous Bag of Words Model To create word embeddings, we need a corpus and a learning algorithm. The by-product of this task would be a set of word embeddings. In the case of the continuous bag-of-words model, the objective of the task is to predict a missing word based on the surrounding words.</p>
+<p>Here is a visualization that shows we how the models works.</p>
+<p>As we can see, the window size in the image above is 5. The context size, C, is 2. C usually tells we how many words before or after the center word the model will use to make the prediction. Here is another visualization that shows an overview of the model.</p>
 </section>
 <section id="cleaning-and-tokenization" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="cleaning-and-tokenization">Cleaning and Tokenization</h2>
@@ -730,9 +737,9 @@ Figure&nbsp;14: Meaning as vectors in 2D
 </figcaption>
 </figure>
 </div></div>
-<p>Before implementing any natural language processing algorithm, you might want to clean the data and tokenize it. Here are a few things to keep track of when handling your data.</p>
-<p>You can clean data using python as follows:</p>
-<p>You can add as many conditions as you want in the lines corresponding to the green rectangle above.</p>
+<p>Before implementing any natural language processing algorithm, we might want to clean the data and tokenize it. Here are a few things to keep track of when handling your data.</p>
+<p>We can clean data using python as follows:</p>
+<p>We can add as many conditions as we want in the lines corresponding to the green rectangle above.</p>
 </section>
 <section id="sliding-window-of-words-in-python" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="sliding-window-of-words-in-python">Sliding Window of words in Python</h2>
@@ -746,7 +753,7 @@ Figure&nbsp;14: Meaning as vectors in 2D
 Figure&nbsp;15: Sliding Window of words in Python
 </figcaption>
 </figure>
-</div></div><p>The code above shows you a function which takes in two parameters.</p>
+</div></div><p>The code above shows we a function which takes in two parameters.</p>
 <p>Words: a list of words.</p>
 <p>C: the context size.</p>
 <p>We first start by setting i to C. Then we single out the center_word, and the context_words. We then yield those and increment i.</p>
@@ -763,7 +770,7 @@ Figure&nbsp;15: Sliding Window of words in Python
 Figure&nbsp;16: Transforming Words into Vectors
 </figcaption>
 </figure>
-</div></div><p>As you can see, we started with one-hot vectors for the context words and and we transform them into a single vector by taking an average. As a result you end up having the following vectors that you can use for your training.</p>
+</div></div><p>As we can see, we started with one-hot vectors for the context words and and we transform them into a single vector by taking an average. As a result we end up having the following vectors that we can use for your training.</p>
 
 <div class="no-row-height column-margin column-container"><div id="fig-15" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -792,7 +799,7 @@ Figure&nbsp;17: Sliding Window of words in Python
 Figure&nbsp;18: Architecture for the CBOW Model
 </figcaption>
 </figure>
-</div></div><p>You have an input, X, which is the average of all context vectors. You then multiply it by <span class="math inline">W_1</span> and add <span class="math inline">b1</span>. The result goes through a ReLU function to give you your hidden layer. That layer is then multiplied by <span class="math inline">W_2</span> and you add <span class="math inline">b_2</span>. The result goes through a softmax which gives you a distribution over V, vocabulary words. You pick the vocabulary word that corresponds to the arg-max of the output.</p>
+</div></div><p>We have an input, X, which is the average of all context vectors. We then multiply it by <span class="math inline">W_1</span> and add <span class="math inline">b1</span>. The result goes through a ReLU function to give we your hidden layer. That layer is then multiplied by <span class="math inline">W_2</span> and we add <span class="math inline">b_2</span>. The result goes through a softmax which gives we a distribution over V, vocabulary words. We pick the vocabulary word that corresponds to the arg-max of the output.</p>
 </section>
 <section id="architecture-of-the-cbow-model-dimensions" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="architecture-of-the-cbow-model-dimensions">Architecture of the CBOW Model: Dimensions</h2>
@@ -809,7 +816,7 @@ z_2 = W_2 h + b_2
 <p><span class="math display">
 \hat{y} = softmax(z_2)
 </span></p>
-<p>Here, you can see the dimensions:</p>
+<p>Here, we can see the dimensions:</p>
 
 <div class="no-row-height column-margin column-container"><div id="fig-17" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -820,11 +827,11 @@ z_2 = W_2 h + b_2
 Figure&nbsp;19: Architecture for the CBOW Model
 </figcaption>
 </figure>
-</div></div><p>Make sure you go through the matrix multiplications and understand why the dimensions make sense.</p>
+</div></div><p>Make sure we go through the matrix multiplications and understand why the dimensions make sense.</p>
 </section>
 <section id="architecture-of-the-cbow-model-dimensions-2" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="architecture-of-the-cbow-model-dimensions-2">Architecture of the CBOW Model: Dimensions 2</h2>
-<p>When dealing with batch input, you can stack the examples as columns. You can then proceed to multiply the matrices as follows:</p>
+<p>When dealing with batch input, we can stack the examples as columns. We can then proceed to multiply the matrices as follows:</p>
 
 <div class="no-row-height column-margin column-container"><div id="fig-18" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -835,13 +842,13 @@ Figure&nbsp;19: Architecture for the CBOW Model
 Figure&nbsp;20: Dimensions Batch Input
 </figcaption>
 </figure>
-</div></div><p>In the diagram above, you can see the dimensions of each matrix. Note that your <span class="math inline">\hat{Y}</span> is of dimension V by m. Each column is the prediction of the column corresponding to the context words. So the first column in <span class="math inline">\hat{Y}</span> is the prediction corresponding to the first column of X.</p>
+</div></div><p>In the diagram above, we can see the dimensions of each matrix. Note that your <span class="math inline">\hat{Y}</span> is of dimension V by m. Each column is the prediction of the column corresponding to the context words. So the first column in <span class="math inline">\hat{Y}</span> is the prediction corresponding to the first column of X.</p>
 </section>
 <section id="architecture-of-the-cbow-model-activation-functions" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="architecture-of-the-cbow-model-activation-functions">Architecture of the CBOW Model: Activation Functions</h2>
 <section id="relu-funciton" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="relu-funciton">ReLU funciton</h3>
-<p>The rectified linear unit (ReLU), is one of the most popular activation functions. When you feed a vector, namely x, into a ReLU function. You end up taking <span class="math inline">x=max(0,x)</span>. This is a drawing that shows ReLU.</p>
+<p>The rectified linear unit (ReLU), is one of the most popular activation functions. When we feed a vector, namely x, into a ReLU function. We end up taking <span class="math inline">x=max(0,x)</span>. This is a drawing that shows ReLU.</p>
 
 <div class="no-row-height column-margin column-container"><div id="fig-19" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -855,7 +862,7 @@ Figure&nbsp;21: Dimensions Batch Input
 </div></div></section>
 <section id="softmax-function" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="softmax-function">Softmax function</h3>
-<p>The softmax function takes a vector and transforms it into a probability distribution. For example, given the following vector z, you can transform it into a probability distribution as follows.</p>
+<p>The softmax function takes a vector and transforms it into a probability distribution. For example, given the following vector z, we can transform it into a probability distribution as follows.</p>
 
 <div class="no-row-height column-margin column-container"><div id="fig-20" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -866,22 +873,23 @@ Figure&nbsp;21: Dimensions Batch Input
 Figure&nbsp;22: Dimensions Batch Input
 </figcaption>
 </figure>
-</div></div><p>As you can see, you can compute <span class="math display">
+</div></div><p>As we can see, we can compute:</p>
+<p><span class="math display">
 \hat{y} = \frac{e^{z_i}}{\sum_{j=1}^V e^{z_j}}
 </span></p>
 </section>
 </section>
 <section id="lecture-notebook---intro-to-cbow-model" class="level2">
 <h2 class="anchored" data-anchor-id="lecture-notebook---intro-to-cbow-model">Lecture Notebook - Intro to CBOW model</h2>
-<p><a href="../../posts/c2w4/lab02.html"></a></p>
+<p><a href="../../posts/c2w4/lab02.html">lab 2 the CBOW model</a></p>
 </section>
 <section id="training-a-cbow-model-cost-function" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="training-a-cbow-model-cost-function">Training a CBOW Model: Cost Function</h2>
 <p>The cost function for the CBOW model is a cross-entropy loss defined as:</p>
-<p><span class="math display">
+<p><span id="eq-cbow-cost"><span class="math display">
 J = -\sum_{k=1}^V y_k log(\hat{y}_k)
-</span> {eq-cbow-cost}</p>
-<p>Here is an example where you use the equation above.</p>
+\tag{1}</span></span></p>
+<p>Here is an example where we use the equation above.</p>
 
 <div class="no-row-height column-margin column-container"><div id="fig-21" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -909,7 +917,7 @@ Z_2 = W_2 H + B_2
 <p><span class="math display">
 \hat{Y} = softmax(Z_2)
 </span></p>
-<p>In the image below you start from the left and you forward propagate all the way to the right.</p>
+<p>In the image below we start from the left and we forward propagate all the way to the right.</p>
 
 <div class="no-row-height column-margin column-container"><div id="fig-22" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -920,11 +928,11 @@ Z_2 = W_2 H + B_2
 Figure&nbsp;24: Dimensions Batch Input
 </figcaption>
 </figure>
-</div></div><p>To calculate the loss of a batch, you have to compute the following:</p>
+</div></div><p>To calculate the loss of a batch, we have to compute the following:</p>
 <p><span class="math display">
 J_{batch} = -\frac{1}{m} \sum_{i=1}^m \sum_{j=1}^V y_j(i) log(\hat{y}^j(i))
 </span></p>
-<p>Given, your predicted center word matrix, and actual center word matrix, you can compute the loss.</p>
+<p>Given, your predicted center word matrix, and actual center word matrix, we can compute the loss.</p>
 
 <div class="no-row-height column-margin column-container"><div id="fig-23" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -959,12 +967,12 @@ Figure&nbsp;27: Dimensions Batch Input
 </figure>
 </div></div>
 <p>Training a CBOW Model: Backpropagation and Gradient Descent Backpropagation: calculate partial derivatives of cost with respect to weights and biases.</p>
-<p>When computing the back-prop in this model, you need to compute the following:</p>
+<p>When computing the back-prop in this model, we need to compute the following:</p>
 <p><span class="math display">
 \frac{\partial J_{batch}}{\partial W_1}, \frac{\partial J_{batch}}{\partial W_2}, \frac{\partial J_{batch}}{\partial B_1}, \frac{\partial J_{batch}}{\partial B_2}
 </span></p>
 <p>Gradient descent: update weights and biases</p>
-<p>Now to update the weights you can iterate as follows:</p>
+<p>Now to update the weights we can iterate as follows:</p>
 <p><span class="math display">
 W_1 := W_1 - \alpha \frac{\partial J_{batch}}{\partial W_1}
 </span></p>
@@ -977,7 +985,7 @@ B_1 := B_1 - \alpha \frac{\partial J_{batch}}{\partial B_1}
 <p><span class="math display">
 B_2 := B_2 - \alpha \frac{\partial J_{batch}}{\partial B_2}
 </span></p>
-<p>A smaller alpha allows for more gradual updates to the weights and biases, whereas a larger number allows for a faster update of the weights. If <span class="math inline">α</span> is too large, you might not learn anything, if it is too small, your model will take forever to train.</p>
+<p>A smaller alpha allows for more gradual updates to the weights and biases, whereas a larger number allows for a faster update of the weights. If <span class="math inline">α</span> is too large, we might not learn anything, if it is too small, your model will take forever to train.</p>
 </section>
 <section id="lecture-notebook---training-the-cbow-model" class="level2">
 <h2 class="anchored" data-anchor-id="lecture-notebook---training-the-cbow-model">Lecture Notebook - Training the CBOW model</h2>
@@ -985,7 +993,7 @@ B_2 := B_2 - \alpha \frac{\partial J_{batch}}{\partial B_2}
 </section>
 <section id="extracting-word-embedding-vectors" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="extracting-word-embedding-vectors">Extracting Word Embedding Vectors</h2>
-<p>There are two options to extract word embeddings after training the continuous bag of words model. You can use <span class="math inline">W_1</span> as follows:</p>
+<p>There are two options to extract word embeddings after training the continuous bag of words model. We can use <span class="math inline">W_1</span> as follows:</p>
 
 <div class="no-row-height column-margin column-container"><div id="fig-26" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -996,7 +1004,7 @@ B_2 := B_2 - \alpha \frac{\partial J_{batch}}{\partial B_2}
 Figure&nbsp;28: Dimensions Batch Input
 </figcaption>
 </figure>
-</div></div><p>If you were to use <span class="math inline">W_1</span>, each column will correspond to the embeddings of a specific word. You can also use <span class="math inline">W_2</span> as follows:</p>
+</div></div><p>If we were to use <span class="math inline">W_1</span>, each column will correspond to the embeddings of a specific word. We can also use <span class="math inline">W_2</span> as follows:</p>
 
 <div class="no-row-height column-margin column-container"><div id="fig-27" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1021,35 +1029,44 @@ Figure&nbsp;30: Dimensions Batch Input
 </div></div></section>
 <section id="lecture-notebook---word-embeddings" class="level2">
 <h2 class="anchored" data-anchor-id="lecture-notebook---word-embeddings">Lecture Notebook - Word Embeddings</h2>
-<p><a href="../../posts/c2w4/lab04.html"></a></p>
+<p><a href="../../posts/c2w4/lab04.html">lab 4 - Word Embeddings</a></p>
 </section>
 <section id="lecture-notebook-word-embeddings-step-by-step" class="level2">
 <h2 class="anchored" data-anchor-id="lecture-notebook-word-embeddings-step-by-step">Lecture notebook: Word embeddings step by step</h2>
-<p><a href="lab05.qmd"></a></p>
+<p><a href="../../posts/c2w4/lab05.html">Lab 5 - Word embeddings step by step</a></p>
 </section>
 <section id="evaluating-word-embeddings-intrinsic-evaluation" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="evaluating-word-embeddings-intrinsic-evaluation">Evaluating Word Embeddings: Intrinsic Evaluation</h2>
-<p>Intrinsic evaluation allows you to test relationships between words. It allows you to capture semantic analogies as, “France” is to “Paris” as “Italy” is to &lt;?&gt; and also syntactic analogies as “seen” is to “saw” as “been” is to &lt;?&gt;.</p>
-<p>Ambiguous cases could be much harder to track: ::: {#fig-28 .column-margin} <img src="img/slide28.png" class="img-fluid"></p>
-<p>Dimensions Batch Input :::</p>
-<p>Here are a few ways that allow to use intrinsic evaluation.</p>
+<p>Intrinsic evaluation allows we to test relationships between words. It allows we to capture semantic analogies as, “France” is to “Paris” as “Italy” is to <code>&lt;?&gt;</code> and also syntactic analogies as “seen” is to “saw” as “been” is to <code>&lt;?&gt;</code>.</p>
+<p>Ambiguous cases could be much harder to track:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-28" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-28-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/slide28.png" class="lightbox" data-gallery="quarto-lightbox-gallery-31" title="Figure&nbsp;31: Dimensions Batch Input"><img src="img/slide28.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-28-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;31: Dimensions Batch Input
+</figcaption>
+</figure>
+</div></div><p>Here are a few ways that allow to use intrinsic evaluation.</p>
 
 <div class="no-row-height column-margin column-container"><div id="fig-29" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-29-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide29.png" class="lightbox" data-gallery="quarto-lightbox-gallery-31" title="Figure&nbsp;31: Dimensions Batch Input"><img src="img/slide29.png" class="img-fluid figure-img"></a>
+<a href="img/slide29.png" class="lightbox" data-gallery="quarto-lightbox-gallery-32" title="Figure&nbsp;32: Dimensions Batch Input"><img src="img/slide29.png" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-29-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;31: Dimensions Batch Input
+Figure&nbsp;32: Dimensions Batch Input
 </figcaption>
 </figure>
 </div><div id="fig-30" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-30-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide30.png" class="lightbox" data-gallery="quarto-lightbox-gallery-32" title="Figure&nbsp;32: Dimensions Batch Input"><img src="img/slide30.png" class="img-fluid figure-img"></a>
+<a href="img/slide30.png" class="lightbox" data-gallery="quarto-lightbox-gallery-33" title="Figure&nbsp;33: Dimensions Batch Input"><img src="img/slide30.png" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-30-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;32: Dimensions Batch Input
+Figure&nbsp;33: Dimensions Batch Input
 </figcaption>
 </figure>
 </div></div>
@@ -1062,7 +1079,7 @@ Figure&nbsp;32: Dimensions Batch Input
 <li>Time Consuming</li>
 <li>More difficult to trouble shoot</li>
 </ul>
-<p>So now you know both intrinsic and extrinsic evaluation.</p>
+<p>So now we know both intrinsic and extrinsic evaluation.</p>
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
@@ -1073,21 +1090,21 @@ Figure&nbsp;32: Dimensions Batch Input
 <li>Continuous bag-of-words model</li>
 <li>Evaluation</li>
 </ul>
-<p>You have all the foundations now. From now on, you will start using some advanced AI libraries in the next courses. Congratulations and good luck with the assignment</p>
+<p>We have all the foundations now. From now on, we will start using some advanced AI libraries in the next courses. Congratulations and good luck with the assignment</p>
 
 
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{2020,
-  author = {},
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2020,
+  author = {Bochman, Oren},
   title = {Word Embeddings with Neural Networks},
   date = {2020-10-23},
   url = {https://orenbochman.github.io/notes-nlp/posts/c2w4/},
   langid = {en}
 }
-</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-2020" class="csl-entry quarto-appendix-citeas" role="listitem">
-<span>“Word Embeddings with Neural Networks.”</span> 2020. October 23,
-2020. <a href="https://orenbochman.github.io/notes-nlp/posts/c2w4/">https://orenbochman.github.io/notes-nlp/posts/c2w4/</a>.
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2020" class="csl-entry quarto-appendix-citeas" role="listitem">
+Bochman, Oren. 2020. <span>“Word Embeddings with Neural
+Networks.”</span> October 23, 2020. <a href="https://orenbochman.github.io/notes-nlp/posts/c2w4/">https://orenbochman.github.io/notes-nlp/posts/c2w4/</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {

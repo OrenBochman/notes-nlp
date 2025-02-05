@@ -35,7 +35,7 @@ My irreverent notes for Week 2 of the [Natural Language Processing with Sequence
 
 ![](img/slide01.png){.column-margin group="slides"}
 
-In the example above, the second sentence is the one that is most likely to take place as it has the highest probability of happening. To compute the probabilities, you can do the following: 
+In the example above, the second sentence is the one that is most likely to take place as it has the highest probability of happening. To compute the probabilities, we can do the following: 
 
 ![](img/slide02.png){.column-margin group="slides"}
 
@@ -52,7 +52,7 @@ An N-gram (trigram) would only look at "did not" and would try to complete the s
 
 ![](img/slide04.png){.column-margin group="slides"}
 
-Note that as you feed in more information into the model, the previous word's retention gets weaker, but it is still there. Look at the orange rectangle above and see how it becomes smaller as you make your way through the text. This shows that your model is capable of capturing dependencies and remembers a previous word although it is at the beginning of a sentence or paragraph. Another advantage of RNNs is that a lot of the computation shares parameters. 
+Note that as we feed in more information into the model, the previous word's retention gets weaker, but it is still there. Look at the orange rectangle above and see how it becomes smaller as we make your way through the text. This shows that your model is capable of capturing dependencies and remembers a previous word although it is at the beginning of a sentence or paragraph. Another advantage of RNNs is that a lot of the computation shares parameters. 
 
 
 
@@ -60,15 +60,15 @@ Note that as you feed in more information into the model, the previous word's re
 
 RNNs could be used in a variety of tasks ranging from machine translation to caption generation. There are many ways to implement an RNN model:
 
-One to One: given some scores of a championship, you can predict the winner. 
+One to One: given some scores of a championship, we can predict the winner. 
 
-One to Many: given an image, you can predict what the caption is going to be.
+One to Many: given an image, we can predict what the caption is going to be.
 
-Many to One: given a tweet, you can predict the sentiment of that tweet. 
+Many to One: given a tweet, we can predict the sentiment of that tweet. 
 
-Many to Many: given an english sentence, you can translate it to its German equivalent. 
+Many to Many: given an english sentence, we can translate it to its German equivalent. 
 
-In the next video, you will see the math in simple RNNs. 
+In the next video, we will see the math in simple RNNs. 
 
 ##  Math in Simple RNNs
 
@@ -82,20 +82,20 @@ $$
 h^{<t>} = g(W_{h}[h^{<t-1>}, x^{<t>}] + b_h)
 $$
 
-Is the same as multiplying $W_{hh}$ by $h$ and $W_{hx}$ by $x$. In other words, you can concatenate it as follows: 
+Is the same as multiplying $W_{hh}$ by $h$ and $W_{hx}$ by $x$. In other words, we can concatenate it as follows: 
 
 $$
 h^{<t>} = g(W_{hh}[h^{<t-1>} \oplus W_{hx}x^{<t>}] + b_h)
 $$
 
-For the prediction at each time step, you can use the following: 
+For the prediction at each time step, we can use the following: 
 
 $$
 \hat{y}^{<t>} = g(W_{yh}h^{<t>} + b_y)
 $$
 
 
-Note that you end up training $W_{hh}$, $W_{hx}$, $W_{yh}$, $b_h$, and $b_y$. Here is a visualization of the model.
+Note that we end up training $W_{hh}$, $W_{hx}$, $W_{yh}$, $b_h$, and $b_y$. Here is a visualization of the model.
 
 
 ![](img/slide06.png){.column-margin group="slides"}
@@ -108,12 +108,12 @@ Note that you end up training $W_{hh}$, $W_{hx}$, $W_{yh}$, $b_h$, and $b_y$. He
 
 ##  Cost Function for RNNs
 
-The cost function used in an RNN is the cross entropy loss. If you were to visualize it
+The cost function used in an RNN is the cross entropy loss. If we were to visualize it
 
 ![](img/slide07.png){.column-margin group="slides"}
 
-you are basically summing over the all the classes and then multiplying  $y_j$ times $log(\hat{y}_j)$. 
-If you were to compute the loss over several time steps, use the following formula: 
+we are basically summing over the all the classes and then multiplying  $y_j$ times $log(\hat{y}_j)$. 
+If we were to compute the loss over several time steps, use the following formula: 
 
 $$
 J = -\frac{1}{T} \sum_{t=1}^{T} \sum_{j=1}^{K} y_j^{<t>} log \hat{y}^{<t>}
@@ -142,7 +142,7 @@ Gated recurrent units are very similar to vanilla RNNs, except that they have a 
 
 ![](img/slide07.png){.column-margin group="slides"}
 
-To the left, you have the diagram and equations for a simple RNN. To the right, we explain the GRU. Note that we add 3 layers before computing h and y.
+To the left, we have the diagram and equations for a simple RNN. To the right, we explain the GRU. Note that we add 3 layers before computing h and y.
 
 $$
 \begin{align*}
@@ -153,7 +153,7 @@ h^{<t>} &= \Gamma_u*h^{<t-1>} + (1-\Gamma_u)*h'^{<t>}
 \end{align*}
 $$
 
-The first gate $Γ_u$ allows you to decide how much you want to update the weights by. The second gate $Γ_r$, helps you find a relevance score. You can compute the new $h$ by using the relevance gate. Finally you can compute $h$, using the update gate. GRUs “decide” how to update the hidden state. GRUs help preserve important information.
+The first gate $Γ_u$ allows we to decide how much we want to update the weights by. The second gate $Γ_r$, helps we find a relevance score. We can compute the new $h$ by using the relevance gate. Finally we can compute $h$, using the update gate. GRUs “decide” how to update the hidden state. GRUs help preserve important information.
 
 ##  Lab: Vanilla RNNs, GRUs and the scan function
 
@@ -165,16 +165,16 @@ The first gate $Γ_u$ allows you to decide how much you want to update the weigh
 
 ##  Deep and Bi-directional RNNs
 
-Bi-directional RNNs are important, because knowing what is next in the sentence could give you more context about the sentence itself. 
+Bi-directional RNNs are important, because knowing what is next in the sentence could give we more context about the sentence itself. 
 
 ![](img/slide08.png){.column-margin group="slides"}
 
 
-So you can see, in order to make a prediction $\hat{y}$, you will use the hidden states from both directions and combine them to make one hidden state, you can then proceed as you would with a simple vanilla RNN. When implementing Deep RNNs, you would compute the following.  
+So we can see, in order to make a prediction $\hat{y}$, we will use the hidden states from both directions and combine them to make one hidden state, we can then proceed as we would with a simple vanilla RNN. When implementing Deep RNNs, we would compute the following.  
 
 ![](img/slide09.png){.column-margin group="slides"}
 
-Note that at layer $l$, you are using the input from the bottom  $a^{[;-1]}$ and the hidden state $h^{<l>}$ That allows you to get your new h, and then to get your new a, you will train another weight matrix $W_{a}$, which you will multiply by the corresponding h add the bias and then run it through an activation layer.
+Note that at layer $l$, we are using the input from the bottom  $a^{[;-1]}$ and the hidden state $h^{<l>}$ That allows we to get your new h, and then to get your new a, we will train another weight matrix $W_{a}$, which we will multiply by the corresponding h add the bias and then run it through an activation layer.
 
 ## Resources:
 

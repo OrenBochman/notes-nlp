@@ -1,4 +1,5 @@
 ---
+date: 2020-10-24
 title: 'Word Embeddings First Steps: Data Preparation'
 categories: 
   - NLP 
@@ -11,16 +12,16 @@ jupyter: python3
 ---
 
 
-::: {#fig-00 .column-margin .nolightbox}
+::: {.column-margin .nolightbox}
 ![course banner](/images/Course-Logo-2-3.webp)
 :::
 
 
-In this series of ungraded notebooks, you'll try out all the individual techniques that you learned about in the lectures. Practicing on small examples will prepare you for the graded assignment, where you will combine the techniques in more advanced ways to create word embeddings from a real-life corpus. 
+In this series of ungraded notebooks, you'll try out all the individual techniques that we learned about in the lectures. Practicing on small examples will prepare we for the graded assignment, where we will combine the techniques in more advanced ways to create word embeddings from a real-life corpus. 
 
-This notebook focuses on data preparation, which is the first step of any machine learning algorithm. It is a very important step because models are only as good as the data they are trained on and the models used require the data to have a particular structure to process it properly.
+This notebook focuses on **data preparation**, which is the first step of any machine learning algorithm. It is a very important step because models are only as good as the data they are trained on and the models used require the data to have a particular structure to process it properly.
 
-To get started, import and initialize all the libraries you will need.
+To get started, import and initialize all the libraries we will need.
 
 
 ```{python}
@@ -34,7 +35,7 @@ from utils2 import get_dict
 
 # Data preparation
 
-In the data preparation phase, starting with a corpus of text, you will:
+In the data preparation phase, starting with a corpus of text, we will:
 
 - Clean and tokenize the corpus.
 
@@ -77,7 +78,7 @@ data = nltk.word_tokenize(data)
 print(f'After tokenization:  {data}')
 ```
 
-Finally, as you saw in the lecture, get rid of numbers and punctuation other than periods, and convert all the remaining tokens to lowercase.
+Finally, as we saw in the lecture, get rid of numbers and punctuation other than periods, and convert all the remaining tokens to lowercase.
 
 ```{python}
 # Print the tokenized version of the corpus
@@ -136,7 +137,7 @@ tokenize("Now it's your turn: try with your own sentence!")
 
 ## Sliding window of words
 
-Now that you have transformed the corpus into a list of clean tokens, you can slide a window of words across this list. For each window you can extract a center word and the context words.
+Now that we have transformed the corpus into a list of clean tokens, we can slide a window of words across this list. For each window we can extract a center word and the context words.
 
 The `get_windows` function in the next cell was introduced in the lecture.
 
@@ -153,7 +154,7 @@ def get_windows(words, C):
 
 The first argument of this function is a list of words (or tokens). The second argument, `C`, is the context half-size. Recall that for a given center word, the context words are made of `C` words to the left and `C` words to the right of the center word.
 
-Here is how you can use this function to extract context words and center words from a list of tokens. These context and center words will make up the training set that you will use to train the CBOW model.
+Here is how we can use this function to extract context words and center words from a list of tokens. These context and center words will make up the training set that we will use to train the CBOW model.
 
 ```{python}
 # Print 'context_words' and 'center_word' for the new corpus with a 'context half-size' of 2
@@ -167,7 +168,7 @@ The first example of the training set is made of:
 
 - and the center word to be predicted: "happy".
 
-**Now try it out yourself. In the next cell, you can change both the sentence and the context half-size.**
+**Now try it out yourself. In the next cell, we can change both the sentence and the context half-size.**
 
 ```{python}
 # Print 'context_words' and 'center_word' for any sentence with a 'context half-size' of 1
@@ -177,13 +178,13 @@ for x, y in get_windows(tokenize("Now it's your turn: try with your own sentence
 
 ## Transforming words into vectors for the training set
 
-To finish preparing the training set, you need to transform the context words and center words into vectors.
+To finish preparing the training set, we need to transform the context words and center words into vectors.
 
 ### Mapping words to indices and indices to words
 
 The center words will be represented as one-hot vectors, and the vectors that represent context words are also based on one-hot vectors.
 
-To create one-hot word vectors, you can start by mapping each unique word to a unique integer (or index). We have provided a helper function, `get_dict`, that creates a Python dictionary that maps words to integers and back.
+To create one-hot word vectors, we can start by mapping each unique word to a unique integer (or index). We have provided a helper function, `get_dict`, that creates a Python dictionary that maps words to integers and back.
 
 ```{python}
 # Get 'word2Ind' and 'Ind2word' dictionaries for the tokenized corpus
@@ -198,7 +199,7 @@ Here's the dictionary that maps words to numeric indices.
 word2Ind
 ```
 
-You can use this dictionary to get the index of a word.
+We can use this dictionary to get the index of a word.
 
 ```{python}
 # Print value for the key 'i' within word2Ind dictionary
@@ -230,7 +231,7 @@ print("Size of vocabulary: ", V)
 
 ### Getting one-hot word vectors
 
-Recall from the lecture that you can easily convert an integer, $n$, into a one-hot vector.
+Recall from the lecture that we can easily convert an integer, $n$, into a one-hot vector.
 
 Consider the word "happy". First, retrieve its numeric index.
 
@@ -252,7 +253,7 @@ center_word_vector = np.zeros(V)
 center_word_vector
 ```
 
-You can confirm that the vector has the right size.
+We can confirm that the vector has the right size.
 
 ```{python}
 # Assert that the length of the vector is the same as the size of the vocabulary
@@ -266,14 +267,14 @@ Next, replace the 0 of the $n$-th element with a 1.
 center_word_vector[n] = 1
 ```
 
-And you have your one-hot word vector.
+And we have your one-hot word vector.
 
 ```{python}
 # Print vector
 center_word_vector
 ```
 
-**You can now group all of these steps in a convenient function, which takes as parameters: a word to be encoded, a dictionary that maps words to indices, and the size of the vocabulary.**
+**We can now group all of these steps in a convenient function, which takes as parameters: a word to be encoded, a dictionary that maps words to indices, and the size of the vocabulary.**
 
 ```{python}
 # Define the 'word_to_one_hot_vector' function that will include the steps previously seen
@@ -303,7 +304,7 @@ Expected output:
 
 ### Getting context word vectors
 
-To create the vectors that represent context words, you will calculate the average of the one-hot vectors representing the individual words.
+To create the vectors that represent context words, we will calculate the average of the one-hot vectors representing the individual words.
 
 Let's start with a list of context words.
 
@@ -312,7 +313,7 @@ Let's start with a list of context words.
 context_words = ['i', 'am', 'because', 'i']
 ```
 
-Using Python's list comprehension construct and the `word_to_one_hot_vector` function that you created in the previous section, you can create a list of one-hot vectors representing each of the context words.
+Using Python's list comprehension construct and the `word_to_one_hot_vector` function that we created in the previous section, we can create a list of one-hot vectors representing each of the context words.
 
 ```{python}
 # Create one-hot vectors for each context word using list comprehension
@@ -322,14 +323,14 @@ context_words_vectors = [word_to_one_hot_vector(w, word2Ind, V) for w in context
 context_words_vectors
 ```
 
-And you can now simply get the average of these vectors using numpy's `mean` function, to get the vector representation of the context words.
+And we can now simply get the average of these vectors using numpy's `mean` function, to get the vector representation of the context words.
 
 ```{python}
 # Compute mean of the vectors using numpy
 np.mean(context_words_vectors, axis=0)
 ```
 
-Note the `axis=0` parameter that tells `mean` to calculate the average of the rows (if you had wanted the average of the columns, you would have used `axis=1`).
+Note the `axis=0` parameter that tells `mean` to calculate the average of the rows (if we had wanted the average of the columns, we would have used `axis=1`).
 
 **Now create the `context_words_to_vector` function that takes in a list of context words, a word-to-index dictionary, and a vocabulary size, and outputs the vector representation of the context words.**
 
@@ -341,7 +342,7 @@ def context_words_to_vector(context_words, word2Ind, V):
     return context_words_vectors
 ```
 
-And check that you obtain the same output as the manual approach above.
+And check that we obtain the same output as the manual approach above.
 
 ```{python}
 # Print output of 'context_words_to_vector' function for context words: 'i', 'am', 'because', 'i'
@@ -362,14 +363,14 @@ Expected output:
 
 ## Building the training set
 
-You can now combine the functions that you created in the previous sections, to build a training set for the CBOW model, starting from the following tokenized corpus.
+We can now combine the functions that we created in the previous sections, to build a training set for the CBOW model, starting from the following tokenized corpus.
 
 ```{python}
 # Print corpus
 words
 ```
 
-To do this you need to use the sliding window function (`get_windows`) to extract the context words and center words, and you then convert these sets of words into a basic vector representation using `word_to_one_hot_vector` and `context_words_to_vector`.
+To do this we need to use the sliding window function (`get_windows`) to extract the context words and center words, and we then convert these sets of words into a basic vector representation using `word_to_one_hot_vector` and `context_words_to_vector`.
 
 ```{python}
 # Print vectors associated to center and context words for corpus
@@ -380,7 +381,7 @@ for context_words, center_word in get_windows(words, 2):  # reminder: 2 is the c
 ```
 
 In this practice notebook you'll be performing a single iteration of training using a single example, but in this week's assignment you'll train the CBOW model using several iterations and batches of example.
-Here is how you would use a Python generator function (remember the `yield` keyword from the lecture?) to make it easier to iterate over a set of examples.
+Here is how we would use a Python generator function (remember the `yield` keyword from the lecture?) to make it easier to iterate over a set of examples.
 
 ```{python}
 # Define the generator function 'get_training_example'
@@ -399,9 +400,9 @@ for context_words_vector, center_word_vector in get_training_example(words, 2, w
     print()
 ```
 
-Your training set is ready, you can now move on to the CBOW model itself which will be covered in the next lecture notebook.
+Your training set is ready, we can now move on to the CBOW model itself which will be covered in the next lecture notebook.
 
-**Congratulations on finishing this lecture notebook!** Hopefully you now have a better understanding of how to prepare your data before feeding it to a continuous bag-of-words model. 
+**Congratulations on finishing this lecture notebook!** Hopefully we now have a better understanding of how to prepare your data before feeding it to a continuous bag-of-words model. 
 
 **Keep it up!**
 

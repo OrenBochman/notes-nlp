@@ -31,7 +31,7 @@ categories:
 :::
 
 ## Part of Speech Tagging
-Part of Speech Tagging (POS) is the process of assigning a part of speech to a word. By doing so, you will learn the following: 
+Part of Speech Tagging (POS) is the process of assigning a part of speech to a word. By doing so, we will learn the following: 
 
 - Markov Chains
 - Hidden Markov Models
@@ -45,13 +45,13 @@ Here is a concrete example:
 Learning Objectives
 :::
 
-You can use part of speech tagging for: 
+We can use part of speech tagging for: 
 
 - Identifying named entities
 - Speech recognition
 - Coreference Resolution
 
-You can use the probabilities of POS tags happening near one another to come up with the most reasonable output
+We can use the probabilities of POS tags happening near one another to come up with the most reasonable output
 
 ## Lab1: Working with text data
 
@@ -73,7 +73,7 @@ FSM representation for POS tagging
 :::
 
 
-The circles of the graph represent the states of your model. A state refers to a certain condition of the present moment.  You can think of these as the POS tags of the current word.
+The circles of the graph represent the states of your model. A state refers to a certain condition of the present moment.  We can think of these as the POS tags of the current word.
 
 $$
 Q={q_1, q_2, q_3} \qquad \text{ is the set of all states in your model. }
@@ -81,7 +81,7 @@ $$
 
 ## Markov Chains and POS Tags
 
-To help identify the parts of speech for every word, you need to build a transition matrix that gives you the probabilities from one state to another.  
+To help identify the parts of speech for every word, we need to build a transition matrix that gives we the probabilities from one state to another.  
 
 ::: {#fig-04 .column-margin}
 ![FSM](img/slide04.png)
@@ -90,9 +90,9 @@ Learning Objectives
 :::
 
 
-In the diagram above, the blue circles correspond to the part of speech tags, and the arrows correspond to the transition probabilities from one part of speech to another. You can populate the table on the right from the diagram on the left. The first row in your A matrix corresponds to the initial distribution among all the states. According to the table, the sentence has a 40% chance to start as a noun, 10% chance to start with a verb, and a 50% chance to start with another part of speech tag. 
+In the diagram above, the blue circles correspond to the part of speech tags, and the arrows correspond to the transition probabilities from one part of speech to another. We can populate the table on the right from the diagram on the left. The first row in your A matrix corresponds to the initial distribution among all the states. According to the table, the sentence has a 40% chance to start as a noun, 10% chance to start with a verb, and a 50% chance to start with another part of speech tag. 
 
-In more general notation, you can write the transition matrix A, given some states Q, as follows: 
+In more general notation, we can write the transition matrix A, given some states Q, as follows: 
 
 ::: {#fig-05 .column-margin}
 ![FSM](img/slide05.png)
@@ -104,7 +104,7 @@ Learning Objectives
 ## Hidden Markov Models
 
 
-In the previous video, I showed you an example with a simple markov model. The transition probabilities allowed you to identify the transition probability from one POS to another. We will now explore hidden markov models. In hidden markov models you make use of emission probabilities that give you the probability to go from one state (POS tag) to a specific word. 
+In the previous video, I showed we an example with a simple markov model. The transition probabilities allowed we to identify the transition probability from one POS to another. We will now explore hidden markov models. In hidden markov models we make use of emission probabilities that give we the probability to go from one state (POS tag) to a specific word. 
 
 ::: {#fig-06 .column-margin}
 ![State Transition Graph](img/slide06.png)
@@ -112,7 +112,7 @@ In the previous video, I showed you an example with a simple markov model. The t
 Emission probabilities
 :::
 
-For example, given that you are in a verb state, you can go to other words with certain probabilities. This emission matrix B, will be used with your transition matrix A, to help you identify the part of speech of a word in a sentence. To populate your matrix B, you can just have a labelled dataset and compute the probabilities of going from a POS to each word in your vocabulary. Here is a recap of what you have seen so far: 
+For example, given that we are in a verb state, we can go to other words with certain probabilities. This emission matrix B, will be used with your transition matrix A, to help we identify the part of speech of a word in a sentence. To populate your matrix B, we can just have a labelled dataset and compute the probabilities of going from a POS to each word in your vocabulary. Here is a recap of what we have seen so far: 
 
 
 ::: {#fig-07 .column-margin}
@@ -121,7 +121,7 @@ For example, given that you are in a verb state, you can go to other words with 
 HMM Summary
 :::
 
-Note that the sum of each row in your A and B matrix has to be 1. Next, I will show you how you can calculate the probabilities inside these matrices.
+Note that the sum of each row in your A and B matrix has to be 1. Next, I will show we how we can calculate the probabilities inside these matrices.
 
 
 ## Calculating Probabilities
@@ -157,11 +157,11 @@ Where
 
 $C(t_{(i−1)} ,t_{(i)})$ is the count of times tag $t_{(i-1)}$ shows up before tag $i$. 
 
-From this you can compute the probability that a tag shows up after another tag. 
+From this we can compute the probability that a tag shows up after another tag. 
 
 ## Populating the Transition Matrix
 
-To populate the transition matrix you have to keep track of the number of times each tag shows up before another tag. 
+To populate the transition matrix we have to keep track of the number of times each tag shows up before another tag. 
 
 ::: {#fig-10 .column-margin}
 ![Transition Probabilities](img/slide10.png)
@@ -170,9 +170,9 @@ Transition Probabilities
 :::
 
 
-In the table above, you can see that green corresponds to nouns (NN), purple corresponds to verbs (VB), and blue corresponds to other (O). Orange (π)  corresponds to the initial state. The numbers inside the matrix correspond to the number of times a part of speech tag shows up right after another one. 
+In the table above, we can see that green corresponds to nouns (NN), purple corresponds to verbs (VB), and blue corresponds to other (O). Orange (π)  corresponds to the initial state. The numbers inside the matrix correspond to the number of times a part of speech tag shows up right after another one. 
 
-To go from O to NN or in other words to calculate P(O∣NN) you have to compute the following: 
+To go from O to NN or in other words to calculate P(O∣NN) we have to compute the following: 
 
 ::: {#fig-11 .column-margin}
 ![Transition Probabilities](img/slide11.png)
@@ -190,7 +190,7 @@ Where:
 
 - $C(t_{(i)},t_{(i-1)})$ is the count of times tag $t_{(i-1)}$ shows up before tag $i$.
 
-Unfortunately, sometimes you might not see two POS tags in front each other. This will give you a probability of 0. To solve this issue, you will "smooth" it as follows: 
+Unfortunately, sometimes we might not see two POS tags in front each other. This will give we a probability of 0. To solve this issue, we will "smooth" it as follows: 
 
 ::: {#fig-12 .column-margin}
 ![Transition Probabilities](img/slide12.png)
@@ -199,12 +199,12 @@ Transition Probabilities
 :::
 
 
-The $\epsilon$ allows you to not have any two sequences showing up with 0 probability. Why is this important? 
+The $\epsilon$ allows we to not have any two sequences showing up with 0 probability. Why is this important? 
 
 
 ## Populating the Emission Matrix
 
-To populate the emission matrix, you have to keep track of the words associated with their parts of speech tags. 
+To populate the emission matrix, we have to keep track of the words associated with their parts of speech tags. 
 
 ::: {#fig-13 .column-margin}
 ![The Emission Matrix](img/slide13.png)
@@ -218,7 +218,7 @@ $$
 P(w_i \mid t_i) = \frac{C(t_i,w_i)+\epsilon}{\sum_{j=1}^{N} C(t_i,w_j)+ N \times \epsilon} = \frac{C(t_i,w_i)+\epsilon}{\sum_{j=1}^{N} C(t_i)+N\times \epsilon}
 $$
 
-Where $C(t_i,w_i)$ is the count associated with how many times the tag $t_i$ is associated with the word $w_i$. The epsilon above is the smoothing parameter. In the next video, we will talk about the Viterbi algorithm and discuss how you can use the transition and emission matrix to come up with probabilities.
+Where $C(t_i,w_i)$ is the count associated with how many times the tag $t_i$ is associated with the word $w_i$. The epsilon above is the smoothing parameter. In the next video, we will talk about the Viterbi algorithm and discuss how we can use the transition and emission matrix to come up with probabilities.
 
 ## Lab2: Working with text data
 
@@ -236,7 +236,7 @@ The Viterbi algorithm makes use of the transition probabilities and the emission
 The Viterbi Algorithm
 :::
 
-To go from $π$ to $O$ you need to multiply the corresponding transition probability (0.3) and the corresponding emission probability (0.5), which gives you 0.15. You keep doing that for all the words, until you get the probability of an entire sequence. 
+To go from $π$ to $O$ we need to multiply the corresponding transition probability (0.3) and the corresponding emission probability (0.5), which gives we 0.15. We keep doing that for all the words, until we get the probability of an entire sequence. 
 
 ::: {#fig-14 .column-margin}
 ![The Emission Matrix](img/slide14.png)
@@ -244,11 +244,11 @@ To go from $π$ to $O$ you need to multiply the corresponding transition probabi
 The Viterbi Algorithm
 :::
 
-You can then see how you will just pick the sequence with the highest probability. We will show you a systematic way to accomplish this (Viterbi!). 
+We can then see how we will just pick the sequence with the highest probability. We will show we a systematic way to accomplish this (Viterbi!). 
 
 ## Viterbi Initialization
 
-You will now populate a matrix C of dimension (num_tags, num_words). This matrix will have the probabilities that will tell you what part of speech each word belongs to. 
+We will now populate a matrix C of dimension (num_tags, num_words). This matrix will have the probabilities that will tell we what part of speech each word belongs to. 
 
 
 ::: {#fig-15 .column-margin}
@@ -258,7 +258,7 @@ The Viterbi Initialization
 :::
 
 
-Now to populate the first column, you just multiply the initial π distribution, for each tag, times $b_{i,cindex(w_1)}$, which is the emission probability of the *word 1* given the tag $i$. Where the i, corresponds to the tag of the initial distribution and the $cindex(w_1)$, is the index of **word 1** in the emission matrix. And that's it, you are done with populating the first column of your new C matrix.  You will now need to keep track what part of speech you are coming from. Hence we introduce a matrix D, which allows you to store the labels that represent the different states you are going through when finding the most likely sequence of POS tags for the given sequence of words $w_2 ,…,w_k$. At first you set the first column to 0, because you are not coming from any POS tag.
+Now to populate the first column, we just multiply the initial π distribution, for each tag, times $b_{i,cindex(w_1)}$, which is the emission probability of the *word 1* given the tag $i$. Where the i, corresponds to the tag of the initial distribution and the $cindex(w_1)$, is the index of **word 1** in the emission matrix. And that's it, we are done with populating the first column of your new C matrix.  We will now need to keep track what part of speech we are coming from. Hence we introduce a matrix D, which allows we to store the labels that represent the different states we are going through when finding the most likely sequence of POS tags for the given sequence of words $w_2 ,…,w_k$. At first we set the first column to 0, because we are not coming from any POS tag.
 
 ::: {#fig-16 .column-margin}
 ![The Emission Matrix](img/slide16.png)
@@ -279,17 +279,17 @@ This will be best illustrated with an example:
 Viterbi: Forward Pass
 :::
 
-So to populate a cell (i.e. 1,2) in the image above, you have to take the max of [kth cells in the previous column, times the corresponding transition probability of the kth POS to the first POS times the emission probability of the first POS and the current word you are looking at]. You do that for all the cells. Take a paper and a pencil, and make sure you understand how it is done. 
+So to populate a cell (i.e. 1,2) in the image above, we have to take the max of [kth cells in the previous column, times the corresponding transition probability of the kth POS to the first POS times the emission probability of the first POS and the current word we are looking at]. We do that for all the cells. Take a paper and a pencil, and make sure we understand how it is done. 
 
 The general rule is $c_{ij}= max_k c_{k,j-1} \times a_{k,i} \times b_{i,cindex(w_j)}$
 
-Now to populate the **D** matrix, you will keep track of the argmax of where you came from as follows: 
+Now to populate the **D** matrix, we will keep track of the argmax of where we came from as follows: 
 
-Note that the only difference between $c_{ij}$ and $d_{ij}$, is that in the former you compute the probability and in the latter you keep track of the index of the row where that probability came from. So you keep track of which $k$ was used to get that max probability.
+Note that the only difference between $c_{ij}$ and $d_{ij}$, is that in the former we compute the probability and in the latter we keep track of the index of the row where that probability came from. So we keep track of which $k$ was used to get that max probability.
 
 ## Viterbi: Backward Pass
 
-Great, now that you know how to compute $A$, $B$, $C$, and $D$, we will put it all together and show you how to construct the path that will give you the part of speech tags for your sentence. 
+Great, now that we know how to compute $A$, $B$, $C$, and $D$, we will put it all together and show we how to construct the path that will give we the part of speech tags for your sentence. 
 
 ::: {#fig-19 .column-margin}
 ![Viterbi: Forward Pass](img/slide19.png)
@@ -297,7 +297,7 @@ Great, now that you know how to compute $A$, $B$, $C$, and $D$, we will put it a
 Viterbi: Forward Pass
 :::
 
-The equation above just gives you the index of the highest row in the last column of C. Once you have that, you can go ahead and start using your D matrix as follows: 
+The equation above just gives we the index of the highest row in the last column of C. Once we have that, we can go ahead and start using your D matrix as follows: 
 
 ::: {#fig-20 .column-margin}
 ![Viterbi: Forward Pass](img/slide20.png)
@@ -305,9 +305,9 @@ The equation above just gives you the index of the highest row in the last colum
 Viterbi: Forward Pass
 :::
 
-Note that since we started at index one, hence the last word (w5) is $t_1$. Then we go to the first row of D and what ever that number is, it indicated the row of the next part of speech tag. Then next part of speech tag indicates the row of the next and so forth. This allows you to reconstruct the POS tags for your sentence.
+Note that since we started at index one, hence the last word (w5) is $t_1$. Then we go to the first row of D and what ever that number is, it indicated the row of the next part of speech tag. Then next part of speech tag indicates the row of the next and so forth. This allows we to reconstruct the POS tags for your sentence.
 
-You will be implementing this in this week's programming assignment. 
+We will be implementing this in this week's programming assignment. 
 
 ## Assignment
 

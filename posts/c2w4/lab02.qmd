@@ -1,4 +1,5 @@
 ---
+date: 2020-10-25
 title: 'Word Embeddings: Intro to CBOW model, activation functions and working with Numpy'
 categories: 
   - NLP 
@@ -9,13 +10,13 @@ jupyter: python3
 # execute: 
 #     error: true
 ---
-::: {#fig-00 .column-margin .nolightbox}
+::: {.column-margin .nolightbox}
 ![course banner](/images/Course-Logo-2-3.webp)
 :::
 
 
 
-In this lecture notebook you will be given an introduction to the continuous bag-of-words model, its activation functions and some considerations when working with Numpy. 
+In this lecture notebook we will be given an introduction to the continuous bag-of-words model, its activation functions and some considerations when working with Numpy. 
 
 Let's dive into it!
 
@@ -58,7 +59,7 @@ z_1
 
 Notice that using numpy's `random.rand` function returns a numpy array filled with values taken from a uniform distribution over [0, 1). Numpy allows vectorization so each value is multiplied by 10 and then substracted 5.
 
-To get the ReLU of this vector, you want all the negative values to become zeros.
+To get the ReLU of this vector, we want all the negative values to become zeros.
 
 First create a copy of this vector.
 
@@ -74,14 +75,14 @@ Now determine which of its values are negative.
 h < 0
 ```
 
-You can now simply set all of the values which are negative to 0.
+We can now simply set all of the values which are negative to 0.
 
 ```{python}
 # Slice the array or vector. This is the same as applying ReLU to it
 h[h < 0] = 0
 ```
 
-And that's it: you have the ReLU of $\mathbf{z_1}$!
+And that's it: we have the ReLU of $\mathbf{z_1}$!
 
 ```{python}
 # Print the vector after ReLU
@@ -118,7 +119,7 @@ Expected output:
 
 ### Softmax
 
-The second activation function that you need is softmax. This function is used to calculate the values of the output layer of the neural network, using the following formulas:
+The second activation function that we need is softmax. This function is used to calculate the values of the output layer of the neural network, using the following formulas:
 
 \begin{align}
  \mathbf{z_2} &= \mathbf{W_2}\mathbf{h} + \mathbf{b_2}   \tag{3} \\
@@ -166,7 +167,7 @@ And the value of the first element of $\textrm{softmax}(\textbf{z})$ is given by
 e_z[0]/sum_e_z
 ```
 
-This is for one element. You can use numpy's vectorized operations to calculate the values of all the elements of the $\textrm{softmax}(\textbf{z})$ vector in one go.
+This is for one element. We can use numpy's vectorized operations to calculate the values of all the elements of the $\textrm{softmax}(\textbf{z})$ vector in one go.
 
 **Implement the softmax function.**
 
@@ -221,7 +222,7 @@ This is a 1-dimensional array, as revealed by the `.shape` property of the array
 x_array.shape
 ```
 
-To perform matrix multiplication in the next steps, you actually need your column vectors to be represented as a matrix with one column. In numpy, this matrix is represented as a 2-dimensional array.
+To perform matrix multiplication in the next steps, we actually need your column vectors to be represented as a matrix with one column. In numpy, this matrix is represented as a 2-dimensional array.
 
 The easiest way to convert a 1D vector to a 2D column matrix is to set its `.shape` property to the number of rows and one column, as shown in the next cell.
 
@@ -243,19 +244,16 @@ The shape of the resulting "vector" is:
 x_column_vector.shape
 ```
 
-So you now have a 5x1 matrix that you can use to perform standard matrix multiplication.
+So we now have a 5x1 matrix that we can use to perform standard matrix multiplication.
 
-**Congratulations on finishing this lecture notebook!** Hopefully you now have a better understanding of the activation functions used in the continuous bag-of-words model, as well as a clearer idea of how to leverage Numpy's power for these types of mathematical computations.
+**Congratulations on finishing this lecture notebook!** Hopefully we now have a better understanding of the activation functions used in the continuous bag-of-words model, as well as a clearer idea of how to leverage Numpy's power for these types of mathematical computations.
 
-In the next lecture notebook you will get a comprehensive dive into:
+In the next lecture notebook we will get a comprehensive dive into:
 
 - Forward propagation.
-
 - Cross-entropy loss.
-
 - Backpropagation.
-
 - Gradient descent.
 
-**See you next time!**
+**See we next time!**
 

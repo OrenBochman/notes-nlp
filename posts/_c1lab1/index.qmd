@@ -8,16 +8,16 @@ jupyter: python3
 
 # Assignment 1: Logistic Regression
 
-Welcome to week one of this specialization. You will learn about logistic regression. Concretely, you will be implementing logistic regression for sentiment analysis on tweets. Given a tweet, you will decide if it has a positive sentiment or a negative one. 
+Welcome to week one of this specialization. We will learn about logistic regression. Concretely, we will be implementing logistic regression for sentiment analysis on tweets. Given a tweet, we will decide if it has a positive sentiment or a negative one. 
 
-Specifically you will: 
+Specifically we will: 
 
 * Learn how to extract features for logistic regression given some text
 * Implement logistic regression from scratch
 * Apply logistic regression on a natural language processing task
 * Test using your logistic regression
 * Perform error analysis
-We will be using a data set of tweets. Hopefully you will get more than 99% accuracy.  
+We will be using a data set of tweets. Hopefully we will get more than 99% accuracy.  
 Run the cell below to load in the packages.
 
 ## Import functions and data
@@ -31,13 +31,13 @@ from os import getcwd
 ### Imported functions
 
 Download the data needed for this assignment. Check out the [documentation for the twitter_samples dataset](http://www.nltk.org/howto/twitter.html).
-* twitter_samples: if you're running this notebook on your local computer, you will need to download it using:
+* twitter_samples: if you're running this notebook on your local computer, we will need to download it using:
 
 ```{Python}
 nltk.download('twitter_samples')
 ```
 
-* stopwords: if you're running this notebook on your local computer, you will need to download it using:
+* stopwords: if you're running this notebook on your local computer, we will need to download it using:
 
 ```{python}
 nltk.download('stopwords')
@@ -67,8 +67,8 @@ from utils import process_tweet, build_freqs
 ### Prepare the data
 
 * The `twitter_samples` contains subsets of 5,000 positive tweets, 5,000 negative tweets, and the full set of 10,000 tweets.  
-    * If you used all three datasets, we would introduce duplicates of the positive tweets and negative tweets.  
-    * You will select just the five thousand positive tweets and five thousand negative tweets.
+    * If we used all three datasets, we would introduce duplicates of the positive tweets and negative tweets.  
+    * We will select just the five thousand positive tweets and five thousand negative tweets.
 
 ```{python}
 
@@ -104,7 +104,7 @@ print("test_y.shape = " + str(test_y.shape))
 ```
 
 * Create the frequency dictionary using the imported `build_freqs()` function.  
-    * We highly recommend that you open `utils.py` and read the `build_freqs()` function to understand what it is doing.
+    * We highly recommend that we open `utils.py` and read the `build_freqs()` function to understand what it is doing.
     * To view the file directory, go to the menu and click File->Open.
 ```Python
     for y,tweet in zip(ys, tweets):
@@ -156,7 +156,7 @@ This is an example of the processes version:
 
 ### Part 1.1: Sigmoid
 
-You will learn to use logistic regression for text classification. 
+We will learn to use logistic regression for text classification. 
 * The sigmoid function is defined as: 
 $$
 h(z) = \frac{1}{1+\exp^{-z}} \tag{1}
@@ -169,7 +169,7 @@ It maps the input 'z' to a value that ranges between 0 and 1, and so it can be t
 
 #### Instructions: Implement the sigmoid function
 
-* You will want this function to work if z is a scalar as well as if it is an array.
+* We will want this function to work if z is a scalar as well as if it is an array.
 
 <details>    
 <summary>
@@ -222,7 +222,7 @@ $$
 z = \theta_0 x_0 + \theta_1 x_1 + \theta_2 x_2 + ... \theta_N x_N
 $$
 
-Note that the $\theta$ values are "weights". If you took the Deep Learning Specialization, we referred to the weights with the `w` vector.  In this course, we're using a different variable $\theta$ to refer to the weights.
+Note that the $\theta$ values are "weights". If we took the Deep Learning Specialization, we referred to the weights with the `w` vector.  In this course, we're using a different variable $\theta$ to refer to the weights.
 Logistic regression
 $$
  h(z) = \frac{1}{1+\exp^{-z}}
@@ -264,7 +264,7 @@ $$ Loss = -1 \times \left( y^{(i)}\log (h(z(\theta)^{(i)})) + (1-y^{(i)})\log (1
 ```
 #### Update the weights
 
-To update your weight vector $\theta$, you will apply gradient descent to iteratively improve your model's predictions.  
+To update your weight vector $\theta$, we will apply gradient descent to iteratively improve your model's predictions.  
 The gradient of the cost function $J$ with respect to one of the weights $\theta_j$ is:
 
 $$
@@ -341,11 +341,11 @@ def gradientDescent(x, y, theta, alpha, num_iters):
         y: corresponding labels of the input matrix x, dimensions (m,1)
         theta: weight vector of dimension (n+1,1)
         alpha: learning rate
-        num_iters: number of iterations you want to train your model for
+        num_iters: number of iterations we want to train your model for
     Output:
         J: the final cost
         theta: your final weight vector
-    Hint: you might want to print the cost to make sure that it is going down.
+    Hint: we might want to print the cost to make sure that it is going down.
     '''
     ### START CODE HERE (REPLACE INSTANCES OF 'None' with your code) ###
     # get 'm', the number of rows in matrix x
@@ -398,7 +398,7 @@ The resulting vector of weights is [4.1e-07, 0.00035658, 7.309e-05]
 
 ## Part 2: Extracting the features
 
-* Given a list of tweets, extract the features and store them in a matrix. You will extract two features.
+* Given a list of tweets, extract the features and store them in a matrix. We will extract two features.
     * The first feature is the number of positive words in a tweet.
     * The second feature is the number of negative words in a tweet. 
 * Then train your logistic regression classifier on these features.
@@ -418,7 +418,7 @@ The resulting vector of weights is [4.1e-07, 0.00035658, 7.309e-05]
 </summary>
 <p>
 <ul>
-    <li>Make sure you handle cases when the (word, label) key is not found in the dictionary. </li>
+    <li>Make sure we handle cases when the (word, label) key is not found in the dictionary. </li>
     <li> Search the web for hints about using the `.get()` method of a Python dictionary.  Here is an <a href="https://www.programiz.com/python-programming/methods/dictionary/get" > example </a> </li>
 </ul>
 </p>
@@ -524,7 +524,7 @@ The resulting vector of weights is [7e-08, 0.0005239, -0.00055517]
 ```
 
 # Part 4: Test your logistic regression
-It is time for you to test your logistic regression function on some new input that your model has not seen before. 
+It is time for we to test your logistic regression function on some new input that your model has not seen before. 
 
 #### Instructions: Write `predict_tweet`
 
@@ -657,7 +657,7 @@ Pretty good!
 
 # Part 5: Error Analysis
 
-In this part you will see some tweets that your model misclassified. Why do you think the misclassifications happened? Specifically what kind of tweets does your model misclassify?
+In this part we will see some tweets that your model misclassified. Why do we think the misclassifications happened? Specifically what kind of tweets does your model misclassify?
 
 ```{python}
 

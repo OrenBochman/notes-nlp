@@ -6,9 +6,11 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Oren Bochman">
+<meta name="keywords" content="Dot product attention, Deep Learning Algorithms, LSH Attention, GPT3, Reversible transformer, Reformer">
 <meta name="description" content="This week of the NLP Specialization, we explore Chatbot. We will be building Reformer model, an efficient transformer to create intelligent conversational agents.We will learn how to train this model on dialogue datasets and generate responses that mimic human-like conversations. Through hands-on exercises using JAX, we will gain practical experience in building chatbot that can understand and respond to user queries. We will master the skills to develop sophisticated chatbot applications using state-of-the-art NLP techniques">
 
-<title>Week 4 Chat Bots – NLP Specialization</title>
+<title>Chat Bots – NLP Specialization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -55,7 +57,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -223,7 +245,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/c4w1/index.html">NLP with Attention Models</a></li><li class="breadcrumb-item"><a href="../../posts/c4w4/index.html">Chat Bots</a></li></ol></nav>
-      <h1 class="title">Week 4 Chat Bots</h1>
+      <h1 class="title">Chat Bots</h1>
             <p class="subtitle lead">NLP with Attention Models</p>
                   <div>
         <div class="description">
@@ -231,26 +253,20 @@ window.Quarto = {
         </div>
       </div>
                           <div class="quarto-categories">
+                <div class="quarto-category">Attention</div>
+                <div class="quarto-category">Chat bot development</div>
+                <div class="quarto-category">Coursera</div>
+                <div class="quarto-category">Intelligent agents</div>
+                <div class="quarto-category">Locality sensitive hashing</div>
                 <div class="quarto-category">NLP with Attention Models</div>
                 <div class="quarto-category">Neural Machine Translation</div>
-                <div class="quarto-category">Coursera</div>
-                <div class="quarto-category">Notes</div>
-                <div class="quarto-category">Deep Learning Algorithms</div>
-                <div class="quarto-category">Transformer</div>
-                <div class="quarto-category">Reversible transformer</div>
-                <div class="quarto-category">Teacher forcing</div>
-                <div class="quarto-category">positional encoding</div>
-                <div class="quarto-category">Locality sensitive hashing</div>
-                <div class="quarto-category">Attention</div>
-                <div class="quarto-category">Dot product attention</div>
-                <div class="quarto-category">LSH Attention</div>
-                <div class="quarto-category">GPT3</div>
-                <div class="quarto-category">Reformer</div>
-                <div class="quarto-category">Reversible layers</div>
-                <div class="quarto-category">Chat bot development</div>
-                <div class="quarto-category">Intelligent agents</div>
                 <div class="quarto-category">NLP</div>
+                <div class="quarto-category">Notes</div>
+                <div class="quarto-category">Positional encoding</div>
                 <div class="quarto-category">Question answering task</div>
+                <div class="quarto-category">Reversible layers</div>
+                <div class="quarto-category">Teacher forcing</div>
+                <div class="quarto-category">Transformer</div>
               </div>
                   </div>
   </div>
@@ -258,6 +274,12 @@ window.Quarto = {
   
   <div class="quarto-title-meta column-body">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Oren Bochman </p>
+            </div>
+    </div>
       
       <div>
       <div class="quarto-title-meta-heading">Published</div>
@@ -269,6 +291,13 @@ window.Quarto = {
       
     </div>
     
+
+  <div>
+    <div class="keywords">
+      <div class="block-title">Keywords</div>
+      <p>Dot product attention, Deep Learning Algorithms, LSH Attention, GPT3, Reversible transformer, Reformer</p>
+    </div>
+  </div>
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
@@ -497,26 +526,20 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#question-answering" id="toc-question-answering" class="nav-link active" data-scroll-target="#question-answering">Question Answering</a>
-  <ul class="collapse">
-  <li><a href="#weeks-learning-objectives" id="toc-weeks-learning-objectives" class="nav-link" data-scroll-target="#weeks-learning-objectives">Week’s Learning Objectives:</a></li>
-  <li><a href="#video-1-tasks-with-long-sequences" id="toc-video-1-tasks-with-long-sequences" class="nav-link" data-scroll-target="#video-1-tasks-with-long-sequences">Video 1 : Tasks with Long Sequences</a></li>
-  <li><a href="#video-2-transformer-complexity" id="toc-video-2-transformer-complexity" class="nav-link" data-scroll-target="#video-2-transformer-complexity">Video 2: Transformer Complexity</a></li>
-  <li><a href="#video-3-lsh-attention" id="toc-video-3-lsh-attention" class="nav-link" data-scroll-target="#video-3-lsh-attention">Video 3: LSH Attention</a></li>
-  <li><a href="#video-4-motivation-for-reversible-layers-memory" id="toc-video-4-motivation-for-reversible-layers-memory" class="nav-link" data-scroll-target="#video-4-motivation-for-reversible-layers-memory">Video 4 Motivation for Reversible Layers: Memory!</a></li>
-  <li><a href="#video-5-reversible-residual-layers" id="toc-video-5-reversible-residual-layers" class="nav-link" data-scroll-target="#video-5-reversible-residual-layers">Video 5 Reversible Residual Layers</a></li>
-  <li><a href="#video-6-reformer" id="toc-video-6-reformer" class="nav-link" data-scroll-target="#video-6-reformer">Video 6 Reformer</a></li>
-  <li><a href="#lab-2-reversible-layers" id="toc-lab-2-reversible-layers" class="nav-link" data-scroll-target="#lab-2-reversible-layers">Lab 2: Reversible layers</a></li>
-  </ul></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References:</a>
+  <li><a href="#sec-task-long" id="toc-sec-task-long" class="nav-link active" data-scroll-target="#sec-task-long">Tasks with Long Sequences</a></li>
+  <li><a href="#sec-transformer-complexity" id="toc-sec-transformer-complexity" class="nav-link" data-scroll-target="#sec-transformer-complexity">Video 2: Transformer Complexity</a></li>
+  <li><a href="#sec-lsh-attention" id="toc-sec-lsh-attention" class="nav-link" data-scroll-target="#sec-lsh-attention">LSH Attention</a></li>
+  <li><a href="#sec-reversible" id="toc-sec-reversible" class="nav-link" data-scroll-target="#sec-reversible">Motivation for Reversible Layers: Memory!</a></li>
+  <li><a href="#sec-reversible-residual" id="toc-sec-reversible-residual" class="nav-link" data-scroll-target="#sec-reversible-residual">Reversible Residual Layers</a></li>
+  <li><a href="#sec-reformer" id="toc-sec-reformer" class="nav-link" data-scroll-target="#sec-reformer">Reformer</a></li>
+  <li><a href="#sec-lab-2" id="toc-sec-lab-2" class="nav-link" data-scroll-target="#sec-lab-2">Lab 2: Reversible layers</a></li>
+  <li><a href="#sec-references" id="toc-sec-references" class="nav-link" data-scroll-target="#sec-references">References</a>
   <ul class="collapse">
   <li><a href="#tokenization" id="toc-tokenization" class="nav-link" data-scroll-target="#tokenization">Tokenization</a></li>
-  <li><a href="#transformers" id="toc-transformers" class="nav-link" data-scroll-target="#transformers">Transformers</a>
-  <ul class="collapse">
+  <li><a href="#transformers" id="toc-transformers" class="nav-link" data-scroll-target="#transformers">Transformers</a></li>
   <li><a href="#question-answering-task" id="toc-question-answering-task" class="nav-link" data-scroll-target="#question-answering-task">Question Answering Task:</a></li>
   </ul></li>
   <li><a href="#links" id="toc-links" class="nav-link" data-scroll-target="#links">Links</a></li>
-  </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c4w4/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -531,60 +554,139 @@ window.Quarto = {
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="../../images/Course-Logo-4-1.webp" class="nolightbox img-fluid figure-img"></p>
-<figcaption>deeplearning.ai</figcaption>
+<figcaption>course banner</figcaption>
 </figure>
-</div></div><section id="question-answering" class="level1 page-columns page-full">
-<h1>Question Answering</h1>
-<p>Notes for: NLP with Attention Models Week 4 Natural Language Processing with Attention Models - Chat Bots</p>
-<section id="weeks-learning-objectives" class="level2">
-<h2 class="anchored" data-anchor-id="weeks-learning-objectives">Week’s Learning Objectives:</h2>
-<ul class="task-list">
-<li><label><input type="checkbox">Explain the motivation for reversible layers</label></li>
-<li><label><input type="checkbox">Integrate locality sensitive hashing into attention layers</label></li>
-<li><label><input type="checkbox">Describe the Reformer model</label></li>
-</ul>
-<p>Deep learning and A.I. researchers push the field forward by looking for new techniques as well as refinements of old ideas to get better performance on tasks. In this lesson we cover <em>reversible layers</em> which allow us to leverage a time memory tradeoff to process book length sequences and handle contexts over a conversation.</p>
-<!-- ## TLDR: Neural Network engineering -->
-</section>
-<section id="video-1-tasks-with-long-sequences" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="video-1-tasks-with-long-sequences">Video 1 : Tasks with Long Sequences</h2>
-<div class="page-columns page-full"><p> In this week you are going to learn about tasks that require processing longer sequences: - Writing books - Storytelling and understanding - Building intelligent agents for conversations like chat-bots.</p><div class="no-row-height column-margin column-container"><img src="img/v01-001.png" class="img-fluid" data-group="slides" alt="week-4"></div></div>
-<p>More specifically we will understand how <em>re-former</em> model (AKA the reversible transformer) and <em>reversible layers</em> work. This week you will learn about the bottlenecks in these larger transformer models, and solutions you can use to make them trainable for you. You will also learn about the. Here is what you will be building for your programming assignment: A chatbot!</p>
-<p>In many ways a Chat bot is very similar to a Q&amp;A system which we built last week and that is also similar to query based summarization another task we covered a week before that. The new challenge is to manage what parts of the new and old context we keep around as the dialogue progresses. Chatbot are smart A.I. agents and much of the techniques developed under the umbrella of knowledge-based AI is also relevant in developing these. For instance carrying out actions on behalf of the user. Chatbots can also get a very simple ui via the web or as an mobile app, which is another area I have some experience. However an even more powerful paradigm here is the ability to interact using voice which has many additional benefit for example supporting people with disabilities and operating in hands-free mode. Here is a link to an <a href="https://play.aidungeon.io/main/landing">AI Storytelling system</a>.</p>
-</section>
-<section id="video-2-transformer-complexity" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="video-2-transformer-complexity">Video 2: Transformer Complexity</h2>
-
-<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+</div><div id="sup-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides" style="@page {size: 16in 9in;  margin: 0;}">
+<figure class="quarto-float quarto-float-sup figure">
+<div aria-describedby="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="img/v02-002.png" class="lightbox" data-gallery="slides" title="week-4"><img src="img/v02-002.png" class="img-fluid figure-img" alt="week-4"></a></p>
-<figcaption>week-4</figcaption>
+<p><a href="slides.pdf" class="lightbox" data-gallery="slides" title="This week’s slides"><embed src="slides.pdf" style="@page {size: 16in 9in;  margin: 0;}" width="420" height="340"></a></p>
+<figcaption>This week’s slides</figcaption>
 </figure>
-</div></div><p>One of the biggest issues with the transformers is that it takes time and a lot of memory when training. Concretely here are the numbers. If you have a sequence of length <span class="math inline">L</span> , then you need <span class="math inline">L^2*N</span> memory to handle the sequence. So if you have <span class="math inline">N</span> layers, that means your model will take <span class="math inline">N</span> times more time to complete. As <span class="math inline">L</span> gets larger, the memory and the time quickly increases.</p>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-sup quarto-uncaptioned" id="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Supplementary Figure&nbsp;1
+</figcaption>
+</figure>
+</div></div>
+<p>My notes for Week 4 of the <a href="https://www.coursera.org/learn/attention-models-in-nlp/home/info">Natural Language Processing with Attention Labels</a> Course in the Natural Language Processing Specialization Offered by <a href="DeepLearning.AI">DeepLearning.AI</a> on <a href="https://www.coursera.org/">Coursera</a></p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul class="task-list">
+<li><label><input type="checkbox" checked=""><a href="#sec-reversible">Explain the motivation for reversible layers</a></label></li>
+<li><label><input type="checkbox" checked=""><a href="#sec-lsh-attention">Integrate locality sensitive hashing into attention layers</a></label></li>
+<li><label><input type="checkbox" checked=""><a href="#sec-reformer">Describe the Reformer model</a></label></li>
+</ul>
+</div>
+</div>
+<p>Deep learning and A.I. researchers push the field forward by looking for new techniques as well as refinements of old ideas to get better performance on tasks. In this lesson <mark>we cover <em>reversible layers</em> which allow us to leverage a time memory tradeoff</mark> to process book length sequences and handle contexts over a conversation.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+TL;DR Chatbots <span class="emoji" data-emoji="chart_with_upwards_trend">📈</span>
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<!-- https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md#smileys--emotion -->
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="../../images/in_a_nutshell.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Chatbots in a nutshell"><img src="../../images/in_a_nutshell.jpg" class="img-fluid figure-img" alt="Chatbots in a nutshell"></a></p>
+<figcaption>Chatbots in a nutshell</figcaption>
+</figure>
+</div>
+<ul>
+<li><strong>Chatbots</strong> are intelligent agents that can hold conversations with humans.</li>
+<li><strong>Reversible layers</strong> allow us to trade memory for compute time.</li>
+<li><strong>Reformer</strong> is an efficient transformer model that can handle long sequences.</li>
+<li><strong>LSH Attention</strong> is a technique to reduce the memory requirements of transformers.</li>
+</ul>
+</div>
+</div>
+</div>
+<section id="sec-task-long" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-task-long">Tasks with Long Sequences</h2>
+
+<div class="no-row-height column-margin column-container"><div id="fig-01" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/v01-001.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;1: Context Window"><img src="img/v01-001.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Context Window
+</figcaption>
+</figure>
+</div></div><p>This week we are going to learn about tasks that require processing longer sequences:</p>
+<ul>
+<li>Writing books</li>
+<li>Storytelling and understanding</li>
+<li>Building intelligent agents for conversations like chat-bots.</li>
+</ul>
+<p>More specifically we will understand how <em>re-former</em> model (AKA the reversible transformer) and <em>reversible layers</em> work.</p>
+<p>This week we will learn about the bottlenecks in these larger transformer models, and solutions we can use to make them trainable for you. We will also learn about the. Here is what we will be building for your programming assignment: A chatbot!</p>
+<p>In many ways a Chat bot is very similar to a Q&amp;A system which we built last week and that is also similar to query based summarization another task we covered a week before that. The new challenge is to manage what parts of the new and old context we keep around as the dialogue progresses. Chatbot are smart A.I. agents and much of the techniques developed under the umbrella of knowledge-based AI is also relevant in developing these. For instance carrying out actions on behalf of the user.</p>
+<p>Chatbots can also get a very simple ui via the web or as an mobile app, which is another area I have some experience. However an even more powerful paradigm here is the ability to interact using voice which has many additional benefit for example supporting people with disabilities and operating in hands-free mode.</p>
+<p>Here is a link to an <a href="https://play.aidungeon.io/main/landing">AI Storytelling system</a>.</p>
+</section>
+<section id="sec-transformer-complexity" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-transformer-complexity">Video 2: Transformer Complexity</h2>
+
+<div class="no-row-height column-margin column-container"><div id="fig-02" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/v02-002.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;2: week-4"><img src="img/v02-002.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: week-4
+</figcaption>
+</figure>
+</div></div><p>One of the biggest issues with the transformers is that it takes time and a lot of memory when training. Concretely here are the numbers. If we have a sequence of length <span class="math inline">L</span> , then we need <span class="math inline">L^2*N</span> memory to handle the sequence. So if we have <span class="math inline">N</span> layers, that means your model will take <span class="math inline">N</span> times more time to complete. As <span class="math inline">L</span> gets larger, the memory and the time quickly increases.</p>
 <p>Perhaps this is the reason people are looking into converting transformers into RNN after training.</p>
 
-<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/v02-003.png" class="lightbox" data-gallery="slides" title="week-4"><img src="img/v02-003.png" class="img-fluid figure-img" alt="week-4"></a></p>
-<figcaption>week-4</figcaption>
+<div class="no-row-height column-margin column-container"><div id="fig-03" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/v02-003.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;3: week-4"><img src="img/v02-003.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: week-4
+</figcaption>
 </figure>
-</div></div><p>When you are handling long sequences, you frequently don’t need to consider all L positions. You can just focus on an area of interest instead. For example, when translating a long text from one language to another, you don’t need to consider every word at once. You can instead focus on a single word being translated, and those immediately around it, by using attention.</p>
-<p>To overcome the memory requirements you can recompute the activations. As long as you do it efficiently, you will be able to save a good amount of time and memory. You will learn this week how to do it. Instead of storing N layers, you will be able to recompute them when doing the back-propagation. That combined with local attention, will give you a much faster model that works at the same level as the transformer you learned about last week.</p>
+</div></div><p>When we are handling long sequences, we frequently don’t need to consider all L positions. We can just focus on an area of interest instead. For example, when translating a long text from one language to another, we don’t need to consider every word at once. We can instead focus on a single word being translated, and those immediately around it, by using attention.</p>
+<p>To overcome the memory requirements we can recompute the activations. As long as we do it efficiently, we will be able to save a good amount of time and memory. We will learn this week how to do it. Instead of storing N layers, we will be able to recompute them when doing the back-propagation. That combined with local attention, will give we a much faster model that works at the same level as the transformer we learned about last week.</p>
 <ul>
 <li><p>one area where we can make headway is working with a subsequence of interest.</p></li>
 <li><p>during training we need to keep the activations in memory for the back propagation task. Clearly for inference we may be able to save on memory.</p></li>
 <li><p>the alternative is to discard the activations as we go along and recalculate later. This can allows trading memory for compute time. However with larger models compute time is also a bottleneck.</p></li>
 </ul>
 
-<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/v03-004.png" class="lightbox" data-gallery="slides" title="week-4"><img src="img/v03-004.png" class="img-fluid figure-img" alt="week-4"></a></p>
-<figcaption>week-4</figcaption>
+<div class="no-row-height column-margin column-container"><div id="fig-04" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/v03-004.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;4: Approximate Nearest Neighbours"><img src="img/v03-004.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Approximate Nearest Neighbours
+</figcaption>
 </figure>
 </div></div></section>
-<section id="video-3-lsh-attention" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="video-3-lsh-attention">Video 3: LSH Attention</h2>
-<p>In Course 1, we covered how <em>locality sensitive hashing</em> (LSH) works. You learned about:</p>
+<section id="sec-lsh-attention" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-lsh-attention">LSH Attention</h2>
+<p>In Course 1, we covered how <em>locality sensitive hashing</em> (LSH) works. We learned about:</p>
 <ul>
 <li>KNN</li>
 <li>Hash Tables and Hash Functions</li>
@@ -592,33 +694,45 @@ window.Quarto = {
 <li>Multiple Planes</li>
 </ul>
 <p>Here are the steps to follow to compute LSH given some vectors, where the vectors may correspond to the transformed word embedding that your transformer outputs.</p>
-<p>Attention is used to try which query (q) and key (k) are the most similar. To do so, you hash q and the keys. This will put similar vectors in the same bucket that you can use. The drawing above shows the lines that separate the buckets. Those could be seen as the planes. Remember that the standard attention mechanism is defined as follows:</p>
-<p><span class="math display">
+<p>Attention is used to try which query (q) and key (k) are the most similar. To do so, we hash q and the keys. This will put similar vectors in the same bucket that we can use. The drawing above shows the lines that separate the buckets. Those could be seen as the planes.</p>
+<p>First let’s recall how the standard attention mechanism is defined as follows:</p>
+<p><span id="eq-attention"><span class="math display">
 A(Q,K,V) = softmax(QK^T)V
-</span></p>
-<p>Once you hash <span class="math inline">Q</span> and <span class="math inline">K</span> you will then compute standard attention on the bins that you have created. You will repeat the same process several times to increase the probability of having the same key in the same bin as the query.</p>
+\tag{1}</span></span></p>
+<p>Once we hash <span class="math inline">Q</span> and <span class="math inline">K</span> we will then compute standard attention on the bins that we have created. We will repeat the same process several times to increase the probability of having the same key in the same bin as the query.</p>
 
-<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/v03-005.png" class="lightbox" data-gallery="slides" title="week-4"><img src="img/v03-005.png" class="img-fluid figure-img" alt="week-4"></a></p>
-<figcaption>week-4</figcaption>
+<div class="no-row-height column-margin column-container"><div id="fig-05" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/v03-005.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;5: week-4"><img src="img/v03-005.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: week-4
+</figcaption>
 </figure>
 </div></div><ul>
-<li>Given the sequence of queries and keys, you hash them into buckets. Check out Course 1 Week 4 for a review of the hashing.</li>
-<li>You will then sort them by bucket.</li>
-<li>You split the buckets into chunks (this is a technical detail for parallel computing purposes).</li>
-<li>You then compute the attention within the same bucket of the chunk you are looking at and the previous chunk. &gt; Q. Why do you need to look at the previous chunk?<br>
-You can see in the figure some buckets (both blue and yellow) have been split across two chunks. Looking at the previous chunk will let you attend to the full bucket.</li>
+<li>Given the sequence of queries and keys, we hash them into buckets. Check out Course 1 Week 4 for a review of the hashing.</li>
+<li>We will then sort them by bucket.</li>
+<li>We split the buckets into chunks (this is a technical detail for parallel computing purposes).</li>
+<li>We then compute the attention within the same bucket of the chunk we are looking at and the previous chunk. &gt; Q. Why do we need to look at the previous chunk?<br>
+We can see in the figure some buckets (both blue and yellow) have been split across two chunks. Looking at the previous chunk will let we attend to the full bucket.</li>
 </ul>
-<p>In <em>Winograd schemas</em> the resolution of the ambiguous pronoun switches between the two variants of the sentence. &gt; the <strong>animal</strong> didn’t cross the street because <code>it</code> was too <strong>tired</strong> &gt; the animal didn’t cross the <strong>street</strong> because <code>it</code> was too <strong>wide</strong> &gt;The city <strong>councilmen</strong> refused the demonstrators a permit because <code>they</code> <strong>feared</strong> violence. &gt;The city councilmen refused the <strong>demonstrators</strong> a permit because <code>they</code> <strong>advocated</strong> violence.</p>
+<p>In <em>Winograd schemas</em> the resolution of the ambiguous pronoun switches between the two variants of the sentence.</p>
+<blockquote class="blockquote">
+<p>the <strong>animal</strong> didn’t cross the street because <code>it</code> was too <strong>tired</strong> / the animal didn’t cross the <strong>street</strong> because <code>it</code> was too <strong>wide</strong> / The city <strong>councilmen</strong> refused the demonstrators a permit because <code>they</code> <strong>feared</strong> violence. / The city councilmen refused the <strong>demonstrators</strong> a permit because <code>they</code> <strong>advocated</strong> violence. /</p>
+</blockquote>
 </section>
-<section id="video-4-motivation-for-reversible-layers-memory" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="video-4-motivation-for-reversible-layers-memory">Video 4 Motivation for Reversible Layers: Memory!</h2>
+<section id="sec-reversible" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-reversible">Motivation for Reversible Layers: Memory!</h2>
 
-<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/v04-006.png" class="lightbox" data-gallery="slides" title="week-4"><img src="img/v04-006.png" class="img-fluid figure-img" alt="week-4"></a></p>
-<figcaption>week-4</figcaption>
+<div class="no-row-height column-margin column-container"><div id="fig-06" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/v04-006.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;6: Memory efficency"><img src="img/v04-006.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: Memory efficency
+</figcaption>
 </figure>
 </div></div><p>For example in this model:</p>
 <ul>
@@ -632,15 +746,15 @@ You can see in the figure some buckets (both blue and yellow) have been split ac
 </ul>
 <p>Each layer of a transformers has an Attention block and feed-forward block. If we want to process, for example to train a document of length 1 million token with 12 layers we will need 50 GB of ram. As we use residual architecture during prediction we only need the current layers input and the output for the next layer. But during training we need to keep all the copies so we can back-propagate the errors.</p>
 </section>
-<section id="video-5-reversible-residual-layers" class="level2">
-<h2 class="anchored" data-anchor-id="video-5-reversible-residual-layers">Video 5 Reversible Residual Layers</h2>
+<section id="sec-reversible-residual" class="level2">
+<h2 class="anchored" data-anchor-id="sec-reversible-residual">Reversible Residual Layers</h2>
 </section>
-<section id="video-6-reformer" class="level2">
-<h2 class="anchored" data-anchor-id="video-6-reformer">Video 6 Reformer</h2>
+<section id="sec-reformer" class="level2">
+<h2 class="anchored" data-anchor-id="sec-reformer">Reformer</h2>
 <p>can run 1 million token in 16 gb</p>
 </section>
-<section id="lab-2-reversible-layers" class="level2">
-<h2 class="anchored" data-anchor-id="lab-2-reversible-layers">Lab 2: Reversible layers</h2>
+<section id="sec-lab-2" class="level2">
+<h2 class="anchored" data-anchor-id="sec-lab-2">Lab 2: Reversible layers</h2>
 <p>From the <code>trax</code> <a href="https://trax-ml.readthedocs.io/en/latest/notebooks/layers_intro.html#2.-Inputs-and-Outputs">documents</a> a Residual, involves first a split and then a merge:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> Serial(</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    Branch(shortcut, layer), <span class="co"># split </span></span>
@@ -649,15 +763,17 @@ You can see in the figure some buckets (both blue and yellow) have been split ac
 <p>where:</p>
 <ul>
 <li><code>Branch(shortcut, layers)</code>: makes two copies of the single incoming data stream, passes one copy via the shortcut (typically a no-op), and processes the other copy via the given layers (applied in series). <span class="math inline">[𝑛_{𝑖𝑛}=1, 𝑛_{𝑜𝑢𝑡}=2]</span></li>
-<li><code>Add()</code>: combines the two streams back into one by adding two tensors element-wise. <span class="math inline">[𝑛_{𝑖𝑛}=2, 𝑛_{𝑜𝑢𝑡}=1]</span> In the <code>Branch</code> operation each layer in the input list copies as many inputs from the stack as it needs, and their outputs are successively combined on stack. Put another way, each element of the branch can have differing numbers of inputs and outputs. Let’s try a more complex example. To work these operations modify the stack by replicating the input needed as well as pushing the outputs (as specified using th <code>out</code> parameters).</li>
+<li><code>Add()</code>: combines the two streams back into one by adding two tensors element-wise. <span class="math inline">[𝑛_{𝑖𝑛}=2, 𝑛_{𝑜𝑢𝑡}=1]</span></li>
 </ul>
+<p>In the <code>Branch</code> operation each layer in the input list copies as many inputs from the stack as it needs, and their outputs are successively combined on stack. Put another way, each element of the branch can have differing numbers of inputs and outputs. Let’s try a more complex example. To work these operations modify the stack by replicating the input needed as well as pushing the outputs (as specified using th <code>out</code> parameters).</p>
 </section>
-</section>
-<section id="references" class="level1">
-<h1>References:</h1>
-<p>https://arxiv.org/pdf/1509.02897.pdf</p>
-<section id="tokenization" class="level2">
-<h2 class="anchored" data-anchor-id="tokenization">Tokenization</h2>
+<section id="sec-references" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-references">References</h2>
+<ul>
+<li><a href="https://arxiv.org/pdf/1509.02897.pdf">Practical and Optimal LSH for Angular Distance</a></li>
+</ul>
+<section id="tokenization" class="level3">
+<h3 class="anchored" data-anchor-id="tokenization">Tokenization</h3>
 <ol type="1">
 <li><a href="https://www.aclweb.org/anthology/D18-2012.pdf">SentencePiece: A simple and language independent subword tokenizer and detokenizer for Neural Text Processing (Kudo &amp; Richardson 2018)</a> sub-word tokenization</li>
 <li><a href="https://www.aclweb.org/anthology/P18-1007.pdf">Subword Regularization: Improving Neural Network Translation Models with Multiple Subword Candidates (Kudo 2018)</a> sub-word tokenization</li>
@@ -667,67 +783,107 @@ You can see in the figure some buckets (both blue and yellow) have been split ac
 <li><a href="https://arxiv.org/abs/1602.02215">Swivel: Improving Embeddings by Noticing What’s Missing (Shazeer, 2016)</a></li>
 </ol>
 </section>
-<section id="transformers" class="level2">
-<h2 class="anchored" data-anchor-id="transformers">Transformers</h2>
+<section id="transformers" class="level3">
+<h3 class="anchored" data-anchor-id="transformers">Transformers</h3>
 <ol type="1">
-<li><a href="https://arxiv.org/abs/1910.10683">Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer</a> (Raffel et al, 2019)<br>
+<li>[Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer] (Raffel et al, 2019)<br>
 </li>
-<li><a href="https://arxiv.org/abs/2001.04451">Reformer: The Efficient Transformer</a> (Kitaev et al, 2020)</li>
-<li><a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a> (Vaswani et al, 2017)</li>
-<li><a href="https://arxiv.org/pdf/1802.05365.pdf">Deep contextualized word representations</a> (Peters et al, 2018)</li>
-<li><a href="https://arxiv.org/abs/1810.04805">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a> (Devlin et al, 2018)</li>
-<li><a href="https://arxiv.org/abs/2103.13076" title="(Kasai et all 2021)">Finetuning Pretrained Transformers into RNNs</a> (Kasai et all 2021)</li>
-<li><a href="http://jalammar.github.io/illustrated-transformer/">The Illustrated Transformer</a> (Alammar, 2018)</li>
-<li><a href="http://jalammar.github.io/illustrated-gpt2/">The Illustrated GPT-2</a> (Alammar, 2019)</li>
-<li><a href="http://jalammar.github.io/how-gpt3-works-visualizations-animations/">How GPT3 Works - Visualizations and Animations</a> (Alammar, 2020)</li>
-<li><a href="https://lilianweng.github.io/lil-log/2018/06/24/attention-attention.html" title="Lilian Weng, 2018">Attention? Attention!</a> (Lilian Weng, 2018)</li>
-<li><a href="https://lilianweng.github.io/lil-log/2020/04/07/the-transformer-family.html" title="(Lilian Weng, 2020)">The Transformer Family</a> (Lilian Weng, 2020)</li>
+<li>[Reformer: The Efficient Transformer] (Kitaev et al, 2020)</li>
+<li><a href="https://arxiv.org/abs/1706.03762">Attention Is All We Need</a> (Vaswani et al, 2017) <span class="citation" data-cites="vaswani2023attentionneed">Vaswani et al. (<a href="#ref-vaswani2023attentionneed" role="doc-biblioref">2023</a>)</span></li>
+<li>[Deep contextualized word representations] (Peters et al, 2018)</li>
+<li>[BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding] (Devlin et al, 2018)</li>
+<li>[Finetuning Pretrained Transformers into RNNs] (Kasai et all 2021)</li>
+<li>[The Illustrated Transformer] (Alammar, 2018)</li>
+<li>[The Illustrated GPT-2] (Alammar, 2019)</li>
+<li>[How GPT3 Works - Visualizations and Animations] (Alammar, 2020)</li>
+<li>In <span class="citation" data-cites="weng2018attention">Weng (<a href="#ref-weng2018attention" role="doc-biblioref">2018</a>)</span> the author covers many attention mechanism <a href="https://lilianweng.github.io/posts/2018-06-24-attention/">Attention? Attention!</a></li>
+<li>[The Transformer Family] (Lilian Weng, 2020)</li>
 <li><a href="https://machinelearningmastery.com/teacher-forcing-for-recurrent-neural-networks/">Teacher forcing for RNNs</a></li>
 </ol>
-<section id="question-answering-task" class="level3">
+</section>
+<section id="question-answering-task" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="question-answering-task">Question Answering Task:</h3>
-<ol type="1">
-<li><a href="https://arxiv.org/pdf/1509.00685.pdf">Title (Author et al., Year)</a> note</li>
-</ol>
+<ul>
+<li>In <span class="citation" data-cites="rush2015neural">Rush (<a href="#ref-rush2015neural" role="doc-biblioref">2015</a>)</span> , a paper titled <a href="https://arxiv.org/pdf/1509.00685.pdf">A Neural Attention Model for Abstractive Sentence Summarization</a> the authors discuss the summarization task.</li>
+</ul>
+<p>The first two videos can be viewed on youtube.</p>
+
+<div class="no-row-height column-margin column-container"><div id="vid-01" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-vid figure">
+<div aria-describedby="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/yIdF-17HwSk" title="Question Answering" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Video&nbsp;1: Christopher Manning in Stanford CS224N: NLP with Deep Learning | Winter 2019 | Lecture 10 On Question Answering.
+</figcaption>
+</figure>
+</div><div id="vid-02" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-vid figure">
+<div aria-describedby="vid-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/NcqfHa0_YmU?list=PLoROMvodv4rMFqRtEuo6SGjY4XbRIVRd4&amp;t=222" title="Question Answering" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Video&nbsp;2: Christopher Manning and Danqi Chen in Stanford CS224N NLP with Deep Learning | Winter 2021 | Lecture 12 - Question Answering
+</figcaption>
+</figure>
+</div><div id="vid-03" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-vid figure">
+<div aria-describedby="vid-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/hAvtJ516Mw4" title="Swivel Embeddings" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid quarto-uncaptioned" id="vid-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Video&nbsp;3
+</figcaption>
+</figure>
+</div></div>
+
 </section>
 </section>
 <section id="links" class="level2">
 <h2 class="anchored" data-anchor-id="links">Links</h2>
 <ul>
-<li><a href="https://github.com/google/jax">Jax</a></li>
-<li><a href="https://trax-ml.readthedocs.io/en/latest/index.html">Trax</a></li>
-<li><a href="https://gitter.im/trax-ml/community">Trax community</a> on Gitter</li>
-<li><a href="https://github.com/abisee/cnn-dailymail">CNN daily mail dataset</a></li>
+<li><p><a href="https://github.com/google/jax">Jax</a></p></li>
+<li><p><a href="https://trax-ml.readthedocs.io/en/latest/index.html">Trax</a></p></li>
+<li><p><a href="https://gitter.im/trax-ml/community">Trax community</a> on Gitter</p></li>
+<li><p><a href="https://github.com/abisee/cnn-dailymail">CNN daily mail dataset</a></p></li>
+<li><p><a href="https://leimao.github.io/">Lei Mao</a> Machine Learning, Artificial Intelligence, Computer Science.</p></li>
+<li><p><a href="https://leimao.github.io/blog/Byte-Pair-Encoding/">Byte Pair Encoding (Lei Mao 2021)</a></p></li>
+<li><p><a href="https://arxiv.org/abs/1910.10683">Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer</a></p></li>
+<li><p><a href="https://arxiv.org/abs/2001.04451">Reformer: The Efficient Transformer</a></p></li>
+<li><p><a href="https://arxiv.org/abs/1706.03762">Attention Is All We Need</a></p></li>
+<li><p><a href="https://arxiv.org/pdf/1802.05365.pdf">Deep contextualized word representations</a></p></li>
+<li><p><a href="http://jalammar.github.io/illustrated-transformer/">The Illustrated Transformer</a></p></li>
+<li><p><a href="http://jalammar.github.io/illustrated-gpt2/">The Illustrated GPT-2</a></p></li>
+<li><p><a href="https://arxiv.org/abs/1810.04805">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a></p></li>
+<li><p><a href="http://jalammar.github.io/how-gpt3-works-visualizations-animations/">How GPT3 Works - Visualizations and Animations</a></p></li>
+<li><p><a href="https://lilianweng.github.io/lil-log/2018/06/24/attention-attention.html">Attention? Attention!</a> (Lilian Weng, 2018)</p></li>
+<li><p><a href="https://lilianweng.github.io/lil-log/2020/04/07/the-transformer-family.html">The Transformer Family</a> “(Lilian Weng, 2020)”</p></li>
+<li><p><a href="https://arxiv.org/abs/2103.13076">Finetuning Pretrained Transformers into RNNs</a> “(Kasai et all 2021)”</p></li>
 </ul>
-<p>Lei Mao Machine Learning, Artificial Intelligence, Computer Science. [Byte Pair Encoding (Lei Mao 2021)] (https://leimao.github.io/blog/Byte-Pair-Encoding/) videos:</p>
-<p>Q&amp;A</p>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/yIdF-17HwSk?start=223" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
-</iframe>
-<p>Subword tokenizers <iframe width="560" height="315" src="https://www.youtube.com/embed/hAvtJ516Mw4?start=223" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe> Swivel Embeddings https://youtu.be/hAvtJ516Mw4</p>
-<!-- 
 
-# all images
-format all image names like
-/assets/img/articles/week3/V000-name.png
-run search and replace:
-^(assets/img/articles/week3/V.-...-)([^.]+)(\.png)
-![$2](img//$1$2$3){.column-margin group="slides"}\n\n<hr>\n\n
- to get them as images get all the names
--->
 
 
 </section>
-</section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{2021,
-  author = {},
-  title = {Week 4 {Chat} {Bots}},
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-rush2015neural" class="csl-entry" role="listitem">
+Rush, AM. 2015. <span>“A Neural Attention Model for Abstractive Sentence Summarization.”</span> <em>arXiv Preprint arXiv:1509.00685</em>.
+</div>
+<div id="ref-vaswani2023attentionneed" class="csl-entry" role="listitem">
+Vaswani, Ashish, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. 2023. <span>“Attention Is All You Need.”</span> <a href="https://arxiv.org/abs/1706.03762">https://arxiv.org/abs/1706.03762</a>.
+</div>
+<div id="ref-weng2018attention" class="csl-entry" role="listitem">
+Weng, Lilian. 2018. <span>“Attention? Attention!”</span> <em>Lilianweng.github.io</em>. <a href="https://lilianweng.github.io/posts/2018-06-24-attention/">https://lilianweng.github.io/posts/2018-06-24-attention/</a>.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2021,
+  author = {Bochman, Oren},
+  title = {Chat {Bots}},
   date = {2021-04-27},
   url = {https://orenbochman.github.io/notes-nlp/posts/c4w4/},
   langid = {en}
 }
-</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-2021" class="csl-entry quarto-appendix-citeas" role="listitem">
-<span>“Week 4 Chat Bots.”</span> 2021. April 27, 2021. <a href="https://orenbochman.github.io/notes-nlp/posts/c4w4/">https://orenbochman.github.io/notes-nlp/posts/c4w4/</a>.
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2021" class="csl-entry quarto-appendix-citeas" role="listitem">
+Bochman, Oren. 2021. <span>“Chat Bots.”</span> April 27, 2021. <a href="https://orenbochman.github.io/notes-nlp/posts/c4w4/">https://orenbochman.github.io/notes-nlp/posts/c4w4/</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {

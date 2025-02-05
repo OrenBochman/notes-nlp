@@ -33,7 +33,7 @@ My irreverent notes for Week 1 of the [Natural Language Processing with Probabil
 
 ## Overview 
 
-You use auto-correct everyday. When you send your friend a text message, or when you make a mistake in a query, there is an autocorrect behind the scenes that corrects the sentence for you. This week you are also going to learn about minimum edit distance, which tells you the minimum amount of edits to change one word into another. In doing that, you will learn about dynamic programming which is an important programming concept which frequently comes up in interviews and could be used to solve a lot of optimization problems.
+We use auto-correct everyday. When we send your friend a text message, or when we make a mistake in a query, there is an autocorrect behind the scenes that corrects the sentence for you. This week we are also going to learn about minimum edit distance, which tells we the minimum amount of edits to change one word into another. In doing that, we will learn about dynamic programming which is an important programming concept which frequently comes up in interviews and could be used to solve a lot of optimization problems.
 
 ::: {#fig-01 .column-margin}
 ![autocorrect](img/slide01.png)
@@ -43,7 +43,7 @@ Learning Objectives
 
 ## Autocorrect
 
-Autocorrects are used everywhere. You use them in your phones, tablets, and computers. 
+Autocorrects are used everywhere. We use them in your phones, tablets, and computers. 
 
 ::: {#fig-02 .column-margin}
 ![find candidates](img/slide02.png)
@@ -51,7 +51,7 @@ Autocorrects are used everywhere. You use them in your phones, tablets, and comp
 What is autocorrect
 :::
 
-To implement autocorrect in this week's assignment, you have to follow these steps: 
+To implement autocorrect in this week's assignment, we have to follow these steps: 
 
 - Identify a misspelled word
 - Find strings n edit distance away: (these could be random strings)
@@ -67,11 +67,11 @@ Find candidates
 Building the model:
 
 1. Identify the misspelled word
-  - When identifying the misspelled word, you can check whether it is in the vocabulary. 
-    If you don't find it, then it is probably a typo.
+  - When identifying the misspelled word, we can check whether it is in the vocabulary. 
+    If we don't find it, then it is probably a typo.
 2. Find strings n edit distance away
 3. Filter candidates
-  - In this step, you want to take all the words generated above and then only keep the actual words that make sense and that you can find in your vocabulary.
+  - In this step, we want to take all the words generated above and then only keep the actual words that make sense and that we can find in your vocabulary.
 
 ::: {#fig-04 .column-margin}
 ![filter](img/slide04.png)
@@ -93,9 +93,9 @@ Filter candidates
 calculating word probabilities
 :::
 
-Note that you are storing the count of words and then you can use that to generate the probabilities. For this week, you will be counting the probabilities of words occurring.  If you want to build a slightly more sophisticated auto-correct you can keep track of two words occurring next to each other instead. You can then use the previous word to decide. For example which combo is more likely, there friend or their friend?  For this week however you will be implementing the probabilities by just using the word frequencies. 
+Note that we are storing the count of words and then we can use that to generate the probabilities. For this week, we will be counting the probabilities of words occurring.  If we want to build a slightly more sophisticated auto-correct we can keep track of two words occurring next to each other instead. We can then use the previous word to decide. For example which combo is more likely, there friend or their friend?  For this week however we will be implementing the probabilities by just using the word frequencies. 
 
-Here is a summary of everything you have seen before in the previous two videos. 
+Here is a summary of everything we have seen before in the previous two videos. 
 
 ::: {#fig-06 .column-margin}
 ![summary](img/slide06.png)
@@ -110,7 +110,7 @@ summary of first four autocorrect steps
 
 ## Minimum edit distance
 
-Minimum edit distance allows you to:
+Minimum edit distance allows we to:
 
 - Evaluate similarity between two strings
 - Find the minimum number of edits between two strings
@@ -130,11 +130,11 @@ Here is a concrete example where we calculate the cost (i.e. edit distance) betw
 Minimum edit distance
 :::
 
-Note that as your strings get larger it gets much harder to calculate the minimum edit distance. Hence you will now learn about the minimum edit distance algorithm!
+Note that as your strings get larger it gets much harder to calculate the minimum edit distance. Hence we will now learn about the minimum edit distance algorithm!
 
 ## Minimum edit distance algorithm
 
-When computing the minimum edit distance, you would start with a source word and transform it into the target word. Let's look at the following example: 
+When computing the minimum edit distance, we would start with a source word and transform it into the target word. Let's look at the following example: 
 
 ::: {#fig-08 .column-margin}
 ![Minimum edit distance](img/slide08.png)
@@ -148,7 +148,7 @@ To go:
 - from p → # has a cost of 1, because that is the cost of a delete.  
 - from p → s has a cost of 2, delete p and insert s.
 
-You can keep going this way by populating one element at a time, but it turns out there is a faster way to do this. 
+We can keep going this way by populating one element at a time, but it turns out there is a faster way to do this. 
 
 Wee will learn about it next.
 
@@ -165,13 +165,13 @@ Minimum edit distance algorithm
 
 There are three equations: 
 
-D[i,j] = D[i-1, j] + del_cost: this indicates you want to populate the current cell (i,j) by using the cost in the cell found directly above. 
+D[i,j] = D[i-1, j] + del_cost: this indicates we want to populate the current cell (i,j) by using the cost in the cell found directly above. 
 
-D[i,j] = D[i, j-1] + ins_cost: this indicates you want to populate the current cell (i,j) by using the cost in the cell found directly to its left. 
+D[i,j] = D[i, j-1] + ins_cost: this indicates we want to populate the current cell (i,j) by using the cost in the cell found directly to its left. 
 
-D[i,j] = D[i-1, j-1] + rep_cost: the rep cost can be 2 or 0 depending if you are going to actually replace it or not. 
+D[i,j] = D[i-1, j-1] + rep_cost: the rep cost can be 2 or 0 depending if we are going to actually replace it or not. 
 
-At every time step you check the three possible paths where you can come from and you select the least expensive one. Once you are done, you get the following: 
+At every time step we check the three possible paths where we can come from and we select the least expensive one. Once we are done, we get the following: 
 
 
 ::: {#fig-10 .column-margin}
@@ -188,9 +188,9 @@ Minimum edit distance algorithm
 Minimum edit distance algorithm
 :::
 
-To summarize, you have seen the levenshtein distance which specifies the cost per operation. If you need to reconstruct the path of how you got from one string to the other, you can use a backtrace. You should keep a simple pointer in each cell letting you know where you came from to get there. So you know the path taken across the table from the top left corner, to the bottom right corner. You can then reconstruct it. 
+To summarize, we have seen the levenshtein distance which specifies the cost per operation. If we need to reconstruct the path of how we got from one string to the other, we can use a backtrace. We should keep a simple pointer in each cell letting we know where we came from to get there. So we know the path taken across the table from the top left corner, to the bottom right corner. We can then reconstruct it. 
 
-This method for computation instead of brute force is a technique known as dynamic programming. You first solve the smallest subproblem first and then reusing that result you solve the next biggest subproblem, saving that result, reusing it again, and so on. This is exactly what you did by populating each cell from the top right to the bottom left. It’s a well-known technique in computer science! 
+This method for computation instead of brute force is a technique known as dynamic programming. We first solve the smallest subproblem first and then reusing that result we solve the next biggest subproblem, saving that result, reusing it again, and so on. This is exactly what we did by populating each cell from the top right to the bottom left. It’s a well-known technique in computer science! 
 
 ## Assignment : Autocorrect
 

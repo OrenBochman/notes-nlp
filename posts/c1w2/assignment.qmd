@@ -24,7 +24,7 @@ Due to the Coursera Honor Code, I cannot provide the solutions to the assignment
 - It is also likely to be out of date as the course has had some updates since I took it.
 :::
 
-Welcome to week two of this specialization. You will learn about Naive Bayes. Concretely, you will be using Naive Bayes for sentiment analysis on tweets. Given a tweet, you will decide if it has a positive sentiment or a negative one. Specifically you will: 
+Welcome to week two of this specialization. We will learn about Naive Bayes. Concretely, we will be using Naive Bayes for sentiment analysis on tweets. Given a tweet, we will decide if it has a positive sentiment or a negative one. Specifically we will: 
 
 * Train a naive bayes model on a sentiment analysis task
 * Test using your model
@@ -32,12 +32,12 @@ Welcome to week two of this specialization. You will learn about Naive Bayes. Co
 * Do some error analysis
 * Predict on your own tweet
 
-You may already be familiar with Naive Bayes and its justification in terms of conditional probabilities and independence.
+We may already be familiar with Naive Bayes and its justification in terms of conditional probabilities and independence.
 * In this week's lectures and assignments we used the ratio of probabilities between positive and negative sentiments.
 * This approach gives us simpler formulas for these 2-way classification tasks.
 
 Load the cell below to import some packages.
-You  may want to browse the documentation of unfamiliar libraries and functions.
+We  may want to browse the documentation of unfamiliar libraries and functions.
 
 
 ```{python}
@@ -52,7 +52,7 @@ from nltk.tokenize import TweetTokenizer
 from os import getcwd
 ```
 
-If you are running this notebook in your local computer,
+If we are running this notebook in your local computer,
 don't forget to download the twitter samples and stopwords from nltk.
 
 ```
@@ -88,12 +88,12 @@ test_y = np.append(np.ones(len(test_pos)), np.zeros(len(test_neg)))
 # Part 1: Process the Data
 
 For any machine learning project, once you've gathered the data, the first step is to process it to make useful inputs to your model.
-- **Remove noise**: You will first want to remove noise from your data -- that is, remove words that don't tell you much about the content. These include all common words like 'I, you, are, is, etc...' that would not give us enough information on the sentiment.
-- We'll also remove stock market tickers, retweet symbols, hyperlinks, and hashtags because they can not tell you a lot of information on the sentiment.
-- You also want to remove all the punctuation from a tweet. The reason for doing this is because we want to treat words with or without the punctuation as the same word, instead of treating "happy", "happy?", "happy!", "happy," and "happy." as different words.
-- Finally you want to use stemming to only keep track of one variation of each word. In other words, we'll treat "motivation", "motivated", and "motivate" similarly by grouping them within the same stem of "motiv-".
+- **Remove noise**: We will first want to remove noise from your data -- that is, remove words that don't tell we much about the content. These include all common words like 'I, you, are, is, etc...' that would not give us enough information on the sentiment.
+- We'll also remove stock market tickers, retweet symbols, hyperlinks, and hashtags because they can not tell we a lot of information on the sentiment.
+- We also want to remove all the punctuation from a tweet. The reason for doing this is because we want to treat words with or without the punctuation as the same word, instead of treating "happy", "happy?", "happy!", "happy," and "happy." as different words.
+- Finally we want to use stemming to only keep track of one variation of each word. In other words, we'll treat "motivation", "motivated", and "motivate" similarly by grouping them within the same stem of "motiv-".
 
-We have given you the function `process_tweet()` that does this for you.
+We have given we the function `process_tweet()` that does this for you.
 
 ```{python}
 custom_tweet = "RT @Twitter @chapagain Hello There! Have a great day. :) #good #morning http://chapagain.com.np"
@@ -104,11 +104,11 @@ print(process_tweet(custom_tweet))
 
 ## Part 1.1 Implementing your helper functions
 
-To help train your naive bayes model, you will need to build a dictionary where the keys are a (word, label) tuple and the values are the corresponding frequency.  Note that the labels we'll use here are 1 for positive and 0 for negative.
+To help train your naive bayes model, we will need to build a dictionary where the keys are a (word, label) tuple and the values are the corresponding frequency.  Note that the labels we'll use here are 1 for positive and 0 for negative.
 
-You will also implement a `lookup()` helper function that takes in the `freqs` dictionary, a word, and a label (1 or 0) and returns the number of times that word and label tuple appears in the collection of tweets.
+We will also implement a `lookup()` helper function that takes in the `freqs` dictionary, a word, and a label (1 or 0) and returns the number of times that word and label tuple appears in the collection of tweets.
 
-For example: given a list of tweets `["i am rather excited", "you are rather happy"]` and the label 1, the function will return a dictionary that contains the following key-value pairs:
+For example: given a list of tweets `["i am rather excited", "we are rather happy"]` and the label 1, the function will return a dictionary that contains the following key-value pairs:
 
 {
     ("rather", 1): 2
@@ -132,9 +132,9 @@ Create a function `count_tweets()` that takes a list of tweets as input, cleans 
 <p>
 <ul>
     <li>Please use the `process_tweet` function that was imported above, and then store the words in their respective dictionaries and sets.</li>
-    <li>You may find it useful to use the `zip` function to match each element in `tweets` with each element in `ys`.</li>
+    <li>We may find it useful to use the `zip` function to match each element in `tweets` with each element in `ys`.</li>
     <li>Remember to check if the key in the dictionary exists before adding that key to the dictionary, or incrementing its value.</li>
-    <li>Assume that the `result` dictionary that is input will contain clean key-value pairs (you can assume that the values will be integers that can be incremented).  It is good practice to check the datatype before incrementing the value, but it's not required here.</li>
+    <li>Assume that the `result` dictionary that is input will contain clean key-value pairs (we can assume that the values will be integers that can be incremented).  It is good practice to check the datatype before incrementing the value, but it's not required here.</li>
 </ul>
 </p>
 
@@ -184,9 +184,9 @@ count_tweets(result, tweets, ys)
 
 Naive bayes is an algorithm that could be used for sentiment analysis. It takes a short time to train and also has a short prediction time.
 
-#### So how do you train a Naive Bayes classifier?
-- The first part of training a naive bayes classifier is to identify the number of classes that you have.
-- You will create a probability for each class.
+#### So how do we train a Naive Bayes classifier?
+- The first part of training a naive bayes classifier is to identify the number of classes that we have.
+- We will create a probability for each class.
 $P(D_{pos})$ is the probability that the document is positive.
 $P(D_{neg})$ is the probability that the document is negative.
 Use the formulas as follows and store the values in a dictionary:
@@ -230,7 +230,7 @@ To compute the loglikelihood of that very same word, we can implement the follow
 $$\text{loglikelihood} = \log \left(\frac{P(W_{pos})}{P(W_{neg})} \right)\tag{6}$$
 
 ##### Create `freqs` dictionary
-- Given your `count_tweets()` function, you can compute a dictionary called `freqs` that contains all the frequencies.
+- Given your `count_tweets()` function, we can compute a dictionary called `freqs` that contains all the frequencies.
 - In this `freqs` dictionary, the key is the tuple (word, label)
 - The value is the number of times it has appeared.
 
@@ -246,13 +246,13 @@ freqs = count_tweets({}, train_x, train_y)
 Given a freqs dictionary, `train_x` (a list of tweets) and a `train_y` (a list of labels for each tweet), implement a naive bayes classifier.
 
 ##### Calculate $V$
-- You can then compute the number of unique words that appear in the `freqs` dictionary to get your $V$ (you can use the `set` function).
+- We can then compute the number of unique words that appear in the `freqs` dictionary to get your $V$ (we can use the `set` function).
 
 ##### Calculate $freq_{pos}$ and $freq_{neg}$
-- Using your `freqs` dictionary, you can compute the positive and negative frequency of each word $freq_{pos}$ and $freq_{neg}$.
+- Using your `freqs` dictionary, we can compute the positive and negative frequency of each word $freq_{pos}$ and $freq_{neg}$.
 
 ##### Calculate $N_{pos}$ and $N_{neg}$
-- Using `freqs` dictionary, you can also compute the total number of positive words and total number of negative words $N_{pos}$ and $N_{neg}$.
+- Using `freqs` dictionary, we can also compute the total number of positive words and total number of negative words $N_{pos}$ and $N_{neg}$.
 
 ##### Calculate $D$, $D_{pos}$, $D_{neg}$
 - Using the `train_y` input list of labels, calculate the number of documents (tweets) $D$, as well as the number of positive documents (tweets) $D_{pos}$ and number of negative documents (tweets) $D_{neg}$.
@@ -262,7 +262,7 @@ Given a freqs dictionary, `train_x` (a list of tweets) and a `train_y` (a list o
 - the logprior is $log(D_{pos}) - log(D_{neg})$
 
 ##### Calculate log likelihood
-- Finally, you can iterate over each word in the vocabulary, use your `lookup` function to get the positive frequencies, $freq_{pos}$, and the negative frequencies, $freq_{neg}$, for that specific word.
+- Finally, we can iterate over each word in the vocabulary, use your `lookup` function to get the positive frequencies, $freq_{pos}$, and the negative frequencies, $freq_{neg}$, for that specific word.
 - Compute the positive probability of each word $P(W_{pos})$, negative probability of each word $P(W_{neg})$ using equations 4 & 5.
 
 $$ P(W_{pos}) = \frac{freq_{pos} + 1}{N_{pos} + V}\tag{4} $$
@@ -270,7 +270,7 @@ $$ P(W_{neg}) = \frac{freq_{neg} + 1}{N_{neg} + V}\tag{5} $$
 
 **Note:** We'll use a dictionary to store the log likelihoods for each word.  The key is the word, the value is the log likelihood of that word).
 
-- You can then compute the loglikelihood: $log \left( \frac{P(W_{pos})}{P(W_{neg})} \right)\tag{6}$.
+- We can then compute the loglikelihood: $log \left( \frac{P(W_{pos})}{P(W_{neg})} \right)\tag{6}$.
 
 ```{python}
 # UNQ_C2 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)
@@ -282,7 +282,7 @@ def train_naive_bayes(freqs, train_x, train_y):
         train_y: a list of labels correponding to the tweets (0,1)
     Output:
         logprior: the log prior. (equation 3 above)
-        loglikelihood: the log likelihood of you Naive bayes equation. (equation 6 above)
+        loglikelihood: the log likelihood of we Naive bayes equation. (equation 6 above)
     '''
     loglikelihood = {}
     logprior = 0
@@ -340,7 +340,7 @@ def train_naive_bayes(freqs, train_x, train_y):
 
 ```{python}
 # UNQ_C3 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)
-# You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
+# We do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
 logprior, loglikelihood = train_naive_bayes(freqs, train_x, train_y)
 print(logprior)
 print(len(loglikelihood))
@@ -407,7 +407,7 @@ def naive_bayes_predict(tweet, logprior, loglikelihood):
 
 ```{python}
 # UNQ_C5 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)
-# You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
+# We do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
 
 # Experiment with your own tweet.
 my_tweet = 'She smiled.'
@@ -476,7 +476,7 @@ print("Naive Bayes accuracy = %0.4f" %
 
 ```{python}
 # UNQ_C7 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)
-# You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
+# We do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
 
 # Run this cell to test your function
 for tweet in ['I am happy', 'I am bad', 'this movie should have been great.', 'great', 'great great', 'great great great', 'great great great great']:
@@ -497,7 +497,7 @@ for tweet in ['I am happy', 'I am bad', 'this movie should have been great.', 'g
 
 ```{python}
 # Feel free to check the sentiment of your own tweet below
-my_tweet = 'you are bad :('
+my_tweet = 'we are bad :('
 naive_bayes_predict(my_tweet, logprior, loglikelihood)
 ```
 
@@ -674,7 +674,7 @@ Notice the difference between the positive and negative ratios. Emojis like :( a
 
 # Part 5: Error Analysis
 
-In this part you will see some tweets that your model missclassified. Why do you think the misclassifications happened? Were there any assumptions made by the naive bayes model?
+In this part we will see some tweets that your model missclassified. Why do we think the misclassifications happened? Were there any assumptions made by the naive bayes model?
 
 ```{python}
 # Some error analysis done for you
@@ -688,7 +688,7 @@ for x, y in zip(test_x, test_y):
 
 # Part 6: Predict with your own tweet
 
-In this part you can predict the sentiment of your own tweet.
+In this part we can predict the sentiment of your own tweet.
 
 ```{python}
 # Test with your own tweet - feel free to modify `my_tweet`
@@ -698,5 +698,5 @@ p = naive_bayes_predict(my_tweet, logprior, loglikelihood)
 print(p)
 ```
 
-Congratulations on completing this assignment. See you next week!
+Congratulations on completing this assignment. See we next week!
 

@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Manipulating word embeddings – NLP Specialization</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed slimcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">NLP Specialization</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/c1w1/index.html">Classification &amp; Vector Spaces</a></li><li class="breadcrumb-item"><a href="../../posts/c1w3/lab02.html">L2 Manipulating word embeddings</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/c1w1/index.html">Classification &amp; Vector Spaces</a></li><li class="breadcrumb-item"><a href="../../posts/c1w3/lab02.html">L2 Manipulating word embeddings</a></li></ol></nav>
+      <h1 class="title">Manipulating word embeddings</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">NLP</div>
+                <div class="quarto-category">Coursera</div>
+                <div class="quarto-category">Lab</div>
+                <div class="quarto-category">Logistic regression</div>
+                <div class="quarto-category">Sentiment analysis task</div>
+                <div class="quarto-category">Classification &amp; Vector Spaces</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-body">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">Wednesday, February 5, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Classification &amp; Vector Spaces</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Logistic Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 Preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 Frequencies</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w1/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 Visualizing tweets</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w1/assignment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">A1 Logistic Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Probability and Bayes Rule</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 Visualizing Naive Bayes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w2/assignment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">A2 Logistic Regression</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Vector Space Models and PCA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 Linear algebra with NumPy</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w3/lab02.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">L2 Manipulating word embeddings</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w3/assignment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">A3 Hello Vectors</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Machine Translation and Document Search via KNN</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 Vector manipulation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 Hash functions and multiplanes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w3/assignment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">A4 Naive Machine Translation and LSH</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Probabilistic Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Autocorrect and Dynamic Programming</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part of Speech Tagging and Hidden Markov Models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Autocomplete and Language Models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Word embeddings with neural networks</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Sequence Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Neural Machine Translation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Text Summarization</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Question Answering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Chat Bots</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">NLP with Attention Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Neural Machine Translation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Text Summarization</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Question Answering</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Chat Bots</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#operating-on-word-embeddings" id="toc-operating-on-word-embeddings" class="nav-link active" data-scroll-target="#operating-on-word-embeddings">Operating on word embeddings</a></li>
+  <li><a href="#word-distance" id="toc-word-distance" class="nav-link" data-scroll-target="#word-distance">Word distance</a></li>
+  <li><a href="#linear-algebra-on-word-embeddings" id="toc-linear-algebra-on-word-embeddings" class="nav-link" data-scroll-target="#linear-algebra-on-word-embeddings">Linear algebra on word embeddings</a></li>
+  <li><a href="#predicting-capitals" id="toc-predicting-capitals" class="nav-link" data-scroll-target="#predicting-capitals">Predicting capitals</a></li>
+  <li><a href="#predicting-other-countries" id="toc-predicting-other-countries" class="nav-link" data-scroll-target="#predicting-other-countries">Predicting other Countries</a></li>
+  <li><a href="#represent-a-sentence-as-a-vector" id="toc-represent-a-sentence-as-a-vector" class="nav-link" data-scroll-target="#represent-a-sentence-as-a-vector">Represent a sentence as a vector</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c1w3/lab02.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
+
+
+
+
+
+
+<div class="no-row-height column-margin column-container"><div id="fig-00" class="nolightbox quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../../images/Course-Logo-1-3.webp" class="nolightbox img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: course banner
+</figcaption>
+</figure>
+</div></div><p>In this week’s assignment, you are going to use a pre-trained word embedding for finding word analogies and equivalence. This exercise can be used as an Intrinsic Evaluation for the word embedding performance. In this notebook, you will apply linear algebra operations using NumPy to find analogies between words manually. This will help you to prepare for this week’s assignment.</p>
+<div id="f424ae90" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd <span class="co"># Library for Dataframes </span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np <span class="co"># Library for math functions</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pickle <span class="co"># Python object serialization library. Not secure</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>word_embeddings <span class="op">=</span> pickle.load( <span class="bu">open</span>( <span class="st">"./data/word_embeddings_subset.p"</span>, <span class="st">"rb"</span> ) )</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(word_embeddings) <span class="co"># there should be 243 words that will be used in this assignment</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>243</code></pre>
+</div>
+</div>
+<p>Now that the model is loaded, we can take a look at the word representations. First, note that <strong>word_embeddings</strong> is a dictionary. Each word is the key to the entry, and the value is its corresponding vector presentation. Remember that square brackets allow access to any entry if the key exists.</p>
+<div id="1d61b0f0" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>countryVector <span class="op">=</span> word_embeddings[<span class="st">'country'</span>] <span class="co"># Get the vector representation for the word 'country'</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">type</span>(countryVector)) <span class="co"># Print the type of the vector. Note it is a numpy array</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(countryVector) <span class="co"># Print the values of the vector.  </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;class 'numpy.ndarray'&gt;
+[-0.08007812  0.13378906  0.14355469  0.09472656 -0.04736328 -0.02355957
+ -0.00854492 -0.18652344  0.04589844 -0.08154297 -0.03442383 -0.11621094
+  0.21777344 -0.10351562 -0.06689453  0.15332031 -0.19335938  0.26367188
+ -0.13671875 -0.05566406  0.07470703 -0.00070953  0.09375    -0.14453125
+  0.04296875 -0.01916504 -0.22558594 -0.12695312 -0.0168457   0.05224609
+  0.0625     -0.1484375  -0.01965332  0.17578125  0.10644531 -0.04760742
+ -0.10253906 -0.28515625  0.10351562  0.20800781 -0.07617188 -0.04345703
+  0.08642578  0.08740234  0.11767578  0.20996094 -0.07275391  0.1640625
+ -0.01135254  0.0025177   0.05810547 -0.03222656  0.06884766  0.046875
+  0.10107422  0.02148438 -0.16210938  0.07128906 -0.16210938  0.05981445
+  0.05102539 -0.05566406  0.06787109 -0.03759766  0.04345703 -0.03173828
+ -0.03417969 -0.01116943  0.06201172 -0.08007812 -0.14941406  0.11914062
+  0.02575684  0.00302124  0.04711914 -0.17773438  0.04101562  0.05541992
+  0.00598145  0.03027344 -0.07666016 -0.109375    0.02832031 -0.10498047
+  0.0100708  -0.03149414 -0.22363281 -0.03125    -0.01147461  0.17285156
+  0.08056641 -0.10888672 -0.09570312 -0.21777344 -0.07910156 -0.10009766
+  0.06396484 -0.11962891  0.18652344 -0.02062988 -0.02172852  0.29296875
+ -0.00793457  0.0324707  -0.15136719  0.00227356 -0.03540039 -0.13378906
+  0.0546875  -0.03271484 -0.01855469 -0.10302734 -0.13378906  0.11425781
+  0.16699219  0.01361084 -0.02722168 -0.2109375   0.07177734  0.08691406
+ -0.09960938  0.01422119 -0.18261719  0.00741577  0.01965332  0.00738525
+ -0.03271484 -0.15234375 -0.26367188 -0.14746094  0.03320312 -0.03344727
+ -0.01000977  0.01855469  0.00183868 -0.10498047  0.09667969  0.07910156
+  0.11181641  0.13085938 -0.08740234 -0.1328125   0.05004883  0.19824219
+  0.0612793   0.16210938  0.06933594  0.01281738  0.01550293  0.01531982
+  0.11474609  0.02758789  0.13769531 -0.08349609  0.01123047 -0.20507812
+ -0.12988281 -0.16699219  0.20410156 -0.03588867 -0.10888672  0.0534668
+  0.15820312 -0.20410156  0.14648438 -0.11572266  0.01855469 -0.13574219
+  0.24121094  0.12304688 -0.14550781  0.17578125  0.11816406 -0.30859375
+  0.10888672 -0.22363281  0.19335938 -0.15722656 -0.07666016 -0.09082031
+ -0.19628906 -0.23144531 -0.09130859 -0.14160156  0.06347656  0.03344727
+ -0.03369141  0.06591797  0.06201172  0.3046875   0.16796875 -0.11035156
+ -0.03833008 -0.02563477 -0.09765625  0.04467773 -0.0534668   0.11621094
+ -0.15039062 -0.16308594 -0.15527344  0.04638672  0.11572266 -0.06640625
+ -0.04516602  0.02331543 -0.08105469 -0.0255127  -0.07714844  0.0016861
+  0.15820312  0.00994873 -0.06445312  0.15722656 -0.03112793  0.10644531
+ -0.140625    0.23535156 -0.11279297  0.16015625  0.00061798 -0.1484375
+  0.02307129 -0.109375    0.05444336 -0.14160156  0.11621094  0.03710938
+  0.14746094 -0.04199219 -0.01391602 -0.03881836  0.02783203  0.10205078
+  0.07470703  0.20898438 -0.04223633 -0.04150391 -0.00588989 -0.14941406
+ -0.04296875 -0.10107422 -0.06176758  0.09472656  0.22265625 -0.02307129
+  0.04858398 -0.15527344 -0.02282715 -0.04174805  0.16699219 -0.09423828
+  0.14453125  0.11132812  0.04223633 -0.16699219  0.10253906  0.16796875
+  0.12597656 -0.11865234 -0.0213623  -0.08056641  0.24316406  0.15527344
+  0.16503906  0.00854492 -0.12255859  0.08691406 -0.11914062 -0.02941895
+  0.08349609 -0.03100586  0.13964844 -0.05151367  0.00765991 -0.04443359
+ -0.04980469 -0.03222656 -0.00952148 -0.10888672 -0.10302734 -0.15722656
+  0.19335938  0.04858398  0.015625   -0.08105469 -0.11621094 -0.01989746
+  0.05737305  0.06103516 -0.14550781  0.06738281 -0.24414062 -0.07714844
+  0.04760742 -0.07519531 -0.14941406 -0.04418945  0.09716797  0.06738281]</code></pre>
+</div>
+</div>
+<p>It is important to note that we store each vector as a NumPy array. It allows us to use the linear algebra operations on it.</p>
+<p>The vectors have a size of 300, while the vocabulary size of Google News is around 3 million words!</p>
+<div id="4766a52e" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Get the vector for a given word:</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> vec(w):</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> word_embeddings[w]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="operating-on-word-embeddings" class="level2">
+<h2 class="anchored" data-anchor-id="operating-on-word-embeddings">Operating on word embeddings</h2>
+<p>Remember that understanding the data is one of the most critical steps in Data Science. Word embeddings are the result of machine learning processes and will be part of the input for further processes. These word embedding needs to be validated or at least understood because the performance of the derived model will strongly depend on its quality.</p>
+<p>Word embeddings are multidimensional arrays, usually with hundreds of attributes that pose a challenge for its interpretation.</p>
+<p>In this notebook, we will visually inspect the word embedding of some words using a pair of attributes. Raw attributes are not the best option for the creation of such charts but will allow us to illustrate the mechanical part in Python.</p>
+<p>In the next cell, we make a beautiful plot for the word embeddings of some words. Even if plotting the dots gives an idea of the words, the arrow representations help to visualize the vector’s alignment as well.</p>
+<div id="049d071e" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt <span class="co"># Import matplotlib</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>matplotlib inline</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>words <span class="op">=</span> [<span class="st">'oil'</span>, <span class="st">'gas'</span>, <span class="st">'happy'</span>, <span class="st">'sad'</span>, <span class="st">'city'</span>, <span class="st">'town'</span>, <span class="st">'village'</span>, <span class="st">'country'</span>, <span class="st">'continent'</span>, <span class="st">'petroleum'</span>, <span class="st">'joyful'</span>]</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>bag2d <span class="op">=</span> np.array([vec(word) <span class="cf">for</span> word <span class="kw">in</span> words]) <span class="co"># Convert each word to its vector representation</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize <span class="op">=</span> (<span class="dv">10</span>, <span class="dv">10</span>)) <span class="co"># Create custom size image</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>col1 <span class="op">=</span> <span class="dv">3</span> <span class="co"># Select the column for the x axis</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>col2 <span class="op">=</span> <span class="dv">2</span> <span class="co"># Select the column for the y axis</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Print an arrow for each word</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> word <span class="kw">in</span> bag2d:</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    ax.arrow(<span class="dv">0</span>, <span class="dv">0</span>, word[col1], word[col2], head_width<span class="op">=</span><span class="fl">0.005</span>, head_length<span class="op">=</span><span class="fl">0.005</span>, fc<span class="op">=</span><span class="st">'r'</span>, ec<span class="op">=</span><span class="st">'r'</span>, width <span class="op">=</span> <span class="fl">1e-5</span>)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>ax.scatter(bag2d[:, col1], bag2d[:, col2])<span class="op">;</span> <span class="co"># Plot a dot for each word</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Add the word label over each dot in the scatter plot</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="bu">len</span>(words)):</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    ax.annotate(words[i], (bag2d[i, col1], bag2d[i, col2]))</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>Text(0.06396484375, -0.279296875, 'oil')</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>Text(0.01080322265625, -0.138671875, 'gas')</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>Text(0.025390625, 0.00160980224609375, 'happy')</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>Text(-0.044677734375, 0.06689453125, 'sad')</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>Text(-0.0400390625, 0.18359375, 'city')</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>Text(-0.1611328125, 0.030029296875, 'town')</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>Text(-0.2158203125, 0.09033203125, 'village')</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>Text(0.0947265625, 0.1435546875, 'country')</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>Text(0.1279296875, 0.2392578125, 'continent')</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>Text(0.10888671875, -0.22265625, 'petroleum')</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>Text(0.083984375, 0.1298828125, 'joyful')</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="lab02_files/figure-html/cell-5-output-12.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="lab02_files/figure-html/cell-5-output-12.png" width="829" height="781" class="figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Note that similar words like ‘village’ and ‘town’ or ‘petroleum’, ‘oil’, and ‘gas’ tend to point in the same direction. Also, note that ‘sad’ and ‘happy’ looks close to each other; however, the vectors point in opposite directions.</p>
+<p>In this chart, one can figure out the angles and distances between the words. Some words are close in both kinds of distance metrics.</p>
+</section>
+<section id="word-distance" class="level2">
+<h2 class="anchored" data-anchor-id="word-distance">Word distance</h2>
+<p>Now plot the words ‘sad’, ‘happy’, ‘town’, and ‘village’. In this same chart, display the vector from ‘village’ to ‘town’ and the vector from ‘sad’ to ‘happy’. Let us use NumPy for these linear algebra operations.</p>
+<div id="5b94efc0" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>words <span class="op">=</span> [<span class="st">'sad'</span>, <span class="st">'happy'</span>, <span class="st">'town'</span>, <span class="st">'village'</span>]</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>bag2d <span class="op">=</span> np.array([vec(word) <span class="cf">for</span> word <span class="kw">in</span> words]) <span class="co"># Convert each word to its vector representation</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize <span class="op">=</span> (<span class="dv">10</span>, <span class="dv">10</span>)) <span class="co"># Create custom size image</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>col1 <span class="op">=</span> <span class="dv">3</span> <span class="co"># Select the column for the x axe</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>col2 <span class="op">=</span> <span class="dv">2</span> <span class="co"># Select the column for the y axe</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Print an arrow for each word</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> word <span class="kw">in</span> bag2d:</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    ax.arrow(<span class="dv">0</span>, <span class="dv">0</span>, word[col1], word[col2], head_width<span class="op">=</span><span class="fl">0.0005</span>, head_length<span class="op">=</span><span class="fl">0.0005</span>, fc<span class="op">=</span><span class="st">'r'</span>, ec<span class="op">=</span><span class="st">'r'</span>, width <span class="op">=</span> <span class="fl">1e-5</span>)</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="co"># print the vector difference between village and town</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>village <span class="op">=</span> vec(<span class="st">'village'</span>)</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>town <span class="op">=</span> vec(<span class="st">'town'</span>)</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>diff <span class="op">=</span> town <span class="op">-</span> village</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>ax.arrow(village[col1], village[col2], diff[col1], diff[col2], fc<span class="op">=</span><span class="st">'b'</span>, ec<span class="op">=</span><span class="st">'b'</span>, width <span class="op">=</span> <span class="fl">1e-5</span>)</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a><span class="co"># print the vector difference between village and town</span></span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>sad <span class="op">=</span> vec(<span class="st">'sad'</span>)</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>happy <span class="op">=</span> vec(<span class="st">'happy'</span>)</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>diff <span class="op">=</span> happy <span class="op">-</span> sad</span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>ax.arrow(sad[col1], sad[col2], diff[col1], diff[col2], fc<span class="op">=</span><span class="st">'b'</span>, ec<span class="op">=</span><span class="st">'b'</span>, width <span class="op">=</span> <span class="fl">1e-5</span>)</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>ax.scatter(bag2d[:, col1], bag2d[:, col2])<span class="op">;</span> <span class="co"># Plot a dot for each word</span></span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Add the word label over each dot in the scatter plot</span></span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="bu">len</span>(words)):</span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>    ax.annotate(words[i], (bag2d[i, col1], bag2d[i, col2]))</span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>Text(-0.044677734375, 0.06689453125, 'sad')</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>Text(0.025390625, 0.00160980224609375, 'happy')</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>Text(-0.1611328125, 0.030029296875, 'town')</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>Text(-0.2158203125, 0.09033203125, 'village')</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="lab02_files/figure-html/cell-6-output-5.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="lab02_files/figure-html/cell-6-output-5.png" width="808" height="781" class="figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="linear-algebra-on-word-embeddings" class="level2">
+<h2 class="anchored" data-anchor-id="linear-algebra-on-word-embeddings">Linear algebra on word embeddings</h2>
+<p>In the lectures, we saw the analogies between words using algebra on word embeddings. Let us see how to do it in Python with Numpy.</p>
+<p>To start, get the <strong>norm</strong> of a word in the word embedding.</p>
+<div id="5a5cd04b" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.linalg.norm(vec(<span class="st">'town'</span>))) <span class="co"># Print the norm of the word town</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.linalg.norm(vec(<span class="st">'sad'</span>))) <span class="co"># Print the norm of the word sad</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>2.3858097
+2.9004838</code></pre>
+</div>
+</div>
+</section>
+<section id="predicting-capitals" class="level2">
+<h2 class="anchored" data-anchor-id="predicting-capitals">Predicting capitals</h2>
+<p>Now, applying vector difference and addition, one can create a vector representation for a new word. For example, we can say that the vector difference between ‘France’ and ‘Paris’ represents the concept of Capital.</p>
+<p>One can move from the city of Madrid in the direction of the concept of Capital, and obtain something close to the corresponding country to which Madrid is the Capital.</p>
+<div id="59c187da" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>capital <span class="op">=</span> vec(<span class="st">'France'</span>) <span class="op">-</span> vec(<span class="st">'Paris'</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>country <span class="op">=</span> vec(<span class="st">'Madrid'</span>) <span class="op">+</span> capital</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(country[<span class="dv">0</span>:<span class="dv">5</span>]) <span class="co"># Print the first 5 values of the vector</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[-0.02905273 -0.2475586   0.53952026  0.20581055 -0.14862823]</code></pre>
+</div>
+</div>
+<p>We can observe that the vector ‘country’ that we expected to be the same as the vector for Spain is not exactly it.</p>
+<div id="e024f66c" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>diff <span class="op">=</span> country <span class="op">-</span> vec(<span class="st">'Spain'</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(diff[<span class="dv">0</span>:<span class="dv">10</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[-0.06054688 -0.06494141  0.37643433  0.08129883 -0.13007355 -0.00952148
+ -0.03417969 -0.00708008  0.09790039 -0.01867676]</code></pre>
+</div>
+</div>
+<p>So, we have to look for the closest words in the embedding that matches the candidate country. If the word embedding works as expected, the most similar word must be ‘Spain’. Let us define a function that helps us to do it. We will store our word embedding as a DataFrame, which facilitate the lookup operations based on the numerical vectors.</p>
+<div id="2275dfd5" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a dataframe out of the dictionary embedding. This facilitate the algebraic operations</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>keys <span class="op">=</span> word_embeddings.keys()</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> []</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> key <span class="kw">in</span> keys:</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    data.append(word_embeddings[key])</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>embedding <span class="op">=</span> pd.DataFrame(data<span class="op">=</span>data, index<span class="op">=</span>keys)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a function to find the closest word to a vector:</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> find_closest_word(v, k <span class="op">=</span> <span class="dv">1</span>):</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate the vector difference from each word to the input vector</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>    diff <span class="op">=</span> embedding.values <span class="op">-</span> v </span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get the norm of each difference vector. </span></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># It means the squared euclidean distance from each word to the input vector</span></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>    delta <span class="op">=</span> np.<span class="bu">sum</span>(diff <span class="op">*</span> diff, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Find the index of the minimun distance in the array</span></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>    i <span class="op">=</span> np.argmin(delta)</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Return the row name for this item</span></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> embedding.iloc[i].name</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="61bcac45" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print some rows of the embedding as a Dataframe</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>embedding.head(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">0</th>
+<th data-quarto-table-cell-role="th">1</th>
+<th data-quarto-table-cell-role="th">2</th>
+<th data-quarto-table-cell-role="th">3</th>
+<th data-quarto-table-cell-role="th">4</th>
+<th data-quarto-table-cell-role="th">5</th>
+<th data-quarto-table-cell-role="th">6</th>
+<th data-quarto-table-cell-role="th">7</th>
+<th data-quarto-table-cell-role="th">8</th>
+<th data-quarto-table-cell-role="th">9</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">290</th>
+<th data-quarto-table-cell-role="th">291</th>
+<th data-quarto-table-cell-role="th">292</th>
+<th data-quarto-table-cell-role="th">293</th>
+<th data-quarto-table-cell-role="th">294</th>
+<th data-quarto-table-cell-role="th">295</th>
+<th data-quarto-table-cell-role="th">296</th>
+<th data-quarto-table-cell-role="th">297</th>
+<th data-quarto-table-cell-role="th">298</th>
+<th data-quarto-table-cell-role="th">299</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">country</td>
+<td>-0.080078</td>
+<td>0.133789</td>
+<td>0.143555</td>
+<td>0.094727</td>
+<td>-0.047363</td>
+<td>-0.023560</td>
+<td>-0.008545</td>
+<td>-0.186523</td>
+<td>0.045898</td>
+<td>-0.081543</td>
+<td>...</td>
+<td>-0.145508</td>
+<td>0.067383</td>
+<td>-0.244141</td>
+<td>-0.077148</td>
+<td>0.047607</td>
+<td>-0.075195</td>
+<td>-0.149414</td>
+<td>-0.044189</td>
+<td>0.097168</td>
+<td>0.067383</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">city</td>
+<td>-0.010071</td>
+<td>0.057373</td>
+<td>0.183594</td>
+<td>-0.040039</td>
+<td>-0.029785</td>
+<td>-0.079102</td>
+<td>0.071777</td>
+<td>0.013306</td>
+<td>-0.143555</td>
+<td>0.011292</td>
+<td>...</td>
+<td>0.024292</td>
+<td>-0.168945</td>
+<td>-0.062988</td>
+<td>0.117188</td>
+<td>-0.020508</td>
+<td>0.030273</td>
+<td>-0.247070</td>
+<td>-0.122559</td>
+<td>0.076172</td>
+<td>-0.234375</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">China</td>
+<td>-0.073242</td>
+<td>0.135742</td>
+<td>0.108887</td>
+<td>0.083008</td>
+<td>-0.127930</td>
+<td>-0.227539</td>
+<td>0.151367</td>
+<td>-0.045654</td>
+<td>-0.065430</td>
+<td>0.034424</td>
+<td>...</td>
+<td>0.140625</td>
+<td>0.087402</td>
+<td>0.152344</td>
+<td>0.079590</td>
+<td>0.006348</td>
+<td>-0.037842</td>
+<td>-0.183594</td>
+<td>0.137695</td>
+<td>0.093750</td>
+<td>-0.079590</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Iraq</td>
+<td>0.191406</td>
+<td>0.125000</td>
+<td>-0.065430</td>
+<td>0.060059</td>
+<td>-0.285156</td>
+<td>-0.102539</td>
+<td>0.117188</td>
+<td>-0.351562</td>
+<td>-0.095215</td>
+<td>0.200195</td>
+<td>...</td>
+<td>-0.100586</td>
+<td>-0.077148</td>
+<td>-0.123047</td>
+<td>0.193359</td>
+<td>-0.153320</td>
+<td>0.089355</td>
+<td>-0.173828</td>
+<td>-0.054688</td>
+<td>0.302734</td>
+<td>0.105957</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">oil</td>
+<td>-0.139648</td>
+<td>0.062256</td>
+<td>-0.279297</td>
+<td>0.063965</td>
+<td>0.044434</td>
+<td>-0.154297</td>
+<td>-0.184570</td>
+<td>-0.498047</td>
+<td>0.047363</td>
+<td>0.110840</td>
+<td>...</td>
+<td>-0.195312</td>
+<td>-0.345703</td>
+<td>0.217773</td>
+<td>-0.091797</td>
+<td>0.051025</td>
+<td>0.061279</td>
+<td>0.194336</td>
+<td>0.204102</td>
+<td>0.235352</td>
+<td>-0.051025</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">town</td>
+<td>0.123535</td>
+<td>0.159180</td>
+<td>0.030029</td>
+<td>-0.161133</td>
+<td>0.015625</td>
+<td>0.111816</td>
+<td>0.039795</td>
+<td>-0.196289</td>
+<td>-0.039307</td>
+<td>0.067871</td>
+<td>...</td>
+<td>-0.007935</td>
+<td>-0.091797</td>
+<td>-0.265625</td>
+<td>0.029297</td>
+<td>0.089844</td>
+<td>-0.049805</td>
+<td>-0.202148</td>
+<td>-0.079590</td>
+<td>0.068848</td>
+<td>-0.164062</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Canada</td>
+<td>-0.136719</td>
+<td>-0.154297</td>
+<td>0.269531</td>
+<td>0.273438</td>
+<td>0.086914</td>
+<td>-0.076172</td>
+<td>-0.018677</td>
+<td>0.006256</td>
+<td>0.077637</td>
+<td>-0.211914</td>
+<td>...</td>
+<td>0.105469</td>
+<td>0.030762</td>
+<td>-0.039307</td>
+<td>0.183594</td>
+<td>-0.117676</td>
+<td>0.191406</td>
+<td>0.074219</td>
+<td>0.020996</td>
+<td>0.285156</td>
+<td>-0.257812</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">London</td>
+<td>-0.267578</td>
+<td>0.092773</td>
+<td>-0.238281</td>
+<td>0.115234</td>
+<td>-0.006836</td>
+<td>0.221680</td>
+<td>-0.251953</td>
+<td>-0.055420</td>
+<td>0.020020</td>
+<td>0.149414</td>
+<td>...</td>
+<td>-0.008667</td>
+<td>-0.008484</td>
+<td>-0.053223</td>
+<td>0.197266</td>
+<td>-0.296875</td>
+<td>0.064453</td>
+<td>0.091797</td>
+<td>0.058350</td>
+<td>0.022583</td>
+<td>-0.101074</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">England</td>
+<td>-0.198242</td>
+<td>0.115234</td>
+<td>0.062500</td>
+<td>-0.058350</td>
+<td>0.226562</td>
+<td>0.045898</td>
+<td>-0.062256</td>
+<td>-0.202148</td>
+<td>0.080566</td>
+<td>0.021606</td>
+<td>...</td>
+<td>0.135742</td>
+<td>0.109375</td>
+<td>-0.121582</td>
+<td>0.008545</td>
+<td>-0.171875</td>
+<td>0.086914</td>
+<td>0.070312</td>
+<td>0.003281</td>
+<td>0.069336</td>
+<td>0.056152</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">Australia</td>
+<td>0.048828</td>
+<td>-0.194336</td>
+<td>-0.041504</td>
+<td>0.084473</td>
+<td>-0.114258</td>
+<td>-0.208008</td>
+<td>-0.164062</td>
+<td>-0.269531</td>
+<td>0.079102</td>
+<td>0.275391</td>
+<td>...</td>
+<td>0.021118</td>
+<td>0.171875</td>
+<td>0.042236</td>
+<td>0.221680</td>
+<td>-0.239258</td>
+<td>-0.106934</td>
+<td>0.030884</td>
+<td>0.006622</td>
+<td>0.051270</td>
+<td>-0.135742</td>
+</tr>
+</tbody>
+</table>
+
+<p>10 rows × 300 columns</p>
+</div>
+</div>
+</div>
+<p>Now let us find the name that corresponds to our numerical country:</p>
+<div id="54686b1f" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>find_closest_word(country)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>'Spain'</code></pre>
+</div>
+</div>
+</section>
+<section id="predicting-other-countries" class="level2">
+<h2 class="anchored" data-anchor-id="predicting-other-countries">Predicting other Countries</h2>
+<div id="1bb3696a" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>find_closest_word(vec(<span class="st">'Italy'</span>) <span class="op">-</span> vec(<span class="st">'Rome'</span>) <span class="op">+</span> vec(<span class="st">'Madrid'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>'Spain'</code></pre>
+</div>
+</div>
+<div id="6a3763d6" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(find_closest_word(vec(<span class="st">'Berlin'</span>) <span class="op">+</span> capital))</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(find_closest_word(vec(<span class="st">'Beijing'</span>) <span class="op">+</span> capital))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Germany
+China</code></pre>
+</div>
+</div>
+<p>However, it does not always work.</p>
+<div id="b8ea8505" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(find_closest_word(vec(<span class="st">'Lisbon'</span>) <span class="op">+</span> capital))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Lisbon</code></pre>
+</div>
+</div>
+</section>
+<section id="represent-a-sentence-as-a-vector" class="level2">
+<h2 class="anchored" data-anchor-id="represent-a-sentence-as-a-vector">Represent a sentence as a vector</h2>
+<p>A whole sentence can be represented as a vector by summing all the word vectors that conform to the sentence. Let us see.</p>
+<div id="b7fae21d" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>doc <span class="op">=</span> <span class="st">"Spain petroleum city king"</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>vdoc <span class="op">=</span> [vec(x) <span class="cf">for</span> x <span class="kw">in</span> doc.split(<span class="st">" "</span>)]</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>doc2vec <span class="op">=</span> np.<span class="bu">sum</span>(vdoc, axis <span class="op">=</span> <span class="dv">0</span>)</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>doc2vec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="15">
+<pre><code>array([ 2.87475586e-02,  1.03759766e-01,  1.32629395e-01,  3.33007812e-01,
+       -2.61230469e-02, -5.95703125e-01, -1.25976562e-01, -1.01306152e+00,
+       -2.18544006e-01,  6.60705566e-01, -2.58300781e-01, -2.09960938e-02,
+       -7.71484375e-02, -3.07128906e-01, -5.94726562e-01,  2.00561523e-01,
+       -1.04980469e-02, -1.10748291e-01,  4.82177734e-02,  6.38977051e-01,
+        2.36083984e-01, -2.69775391e-01,  3.90625000e-02,  4.16503906e-01,
+        2.83416748e-01, -7.25097656e-02, -3.12988281e-01,  1.05712891e-01,
+        3.22265625e-02,  2.38403320e-01,  3.88183594e-01, -7.51953125e-02,
+       -1.26281738e-01,  6.60644531e-01, -7.89794922e-01, -7.04345703e-02,
+       -1.14379883e-01, -4.78515625e-02,  4.76318359e-01,  5.31127930e-01,
+        8.10546875e-02, -1.17553711e-01,  1.02050781e+00,  5.59814453e-01,
+       -1.17187500e-01,  1.21826172e-01, -5.51574707e-01,  1.44531250e-01,
+       -7.66113281e-01,  5.36102295e-01, -2.80029297e-01,  3.85986328e-01,
+       -2.39135742e-01, -2.86865234e-02, -5.10498047e-01,  2.59658813e-01,
+       -7.52929688e-01,  4.32128906e-02, -7.17773438e-02, -1.26708984e-01,
+        4.40673828e-02,  5.12939453e-01, -5.15808105e-01,  1.20117188e-01,
+       -5.52978516e-02, -3.92089844e-01, -3.15917969e-01,  1.57226562e-01,
+       -3.19702148e-01,  1.75170898e-01, -3.81835938e-01, -2.07031250e-01,
+       -4.72717285e-02, -2.79296875e-01, -3.29040527e-01, -1.69067383e-01,
+        1.61132812e-02,  1.71569824e-01,  5.73730469e-02, -2.44140625e-03,
+        8.34960938e-02, -1.58203125e-01, -3.10119629e-01,  5.28564453e-02,
+        8.60595703e-02,  5.12695312e-02, -7.22900391e-01,  4.97924805e-01,
+       -5.85937500e-03,  4.49951172e-01,  3.82446289e-01, -2.80029297e-01,
+       -3.28125000e-01, -6.27441406e-02, -4.81933594e-01,  1.93176270e-02,
+       -1.69326782e-01, -4.28649902e-01,  5.39062500e-01, -1.28417969e-01,
+       -8.83789062e-02,  5.13916016e-01,  9.13085938e-02, -1.60156250e-01,
+        6.86035156e-02, -9.74121094e-02, -3.70712280e-01, -3.27270508e-01,
+        1.77978516e-01, -4.65332031e-01,  1.70410156e-01,  9.08203125e-02,
+        2.76857376e-01, -1.69677734e-01,  3.27728271e-01, -3.12500000e-02,
+       -2.20809937e-01, -3.46679688e-01,  4.67407227e-01,  5.31860352e-01,
+       -1.30615234e-01, -2.36816406e-02, -6.56250000e-01, -5.79589844e-01,
+       -2.05810547e-01, -3.03222656e-01,  1.94259644e-01, -7.28515625e-01,
+       -4.92522240e-01, -5.37109375e-01, -3.47656250e-01,  1.08642578e-01,
+       -1.41601562e-01, -2.07031250e-01,  2.52441406e-01, -7.78808594e-02,
+       -5.02441406e-01,  1.53808594e-02,  8.64257812e-02,  2.59765625e-01,
+        6.64062500e-02, -7.12890625e-01, -1.45751953e-01,  7.56835938e-03,
+        4.87792969e-01,  1.39160156e-01,  1.15722656e-01,  1.28662109e-01,
+       -4.75585938e-01,  2.21191406e-01,  3.25317383e-01,  1.06323242e-01,
+       -6.11083984e-01, -3.59619141e-01,  6.54296875e-02, -2.41699219e-01,
+       -6.29882812e-02, -1.62109375e-01,  4.26269531e-01, -4.38354492e-01,
+        1.93725586e-01,  4.89562988e-01,  5.31494141e-01, -7.29370117e-02,
+        1.77246094e-01,  9.39941406e-02,  2.92236328e-01, -2.74047852e-01,
+        2.63366699e-02,  4.36035156e-01, -3.76953125e-01,  3.10546875e-01,
+        4.87304688e-01, -2.43041992e-01,  1.21612549e-02, -3.80371094e-01,
+        3.80493164e-01, -6.22436523e-01, -3.98071289e-01,  1.24206543e-01,
+       -8.20312500e-01, -2.72583008e-01, -6.21582031e-01, -4.87060547e-01,
+        3.06671143e-01, -2.61230469e-01,  5.12451172e-01,  5.55694580e-01,
+        5.66894531e-01,  7.33886719e-01, -1.75781250e-01,  4.13574219e-01,
+       -2.54272461e-01,  1.32507324e-01, -4.78515625e-01,  4.63256836e-01,
+       -6.21948242e-02, -1.80664062e-01, -5.46386719e-01, -6.31103516e-01,
+       -1.47949219e-01, -3.15185547e-01, -7.12890625e-02, -7.67578125e-01,
+        3.92272949e-01, -1.97753906e-01,  2.23144531e-01, -5.07324219e-01,
+        8.39843750e-02, -4.98657227e-02,  1.01074219e-01,  2.07885742e-01,
+       -2.77343750e-01,  1.03027344e-01, -1.38671875e-01,  2.87353516e-01,
+       -4.81895447e-01, -1.66748047e-01, -1.47277832e-01,  3.61633301e-01,
+        6.38504028e-02, -6.69189453e-01,  1.95312500e-03, -7.34375000e-01,
+       -1.28158569e-01,  9.76562500e-04, -7.08007812e-02,  3.72558594e-01,
+        8.31176758e-01,  5.94482422e-01,  5.37109375e-02, -3.00140381e-01,
+       -4.53857422e-01,  1.11511230e-01, -1.32812500e-01,  1.25732422e-01,
+        3.39843750e-01, -2.48352051e-01, -1.62353516e-02, -2.84667969e-01,
+        4.70703125e-01, -4.48242188e-01,  8.50753784e-02,  2.69042969e-01,
+        3.98254395e-03, -3.53759766e-01, -3.90625000e-02, -3.22753906e-01,
+       -6.90917969e-02, -4.13818359e-02,  1.35314941e-01, -8.50396156e-02,
+        1.28417969e-01,  6.15966797e-01,  3.55957031e-01, -6.05468750e-02,
+       -2.25463867e-01, -2.62207031e-01, -2.72949219e-01, -5.16113281e-01,
+        1.59179688e-01,  2.74902344e-01, -7.61718750e-02, -3.41796875e-03,
+        4.37500000e-01,  2.98583984e-01, -4.40795898e-01, -3.43261719e-01,
+        1.73583984e-01,  3.32092285e-01, -2.12646484e-01,  5.76171875e-01,
+        2.06787109e-01, -7.91015625e-02,  5.79695702e-02, -1.01806641e-01,
+       -7.06787109e-01, -3.40576172e-02, -4.11865234e-01,  9.82666016e-02,
+       -1.70410156e-01, -4.18212891e-01,  8.39233398e-01, -1.15722656e-01,
+        1.28173828e-01, -2.07763672e-01, -4.08203125e-01, -1.77612305e-01,
+        1.01196289e-01,  4.24072266e-01, -5.26428223e-02, -5.58593750e-01,
+        1.12304688e-02, -1.12060547e-01, -9.42382812e-02,  2.35595703e-02,
+       -3.92578125e-01, -7.12890625e-02,  5.69824219e-01,  9.81445312e-02],
+      dtype=float32)</code></pre>
+</div>
+</div>
+<div id="b550279d" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>find_closest_word(doc2vec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
+<pre><code>'petroleum'</code></pre>
+</div>
+</div>
+<p><strong>Congratulations! You have finished the introduction to word embeddings manipulation!</strong></p>
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{2025,
+  author = {},
+  title = {Manipulating Word Embeddings},
+  date = {2025-02-05},
+  url = {https://orenbochman.github.io/notes-nlp/posts/c1w3/lab02.html},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-2025" class="csl-entry quarto-appendix-citeas" role="listitem">
+<span>“Manipulating Word Embeddings.”</span> 2025. February 5, 2025. <a href="https://orenbochman.github.io/notes-nlp/posts/c1w3/lab02.html">https://orenbochman.github.io/notes-nlp/posts/c1w3/lab02.html</a>.
+</div></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("^(?:http:|https:)\/\/www\.quarto\.org\/custom");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+          // default icon
+          link.classList.add("external");
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© Copyright 2023-2025, Oren Bochman</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c1w3/lab02.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This page is built with 💛 and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"fade","descPosition":"right","loop":true,"openEffect":"fade","selector":".lightbox","skin":"my-css-class"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

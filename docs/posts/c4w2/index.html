@@ -6,9 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="This week of the NLP Specialization, we unlock the secrets of Neural Text Summarization. We will building a powerful Transformer model to extract crucial information and create concise summaries. Through hands-on exercises using JAX, we will learn techniques like beam search and length normalization to enhance the quality of our summaries. Through hands-on exercises we will train our model on a dataset of articles. We will master the skills to create effective text summaries using state-of-the-art NLP techniques.">
+<meta name="author" content="Oren Bochman">
+<meta name="description" content="This week we unlock the secrets of Neural Text Summarization. We will building a powerful Transformer model to extract crucial information and create concise summaries. Through hands-on exercises using JAX, we will learn techniques like beam search and length normalization to enhance the quality of our summaries. Through hands-on exercises we will train our model on a dataset of articles.">
 
-<title>Week 2 Text Summarization – NLP Specialization</title>
+<title>Week 2 - Text Summarization – NLP Specialization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -243,11 +244,11 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/c4w1/index.html">NLP with Attention Models</a></li><li class="breadcrumb-item"><a href="../../posts/c4w2/index.html">Text Summarization</a></li></ol></nav>
-      <h1 class="title">Week 2 Text Summarization</h1>
+      <h1 class="title">Week 2 - Text Summarization</h1>
             <p class="subtitle lead">NLP with Attention Models</p>
                   <div>
         <div class="description">
-          This week of the NLP Specialization, we unlock the secrets of Neural Text Summarization. We will building a powerful Transformer model to extract crucial information and create concise summaries. Through hands-on exercises using JAX, we will learn techniques like beam search and length normalization to enhance the quality of our summaries. Through hands-on exercises we will train our model on a dataset of articles. We will master the skills to create effective text summaries using state-of-the-art NLP techniques.
+          This week we unlock the secrets of Neural Text Summarization. We will building a powerful Transformer model to extract crucial information and create concise summaries. Through hands-on exercises using JAX, we will learn techniques like beam search and length normalization to enhance the quality of our summaries. Through hands-on exercises we will train our model on a dataset of articles.
         </div>
       </div>
                           <div class="quarto-categories">
@@ -274,6 +275,12 @@ window.Quarto = {
   
   <div class="quarto-title-meta column-body">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Oren Bochman </p>
+            </div>
+    </div>
       
       <div>
       <div class="quarto-title-meta-heading">Published</div>
@@ -513,62 +520,49 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#what-is-attention" id="toc-what-is-attention" class="nav-link active" data-scroll-target="#what-is-attention">What is attention ?</a></li>
-  <li><a href="#what-is-dot-product-attention" id="toc-what-is-dot-product-attention" class="nav-link" data-scroll-target="#what-is-dot-product-attention">What is dot-product attention ?</a></li>
-  <li><a href="#what-is-causal-attention" id="toc-what-is-causal-attention" class="nav-link" data-scroll-target="#what-is-causal-attention">What is causal attention ?</a></li>
-  <li><a href="#what-is-multi-headed-attention" id="toc-what-is-multi-headed-attention" class="nav-link" data-scroll-target="#what-is-multi-headed-attention">What is multi-headed attention?</a></li>
-  <li><a href="#what-is-positional-encoding" id="toc-what-is-positional-encoding" class="nav-link" data-scroll-target="#what-is-positional-encoding">What is positional encoding</a></li>
-  <li><a href="#what-is-teacher-forcing" id="toc-what-is-teacher-forcing" class="nav-link" data-scroll-target="#what-is-teacher-forcing">What is teacher forcing ?</a></li>
-  <li><a href="#additional-coding-notes" id="toc-additional-coding-notes" class="nav-link" data-scroll-target="#additional-coding-notes">Additional coding notes:</a>
+  <li><a href="#sec-transformers-vs-rnns" id="toc-sec-transformers-vs-rnns" class="nav-link active" data-scroll-target="#sec-transformers-vs-rnns">Transformers vs RNNs</a>
   <ul class="collapse">
-  <li><a href="#how-to-reshape-a-test-tensor-so-it-has-a-size-0-batch-dimension-at-the-front" id="toc-how-to-reshape-a-test-tensor-so-it-has-a-size-0-batch-dimension-at-the-front" class="nav-link" data-scroll-target="#how-to-reshape-a-test-tensor-so-it-has-a-size-0-batch-dimension-at-the-front">How to reshape a test tensor so it has a (size 0) batch dimension at the front?</a></li>
-  <li><a href="#how-to-make-trax-take-in-string-date-as-a-stream" id="toc-how-to-make-trax-take-in-string-date-as-a-stream" class="nav-link" data-scroll-target="#how-to-make-trax-take-in-string-date-as-a-stream">How to make TRAX take in string date as a stream ?</a></li>
-  <li><a href="#how-to-transpose-batched-tensors" id="toc-how-to-transpose-batched-tensors" class="nav-link" data-scroll-target="#how-to-transpose-batched-tensors">How to transpose batched tensors ?</a></li>
-  <li><a href="#how-to-de-structure-tensors-for-use-with-multihead-attention" id="toc-how-to-de-structure-tensors-for-use-with-multihead-attention" class="nav-link" data-scroll-target="#how-to-de-structure-tensors-for-use-with-multihead-attention">How to de-structure tensors for use with multihead attention ?</a></li>
+  <li><a href="#sec-information-loss" id="toc-sec-information-loss" class="nav-link" data-scroll-target="#sec-information-loss">Information loss</a></li>
+  <li><a href="#sec-vanishing-gradient-problem" id="toc-sec-vanishing-gradient-problem" class="nav-link" data-scroll-target="#sec-vanishing-gradient-problem">Vanishing Gradient Problem</a></li>
   </ul></li>
-  <li><a href="#video-1-transformers-vs-rnns" id="toc-video-1-transformers-vs-rnns" class="nav-link" data-scroll-target="#video-1-transformers-vs-rnns">Video 1: Transformers vs RNNs</a>
+  <li><a href="#sec-transformer-applications" id="toc-sec-transformer-applications" class="nav-link" data-scroll-target="#sec-transformer-applications">Transformer Applications</a>
   <ul class="collapse">
-  <li><a href="#information-loss" id="toc-information-loss" class="nav-link" data-scroll-target="#information-loss">Information loss</a></li>
-  <li><a href="#vanishing-gradient" id="toc-vanishing-gradient" class="nav-link" data-scroll-target="#vanishing-gradient">Vanishing Gradient</a></li>
+  <li><a href="#sec-applications-of-transformers" id="toc-sec-applications-of-transformers" class="nav-link" data-scroll-target="#sec-applications-of-transformers">Applications of Transformers</a></li>
+  <li><a href="#sec-transformers-time-line" id="toc-sec-transformers-time-line" class="nav-link" data-scroll-target="#sec-transformers-time-line">SOTA Transformers</a></li>
   </ul></li>
-  <li><a href="#video-2-transformer-applications" id="toc-video-2-transformer-applications" class="nav-link" data-scroll-target="#video-2-transformer-applications">Video 2: Transformer Applications</a>
+  <li><a href="#sec-t5" id="toc-sec-t5" class="nav-link" data-scroll-target="#sec-t5">T5 - Text-To-Text Transfer Transformer</a>
   <ul class="collapse">
-  <li><a href="#applications" id="toc-applications" class="nav-link" data-scroll-target="#applications">Applications:</a></li>
-  <li><a href="#sota-transformers" id="toc-sota-transformers" class="nav-link" data-scroll-target="#sota-transformers">SOTA Transformers</a></li>
+  <li><a href="#sec-t5-classification-tasks" id="toc-sec-t5-classification-tasks" class="nav-link" data-scroll-target="#sec-t5-classification-tasks">T5 Classification tasks</a></li>
+  <li><a href="#sec-t5-regression-tasks" id="toc-sec-t5-regression-tasks" class="nav-link" data-scroll-target="#sec-t5-regression-tasks">T5 regression tasks</a></li>
   </ul></li>
-  <li><a href="#t5---text-to-text-transfer-transformer" id="toc-t5---text-to-text-transfer-transformer" class="nav-link" data-scroll-target="#t5---text-to-text-transfer-transformer">T5 - Text-To-Text Transfer Transformer</a>
+  <li><a href="#sec-dot-product-attention" id="toc-sec-dot-product-attention" class="nav-link" data-scroll-target="#sec-dot-product-attention">Dot-Product Attention</a>
   <ul class="collapse">
-  <li><a href="#t5-classification-tasks" id="toc-t5-classification-tasks" class="nav-link" data-scroll-target="#t5-classification-tasks">T5 Classification tasks</a></li>
-  <li><a href="#t5-regression-tasks" id="toc-t5-regression-tasks" class="nav-link" data-scroll-target="#t5-regression-tasks">T5 regression tasks</a></li>
+  <li><a href="#sec-query-key-value" id="toc-sec-query-key-value" class="nav-link" data-scroll-target="#sec-query-key-value">Query, Key &amp; Value</a></li>
   </ul></li>
-  <li><a href="#video-3-dot-product-attention" id="toc-video-3-dot-product-attention" class="nav-link" data-scroll-target="#video-3-dot-product-attention">Video 3: Dot-Product Attention</a>
+  <li><a href="#sec-causal-attention" id="toc-sec-causal-attention" class="nav-link" data-scroll-target="#sec-causal-attention">V4: Causal Attention</a>
   <ul class="collapse">
-  <li><a href="#query-key-value" id="toc-query-key-value" class="nav-link" data-scroll-target="#query-key-value">Query, Key &amp; Value</a></li>
+  <li><a href="#sec-scaled-dot-product-attention" id="toc-sec-scaled-dot-product-attention" class="nav-link" data-scroll-target="#sec-scaled-dot-product-attention">Scaled dot product attention:</a></li>
+  <li><a href="#sec-causal-attention" id="toc-sec-causal-attention" class="nav-link" data-scroll-target="#sec-causal-attention">Causal Attention:</a></li>
+  <li><a href="#sec-bi-directional-self-attention" id="toc-sec-bi-directional-self-attention" class="nav-link" data-scroll-target="#sec-bi-directional-self-attention">Bi-directional self attention:</a></li>
   </ul></li>
-  <li><a href="#v4-causal-attention" id="toc-v4-causal-attention" class="nav-link" data-scroll-target="#v4-causal-attention">V4: Causal Attention</a>
+  <li><a href="#sec-multi-head-attention" id="toc-sec-multi-head-attention" class="nav-link" data-scroll-target="#sec-multi-head-attention">V5: Multi-head Attention</a></li>
+  <li><a href="#sec-transformer-decoder" id="toc-sec-transformer-decoder" class="nav-link" data-scroll-target="#sec-transformer-decoder">V6: Transformer Decoder</a></li>
+  <li><a href="#sec-transformer-summarizer" id="toc-sec-transformer-summarizer" class="nav-link" data-scroll-target="#sec-transformer-summarizer">V7: Transformer Summarizer</a>
   <ul class="collapse">
-  <li><a href="#scaled-dot-product-attention" id="toc-scaled-dot-product-attention" class="nav-link" data-scroll-target="#scaled-dot-product-attention">Scaled dot product attention:</a></li>
-  <li><a href="#causal-attention" id="toc-causal-attention" class="nav-link" data-scroll-target="#causal-attention">Causal Attention:</a></li>
-  <li><a href="#bi-directional-self-attention" id="toc-bi-directional-self-attention" class="nav-link" data-scroll-target="#bi-directional-self-attention">Bi-directional self attention:</a></li>
-  </ul></li>
-  <li><a href="#v5-multi-head-attention" id="toc-v5-multi-head-attention" class="nav-link" data-scroll-target="#v5-multi-head-attention">V5: Multi-head Attention</a></li>
-  <li><a href="#v6-transformer-decoder" id="toc-v6-transformer-decoder" class="nav-link" data-scroll-target="#v6-transformer-decoder">V6: Transformer Decoder</a></li>
-  <li><a href="#v7-transformer-summarizer" id="toc-v7-transformer-summarizer" class="nav-link" data-scroll-target="#v7-transformer-summarizer">V7: Transformer Summarizer</a>
-  <ul class="collapse">
-  <li><a href="#cross-entropy-loss" id="toc-cross-entropy-loss" class="nav-link" data-scroll-target="#cross-entropy-loss">Cross entropy loss</a></li>
-  <li><a href="#lab1-attention" id="toc-lab1-attention" class="nav-link" data-scroll-target="#lab1-attention">Lab1 : Attention</a></li>
+  <li><a href="#sec-cross-entropy-loss" id="toc-sec-cross-entropy-loss" class="nav-link" data-scroll-target="#sec-cross-entropy-loss">Cross entropy loss</a></li>
+  <li><a href="#sec-lab1-attention" id="toc-sec-lab1-attention" class="nav-link" data-scroll-target="#sec-lab1-attention">Lab1 : Attention</a></li>
   <li><a href="#lab2-the-transformer-decoder" id="toc-lab2-the-transformer-decoder" class="nav-link" data-scroll-target="#lab2-the-transformer-decoder">Lab2 : The Transformer Decoder</a></li>
   <li><a href="#assignment-transformer-summarizer" id="toc-assignment-transformer-summarizer" class="nav-link" data-scroll-target="#assignment-transformer-summarizer">Assignment: Transformer Summarizer</a></li>
-  <li><a href="#expanding-the-lab-to-a-project" id="toc-expanding-the-lab-to-a-project" class="nav-link" data-scroll-target="#expanding-the-lab-to-a-project">Expanding the lab to a project:</a>
+  <li><a href="#sec-expanding-the-lab-to-a-project" id="toc-sec-expanding-the-lab-to-a-project" class="nav-link" data-scroll-target="#sec-expanding-the-lab-to-a-project">Expanding the lab to a project:</a>
   <ul class="collapse">
-  <li><a href="#more-data" id="toc-more-data" class="nav-link" data-scroll-target="#more-data">more data</a></li>
-  <li><a href="#more-algorithms" id="toc-more-algorithms" class="nav-link" data-scroll-target="#more-algorithms">More algorithms</a></li>
-  <li><a href="#evaluation" id="toc-evaluation" class="nav-link" data-scroll-target="#evaluation">Evaluation</a></li>
-  <li><a href="#extra-features" id="toc-extra-features" class="nav-link" data-scroll-target="#extra-features">Extra features</a></li>
+  <li><a href="#sec-more-data" id="toc-sec-more-data" class="nav-link" data-scroll-target="#sec-more-data">more data</a></li>
+  <li><a href="#sec-more-algorithms" id="toc-sec-more-algorithms" class="nav-link" data-scroll-target="#sec-more-algorithms">More algorithms</a></li>
+  <li><a href="#sec-evaluation" id="toc-sec-evaluation" class="nav-link" data-scroll-target="#sec-evaluation">Evaluation</a></li>
+  <li><a href="#sec-extra-features" id="toc-sec-extra-features" class="nav-link" data-scroll-target="#sec-extra-features">Extra features</a></li>
   </ul></li>
-  <li><a href="#open-question" id="toc-open-question" class="nav-link" data-scroll-target="#open-question">Open question</a>
+  <li><a href="#sec-open-question" id="toc-sec-open-question" class="nav-link" data-scroll-target="#sec-open-question">Open question</a>
   <ul class="collapse">
-  <li><a href="#questions" id="toc-questions" class="nav-link" data-scroll-target="#questions">Questions</a></li>
+  <li><a href="#sec-questions" id="toc-sec-questions" class="nav-link" data-scroll-target="#sec-questions">Questions</a></li>
   </ul></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   <li><a href="#papers" id="toc-papers" class="nav-link" data-scroll-target="#papers">Papers</a>
@@ -613,7 +607,7 @@ Learning objectives
 <div class="callout-body-container callout-body">
 <!-- TODO: add links to repective sections -->
 <ul class="task-list">
-<li><label><input type="checkbox" checked="">Describe the three basic types of attention.</label></li>
+<li><label><input type="checkbox" checked=""><a href="#sec">Describe the three basic types of attention</a></label></li>
 <li><label><input type="checkbox" checked="">Name the two types of layers in a Transformer.</label></li>
 <li><label><input type="checkbox" checked="">Define three main matrices in attention.</label></li>
 <li><label><input type="checkbox" checked="">Interpret the math behind scaled dot product attention, causal attention, and multi-head attention.</label></li>
@@ -635,143 +629,173 @@ TL;DR neural network engineering
 <div id="callout-2" class="callout-2-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
 <!-- TODO: better summary -->
+</div>
+</div>
+</div>
 <p>For the impatient - We’ll start with NLP engineering insights from this week.</p>
 <!-- TODO: add podcast for this week's material -->
-</div>
-</div>
-</div>
-<section id="what-is-attention" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-attention">What is attention ?</h3>
-<p>The latest version of {{ site.product_name }} is now available. - Attention is a general solution for the sequence alignment problem. - Attention doesn’t reorder the input sequence. - It provides a linear transformation which filters the relevant parts of the source for predicting the each item in the target.</p>
-<p><span class="math display">
+<p>:::</p>
+<!-- TODO: move this to a blog post
+
+### What is attention ?
+
+The latest version of {{ site.product_name }} is now available.
+- Attention is a general solution for the sequence alignment problem.
+- Attention doesn't reorder the input sequence.
+- It provides a linear transformation which filters the relevant parts of the source for predicting the each item in the target.
+
+$$
 attention(h_t,\bar{h}_s)= softmax(h_t^T\bar{h}_s)
-</span></p>
-</section>
-<section id="what-is-dot-product-attention" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-dot-product-attention">What is dot-product attention ?</h3>
-<ul>
-<li>Dot Product attention is the most common form of attention.</li>
-<li>In the engineering sense it is suited for a encoder-decoder architecture</li>
-<li>It is the best fit for tasks where the source sequence is fully available at the start and the tasks is mapping or transformation the source sequence to an output sequence like</li>
-<li>It is used for alignment and machine translation or translation.</li>
-</ul>
-<p><span class="math display">
+$$
+
+### What is dot-product attention ?
+
+- Dot Product attention is the most common form of attention.
+- In the engineering sense it is suited for a encoder-decoder architecture 
+- It is the best fit for tasks where the source sequence is fully available at the start and the tasks is mapping or transformation the source sequence to an output sequence like 
+- It is used for alignment and machine translation or translation.
+
+$$
 attention_{(\cdot)}(Q,V,K) = softmax(\frac{QK^T}{\sqrt{n}})V
-</span></p>
-<div id="c4da4924" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> DotProductAttention(query,key,value,mask,scale<span class="op">=</span><span class="va">True</span>):</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Dot product self-attention.</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">        scale (bool): if to scale </span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">        numpy.ndarray: attention array (L_q by L_k)</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Save query embedding dimension</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    depth <span class="op">=</span> query.shape[<span class="op">-</span><span class="dv">1</span>] <span class="cf">if</span> scale <span class="cf">else</span> <span class="dv">1</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate scaled query key dot product </span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    dots <span class="op">=</span> np.matmul(query, np.swapaxes(key, <span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="dv">2</span>)) <span class="op">/</span> np.sqrt(depth) </span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Apply the mask</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> mask <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        dots <span class="op">=</span> np.where(mask, dots, np.full_like(dots, <span class="op">-</span><span class="fl">1e9</span>)) </span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    logsumexp <span class="op">=</span> scipy.special.logsumexp(dots, axis<span class="op">=-</span><span class="dv">1</span>, keepdims<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    dots <span class="op">=</span> np.exp(dots <span class="op">-</span> logsumexp)</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    attention <span class="op">=</span> np.matmul(dots, value)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> attention</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="what-is-causal-attention" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-causal-attention">What is causal attention ?</h3>
-<ul>
-<li>Causal attention is also called <em>self attention</em>.</li>
-<li>It is used to generate a sequence based on previous tokens.</li>
-<li>It requires a mask <span class="math inline">M</span> to enforce ignoring ‘future’ values during training.</li>
-</ul>
-<p><span class="math display">
+$$  
+
+::: {#c4da4924 .cell execution_count=2}
+``` {.python .cell-code}
+def DotProductAttention(query,key,value,mask,scale=True):
+    """Dot product self-attention.
+    Args:
+        scale (bool): if to scale 
+    Returns:
+        numpy.ndarray: attention array (L_q by L_k)
+    """
+    # Save query embedding dimension
+    depth = query.shape[-1] if scale else 1
+    # Calculate scaled query key dot product 
+    dots = np.matmul(query, np.swapaxes(key, -1, -2)) / np.sqrt(depth) 
+    # Apply the mask
+    if mask is not None:
+        dots = np.where(mask, dots, np.full_like(dots, -1e9)) 
+    logsumexp = scipy.special.logsumexp(dots, axis=-1, keepdims=True)
+    dots = np.exp(dots - logsumexp)
+    attention = np.matmul(dots, value)
+    return attention
+```
+:::
+
+
+### What is causal attention ?
+
+- Causal attention is also called *self attention*.
+- It is used to generate a sequence based on previous tokens.
+- It requires a mask $M$ to enforce ignoring 'future' values during training.
+
+$$ 
 attention_{self}(Q,V,K) = softmax(\frac{QK^T}{\sqrt{n}}+M)V
-</span></p>
-<p>where:</p>
-<ul>
-<li><span class="math inline">n</span> is the embedding dimension.</li>
-</ul>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> SelfAttention(query,key,value,scale<span class="op">=</span><span class="va">True</span>):</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Self attention.</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">        scale (bool): if to scale </span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">        numpy.ndarray: Self-attention array (L_q by L_k)</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Save query embedding dimension</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    depth <span class="op">=</span> query.shape[<span class="op">-</span><span class="dv">1</span>] <span class="cf">if</span> scale <span class="cf">else</span> <span class="dv">1</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate scaled query key dot product </span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    dots <span class="op">=</span> np.matmul(query, np.swapaxes(key, <span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="dv">2</span>)) <span class="op">/</span> np.sqrt(depth) </span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    logsumexp <span class="op">=</span> scipy.special.logsumexp(dots, axis<span class="op">=-</span><span class="dv">1</span>, keepdims<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    dots <span class="op">=</span> np.exp(dots <span class="op">-</span> logsumexp)</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    attention <span class="op">=</span> np.matmul(dots, value)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> attention</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="what-is-multi-headed-attention" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-multi-headed-attention">What is multi-headed attention?</h3>
-<p>Multi-headed attention replicates the attention mechanism analogously to the multiple filters used in convolutional layers.</p>
-<p><span class="math display">
+$$
+
+where:
+
+- $n$ is the embedding dimension.
+
+```python
+def SelfAttention(query,key,value,scale=True):
+    """Self attention.
+    Args:
+        scale (bool): if to scale 
+    Returns:
+        numpy.ndarray: Self-attention array (L_q by L_k)
+    """
+    # Save query embedding dimension
+    depth = query.shape[-1] if scale else 1
+    # Calculate scaled query key dot product 
+    dots = np.matmul(query, np.swapaxes(key, -1, -2)) / np.sqrt(depth) 
+    logsumexp = scipy.special.logsumexp(dots, axis=-1, keepdims=True)
+    dots = np.exp(dots - logsumexp)
+    attention = np.matmul(dots, value)
+    return attention
+```
+
+### What is multi-headed attention?
+
+Multi-headed attention replicates the attention mechanism analogously to the multiple filters used in convolutional layers.
+  
+$$
 attention_{mh}(Q,V,K) = softmax(\frac{QK^T}{\sqrt{n}})V
-</span></p>
-<p>The different attention heads are given different subspaces of the embeddings to work with. This causes them to specialize on different areas. More so if the embedding is also structured to store different data in subspaces say by concatenating different embeddings for morphology, semantics etc in those sub spaces.</p>
-<p>After input is processed by the heads their output is concatenated and processed by a big feed forward layer which uses most of the parameters in the model.</p>
-</section>
-<section id="what-is-positional-encoding" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-positional-encoding">What is positional encoding</h3>
-<p>Unlike the RNN which process information sequentially transforms need to provide the model with extra information to explicitly describe the order if the input sequences.</p>
-<p>You might think this is added as an index but positional embedding is added as a low dimensional wave which can be added to an high dimensional embedding. (or concatenated) this is achieved using a special purpose layer.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> trax</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> trax.layers <span class="im">as</span> tl</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Embedding inputs and positional encoder</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>positional_encoder <span class="op">=</span> [ </span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Add embedding layer of dimension (vocab_size, d_model)</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    tl.Embedding(vocab_size, d_model),</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Use dropout with rate and mode specified</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    tl.Dropout(rate<span class="op">=</span>dropout,mode<span class="op">=</span>mode),</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Add positional encoding layer with maximum input length and mode specified</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    tl.PositionalEncoding(max_len<span class="op">=</span>max_len)</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="what-is-teacher-forcing" class="level3">
-<h3 class="anchored" data-anchor-id="what-is-teacher-forcing">What is teacher forcing ?</h3>
-<blockquote class="blockquote">
-<p>An interesting technique that is frequently used in dynamical supervised learning tasks is to replace the actual output y(t) of a unit by the teacher signal d(t) in subsequent computation of the behavior of the network, whenever such a value exists. We call this technique teacher forcing. — <a href="http://ieeexplore.ieee.org/document/6795228/">A Learning Algorithm for Continually Running Fully Recurrent Neural Networks, 1989</a>.</p>
-</blockquote>
-</section>
-<section id="additional-coding-notes" class="level2">
-<h2 class="anchored" data-anchor-id="additional-coding-notes">Additional coding notes:</h2>
-<p>Here are some notable code snippets.</p>
-<section id="how-to-reshape-a-test-tensor-so-it-has-a-size-0-batch-dimension-at-the-front" class="level3">
-<h3 class="anchored" data-anchor-id="how-to-reshape-a-test-tensor-so-it-has-a-size-0-batch-dimension-at-the-front">How to reshape a test tensor so it has a (size 0) batch dimension at the front?</h3>
-<p>This is needed when inspecting single test inputs instead of working with a batch. The model is expecting to process batches of inputs like it saw during training - we therefore need to add a dimension at the start.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>padded_with_batch <span class="op">=</span> fastnp.expand_dims(fastnp.array(padded),axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># get log probabilities from the last token output</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>log_probs <span class="op">=</span> output[<span class="dv">0</span>,<span class="op">-</span><span class="dv">1</span>,:] </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="how-to-make-trax-take-in-string-date-as-a-stream" class="level3">
-<h3 class="anchored" data-anchor-id="how-to-make-trax-take-in-string-date-as-a-stream">How to make TRAX take in string date as a stream ?</h3>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>inputs <span class="op">=</span>  <span class="bu">next</span>(trax.data.tokenize(<span class="bu">iter</span>([input_str]),</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>                vocab_dir<span class="op">=</span><span class="st">'vocab_dir/'</span>,</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                vocab_file<span class="op">=</span><span class="st">'summarize32k.subword.subwords'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="how-to-transpose-batched-tensors" class="level3">
-<h3 class="anchored" data-anchor-id="how-to-transpose-batched-tensors">How to transpose batched tensors ?</h3>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># batch_size, seqlen, n_heads, d_head -&gt; batch_size, n_heads, seqlen, d_head</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> jnp.transpose(x, (<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="how-to-de-structure-tensors-for-use-with-multihead-attention" class="level3">
-<h3 class="anchored" data-anchor-id="how-to-de-structure-tensors-for-use-with-multihead-attention">How to de-structure tensors for use with multihead attention ?</h3>
-<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># batch_size, seqlen, n_heads*d_head -&gt; batch_size, seqlen, n_heads, d_head</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> jnp.reshape(x,(batch_size, seqlen, n_heads, d_head))</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># batch_size, seqlen, n_heads, d_head -&gt; batch_size, n_heads, seqlen, d_head</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> jnp.transpose(x, (<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">3</span>))</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># batch_size, n_heads, seqlen, d_head -&gt; batch_size*n_heads, seqlen, d_head</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  x <span class="op">=</span> jnp.reshape(x,( batch_size<span class="op">*</span>n_heads, seqlen, d_head))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre>input tensor shape: (3, 2, 6)
+$$
+
+The different attention heads are given different subspaces of the embeddings to work with. This causes them to specialize on different areas. More so if the embedding is also structured to store different data in subspaces say by concatenating different embeddings for morphology, semantics etc in those sub spaces.
+
+After input is processed by the heads their output is concatenated and processed by a big feed forward layer which uses most of the parameters in the model. 
+
+### What is positional encoding
+
+Unlike the RNN which process information sequentially transforms need to provide the model with extra information to explicitly describe the order if the input sequences. 
+
+We might think this is added as an index but positional embedding is added as a low dimensional wave which can be added to an high dimensional embedding. (or concatenated)
+this is achieved using a special purpose layer.
+
+```python
+import trax
+import trax.layers as tl
+
+# Embedding inputs and positional encoder
+positional_encoder = [ 
+    # Add embedding layer of dimension (vocab_size, d_model)
+    tl.Embedding(vocab_size, d_model),
+    # Use dropout with rate and mode specified
+    tl.Dropout(rate=dropout,mode=mode),
+    # Add positional encoding layer with maximum input length and mode specified
+    tl.PositionalEncoding(max_len=max_len)
+]
+```
+### What is teacher forcing ?
+
+> An interesting technique that is frequently used in dynamical supervised learning tasks is to replace the actual output y(t) of a unit by the teacher signal d(t) in subsequent computation of the behavior of the network, whenever such a value exists. We call this technique teacher forcing.
+>— [A Learning Algorithm for Continually Running Fully Recurrent Neural Networks, 1989](http://ieeexplore.ieee.org/document/6795228/).
+
+## Additional coding notes:
+
+Here are some notable code snippets. 
+
+### How to reshape a test tensor so it has a (size 0) batch dimension at the front?
+
+This is needed when inspecting single test inputs instead of working with a batch. The model is expecting to process batches of inputs like it saw during training - we therefore need to add a dimension at the start.
+
+```python
+padded_with_batch = fastnp.expand_dims(fastnp.array(padded),axis=0)
+
+# get log probabilities from the last token output
+log_probs = output[0,-1,:] 
+```
+
+### How to make TRAX take in string date as a stream ?
+
+```python
+inputs =  next(trax.data.tokenize(iter([input_str]),
+                vocab_dir='vocab_dir/',
+                vocab_file='summarize32k.subword.subwords'))
+```
+
+### How to transpose batched tensors ?
+
+```python
+  # batch_size, seqlen, n_heads, d_head -> batch_size, n_heads, seqlen, d_head
+  x = jnp.transpose(x, (0, 2, 1, 3))
+```
+
+### How to de-structure tensors for use with multihead attention ?
+
+```python
+  # batch_size, seqlen, n_heads*d_head -> batch_size, seqlen, n_heads, d_head
+  x = jnp.reshape(x,(batch_size, seqlen, n_heads, d_head))
+  # batch_size, seqlen, n_heads, d_head -> batch_size, n_heads, seqlen, d_head
+  x = jnp.transpose(x, (0, 2, 1, 3))
+  # batch_size, n_heads, seqlen, d_head -> batch_size*n_heads, seqlen, d_head
+  x = jnp.reshape(x,( batch_size*n_heads, seqlen, d_head))
+```
+
+<pre>
+input tensor shape: (3, 2, 6)
 [[[1 0 0 1 0 0]
   [0 1 0 0 1 0]]
  [[1 0 0 1 0 0]
@@ -792,10 +816,10 @@ output tensor shape: (6, 2, 3)
  [[1 0 0]
   [0 1 0]]]
 </pre>
-</section>
-</section>
-<section id="video-1-transformers-vs-rnns" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="video-1-transformers-vs-rnns">Video 1: Transformers vs RNNs</h2>
+
+-->
+<section id="sec-transformers-vs-rnns" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-transformers-vs-rnns">Transformers vs RNNs</h2>
 <p>RNNs were a big breakthrough and became the state of the art (SOTA) for machine translation (MT).</p>
 <p>This illustrates a typical RNN that is used to translate the English sentence “How are you?” to its German equivalent, “Wie sind Sie?”.</p>
 
@@ -819,9 +843,9 @@ output tensor shape: (6, 2, 3)
 <figcaption>seq2seq-steps</figcaption>
 </figure>
 </div></div><p>Which entailed that to process the word “you”, the RNN it has to first go through “are” and then “you”. Two other issues with RNNs are the:</p>
-<section id="information-loss" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="information-loss">Information loss</h3>
-<p>It becomes harder to keep track of whether the subject is singular or plural as you move further away from the subject.</p>
+<section id="sec-information-loss" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="sec-information-loss">Information loss</h3>
+<p>It becomes harder to keep track of whether the subject is singular or plural as we move further away from the subject.</p>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -831,9 +855,9 @@ output tensor shape: (6, 2, 3)
 </div></div><p>transformer architecture:</p>
 <p>in the encoder side - lookup layer - the source sequence is converted from one hot encoding to a distributed representation using an embedding. - this is converted to K V matrices in the decoder side</p>
 </section>
-<section id="vanishing-gradient" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="vanishing-gradient">Vanishing Gradient</h3>
-<p>When gradients you back-propagate, the gradients can become really small and as a result.</p>
+<section id="sec-vanishing-gradient-problem" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="sec-vanishing-gradient-problem">Vanishing Gradient Problem</h3>
+<p>When gradients we back-propagate, the gradients can become really small and as a result.</p>
 <p>With small gradient the model will learn very little.</p>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
@@ -851,8 +875,8 @@ output tensor shape: (6, 2, 3)
 </div></div><p>Additionally, the gradient steps that need to be taken from the last output to the first input in a transformer is just one. For RNNs, the number of steps increases with longer sequences. Finally, transformers don’t suffer from vanishing gradients problems that are related to the length of the sequences.</p>
 </section>
 </section>
-<section id="video-2-transformer-applications" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="video-2-transformer-applications">Video 2: Transformer Applications</h2>
+<section id="sec-transformer-applications" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-transformer-applications">Transformer Applications</h2>
 <div class="page-columns page-full"><p> Transformers have essentially replaced RNN,LSTM and GRUs in sequence processing.</p><div class="no-row-height column-margin column-container"><img src="img/c4w2-15-application.png" class="img-fluid" data-group="slides" alt="application"></div></div>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
@@ -860,8 +884,8 @@ output tensor shape: (6, 2, 3)
 <p><a href="img/c4w2-16-application-NLP.png" class="lightbox" data-gallery="slides" title="application-NLP"><img src="img/c4w2-16-application-NLP.png" class="img-fluid figure-img" alt="application-NLP"></a></p>
 <figcaption>application-NLP</figcaption>
 </figure>
-</div></div><section id="applications" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="applications">Applications:</h3>
+</div></div><section id="sec-applications-of-transformers" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="sec-applications-of-transformers">Applications of Transformers</h3>
 <ul>
 <li>Text summarization</li>
 <li>Autocomplete</li>
@@ -882,8 +906,8 @@ output tensor shape: (6, 2, 3)
 <figcaption>sota</figcaption>
 </figure>
 </div></div></section>
-<section id="sota-transformers" class="level3">
-<h3 class="anchored" data-anchor-id="sota-transformers">SOTA Transformers</h3>
+<section id="sec-transformers-time-line" class="level3">
+<h3 class="anchored" data-anchor-id="sec-transformers-time-line">SOTA Transformers</h3>
 <p>Transformers Time Line:</p>
 <ul>
 <li>GPT-4:</li>
@@ -893,8 +917,8 @@ output tensor shape: (6, 2, 3)
 </ul>
 </section>
 </section>
-<section id="t5---text-to-text-transfer-transformer" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="t5---text-to-text-transfer-transformer">T5 - Text-To-Text Transfer Transformer</h2>
+<section id="sec-t5" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-t5">T5 - Text-To-Text Transfer Transformer</h2>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -908,8 +932,8 @@ output tensor shape: (6, 2, 3)
 </figure>
 </div></div>
 <p><span class="citation" data-cites="DBLP:journals/corr/abs-1910-10683">(<a href="#ref-DBLP:journals/corr/abs-1910-10683" role="doc-biblioref">Raffel et al. 2019</a>)</span> introduced T5 which can do a number of tasks with a single model. While the earlier transformer models were able to score high in many different tasks without specific training. T5 is setup to handle different inputs and respond with output that is relevant to the requested task.</p>
-<section id="t5-classification-tasks" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="t5-classification-tasks">T5 Classification tasks</h3>
+<section id="sec-t5-classification-tasks" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="sec-t5-classification-tasks">T5 Classification tasks</h3>
 <p>These tasks are selected using the initial string: - Translate English into German - Cola sentence - Question</p>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
@@ -918,8 +942,8 @@ output tensor shape: (6, 2, 3)
 <figcaption>text-to-text-transformer</figcaption>
 </figure>
 </div></div></section>
-<section id="t5-regression-tasks" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="t5-regression-tasks">T5 regression tasks</h3>
+<section id="sec-t5-regression-tasks" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="sec-t5-regression-tasks">T5 regression tasks</h3>
 <ul>
 <li>Stbs Sentence1 … Stbs Sentence2 …</li>
 <li>Summarize:</li>
@@ -953,8 +977,8 @@ Warning
 </figure>
 </div></div></section>
 </section>
-<section id="video-3-dot-product-attention" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="video-3-dot-product-attention">Video 3: Dot-Product Attention</h2>
+<section id="sec-dot-product-attention" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-dot-product-attention">Dot-Product Attention</h2>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -984,36 +1008,47 @@ Warning
 <p><span class="math display">
 \hat q_i = \sum_{i} softmax(q_i \cdot k_i) \times v_i =  \sum w_a(q_i) * v_i
 </span></p>
-<section id="query-key-value" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="query-key-value">Query, Key &amp; Value</h3>
+<section id="sec-query-key-value" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="sec-query-key-value">Query, Key &amp; Value</h3>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><a href="img/c4w2-24-queries-keys-values.png" class="lightbox" data-gallery="slides" title="queries-keys-values"><img src="img/c4w2-24-queries-keys-values.png" class="img-fluid figure-img" alt="queries-keys-values"></a></p>
 <figcaption>queries-keys-values</figcaption>
 </figure>
-</div></div><p>Attention uses three matrices which are formed as shown in the figure The <strong>Query</strong> <span class="math inline">Q</span>, <strong>Key</strong> <span class="math inline">K</span> and <strong>Value</strong> <span class="math inline">V</span> are formed from the source and target (if there is no target then just from the source). Each word is converted into an embedding column vector and these are placed into the matracies as their columns. In the master class embedded bellow Dr.&nbsp;Łukasz Kaiser talks about attention and here he is talking about solving the problem of retrieving information from a long sequence. At around 16 minutes in he call Q a query vector and K and V a memory, of all the words we have seen, which we want to access.</p>
-<ul>
-<li>The <em><strong>Q</strong>uery</em> is the matrix formed from the column word vector for the German words.</li>
-<li>The <em><strong>K</strong>ey</em> is the matrix formed from the column word vector for the English words.</li>
-<li>The <em><strong>V</strong>alue</em> is the matrix formed from the column word vector for the English words.</li>
-</ul>
+</div></div><p>I find it fascinating that the authors of Attention is all decided to motivate their work on a attention using the language of information retrieval. This makes understanding the concepts a little easier and has also lead to more recent work on LSTM to use this same language. In both case though the authors are interested in the ability of the neural network to use the wghiets that it has learned to process a long sequence of test and put together a coherent output based on distant and often sparse parts of the input. In a named entity recognition task the network has a fairly simple task to do - it needs to classify a few token based a few cues from the immediate context. But for the text summarization task the network has to understand the text and pick up the most salient bit while discarding the rest.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Note
+Query, Key &amp; Value
 </div>
 </div>
 <div class="callout-body-container callout-body">
+<p>Attention uses three matrices which are formed as shown in the figure The <strong>Query</strong> <span class="math inline">Q</span>, <strong>Key</strong> <span class="math inline">K</span> and <strong>Value</strong> <span class="math inline">V</span> are formed from the source and target (if there is no target then just from the source). Each word is converted into an embedding column vector and these are placed into the matracies as their columns.</p>
+<p>In <a href="#vid-01-Attentional" class="quarto-xref">Video&nbsp;1</a> Dr.&nbsp;Łukasz Kaiser talks about attention and here he is talking about solving the problem of retrieving information from a long sequence. At around 16 minutes in he call Q a query vector and K and V a memory, of all the words we have seen, which we want to access.</p>
+<ul>
+<li>The <em><strong>Q</strong>uery</em> is the matrix formed from the column word vector for the German words.</li>
+<li>The <em><strong>K</strong>ey</em> is the matrix formed from the column word vector for the English words.</li>
+<li>The <em><strong>V</strong>alue</em> is the matrix formed from the column word vector for the English words.</li>
+</ul>
 <p>K and V are the same</p>
 </div>
 </div>
 <p>Once these are called keys since we use them to are we doing a similarity lookup. And the second time they are called value because we use them in the activation when we apply the weights to them. The input and output sequences are mapped to an embedding layer to become the <span class="math inline">Q</span>, <span class="math inline">K</span> and <span class="math inline">V</span> matrices.</p>
-<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/rBCqOTEfxvg" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-<p>Given an input, you transform it into a new representation or a column vector. Depending on the task you are working on, you will end up getting queries, keys, and values. Each column corresponds to a word in the figure above. Hence, when you compute the following:</p>
+
+<div class="no-row-height column-margin column-container"><div id="vid-01-Attentional" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-vid figure">
+<div aria-describedby="vid-01-Attentional-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/rBCqOTEfxvg" title="Masterclass on Attention is all you need" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-01-Attentional-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Video&nbsp;1: Lukasz Kaiser’s Masterclass on Attention is all you need
+</figcaption>
+</figure>
+</div></div><p>Given an input, we transform it into a new representation or a column vector. Depending on the task we are working on, we will end up getting queries, keys, and values. Each column corresponds to a word in the figure above. Hence, when we compute the following:</p>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -1043,15 +1078,15 @@ Z = W_A V
 <p><span class="math display">
 W_A = softmax(QK^T)
 </span></p>
-<p>This concept implies that similar vectors are likely to have a higher score when you dot them with one another. You transform that score into a probability by using a softmax function. You can then multiply the output by</p>
-<p>You can think of the <strong>keys</strong> and the <strong>values</strong> as being the same. Note that both <span class="math inline">K</span>,<span class="math inline">V</span> are of dimension <span class="math inline">L_k, D</span>. Each query <span class="math inline">q_i</span> picks the most similar key <span class="math inline">k_j</span>.</p>
+<p>This concept implies that similar vectors are likely to have a higher score when we dot them with one another. We transform that score into a probability by using a softmax function. We can then multiply the output by</p>
+<p>We can think of the <strong>keys</strong> and the <strong>values</strong> as being the same. Note that both <span class="math inline">K</span>,<span class="math inline">V</span> are of dimension <span class="math inline">L_k, D</span>. Each query <span class="math inline">q_i</span> picks the most similar key <span class="math inline">k_j</span>.</p>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><a href="img/c4w2-27-attention-formula.png" class="lightbox" data-gallery="slides" title="attention-formula"><img src="img/c4w2-27-attention-formula.png" class="img-fluid figure-img" alt="attention-formula"></a></p>
 <figcaption>attention-formula</figcaption>
 </figure>
-</div></div><p>Queries are the German words and the keys are the English words. Once you have the attention weights, you can just multiply it by <span class="math inline">V</span> to get a weighted combination of the input.</p>
+</div></div><p>Queries are the German words and the keys are the English words. Once we have the attention weights, we can just multiply it by <span class="math inline">V</span> to get a weighted combination of the input.</p>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -1068,8 +1103,8 @@ W_A = softmax(QK^T)
 <p>In <span class="citation" data-cites="DBLP:journals/corr/abs-2103-13076">(<a href="#ref-DBLP:journals/corr/abs-2103-13076" role="doc-biblioref">Kasai et al. 2021</a>)</span> there is a reversal of the trend from rnn to transformers. Here the latest results show a an idea of training big transformers and then converting them to RNN to improve performance. (One get an RNN by training a transformer.)</p>
 </section>
 </section>
-<section id="v4-causal-attention" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="v4-causal-attention">V4: Causal Attention</h2>
+<section id="sec-causal-attention" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-causal-attention">V4: Causal Attention</h2>
 <ul>
 <li>We are interested in three main types of attention.</li>
 <li>We’ll see a brief overview of causal attention.</li>
@@ -1082,8 +1117,8 @@ W_A = softmax(QK^T)
 <figcaption>three forms of attention</figcaption>
 </figure>
 </div></div><p>In terms of use cases there are three types of attention mechanisms:</p>
-<section id="scaled-dot-product-attention" class="level3">
-<h3 class="anchored" data-anchor-id="scaled-dot-product-attention">Scaled dot product attention:</h3>
+<section id="sec-scaled-dot-product-attention" class="level3">
+<h3 class="anchored" data-anchor-id="sec-scaled-dot-product-attention">Scaled dot product attention:</h3>
 <ul>
 <li>AKA Encoder-Decoder attention.</li>
 <li>one sentence in the decoder look at to another one in the encoder.</li>
@@ -1094,11 +1129,11 @@ W_A = softmax(QK^T)
 </ul></li>
 </ul>
 </section>
-<section id="causal-attention" class="level3">
-<h3 class="anchored" data-anchor-id="causal-attention">Causal Attention:</h3>
+<section id="sec-causal-attention" class="level3">
+<h3 class="anchored" data-anchor-id="sec-causal-attention">Causal Attention:</h3>
 <ul>
 <li>AKA self attention.</li>
-<li>attention is all you need.</li>
+<li>attention is all we need.</li>
 <li>In the same sentence words attend to previous words.</li>
 <li>Future words have not been generated yet.</li>
 <li>use cases:
@@ -1109,8 +1144,8 @@ W_A = softmax(QK^T)
 </ul></li>
 </ul>
 </section>
-<section id="bi-directional-self-attention" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="bi-directional-self-attention">Bi-directional self attention:</h3>
+<section id="sec-bi-directional-self-attention" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="sec-bi-directional-self-attention">Bi-directional self attention:</h3>
 <ul>
 <li>In one sentence words look both at previous and future words.</li>
 <li>use cases:
@@ -1154,8 +1189,8 @@ W_A = softmax(QK^T)
 </div></div>
 </section>
 </section>
-<section id="v5-multi-head-attention" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="v5-multi-head-attention">V5: Multi-head Attention</h2>
+<section id="sec-multi-head-attention" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-multi-head-attention">V5: Multi-head Attention</h2>
 <div class="page-columns page-full"><p> Let’s summarize the intuition behind <strong>multi-head attention</strong> and <strong>scaled dot product attention</strong>.</p><div class="no-row-height column-margin column-container"><img src="img/c4w2-40-outline-of-mutihead-attention.png" class="img-fluid" data-group="slides" alt="outline-of-muti-head-attention"></div></div>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
@@ -1200,10 +1235,10 @@ W_A = softmax(QK^T)
 <li>5 heads sampling from 2 subspaces different sub-spaces and 3 from three</li>
 </ol>
 <p>Each would specialize on a domain or on a interface between two domain or on all data but one domain. Language is rather redundant so they may be able to reconstruct most of the missing data - but at least they would specialize in a linguistically meaningful way.</p>
-<p>Given a word, you take its embedding then you multiply it by the <span class="math inline">Q</span>, <span class="math inline">K</span>, <span class="math inline">V</span> matrix to get the corresponding queries, keys and values. When you use multi-head attention, a head can learn different relationships between words from another head.</p>
+<p>Given a word, we take its embedding then we multiply it by the <span class="math inline">Q</span>, <span class="math inline">K</span>, <span class="math inline">V</span> matrix to get the corresponding queries, keys and values. When we use multi-head attention, a head can learn different relationships between words from another head.</p>
 <p>Here’s one way to look at it:</p>
 <ul>
-<li>First, imagine that you have an embedding for a word. You multiply that embedding with <span class="math inline">Q</span> to get <span class="math inline">q_1</span>, <span class="math inline">K</span> to get <span class="math inline">k_1</span>, and V to get <span class="math inline">v_1</span></li>
+<li>First, imagine that we have an embedding for a word. We multiply that embedding with <span class="math inline">Q</span> to get <span class="math inline">q_1</span>, <span class="math inline">K</span> to get <span class="math inline">k_1</span>, and V to get <span class="math inline">v_1</span></li>
 </ul>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
@@ -1254,10 +1289,10 @@ W_A = softmax(QK^T)
 
 
 <ul>
-<li>Next, you feed it to the linear layer, once you go through the linear layer for each word, you need to calculate a score. After that, you end up having an embedding for each word. But you still need to get the score for how much of each word you are going to use. For example, this will tell you how similar two words are <span class="math inline">q_1</span> and <span class="math inline">k_1</span>or even <span class="math inline">q_1</span> and <span class="math inline">k_2</span> by doing a simple <span class="math inline">q_1 \dot k_1</span>. You can take the softmax of those scores (the paper mentions that you have to divide by <span class="math inline">\sqrt(d)</span> to get a probability and then you multiply that by the value. That gives you the new representation of the word.) If you have many heads, you can concatenate them and then multiply again by a matrix that is of dimension (dim of each head by num heads - dim of each head) to get one final vector corresponding to each word.</li>
+<li>Next, we feed it to the linear layer, once we go through the linear layer for each word, we need to calculate a score. After that, we end up having an embedding for each word. But we still need to get the score for how much of each word we are going to use. For example, this will tell we how similar two words are <span class="math inline">q_1</span> and <span class="math inline">k_1</span>or even <span class="math inline">q_1</span> and <span class="math inline">k_2</span> by doing a simple <span class="math inline">q_1 \dot k_1</span>. We can take the softmax of those scores (the paper mentions that we have to divide by <span class="math inline">\sqrt(d)</span> to get a probability and then we multiply that by the value. That gives we the new representation of the word.) If we have many heads, we can concatenate them and then multiply again by a matrix that is of dimension (dim of each head by num heads - dim of each head) to get one final vector corresponding to each word.</li>
 </ul>
-<p>Here is step by step guide, first you get the <span class="math inline">Q</span>, <span class="math inline">K</span>, <span class="math inline">V</span> matrices: Note that the computation above was done for one head. If you have several heads, concretely nn, then you will have <span class="math inline">Z_1, Z_2, \ldots, Z_n</span>. In which case, you can just concatenate them and multiply by a <span class="math inline">W_O</span> matrix as follows:</p>
-<p>Hence, the more heads you have, the more <span class="math inline">Z</span>s you will end up concatenating and as a result, that will change the inner dimension of <span class="math inline">W_O</span>, which will then project the combined embeddings into one final embedding.</p>
+<p>Here is step by step guide, first we get the <span class="math inline">Q</span>, <span class="math inline">K</span>, <span class="math inline">V</span> matrices: Note that the computation above was done for one head. If we have several heads, concretely nn, then we will have <span class="math inline">Z_1, Z_2, \ldots, Z_n</span>. In which case, we can just concatenate them and multiply by a <span class="math inline">W_O</span> matrix as follows:</p>
+<p>Hence, the more heads we have, the more <span class="math inline">Z</span>s we will end up concatenating and as a result, that will change the inner dimension of <span class="math inline">W_O</span>, which will then project the combined embeddings into one final embedding.</p>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -1265,8 +1300,8 @@ W_A = softmax(QK^T)
 <figcaption>summary-muti-head-attention</figcaption>
 </figure>
 </div></div></section>
-<section id="v6-transformer-decoder" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="v6-transformer-decoder">V6: Transformer Decoder</h2>
+<section id="sec-transformer-decoder" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-transformer-decoder">V6: Transformer Decoder</h2>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -1310,7 +1345,7 @@ W_A = softmax(QK^T)
 
 
 </section>
-<section id="v7-transformer-summarizer" class="level1 page-columns page-full">
+<section id="sec-transformer-summarizer" class="level1 page-columns page-full">
 <h1>V7: Transformer Summarizer</h1>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
@@ -1322,17 +1357,17 @@ W_A = softmax(QK^T)
 <div class="page-columns page-full"><p> we are told there is an input and an output but the two are combined into one long sequence.</p><div class="no-row-height column-margin column-container"><img src="img/c4w2-71-transformer-for-summarization.png" class="img-fluid" data-group="slides" alt="transformer-for-summarization"></div></div>
 <div class="page-columns page-full"><p> So to account for concatenating the output to the output we have a mask.</p><div class="no-row-height column-margin column-container"><img src="img/c4w2-72-loss-weights.png" class="img-fluid" data-group="slides" alt="loss-weights"></div></div>
 <p>However we might want to give the input some weights so that we can incorporate it into the language model. also I don’t think I saw anywhere how we feed this loss weighs into the loss function. Loss weights were created as a masks by the following code:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>  mask <span class="op">=</span> [<span class="dv">0</span>] <span class="op">*</span> (<span class="bu">len</span>(<span class="bu">list</span>(article)) <span class="op">+</span> <span class="dv">2</span>) <span class="op">+</span> [<span class="dv">1</span>] <span class="op">*</span> (<span class="bu">len</span>(<span class="bu">list</span>(summary)) <span class="op">+</span> <span class="dv">1</span>) </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the +2 Accounting for EOS and SEP</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># and +1 Accounting for the final EOS </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>  mask <span class="op">=</span> [<span class="dv">0</span>] <span class="op">*</span> (<span class="bu">len</span>(<span class="bu">list</span>(article)) <span class="op">+</span> <span class="dv">2</span>) <span class="op">+</span> [<span class="dv">1</span>] <span class="op">*</span> (<span class="bu">len</span>(<span class="bu">list</span>(summary)) <span class="op">+</span> <span class="dv">1</span>) </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the +2 Accounting for EOS and SEP</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># and +1 Accounting for the final EOS </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><a href="img/c4w2-73-cost-function.png" class="lightbox" data-gallery="slides" title="cost-function"><img src="img/c4w2-73-cost-function.png" class="img-fluid figure-img" alt="cost-function"></a></p>
 <figcaption>cost-function</figcaption>
 </figure>
-</div></div><section id="cross-entropy-loss" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="cross-entropy-loss">Cross entropy loss</h2>
+</div></div><section id="sec-cross-entropy-loss" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-cross-entropy-loss">Cross entropy loss</h2>
 <p>Cross-entropy loss, or log loss, measures the performance of a classification model whose output is a probability value between 0 and 1. Cross-entropy loss increases as the predicted probability diverges from the actual label.</p>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
@@ -1372,16 +1407,19 @@ W_A = softmax(QK^T)
 </div></div><p>I think these is much missing from this lesson about summerization. However there are a number of good source in papers as well as some lectures on YouTube.</p>
 <p>I have quickly summarized one and should link to it from <a href="">here</a> once it is published.</p>
 </section>
-<section id="lab1-attention" class="level2">
-<h2 class="anchored" data-anchor-id="lab1-attention">Lab1 : Attention</h2>
+<section id="sec-lab1-attention" class="level2">
+<h2 class="anchored" data-anchor-id="sec-lab1-attention">Lab1 : Attention</h2>
 <p>This was a numpy based realization of dot product and multi-head attention. Some of the main assignment required porting this to Jax.</p>
+<p><a href="lab01.qmd">Attention lab</a></p>
 </section>
 <section id="lab2-the-transformer-decoder" class="level2">
 <h2 class="anchored" data-anchor-id="lab2-the-transformer-decoder">Lab2 : The Transformer Decoder</h2>
 <p>this covered the transformer block</p>
+<p><a href="lab02.qmd">Transformer block lab</a></p>
 </section>
 <section id="assignment-transformer-summarizer" class="level2">
 <h2 class="anchored" data-anchor-id="assignment-transformer-summarizer">Assignment: Transformer Summarizer</h2>
+<p><a href="assignment.qmd">Assignment</a></p>
 <p>This long assignment primarily focused on dot product attention, multi-head attention and on building the transformer blocks. These were manageable as their theory had been explained in the lectures and their code had already been covered in the labs. It glosses over the parts involving data processing, training, evaluation and the actual summarization task. The summarization is accomplished using maximum likelihood estimate. A beam search might have yielded better results.</p>
 <p>The date as described by:</p>
 <blockquote class="blockquote">
@@ -1391,11 +1429,11 @@ W_A = softmax(QK^T)
 <p><a href="https://arxiv.org/pdf/1704.04368.pdf">Get To The Point §4 (Abigail et all 2017)</a> We used the non anatomized version. However the earlier paper used a preprocessed version which replaced the named entities with token like <code>$entity5</code>. This is probably ideal in other situations like event processing where each event looks quite different unless one anatomizes them rendering them much more similar and hopefully helping the model generalize better by learning from the partitions induced by the equivalency relation.</p>
 </blockquote>
 </section>
-<section id="expanding-the-lab-to-a-project" class="level2">
-<h2 class="anchored" data-anchor-id="expanding-the-lab-to-a-project">Expanding the lab to a project:</h2>
+<section id="sec-expanding-the-lab-to-a-project" class="level2">
+<h2 class="anchored" data-anchor-id="sec-expanding-the-lab-to-a-project">Expanding the lab to a project:</h2>
 <p>This is one of the main areas I’d like to focus on for a project. I have in mind a tool for improving wikipedia article leads. Here is how I’d like to take this project to the next level:</p>
-<section id="more-data" class="level3">
-<h3 class="anchored" data-anchor-id="more-data">more data</h3>
+<section id="sec-more-data" class="level3">
+<h3 class="anchored" data-anchor-id="sec-more-data">more data</h3>
 <p>train it on additional material:</p>
 <ul>
 <li>papers and abstracts.</li>
@@ -1409,8 +1447,8 @@ W_A = softmax(QK^T)
 </ul></li>
 </ul>
 </section>
-<section id="more-algorithms" class="level3">
-<h3 class="anchored" data-anchor-id="more-algorithms">More algorithms</h3>
+<section id="sec-more-algorithms" class="level3">
+<h3 class="anchored" data-anchor-id="sec-more-algorithms">More algorithms</h3>
 <ul>
 <li>Using a reformer to handle longer texts like books.</li>
 <li>Better summarization using:
@@ -1437,16 +1475,16 @@ W_A = softmax(QK^T)
 </ul></li>
 </ul>
 </section>
-<section id="evaluation" class="level3">
-<h3 class="anchored" data-anchor-id="evaluation">Evaluation</h3>
+<section id="sec-evaluation" class="level3">
+<h3 class="anchored" data-anchor-id="sec-evaluation">Evaluation</h3>
 <p>use sammy lib with</p>
 <ul>
 <li>rouge-n metric</li>
 <li>the pyramid metric</li>
 </ul>
 </section>
-<section id="extra-features" class="level3">
-<h3 class="anchored" data-anchor-id="extra-features">Extra features</h3>
+<section id="sec-extra-features" class="level3">
+<h3 class="anchored" data-anchor-id="sec-extra-features">Extra features</h3>
 <ul class="task-list">
 <li><label><input type="checkbox">pages for paper reviews</label></li>
 <li><label><input type="checkbox">pages for research questions</label></li>
@@ -1458,12 +1496,12 @@ W_A = softmax(QK^T)
 </ul>
 </section>
 </section>
-<section id="open-question" class="level2">
-<h2 class="anchored" data-anchor-id="open-question">Open question</h2>
+<section id="sec-open-question" class="level2">
+<h2 class="anchored" data-anchor-id="sec-open-question">Open question</h2>
 <p>For me the assignment raised a number of questions about what really going on here during training.</p>
 <p>I’ll probably do this assignment again and look for some answers to my many questions. Once I have these I’ll add them in the body of these notes.</p>
-<section id="questions" class="level3">
-<h3 class="anchored" data-anchor-id="questions">Questions</h3>
+<section id="sec-questions" class="level3">
+<h3 class="anchored" data-anchor-id="sec-questions">Questions</h3>
 <ol type="1">
 <li>Loading and prepocessing the data:
 <ol type="1">
@@ -1535,7 +1573,7 @@ W_A = softmax(QK^T)
 <li><a href="https://arxiv.org/abs/1910.10683">Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer</a> (Raffel et al, 2019)<br>
 </li>
 <li><a href="https://arxiv.org/abs/2001.04451">Reformer: The Efficient Transformer</a> (Kitaev et al, 2020)</li>
-<li><a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a> (Vaswani et al, 2017)</li>
+<li><a href="https://arxiv.org/abs/1706.03762">Attention Is All We Need</a> (Vaswani et al, 2017)</li>
 <li><a href="https://arxiv.org/pdf/1802.05365.pdf">Deep contextualized word representations</a> (Peters et al, 2018)</li>
 <li><a href="https://arxiv.org/abs/1810.04805">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a> (Devlin et al, 2018)</li>
 <li><a href="https://arxiv.org/abs/2103.13076" title="(Kasai et all 2021)">Finetuning Pretrained Transformers into RNNs</a> (Kasai et all 2021)</li>
@@ -1600,15 +1638,16 @@ Kasai, Jungo, Hao Peng, Yizhe Zhang, Dani Yogatama, Gabriel Ilharco, Nikolaos Pa
 <div id="ref-DBLP:journals/corr/abs-1910-10683" class="csl-entry" role="listitem">
 Raffel, Colin, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Michael Matena, Yanqi Zhou, Wei Li, and Peter J. Liu. 2019. <span>“Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer.”</span> <em>CoRR</em> abs/1910.10683. <a href="http://arxiv.org/abs/1910.10683">http://arxiv.org/abs/1910.10683</a>.
 </div>
-</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{2021,
-  author = {},
-  title = {Week 2 {Text} {Summarization}},
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2021,
+  author = {Bochman, Oren},
+  title = {Week 2 - {Text} {Summarization}},
   date = {2021-03-31},
   url = {https://orenbochman.github.io/notes-nlp/posts/c4w2/},
   langid = {en}
 }
-</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-2021" class="csl-entry quarto-appendix-citeas" role="listitem">
-<span>“Week 2 Text Summarization.”</span> 2021. March 31, 2021. <a href="https://orenbochman.github.io/notes-nlp/posts/c4w2/">https://orenbochman.github.io/notes-nlp/posts/c4w2/</a>.
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2021" class="csl-entry quarto-appendix-citeas" role="listitem">
+Bochman, Oren. 2021. <span>“Week 2 - Text Summarization.”</span> March
+31, 2021. <a href="https://orenbochman.github.io/notes-nlp/posts/c4w2/">https://orenbochman.github.io/notes-nlp/posts/c4w2/</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {

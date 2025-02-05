@@ -28,9 +28,9 @@ Due to the Coursera Honor Code, I cannot provide the solutions to the assignment
 Welcome to this week's programming assignment on exploring word vectors.
 In natural language processing, we represent each word as a vector consisting of numbers.
 The vector encodes the meaning of the word. These numbers (or weights) for each word are learned using various machine
-learning models, which we will explore in more detail later in this specialization. Rather than make you code the
-machine learning models from scratch, we will show you how to use them. In the real world, you can always load the
-trained word vectors, and you will almost never have to train them from scratch. In this assignment, you will:
+learning models, which we will explore in more detail later in this specialization. Rather than make we code the
+machine learning models from scratch, we will show we how to use them. In the real world, we can always load the
+trained word vectors, and we will almost never have to train them from scratch. In this assignment, we will:
 
 - Predict analogies between words.
 - Use PCA to reduce the dimensionality of the word embeddings and plot them in two dimensions.
@@ -43,17 +43,17 @@ trained word vectors, and you will almost never have to train them from scratch.
 
 In the lectures, we have illustrated the word analogies
 by finding the capital of a country from the country. 
-We have changed the problem a bit in this part of the assignment. You are asked to predict the **countries** 
+We have changed the problem a bit in this part of the assignment. We are asked to predict the **countries** 
 that corresponds to some **capitals**.
-You are playing trivia against some second grader who just took their geography test and knows all the capitals by heart.
-Thanks to NLP, you will be able to answer the questions properly. In other words, you will write a program that can give
-you the country by its capital. That way you are pretty sure you will win the trivia game. We will start by exploring the data set.
+We are playing trivia against some second grader who just took their geography test and knows all the capitals by heart.
+Thanks to NLP, we will be able to answer the questions properly. In other words, we will write a program that can give
+we the country by its capital. That way we are pretty sure we will win the trivia game. We will start by exploring the data set.
 
 ![map](img/map.jpg){style="width:467px;height:300px;" group="slides"}
 
 ###  1.1 Importing the data
 
-As usual, you start by importing some essential Python libraries and then load the dataset.
+As usual, we start by importing some essential Python libraries and then load the dataset.
 The dataset will be loaded as a [Pandas DataFrame](https://pandas.pydata.org/pandas-docs/stable/getting_started/dsintro.html),
 which is very a common method in data science.
 This may take a few minutes because of the large size of the data.
@@ -85,7 +85,7 @@ the workspace is not able to handle the full file set.  So we've downloaded the 
 extracted a sample of the words that we're going to analyze in this assignment, and saved
 it in a pickle file called `word_embeddings_capitals.p`
 
-If you want to download the full dataset on your own and choose your own set of word embeddings,
+If we want to download the full dataset on your own and choose your own set of word embeddings,
 please see the instructions and some helper code.
 
 - Download the dataset from this [page](https://code.google.com/archive/p/word2vec/).
@@ -139,20 +139,20 @@ print("dimension: {}".format(word_embeddings['Spain'].shape[0]))
 
 ### Predict relationships among words
 
-Now you will write a function that will use the word embeddings to predict relationships among words.
+Now we will write a function that will use the word embeddings to predict relationships among words.
 * The function will take as input three words.
 * The first two are related to each other.
 * It will predict a 4th word which is related to the third word in a similar manner as the two first words are related to each other.
 * As an example, "Athens is to Greece as Bangkok is to ______"?
-* You will write a program that is capable of finding the fourth word.
-* We will give you a hint to show you how to compute this.
+* We will write a program that is capable of finding the fourth word.
+* We will give we a hint to show we how to compute this.
 
 A similar analogy would be the following:
 
 ![](img/vectorsf.jpg){style="width:467px;height:200px;" group="slides"}
 
-You will implement a function that can tell you the capital of a country.
-You should use the same methodology shown in the figure above. To do this,
+We will implement a function that can tell we the capital of a country.
+We should use the same methodology shown in the figure above. To do this,
 compute you'll first compute cosine similarity metric or the Euclidean distance.
 
 ### 1.2 Cosine Similarity
@@ -162,9 +162,9 @@ The cosine similarity function is:
 $$\cos (\theta)=\frac{\mathbf{A} \cdot \mathbf{B}}{\|\mathbf{A}\|\|\mathbf{B}\|}=\frac{\sum_{i=1}^{n} A_{i} B_{i}}{\sqrt{\sum_{i=1}^{n} A_{i}^{2}} \sqrt{\sum_{i=1}^{n} B_{i}^{2}}}\tag{1}$$
 
 $A$ and $B$ represent the word vectors and $A_i$ or $B_i$ represent index i of that vector.
-& Note that if A and B are identical, you will get $cos(\theta) = 1$.
-* Otherwise, if they are the total opposite, meaning, $A= -B$, then you would get $cos(\theta) = -1$.
-* If you get $cos(\theta) =0$, that means that they are orthogonal (or perpendicular).
+& Note that if A and B are identical, we will get $cos(\theta) = 1$.
+* Otherwise, if they are the total opposite, meaning, $A= -B$, then we would get $cos(\theta) = -1$.
+* If we get $cos(\theta) =0$, that means that they are orthogonal (or perpendicular).
 * Numbers between 0 and 1 indicate a similarity score.
 * Numbers between -1-0 indicate a dissimilarity score.
 
@@ -218,7 +218,7 @@ $\approx$ 0.6510956
 
 ### 1.3 Euclidean distance
 
-You will now implement a function that computes the similarity between two vectors using the Euclidean distance.
+We will now implement a function that computes the similarity between two vectors using the Euclidean distance.
 Euclidean distance is defined as:
 
 $$ \begin{aligned} d(\mathbf{A}, \mathbf{B})=d(\mathbf{B}, \mathbf{A}) &=\sqrt{\left(A_{1}-B_{1}\right)^{2}+\left(A_{2}-B_{2}\right)^{2}+\cdots+\left(A_{n}-B_{n}\right)^{2}} \\ &=\sqrt{\sum_{i=1}^{n}\left(A_{i}-B_{i}\right)^{2}} \end{aligned}$$
@@ -272,8 +272,8 @@ euclidean(king, queen)
 
 ### 1.4 Finding the country of each capital
 
-Now, you  will use the previous functions to compute similarities between vectors,
-and use these to find the capital cities of countries. You will write a function that
+Now, we  will use the previous functions to compute similarities between vectors,
+and use these to find the capital cities of countries. We will write a function that
 takes in three words, and the embeddings dictionary. Your task is to find the
 capital cities. For example, given the following words: 
 
@@ -283,11 +283,11 @@ your task is to predict the country 4: Iraq.
 
 **Instructions**: 
 
-1. To predict the capital you might want to look at the *King - Man + Woman = Queen* example above, and implement that scheme into a mathematical function, using the word embeddings and a similarity function.
+1. To predict the capital we might want to look at the *King - Man + Woman = Queen* example above, and implement that scheme into a mathematical function, using the word embeddings and a similarity function.
 
 2. Iterate over the embeddings dictionary and compute the cosine similarity score between your vector and the current word embedding.
 
-3. You should add a check to make sure that the word you return is not any of the words that you fed into your function. Return the one with the highest score.
+3. We should add a check to make sure that the word we return is not any of the words that we fed into your function. Return the one with the highest score.
 
 ```{python}
 # UNQ_C3 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)
@@ -352,7 +352,7 @@ def get_country(city1, country1, city2, embeddings):
 ```
 
 ```{python}
-# Testing your function, note to make it more robust you can return the 5 most similar words.
+# Testing your function, note to make it more robust we can return the 5 most similar words.
 get_country('Athens', 'Greece', 'Cairo', word_embeddings)
 ```
 
@@ -362,11 +362,11 @@ get_country('Athens', 'Greece', 'Cairo', word_embeddings)
 
 ### 1.5 Model Accuracy
 
-Now you will test your new function on the dataset and check the accuracy of the model:
+Now we will test your new function on the dataset and check the accuracy of the model:
 
 $$\text{Accuracy}=\frac{\text{Correct \# of predictions}}{\text{Total \# of predictions}}$$
 
-**Instructions**: Write a program that can compute the accuracy on the dataset provided for you. You have to iterate over every row to get the corresponding words and feed them into you `get_country` function above. 
+**Instructions**: Write a program that can compute the accuracy on the dataset provided for you. We have to iterate over every row to get the corresponding words and feed them into we `get_country` function above. 
 
 <details>
 <summary>
@@ -440,28 +440,28 @@ $\approx$ 0.92
 
 # 3.0 Plotting the vectors using PCA
 
-Now you will explore the distance between word vectors after reducing their dimension.
+Now we will explore the distance between word vectors after reducing their dimension.
 The technique we will employ is known as
 [*principal component analysis* (PCA)](https://en.wikipedia.org/wiki/Principal_component_analysis).
 As we saw, we are working in a 300-dimensional space in this case.
 Although from a computational perspective we were able to perform a good job,
 it is impossible to visualize results in such high dimensional spaces.
 
-You can think of PCA as a method that projects our vectors in a space of reduced
+We can think of PCA as a method that projects our vectors in a space of reduced
 dimension, while keeping the maximum information about the original vectors in
 their reduced counterparts. In this case, by *maximum infomation* we mean that the
 Euclidean distance between the original vectors and their projected siblings is
 minimal. Hence vectors that were originally close in the embeddings dictionary,
 will produce lower dimensional vectors that are still close to each other.
 
-You will see that when you map out the words, similar words will be clustered
+We will see that when we map out the words, similar words will be clustered
 next to each other. For example, the words 'sad', 'happy', 'joyful' all describe
 emotion and are supposed to be near each other when plotted.
 The words: 'oil', 'gas', and 'petroleum' all describe natural resources.
 Words like 'city', 'village', 'town' could be seen as synonyms and describe a
 similar thing.
 
-Before plotting the words, you need to first be able to reduce each word vector
+Before plotting the words, we need to first be able to reduce each word vector
 with PCA into 2 dimensions and then plot it. The steps to compute PCA are as follows:
 
 1. Mean normalize the data
@@ -473,7 +473,7 @@ with PCA into 2 dimensions and then plot it. The steps to compute PCA are as fol
 
 **Instructions**: 
 
-You will write a program that takes in a data set where each row corresponds to a word vector. 
+We will write a program that takes in a data set where each row corresponds to a word vector. 
 * The word vectors are of dimension 300. 
 * Use PCA to change the 300 dimensions to `n_components` dimensions. 
 * The new matrix should be of dimension `m, n_componentns`. 
@@ -481,7 +481,7 @@ You will write a program that takes in a data set where each row corresponds to 
 * First de-mean the data
 * Get the eigenvalues using `linalg.eigh`.  Use `eigh` rather than `eig` since R is symmetric.  The performance gain when using `eigh` instead of `eig` is substantial.
 * Sort the eigenvectors and eigenvalues by decreasing order of the eigenvalues.
-* Get a subset of the eigenvectors (choose how many principle components you want to use using `n_components`).
+* Get a subset of the eigenvectors (choose how many principle components we want to use using `n_components`).
 * Return the new transformation of the data by multiplying the eigenvectors with the original data.
 
 <details>
@@ -490,13 +490,13 @@ You will write a program that takes in a data set where each row corresponds to 
 </summary>
 <p>
 <ul>
-    <li>Use <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.mean.html" > numpy.mean(a,axis=None) </a> : If you set <code>axis = 0</code>, you take the mean for each column.  If you set <code>axis = 1</code>, you take the mean for each row.  Remember that each row is a word vector, and the number of columns are the number of dimensions in a word vector. </li>
+    <li>Use <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.mean.html" > numpy.mean(a,axis=None) </a> : If we set <code>axis = 0</code>, we take the mean for each column.  If we set <code>axis = 1</code>, we take the mean for each row.  Remember that each row is a word vector, and the number of columns are the number of dimensions in a word vector. </li>
     <li>Use <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.cov.html" > numpy.cov(m, rowvar=True) </a>. This calculates the covariance matrix.  By default <code>rowvar</code> is <code>True</code>.  From the documentation: "If rowvar is True (default), then each row represents a variable, with observations in the columns."  In our case, each row is a word vector observation, and each column is a feature (variable). </li>
     <li>Use <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.eigh.html" > numpy.linalg.eigh(a, UPLO='L') </a> </li>
     <li>Use <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.argsort.html" > numpy.argsort </a> sorts the values in an array from smallest to largest, then returns the indices from this sort. </li>
-    <li>In order to reverse the order of a list, you can use: <code>x[::-1]</code>.</li>
-    <li>To apply the sorted indices to eigenvalues, you can use this format <code>x[indices_sorted]</code>.</li>
-    <li>When applying the sorted indices to eigen vectors, note that each column represents an eigenvector.  In order to preserve the rows but sort on the columns, you can use this format <code>x[:,indices_sorted]</code></li>
+    <li>In order to reverse the order of a list, we can use: <code>x[::-1]</code>.</li>
+    <li>To apply the sorted indices to eigenvalues, we can use this format <code>x[indices_sorted]</code>.</li>
+    <li>When applying the sorted indices to eigen vectors, note that each column represents an eigenvector.  In order to preserve the rows but sort on the columns, we can use this format <code>x[:,indices_sorted]</code></li>
     <li>To transform the data using a subset of the most relevant principle components, take the matrix multiplication of the eigenvectors with the original data.  </li>
     <li>The data is of shape <code>(n_observations, n_features)</code>.  </li>
     <li>The subset of eigenvectors are in a matrix of shape <code>(n_features, n_components)</code>.</li>
@@ -511,7 +511,7 @@ def compute_pca(X, n_components=2):
     """
     Input:
         X: of dimension (m,n) where each row corresponds to a word vector
-        n_components: Number of components you want to keep.
+        n_components: Number of components we want to keep.
     Output:
         X_reduced: data transformed in 2 dims/columns + regenerated original data
     """
@@ -592,14 +592,14 @@ Your original matrix was: (3,10) and it became:
     </tr>
 </table>
 
-Now you will use your pca function to plot a few words we have chosen for you.
-You will see that similar words tend to be clustered near each other.
+Now we will use your pca function to plot a few words we have chosen for you.
+We will see that similar words tend to be clustered near each other.
 Sometimes, even antonyms tend to be clustered near each other. Antonyms
 describe the same thing but just tend to be on the other end of the scale
 They are usually found in the same location of a sentence,
 have the same parts of speech, and thus when
-learning the word vectors, you end up getting similar weights. In the next week
-we will go over how you learn them, but for now let's just enjoy using them.
+learning the word vectors, we end up getting similar weights. In the next week
+we will go over how we learn them, but for now let's just enjoy using them.
 
 **Instructions:** Run the cell below.
 
@@ -610,7 +610,7 @@ words = ['oil', 'gas', 'happy', 'sad', 'city', 'town',
 # given a list of words and the embeddings, it returns a matrix with all the embeddings
 X = get_vectors(word_embeddings, words)
 
-print('You have 11 words each of 300 dimensions thus X.shape is:', X.shape)
+print('We have 11 words each of 300 dimensions thus X.shape is:', X.shape)
 ```
 
 ```{python}
@@ -623,7 +623,7 @@ for i, word in enumerate(words):
 plt.show()
 ```
 
-**What do you notice?**
+**What do we notice?**
 
 The word vectors for 'gas', 'oil' and 'petroleum' appear related to each other,
 because their vectors are close to each other.  Similarly, 'sad', 'joyful'

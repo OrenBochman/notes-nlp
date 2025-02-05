@@ -26,11 +26,11 @@ Due to the Coursera Honor Code, I cannot provide the solutions to the assignment
 :::
 
 
-You will now implement your first machine translation system and then you
+We will now implement your first machine translation system and then you
 will see how locality sensitive hashing works. Let's get started by importing
 the required functions!
 
-If you are running this notebook in your local computer, don't forget to
+If we are running this notebook in your local computer, don't forget to
 download the twitter samples and stopwords from nltk.
 
 ```
@@ -108,8 +108,8 @@ embeddings are about 629 megabytes. To prevent the Coursera workspace from
 crashing, we've extracted a subset of the embeddings for the words that you'll
 use in this assignment.
 
-If you want to run this on your local computer and use the full dataset,
-you can download the
+If we want to run this on your local computer and use the full dataset,
+we can download the
 * English embeddings from Google code archive word2vec
 [look for GoogleNews-vectors-negative300.bin.gz](https://code.google.com/archive/p/word2vec/)
     * You'll need to unzip the file first.
@@ -215,7 +215,7 @@ until we get to testing.
 <a name="ex-01"></a>
 #### Exercise 01: Translating English dictionary to French by using embeddings
 
-You will now implement a function `get_matrices`, which takes the loaded data
+We will now implement a function `get_matrices`, which takes the loaded data
 and returns matrices `X` and `Y`.
 
 Inputs:
@@ -245,8 +245,8 @@ corresponds to the ith row in the `Y` matrix.
     <p>
         <ul>
             <li><a href="https://realpython.com/python-sets/#set-size-and-membership" >Sets</a> are useful data structures that can be used to check if an item is a member of a group.</li>
-            <li>You can get words which are embedded into the language by using <a href="https://www.w3schools.com/python/ref_dictionary_keys.asp"> keys</a> method.</li>
-            <li>Keep vectors in `X` and `Y` sorted in list. You can use <a href="https://docs.scipy.org/doc/numpy-1.13.0/reference/generated/numpy.ma.vstack.html"> np.vstack()</a> to merge them into the numpy matrix. </li>
+            <li>We can get words which are embedded into the language by using <a href="https://www.w3schools.com/python/ref_dictionary_keys.asp"> keys</a> method.</li>
+            <li>Keep vectors in `X` and `Y` sorted in list. We can use <a href="https://docs.scipy.org/doc/numpy-1.13.0/reference/generated/numpy.ma.vstack.html"> np.vstack()</a> to merge them into the numpy matrix. </li>
             <li><a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.vstack.html">numpy.vstack</a> stacks the items in a list as rows in a matrix.</li>
         </ul>
     </p>
@@ -313,7 +313,7 @@ of English and French word embeddings into the corresponding vector space models
 
 ```{python}
 # UNQ_C2 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)
-# You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
+# We do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
 
 # getting the training set:
 X_train, Y_train = get_matrices(
@@ -331,10 +331,10 @@ Write a program that translates English words to French words using word embeddi
 <a name="2-1"></a>
 ## 2.1 Translation as linear transformation of embeddings
 
-Given dictionaries of English and French word embeddings you will create a transformation matrix `R`
-* Given an English word embedding, $\mathbf{e}$, you can multiply $\mathbf{eR}$ to get a new word embedding $\mathbf{f}$.
+Given dictionaries of English and French word embeddings we will create a transformation matrix `R`
+* Given an English word embedding, $\mathbf{e}$, we can multiply $\mathbf{eR}$ to get a new word embedding $\mathbf{f}$.
     * Both $\mathbf{e}$ and $\mathbf{f}$ are [row vectors](https://en.wikipedia.org/wiki/Row_and_column_vectors).
-* You can then compute the nearest neighbors to `f` in the french embeddings and recommend the word that is most similar to the transformed word embedding.
+* We can then compute the nearest neighbors to `f` in the french embeddings and recommend the word that is most similar to the transformed word embedding.
 
 ### Describing translation as the minimization problem
 
@@ -414,7 +414,7 @@ where $a_{i j}$ is value in $i$th row and $j$th column of the matrix $\mathbf{XR
        <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.norm.html">Numpy norm</a>
     </li>
    <li> Be careful about which operation is elementwise and which operation is a matrix multiplication.</li>
-   <li> Try to use matrix operations instead of the numpy norm function.  If you choose to use norm function, take care of extra arguments and that it's returning loss squared, and not the loss itself.</li>
+   <li> Try to use matrix operations instead of the numpy norm function.  If we choose to use norm function, take care of extra arguments and that it's returning loss squared, and not the loss itself.</li>
 
 </ul>
 </p>
@@ -520,12 +520,12 @@ Most of the time we iterate for a fixed number of training steps rather than ite
 </summary>
 <p>
 <ul>
-    <li> You cannot rely on training loss getting low -- what you really want is the validation loss to go down, or validation accuracy to go up. And indeed - in some cases people train until validation accuracy reaches a threshold, or -- commonly known as "early stopping" -- until the validation accuracy starts to go down, which is a sign of over-fitting.
+    <li> We cannot rely on training loss getting low -- what we really want is the validation loss to go down, or validation accuracy to go up. And indeed - in some cases people train until validation accuracy reaches a threshold, or -- commonly known as "early stopping" -- until the validation accuracy starts to go down, which is a sign of over-fitting.
     </li>
     <li>
-    Why not always do "early stopping"? Well, mostly because well-regularized models on larger data-sets never stop improving. Especially in NLP, you can often continue training for months and the model will continue getting slightly and slightly better. This is also the reason why it's hard to just stop at a threshold -- unless there's an external customer setting the threshold, why stop, where do you put the threshold?
+    Why not always do "early stopping"? Well, mostly because well-regularized models on larger data-sets never stop improving. Especially in NLP, we can often continue training for months and the model will continue getting slightly and slightly better. This is also the reason why it's hard to just stop at a threshold -- unless there's an external customer setting the threshold, why stop, where do we put the threshold?
     </li>
-    <li>Stopping after a certain number of steps has the advantage that you know how long your training will take - so you can keep some sanity and not train for months. You can then try to get the best performance within this time budget. Another advantage is that you can fix your learning rate schedule -- e.g., lower the learning rate at 10% before finish, and then again more at 1% before finishing. Such learning rate schedules help a lot, but are harder to do if you don't know how long you're training.
+    <li>Stopping after a certain number of steps has the advantage that we know how long your training will take - so we can keep some sanity and not train for months. We can then try to get the best performance within this time budget. Another advantage is that we can fix your learning rate schedule -- e.g., lower the learning rate at 10% before finish, and then again more at 1% before finishing. Such learning rate schedules help a lot, but are harder to do if we don't know how long you're training.
     </li>
 </ul>
 </p>
@@ -584,7 +584,7 @@ def align_embeddings(X, Y, train_steps=100, learning_rate=0.0003):
         if i % 25 == 0:
             print(f"loss at iteration {i} is: {compute_loss(X, Y, R):.4f}")
         ### START CODE HERE (REPLACE INSTANCES OF 'None' with your code) ###
-        # use the function that you defined to compute the gradient
+        # use the function that we defined to compute the gradient
         gradient = None
 
         # update R by subtracting the learning rate times gradient
@@ -595,7 +595,7 @@ def align_embeddings(X, Y, train_steps=100, learning_rate=0.0003):
 
 ```{python}
 # UNQ_C6 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)
-# You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
+# We do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
 
 # Testing your implementation.
 np.random.seed(129)
@@ -622,7 +622,7 @@ Using those the training set, find the transformation matrix $\mathbf{R}$ by cal
 
 ```{python}
 # UNQ_C7 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)
-# You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
+# We do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
 R_train = align_embeddings(X_train, Y_train, train_steps=400, learning_rate=0.8)
 ```
 
@@ -688,7 +688,7 @@ Inputs:
 * The distance metric should be based on cosine similarity.
 * `cosine_similarity` function is already implemented and imported for you. It's arguments are two vectors and it returns the cosine of the angle between them.
 * Iterate over rows in `candidates`, and save the result of similarities between current row and vector `v` in a python list. Take care that similarities are in the same order as row vectors of `candidates`.
-* Now you can use [numpy argsort]( https://docs.scipy.org/doc/numpy/reference/generated/numpy.argsort.html#numpy.argsort) to sort the indices for the rows of `candidates`.
+* Now we can use [numpy argsort]( https://docs.scipy.org/doc/numpy/reference/generated/numpy.argsort.html#numpy.argsort) to sort the indices for the rows of `candidates`.
 
 <details>
 <summary>
@@ -707,7 +707,7 @@ Inputs:
 def nearest_neighbor(v, candidates, k=1):
     """
     Input:
-      - v, the vector you are going find the nearest neighbor for
+      - v, the vector we are going find the nearest neighbor for
       - candidates: a set of vectors where we will find the neighbors
       - k: top k nearest neighbors to find
     Output:
@@ -735,7 +735,7 @@ def nearest_neighbor(v, candidates, k=1):
 
 ```{python}
 # UNQ_C9 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)
-# You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
+# We do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
 
 # Test your implementation:
 v = np.array([1, 0, 1])
@@ -762,8 +762,8 @@ closest French word vector belongs to French word that is the actual
 translation.
 * Obtain an index of the closest French embedding by using
 `nearest_neighbor` (with argument `k=1`), and compare it to the index
-of the English embedding you have just transformed.
-* Keep track of the number of times you get the correct translation.
+of the English embedding we have just transformed.
+* Keep track of the number of times we get the correct translation.
 * Calculate accuracy as $$\text{accuracy}=\frac{\#(\text{correct predictions})}{\#(\text{total predictions})}$$
 
 ```{python}
@@ -812,7 +812,7 @@ X_val, Y_val = get_matrices(en_fr_test, fr_embeddings_subset, en_embeddings_subs
 
 ```{python}
 # UNQ_C11 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)
-# You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
+# We do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
 
 acc = test_vocabulary(X_val, Y_val, R_train)  # this might take a minute or two
 print(f"accuracy on test set is {acc:.3f}")
@@ -824,7 +824,7 @@ print(f"accuracy on test set is {acc:.3f}")
 0.557
 ```
 
-You managed to translate words from one language to another language
+We managed to translate words from one language to another language
 without ever seing them with almost 56% accuracy by using some basic
 linear algebra and learning a mapping of words from one language to another!
 
@@ -832,9 +832,9 @@ linear algebra and learning a mapping of words from one language to another!
 
 # 3. LSH and document search
 
-In this part of the assignment, you will implement a more efficient version
+In this part of the assignment, we will implement a more efficient version
 of k-nearest neighbors using locality sensitive hashing.
-You will then apply this to document search.
+We will then apply this to document search.
 
 * Process the tweets and represent each tweet as a vector (represent a
 document with a vector embedding).
@@ -881,10 +881,10 @@ Complete the `get_document_embedding()` function.
 </summary>
 <p>
 <ul>
-    <li> You can handle missing words easier by using the `get()` method of the python dictionary instead of the bracket notation (i.e. "[ ]"). See more about it <a href="https://stackoverflow.com/a/11041421/12816433" >here</a> </li>
+    <li> We can handle missing words easier by using the `get()` method of the python dictionary instead of the bracket notation (i.e. "[ ]"). See more about it <a href="https://stackoverflow.com/a/11041421/12816433" >here</a> </li>
     <li> The default value for missing word should be the zero vector. Numpy will <a href="https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html" > broadcast </a> simple 0 scalar into a vector of zeros during the summation.</li>
     <li>Alternatively, skip the addition if a word is not in the dictonary. </li>
-    <li>  You can use your `process_tweet()` function which allows you to process the tweet. The function just takes in a tweet and returns a list of words.</li>
+    <li>  We can use your `process_tweet()` function which allows we to process the tweet. The function just takes in a tweet and returns a list of words.</li>
 </ul>
 </p>
 
@@ -912,7 +912,7 @@ def get_document_embedding(tweet, en_embeddings):
 
 ```{python}
 # UNQ_C13 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)
-# You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
+# We do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
 
 # testing your function
 custom_tweet = "RT @Twitter @chapagain Hello There! Have a great day. :) #good #morning http://chapagain.com.np"
@@ -979,7 +979,7 @@ document_vecs, ind2Tweet = get_document_vecs(all_tweets, en_embeddings_subset)
 
 ```{python}
 # UNQ_C15 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)
-# You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
+# We do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
 
 print(f"length of dictionary {len(ind2Tweet)}")
 print(f"shape of document_vecs {document_vecs.shape}")
@@ -995,7 +995,7 @@ shape of document_vecs (10000, 300)
 
 ## 3.2 Looking up the tweets
 
-Now you have a vector of dimension (m,d) where `m` is the number of tweets
+Now we have a vector of dimension (m,d) where `m` is the number of tweets
 (10,000) and `d` is the dimension of the embeddings (300).  Now you
 will input a tweet, and use cosine similarity to see which tweet in our
 corpus is similar to your tweet.
@@ -1008,9 +1008,9 @@ tweet_embedding = get_document_embedding(my_tweet, en_embeddings_subset)
 
 ```{python}
 # UNQ_C16 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)
-# You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
+# We do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
 
-# this gives you a similar tweet as your input.
+# this gives we a similar tweet as your input.
 # this implementation is vectorized...
 idx = np.argmax(cosine_similarity(document_vecs, tweet_embedding))
 print(all_tweets[idx])
@@ -1019,15 +1019,15 @@ print(all_tweets[idx])
 ##### Expected Output
 
 ```
-@zoeeylim sad sad sad kid :( it's ok I help you watch the match HAHAHAHAHA
+@zoeeylim sad sad sad kid :( it's ok I help we watch the match HAHAHAHAHA
 ```
 
 <a name="3-3"></a>
 
 ## 3.3 Finding the most similar tweets with LSH
 
-You will now implement locality sensitive hashing (LSH) to identify the most similar tweet.
-* Instead of looking at all 10,000 vectors, you can just search a subset to find
+We will now implement locality sensitive hashing (LSH) to identify the most similar tweet.
+* Instead of looking at all 10,000 vectors, we can just search a subset to find
 its nearest neighbors.
 
 Let's say your data points are plotted like this:
@@ -1035,7 +1035,7 @@ Let's say your data points are plotted like this:
 
 <div style="width:image width px; font-size:100%; text-align:center;"><img src='one.png' alt="alternate text" width="width" height="height" style="width:400px;height:200px;" /> Figure 3 </div>
 
-You can divide the vector space into regions and search within one region for nearest neighbors of a given vector.
+We can divide the vector space into regions and search within one region for nearest neighbors of a given vector.
 
 <div style="width:image width px; font-size:100%; text-align:center;"><img src='four.png' alt="alternate text" width="width" height="height" style="width:400px;height:200px;" /> Figure 4 </div>
 
@@ -1081,7 +1081,7 @@ We can use a hyperplane to split the vector space into $2$ parts.
 * For a vector, we can take its dot product with all the planes, then encode this information to assign the vector to a single hash bucket.
 * When the vector is pointing to the opposite side of the hyperplane than normal, encode it by 0.
 * Otherwise, if the vector is on the same side as the normal vector, encode it by 1.
-* If you calculate the dot product with each plane in the same order for every vector, you've encoded each vector's unique hash ID as a binary number, like [0, 1, 1, ... 0].
+* If we calculate the dot product with each plane in the same order for every vector, you've encoded each vector's unique hash ID as a binary number, like [0, 1, 1, ... 0].
 
 <a name="ex-09"></a>
 
@@ -1091,12 +1091,12 @@ We've initialized hash table `hashes` for you. It is list of `N_UNIVERSES` matri
 
 *Exercise*: Your task is to complete the function `hash_value_of_vector` which places vector `v` in the correct hash bucket.
 
-* First multiply your vector `v`, with a corresponding plane. This will give you a vector of dimension $(1,\text{N_planes})$.
-* You will then convert every element in that vector to 0 or 1.
-* You create a hash vector by doing the following: if the element is negative, it becomes a 0, otherwise you change it to a 1.
-* You then compute the unique number for the vector by iterating over `N_PLANES`
-* Then you multiply $2^i$ times the corresponding bit (0 or 1).
-* You will then store that sum in the variable `hash_value`.
+* First multiply your vector `v`, with a corresponding plane. This will give we a vector of dimension $(1,\text{N_planes})$.
+* We will then convert every element in that vector to 0 or 1.
+* We create a hash vector by doing the following: if the element is negative, it becomes a 0, otherwise we change it to a 1.
+* We then compute the unique number for the vector by iterating over `N_PLANES`
+* Then we multiply $2^i$ times the corresponding bit (0 or 1).
+* We will then store that sum in the variable `hash_value`.
 
 **Intructions:** Create a hash for the vector in the function below.
 Use this formula:
@@ -1105,7 +1105,7 @@ $$ hash = \sum_{i=0}^{N-1} \left( 2^{i} \times h_{i} \right) $$
 
 #### Create the sets of planes
 * Create multiple (25) sets of planes (the planes that divide up the region).
-* You can think of these as 25 separate ways of dividing up the vector space with a different set of planes.
+* We can think of these as 25 separate ways of dividing up the vector space with a different set of planes.
 * Each element of this list contains a matrix with 300 rows (the word vector have 300 dimensions), and 10 columns (there are 10 planes in each "universe").
 
 ```{python}
@@ -1169,7 +1169,7 @@ def hash_value_of_vector(v, planes):
 
 ```{python}
 # UNQ_C18 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)
-# You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
+# We do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
 
 np.random.seed(0)
 idx = 0
@@ -1194,11 +1194,11 @@ The hash value for this vector, and the set of planes at index 0, is 768
 
 ### Exercise 10
 
-Given that you have a unique number for each vector (or tweet), You now want to create a hash table. You need a hash table, so that given a hash_id, you can quickly look up the corresponding vectors. This allows you to reduce your search by a significant amount of time.
+Given that we have a unique number for each vector (or tweet), We now want to create a hash table. We need a hash table, so that given a hash_id, we can quickly look up the corresponding vectors. This allows we to reduce your search by a significant amount of time.
 
 <div style="width:image width px; font-size:100%; text-align:center;"><img src='table.png' alt="alternate text" width="width" height="height" style="width:500px;height:200px;" />  </div>
 
-We have given you the `make_hash_table` function, which maps the tweet vectors to a bucket and stores the vector there. It returns the `hash_table` and the `id_table`. The `id_table` allows you know which vector in a certain bucket corresponds to what tweet.
+We have given we the `make_hash_table` function, which maps the tweet vectors to a bucket and stores the vector there. It returns the `hash_table` and the `id_table`. The `id_table` allows we know which vector in a certain bucket corresponds to what tweet.
 
 <details>    
 <summary>
@@ -1261,7 +1261,7 @@ def make_hash_table(vecs, planes):
 
 ```{python}
 # UNQ_C20 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)
-# You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
+# We do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
 
 np.random.seed(0)
 planes = planes_l[0]  # get one 'universe' of planes to test the function
@@ -1284,12 +1284,12 @@ The first 5 document indices stored at key 0 of are [3276, 3281, 3282]
 
 ### 3.6 Creating all hash tables
 
-You can now hash your vectors and store them in a hash table that
-would allow you to quickly look up and search for similar vectors.
-Run the cell below to create the hashes. By doing so, you end up having
-several tables which have all the vectors. Given a vector, you then
-identify the buckets in all the tables.  You can then iterate over the
-buckets and consider much fewer vectors. The more buckets you use, the
+We can now hash your vectors and store them in a hash table that
+would allow we to quickly look up and search for similar vectors.
+Run the cell below to create the hashes. By doing so, we end up having
+several tables which have all the vectors. Given a vector, we then
+identify the buckets in all the tables.  We can then iterate over the
+buckets and consider much fewer vectors. The more buckets we use, the
 more accurate your lookup will be, but also the longer it will take.
 
 ```{python}
@@ -1430,7 +1430,7 @@ vec_to_search = document_vecs[doc_id]
 
 ```{python}
 # UNQ_C22 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)
-# You do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
+# We do not have to input any code in this cell, but it is relevant to grading, so please do not change anything
 
 # Sample
 nearest_neighbor_ids = approximate_knn(
@@ -1448,6 +1448,6 @@ for neighbor_id in nearest_neighbor_ids:
 ```
 
 # 4 Conclusion
-Congratulations - Now you can look up vectors that are similar to the
+Congratulations - Now we can look up vectors that are similar to the
 encoding of your tweet using LSH!
 

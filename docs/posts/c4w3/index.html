@@ -6,9 +6,11 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="This week of the NLP Specialization, we will uncover the field of Neural Question Answering. We will build advanced models like T5 and BERT to accurately answer questions based on given contexts. We will fine-tune these models to optimize their performance. We will gain practical experience in building question-answering systems. By the end of this week, we will have the skills to develop state-of-the-art NLP models to provide accurate answers to a wide range of questions.">
+<meta name="author" content="Oren Bochman">
+<meta name="keywords" content="BERT, Causal attention, Dot product attention, Multi-head attention, Self attention, Transformer decoder, T5">
+<meta name="description" content="This week we will dive into Neural Question Answering. We will build advanced models like T5 and BERT to accurately answer questions based on given contexts. We will fine-tune these models to optimize their performance. We will gain practical experience in building question-answering systems.">
 
-<title>Week 3 Question Answering – NLP Specialization</title>
+<title>Week 3 - Question Answering – NLP Specialization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -55,7 +57,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -223,31 +245,24 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/c4w1/index.html">NLP with Attention Models</a></li><li class="breadcrumb-item"><a href="../../posts/c4w3/index.html">Question Answering</a></li></ol></nav>
-      <h1 class="title">Week 3 Question Answering</h1>
+      <h1 class="title">Week 3 - Question Answering</h1>
             <p class="subtitle lead">NLP with Attention Models</p>
                   <div>
         <div class="description">
-          This week of the NLP Specialization, we will uncover the field of Neural Question Answering. We will build advanced models like T5 and BERT to accurately answer questions based on given contexts. We will fine-tune these models to optimize their performance. We will gain practical experience in building question-answering systems. By the end of this week, we will have the skills to develop state-of-the-art NLP models to provide accurate answers to a wide range of questions.
+          This week we will dive into Neural Question Answering. We will build advanced models like T5 and BERT to accurately answer questions based on given contexts. We will fine-tune these models to optimize their performance. We will gain practical experience in building question-answering systems.
         </div>
       </div>
                           <div class="quarto-categories">
+                <div class="quarto-category">Attention</div>
+                <div class="quarto-category">Coursera</div>
+                <div class="quarto-category">Deep Learning Algorithms</div>
+                <div class="quarto-category">NLP</div>
+                <div class="quarto-category">Notes</div>
                 <div class="quarto-category">NLP with Attention Models</div>
                 <div class="quarto-category">Neural Machine Translation</div>
-                <div class="quarto-category">Coursera</div>
-                <div class="quarto-category">Notes</div>
-                <div class="quarto-category">NLP</div>
-                <div class="quarto-category">Deep Learning Algorithms</div>
-                <div class="quarto-category">transformer</div>
-                <div class="quarto-category">teacher forcing</div>
-                <div class="quarto-category">positional encoding</div>
-                <div class="quarto-category">BERT</div>
-                <div class="quarto-category">T5</div>
-                <div class="quarto-category">Transformer decoder</div>
-                <div class="quarto-category">Attention</div>
-                <div class="quarto-category">Dot product attention</div>
-                <div class="quarto-category">Self attention</div>
-                <div class="quarto-category">Causal attention</div>
-                <div class="quarto-category">Multi-head attention</div>
+                <div class="quarto-category">Transformer</div>
+                <div class="quarto-category">Teacher forcing</div>
+                <div class="quarto-category">Positional encoding</div>
                 <div class="quarto-category">Question answering task</div>
               </div>
                   </div>
@@ -256,6 +271,12 @@ window.Quarto = {
   
   <div class="quarto-title-meta column-body">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Oren Bochman </p>
+            </div>
+    </div>
       
       <div>
       <div class="quarto-title-meta-heading">Published</div>
@@ -267,6 +288,13 @@ window.Quarto = {
       
     </div>
     
+
+  <div>
+    <div class="keywords">
+      <div class="block-title">Keywords</div>
+      <p>BERT, Causal attention, Dot product attention, Multi-head attention, Self attention, Transformer decoder, T5</p>
+    </div>
+  </div>
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
@@ -496,7 +524,7 @@ window.Quarto = {
    
   <ul>
   <li><a href="#sec-question-answering" id="toc-sec-question-answering" class="nav-link active" data-scroll-target="#sec-question-answering">Question Answering</a></li>
-  <li><a href="#sec-video1-week3-overview" id="toc-sec-video1-week3-overview" class="nav-link" data-scroll-target="#sec-video1-week3-overview">Video 1 : Week 3 Overview</a></li>
+  <li><a href="#sec-overview" id="toc-sec-overview" class="nav-link" data-scroll-target="#sec-overview">Overview</a></li>
   <li><a href="#sec-video2-transfer-learning-nlp" id="toc-sec-video2-transfer-learning-nlp" class="nav-link" data-scroll-target="#sec-video2-transfer-learning-nlp">Video 2 : Transfer Learning in NLP</a></li>
   <li><a href="#sec-video3-elmo-gpt-bert-t5" id="toc-sec-video3-elmo-gpt-bert-t5" class="nav-link" data-scroll-target="#sec-video3-elmo-gpt-bert-t5">Video 3 : ELMo, GPT, BERT, T5</a></li>
   <li><a href="#cbow" id="toc-cbow" class="nav-link" data-scroll-target="#cbow">CBOW</a></li>
@@ -546,12 +574,26 @@ window.Quarto = {
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="../../images/Course-Logo-4-1.webp" class="nolightbox img-fluid figure-img"></p>
-<figcaption>deeplearning.ai</figcaption>
+<figcaption>course banner</figcaption>
 </figure>
-</div></div><section id="sec-question-answering" class="level2">
+</div></div><section id="sec-question-answering" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="sec-question-answering">Question Answering</h2>
-<p>Notes for: NLP with Attention Models Week 3</p>
-<p>Natural Language Processing with Attention Models - Question Answering</p>
+
+<div class="no-row-height column-margin column-container"><div id="sup-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides" style="@page {size: 16in 9in;  margin: 0;}">
+<figure class="quarto-float quarto-float-sup figure">
+<div aria-describedby="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="slides.pdf" class="lightbox" data-gallery="slides" title="This week’s slides"><embed src="slides.pdf" style="@page {size: 16in 9in;  margin: 0;}" width="420" height="340"></a></p>
+<figcaption>This week’s slides</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-sup quarto-uncaptioned" id="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Supplementary Figure&nbsp;1
+</figcaption>
+</figure>
+</div></div><p>My notes for Week 3 of the <a href="https://www.coursera.org/learn/attention-models-in-nlp/home/info">Natural Language Processing with Attention Labels</a> Course in the Natural Language Processing Specialization Offered by <a href="DeepLearning.AI">DeepLearning.AI</a> on <a href="https://www.coursera.org/">Coursera</a></p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -563,20 +605,19 @@ Learning Objectives:
 </div>
 <div class="callout-body-container callout-body">
 <ul class="task-list">
-<li><label><input type="checkbox">Gain intuition for how transfer learning works in the context of NLP</label></li>
-<li><label><input type="checkbox">Identify two approaches to transfer learning</label></li>
-<li><label><input type="checkbox">Discuss the evolution of language models from CBOW to T5 and Bert</label></li>
-<li><label><input type="checkbox">Fine-tune BERT on a dataset</label></li>
-<li><label><input type="checkbox">Implement context-based question answering with T5</label></li>
-<li><label><input type="checkbox">Interpret the GLUE benchmark</label></li>
+<li><label><input type="checkbox" checked=""><span id="sec-video2-transfer-learning-nlp">Gain intuition for how transfer learning works in the context of NLP</span></label></li>
+<li><label><input type="checkbox" checked=""><span id="sec-video2-transfer-learning-nlp">Identify two approaches to transfer learning</span></label></li>
+<li><label><input type="checkbox" checked=""><span id="sec-video3-elmo-gpt-bert-t5">Discuss the evolution of language models from CBOW to T5 and Bert</span></label></li>
+<li><label><input type="checkbox" checked=""><span id="sec-video4-bert">Fine-tune BERT on a dataset</span></label></li>
+<li><label><input type="checkbox" checked=""><span id="sec-video7-transformer-t5">Implement context-based question answering with T5</span></label></li>
+<li><label><input type="checkbox" checked=""><span id="sec-video9-glue-benchmark">Interpret the GLUE benchmark</span></label></li>
 </ul>
 </div>
 </div>
-<!-- ## TLDR: Neural Network engineering -->
 </section>
-<section id="sec-video1-week3-overview" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="sec-video1-week3-overview">Video 1 : Week 3 Overview</h2>
-<div class="page-columns page-full"><p> In this week you are going to learn about <strong>transfer learning</strong>. More specifically you will understand how <strong>T5</strong> and <strong>BERT</strong> actually work.</p><div class="no-row-height column-margin column-container"><img src="img/V1-001-week-3.png" class="img-fluid" data-group="slides" alt="week-3"></div></div>
+<section id="sec-overview" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-overview">Overview</h2>
+<div class="page-columns page-full"><p> In this week we are going to learn about <strong>transfer learning</strong>. More specifically we will understand how <strong>T5</strong> and <strong>BERT</strong> actually work.</p><div class="no-row-height column-margin column-container"><img src="img/V1-001-week-3.png" class="img-fluid" data-group="slides" alt="week-3"></div></div>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -595,7 +636,7 @@ Definitions:
 <div class="callout-body-container callout-body">
 <p>Q&amp;A comes in two forms:</p>
 <p>context based : given a document and a question the model extracts an answer or generates an answer</p>
-<p>closed book : the model picks an answer from servral options (classifier)</p>
+<p>closed book : the model picks an answer from several options (classifier)</p>
 </div>
 </div>
 
@@ -616,7 +657,7 @@ Definitions:
 </figure>
 </div></div>
 
-<div class="page-columns page-full"><p> You can see how a model initially trained on some type of sentiment classification, could now be used for question answering. One other model that has state of the art makes use of multi tasking. For example, the same model could be used for sentiment analysis, question answering, and many other things.</p><div class="no-row-height column-margin column-container"><img src="img/V1-006-transfer-learning-tasks.png" class="img-fluid" data-group="slides" alt="transfer-learning-tasks"></div></div>
+<div class="page-columns page-full"><p> We can see how a model initially trained on some type of sentiment classification, could now be used for question answering. One other model that has state of the art makes use of multi tasking. For example, the same model could be used for sentiment analysis, question answering, and many other things.</p><div class="no-row-height column-margin column-container"><img src="img/V1-006-transfer-learning-tasks.png" class="img-fluid" data-group="slides" alt="transfer-learning-tasks"></div></div>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -625,7 +666,7 @@ Definitions:
 </figure>
 </div></div><p>These new types of models make use of a lot of data. For example the C4 (colossal cleaned crawled corpus) is about 800 GB when all of the english wikipedia is just 13 GB!</p>
 <blockquote class="blockquote">
-<p>C4 is a colossal, cleaned version of Common Crawl’s web crawl corpus. It was based on Common Crawl dataset: https://commoncrawl.org. It was used to train the T5 text-to-text Transformer models. Introduced by Raffel et al.&nbsp;in Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer The dataset can be downloaded in a pre-processed form from <a href="https://github.com/allenai/allennlp/discussions/5056">allennlp</a>. <a href="https://paperswithcode.com/dataset/c4">C4 $ papers with code</a></p>
+<p>C4 is a colossal, cleaned version of Common Crawl’s web crawl corpus. It was based on <a href="https://commoncrawl.org">Common Crawl dataset</a>. It was used to train the T5 text-to-text Transformer models. Introduced by <span class="citation" data-cites="raffel2023exploringlimitstransferlearning">Raffel et al. (<a href="#ref-raffel2023exploringlimitstransferlearning" role="doc-biblioref">2023</a>)</span> in a paper titled “Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer” The dataset can be downloaded in a pre-processed form from <a href="https://github.com/allenai/allennlp/discussions/5056">allennlp</a>. <a href="https://paperswithcode.com/dataset/c4">C4 at papers with code</a></p>
 </blockquote>
 </section>
 <section id="sec-video2-transfer-learning-nlp" class="level2 page-columns page-full">
@@ -700,14 +741,14 @@ Definitions:
 <ul>
 <li>Reduce training time</li>
 <li>Improve predictions</li>
-<li>Allows you to use smaller datasets</li>
+<li>Allows we to use smaller datasets</li>
 </ul>
-<p>Two methods that you can use for transfer learning are the following:</p>
+<p>Two methods that we can use for transfer learning are the following:</p>
 <ul>
 <li>pre-training</li>
 <li>fine tuning</li>
 </ul>
-<p>In <strong>feature based</strong>, you can train word embeddings by running a different model and then using those features (i.e.&nbsp;word vectors) on a different task. When <strong>fine tuning</strong>, you can use the exact same model and just run it on a different task. Sometimes when fine tuning, you can keep the model weights fixed and just add a new layer that you will train. Other times you can slowly unfreeze the layers one at a time. You can also use unlabelled data when pre-training, by masking words and trying to predict which word was masked.</p>
+<p>In <strong>feature based</strong>, we can train word embeddings by running a different model and then using those features (i.e.&nbsp;word vectors) on a different task. When <strong>fine tuning</strong>, we can use the exact same model and just run it on a different task. Sometimes when fine tuning, we can keep the model weights fixed and just add a new layer that we will train. Other times we can slowly unfreeze the layers one at a time. We can also use unlabelled data when pre-training, by masking words and trying to predict which word was masked.</p>
 <p>For example, in the drawing above we try to predict the word “friend”. This allows your model to get a grasp of the overall structure of the data and to help the model learn some relationships within the words of a sentence</p>
 </section>
 <section id="sec-video3-elmo-gpt-bert-t5" class="level2 page-columns page-full">
@@ -794,7 +835,7 @@ Definitions:
 
 
 
-<p>In CBOW, you want to encode a word as a vector. To do this we used the context before the word and the context after the word and we use that model to learn and creates features for the word. CBOW however uses a fixed window C (for the context).</p>
+<p>In CBOW, we want to encode a word as a vector. To do this we used the context before the word and the context after the word and we use that model to learn and creates features for the word. CBOW however uses a fixed window C (for the context).</p>
 <p>the main isused with CBOW are:</p>
 <ul>
 <li>it has a fixed window size</li>
@@ -852,7 +893,7 @@ Definitions:
 </div></div>
 
 <p>lets dive deeper into BERT</p>
-<p>There are two steps in the BERT framework: pre-training and fine-tuning. During pre-training, the model is trained on unlabeled data over different pre-training tasks. For fine tuning, the BERT model is first initialized with the pre-trained parameters, and all of the parameters are fine-tuned using labeled data from the downstream tasks. For example, in the figure above, you get the corresponding embeddings for the input words, you run it through a few transformer blocks, and then you make the prediction at each time point <span class="math inline">T_i</span>.</p>
+<p>There are two steps in the BERT framework: pre-training and fine-tuning. During pre-training, the model is trained on unlabeled data over different pre-training tasks. For fine tuning, the BERT model is first initialized with the pre-trained parameters, and all of the parameters are fine-tuned using labeled data from the downstream tasks. For example, in the figure above, we get the corresponding embeddings for the input words, we run it through a few transformer blocks, and then we make the prediction at each time point <span class="math inline">T_i</span>.</p>
 <p>Training procedures:</p>
 <ul>
 <li>Choose 15% of the tokens at random:
@@ -899,14 +940,14 @@ Definitions:
 <p><a href="img/V5-061-BERT-the-input.png" class="lightbox" data-gallery="slides" title="BERT-the-input"><img src="img/V5-061-BERT-the-input.png" class="img-fluid figure-img" alt="BERT-the-input"></a></p>
 <figcaption>BERT-the-input</figcaption>
 </figure>
-</div></div><p>The input embeddings are the sum of the token embeddings, the segmentation embeddings and the position embeddings. The input embeddings: you have a CLS token to indicate the beginning of the sentence and a sep to indicate the end of the sentence The segment embeddings: allows you to indicate whether it is sentence a or b. Positional embeddings: allows you to indicate the word’s position in the sentence.</p>
+</div></div><p>The input embeddings are the sum of the token embeddings, the segmentation embeddings and the position embeddings. The input embeddings: we have a CLS token to indicate the beginning of the sentence and a sep to indicate the end of the sentence The segment embeddings: allows we to indicate whether it is sentence a or b. Positional embeddings: allows we to indicate the word’s position in the sentence.</p>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><a href="img/V5-062-BERT-the-output.png" class="lightbox" data-gallery="slides" title="BERT-the-output"><img src="img/V5-062-BERT-the-output.png" class="img-fluid figure-img" alt="BERT-the-output"></a></p>
 <figcaption>BERT-the-output</figcaption>
 </figure>
-</div></div><p>The C token in the image above could be used for classification purposes. The unlabeled sentence A/B pair will depend on what you are trying to predict, it could range from question answering to sentiment. (in which case the second sentence could be just empty).</p>
+</div></div><p>The C token in the image above could be used for classification purposes. The unlabeled sentence A/B pair will depend on what we are trying to predict, it could range from question answering to sentiment. (in which case the second sentence could be just empty).</p>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -929,16 +970,16 @@ Definitions:
 <p><a href="img/V6-070-BERT-fine-tuning-outline.png" class="lightbox" data-gallery="slides" title="BERT-fine-tuning-outline"><img src="img/V6-070-BERT-fine-tuning-outline.png" class="img-fluid figure-img" alt="BERT-fine-tuning-outline"></a></p>
 <figcaption>BERT-fine-tuning-outline</figcaption>
 </figure>
-</div></div><p>Once you have a pre-trained model, you can fine tune it on different tasks.</p>
+</div></div><p>Once we have a pre-trained model, we can fine tune it on different tasks.</p>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><a href="img/V6-071-inputs.png" class="lightbox" data-gallery="slides" title="inputs"><img src="img/V6-071-inputs.png" class="img-fluid figure-img" alt="inputs"></a></p>
 <figcaption>inputs</figcaption>
 </figure>
-</div></div><p>For example, given a hypothesis, you can identify the premise. Given a question, you can find the answer. You can also use it for named entity recognition. Here is a summary of the inputs.</p>
+</div></div><p>For example, given a hypothesis, we can identify the premise. Given a question, we can find the answer. We can also use it for named entity recognition. Here is a summary of the inputs.</p>
 <ul>
-<li>You can replace sentences A/B</li>
+<li>We can replace sentences A/B</li>
 <li>Paraphrase from sentence A</li>
 <li>Question/passage</li>
 <li>Hypothesis premise pairs in entailment</li>
@@ -973,16 +1014,16 @@ Definitions:
 </div></div>
 
 <p>One of the major techniques that allowed the T5 model to reach state of the art is the concept of masking:</p>
-<p>For example, you represent the “for inviting” with <span class="math inline">&lt;X&gt;</span> and last with <span class="math inline">&lt;Y&gt;</span> then the model predicts what the X should be and what the Y should be. This is exactly what we saw in the BERT loss. You can also mask out a few positions, not just one. The loss is only on the mask for BERT, for T5 it is on the target.</p>
+<p>For example, we represent the “for inviting” with <span class="math inline">&lt;X&gt;</span> and last with <span class="math inline">&lt;Y&gt;</span> then the model predicts what the X should be and what the Y should be. This is exactly what we saw in the BERT loss. We can also mask out a few positions, not just one. The loss is only on the mask for BERT, for T5 it is on the target.</p>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><a href="img/V7-076-T5-architecture.png" class="lightbox" data-gallery="slides" title="T5-architecture"><img src="img/V7-076-T5-architecture.png" class="img-fluid figure-img" alt="T5-architecture"></a></p>
 <figcaption>T5-architecture</figcaption>
 </figure>
-</div></div><p>So we start with the basic encoder-decoder representation. There you have a fully visible attention in the encoder and then causal attention in the decoder. So light gray lines correspond to causal masking. And dark gray lines correspond to the fully visible masking.</p>
-<p>In the middle we have the language model which consists of a single transformer layer stack. And it’s being fed the concatenation of the inputs and the target. So it uses causal masking throughout as you can see because they’re all gray lines. And you have <span class="math inline">X_1</span> going inside, you get <span class="math inline">X_2</span>, <span class="math inline">X_2</span> goes into the model and you get <span class="math inline">X3</span> and so forth.</p>
-<p>To the right, we have prefix language model which corresponds to allowing fully visible masking over the inputs as you can see with the dark arrows. And then causal masking in the rest.</p>
+</div></div><p>So we start with the basic encoder-decoder representation. There we have a fully visible attention in the encoder and then causal attention in the decoder. So light gray lines correspond to causal masking. And dark gray lines correspond to the fully visible masking.</p>
+<p>In the middle we have the language model which consists of a single transformer layer stack. And it’s being fed the concatenation of the inputs and the target. So it uses causal masking throughout as we can see because they’re all gray lines. And we have <span class="math inline">X_1</span> going inside, we get <span class="math inline">X_2</span>, <span class="math inline">X_2</span> goes into the model and we get <span class="math inline">X3</span> and so forth.</p>
+<p>To the right, we have prefix language model which corresponds to allowing fully visible masking over the inputs as we can see with the dark arrows. And then causal masking in the rest.</p>
 </section>
 <section id="sec-video8-multi-task-training-strategy" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="sec-video8-multi-task-training-strategy">Video 8: Lecture Multi-Task Training Strategy</h2>
@@ -1005,7 +1046,7 @@ Definitions:
 </div></div>
 
 <p>This is a reminder of how the T5 model works:</p>
-<p>You can see that you only have to add a small prefix to the input and the model as a result will solve the task for you. There are many tasks that the t5 model can do for you. It is possible to formulate most NLP tasks in a “text-to-text” format – that is, a task where the model is fed some text for context or conditioning and is then asked to produce some output text. This framework provides a consistent training objective both for pre-training and fine-tuning. Specifically, the model is trained with a maximum likelihood objective (using “teacher forcing” ) regardless of the task.</p>
+<p>We can see that we only have to add a small prefix to the input and the model as a result will solve the task for you. There are many tasks that the t5 model can do for you. It is possible to formulate most NLP tasks in a “text-to-text” format – that is, a task where the model is fed some text for context or conditioning and is then asked to produce some output text. This framework provides a consistent training objective both for pre-training and fine-tuning. Specifically, the model is trained with a maximum likelihood objective (using “teacher forcing” ) regardless of the task.</p>
 <section id="sec-training-data-strategies" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="sec-training-data-strategies">Training data strategies</h3>
 <dl>
@@ -1015,11 +1056,11 @@ sample in proportion to the size of each task’s dataset
 </dd>
 <dt>Temperature scaled mixing</dt>
 <dd>
-adjust the “temperature”” of the mixing rates. This temperature parameter allows you to weight certain examples more than others. To implement temperature scaling with temperature T, we raise each task’s mixing rate rm to the power of 1⁄T and renormalize the rates so that they sum to 1. When T = 1, this approach is equivalent to examples-proportional mixing and as T increases the proportions become closer to equal mixing
+adjust the “temperature”” of the mixing rates. This temperature parameter allows we to weight certain examples more than others. To implement temperature scaling with temperature T, we raise each task’s mixing rate rm to the power of 1⁄T and renormalize the rates so that they sum to 1. When T = 1, this approach is equivalent to examples-proportional mixing and as T increases the proportions become closer to equal mixing
 </dd>
 <dt>Equal mixing</dt>
 <dd>
-In this case, you sample examples from each task with equal probability. Specifically, each example in each batch is sampled uniformly at random from one of the datasets you train on.
+In this case, we sample examples from each task with equal probability. Specifically, each example in each batch is sampled uniformly at random from one of the datasets we train on.
 </dd>
 </dl>
 
@@ -1058,7 +1099,7 @@ In this case, you sample examples from each task with equal probability. Specifi
 
 
 
-<p>You can see how fine tuning on a specific task could work even though you were pre-training on different tasks.</p>
+<p>We can see how fine tuning on a specific task could work even though we were pre-training on different tasks.</p>
 </section>
 </section>
 <section id="sec-video9-glue-benchmark" class="level2 page-columns page-full">
@@ -1087,11 +1128,11 @@ In this case, you sample examples from each task with equal probability. Specifi
 <li>Datasets with different genres, and of different sizes and difficulties</li>
 <li>Leaderboard</li>
 </ul>
-<p>Currently T5 is state of the art according to this GLUE benchmark and you will be implementing it for homework this week! This GLUE bench mark is used for research purposes, it is model agnostic, and relies on models that make use of transfer learning.</p>
+<p>Currently T5 is state of the art according to this GLUE benchmark and we will be implementing it for homework this week! This GLUE bench mark is used for research purposes, it is model agnostic, and relies on models that make use of transfer learning.</p>
 </section>
 <section id="sec-video10-question-answering" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="sec-video10-question-answering">Video 10: Question Answering</h2>
-<div class="page-columns page-full"><p> You will be implementing an encoder this week. Last week you implemented the decoder. So here it is:</p><div class="no-row-height column-margin column-container"><img src="img/V9-093-BERT-feed-forward-block.png" class="img-fluid" data-group="slides" alt="BERT-feed-forward-block"></div></div>
+<div class="page-columns page-full"><p> We will be implementing an encoder this week. Last week we implemented the decoder. So here it is:</p><div class="no-row-height column-margin column-container"><img src="img/V9-093-BERT-feed-forward-block.png" class="img-fluid" data-group="slides" alt="BERT-feed-forward-block"></div></div>
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -1128,8 +1169,8 @@ In this case, you sample examples from each task with equal probability. Specifi
 
 
 
-<p>You can see there is a feed forward and the encoder-block above. It makes use of two residual connections, layer normalization, and dropout.</p>
-<p>The steps you will follow to implement it are:</p>
+<p>We can see there is a feed forward and the encoder-block above. It makes use of two residual connections, layer normalization, and dropout.</p>
+<p>The steps we will follow to implement it are:</p>
 <ul>
 <li>Load a pre-trained model</li>
 <li>Process data to get the required inputs and outputs: “question: Q context: C” as input and “A” as target</li>
@@ -1216,8 +1257,8 @@ BERT_Base
 <p>Fine tuning BERT<br>
 Fine tuning</p>
 <p>T5 like BERT does Transfer learning + fine tuning. classification, MT, NE, Sentiment</p>
-<pre><code>So you can see over here you have fully visible attention in the encoder and then causal attention in the decoder. 
-And then you have the general encoder-decoder representation just as 
+<pre><code>So we can see over here we have fully visible attention in the encoder and then causal attention in the decoder. 
+And then we have the general encoder-decoder representation just as 
 notation. 
 So light gray lines correspond to causal masking. 
 And dark gray lines correspond to the fully visible masking. 
@@ -1225,19 +1266,19 @@ So on the left as I said again, it's the standard encoder-decoder architecture.
 In the middle over here what we have, 
 we have the language model which consists of a single transformer layer stack. 
 And it's being fed the concatenation of the inputs and the target. 
-So it uses causal masking throughout as you can see because they're 
+So it uses causal masking throughout as we can see because they're 
 all gray lines. 
-And you have X1 going inside over here, get at X2, 
+And we have X1 going inside over here, get at X2, 
 X2 goes into the model X3 and so forth. 
 Now over here to the right, 
 we have prefix language model which corresponds to allowing fully 
-visible masking over the inputs as you can see here in the dark arrows. 
+visible masking over the inputs as we can see here in the dark arrows. 
 And then causal masking in the rest.
 Play video starting at :3:2 and follow transcript3:02
-So as you can see over here, it's doing causal masking. 
+So as we can see over here, it's doing causal masking. 
 So the model architecture, it uses encoder/decoder stack. 
 It has 12 transformer blocks each. 
-So you can think of it as a dozen eggs and then 220 million parameters. 
+So we can think of it as a dozen eggs and then 220 million parameters. 
 So in summary, you've seen prefix language model attention. 
 You've seen the model architecture for T5. 
 And you've seen how the pre-training is done similar to birds, but 
@@ -1266,7 +1307,7 @@ encoder/decoder</code></pre>
 <li><a href="https://arxiv.org/abs/1910.10683">Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer</a> (Raffel et al, 2019)<br>
 </li>
 <li><a href="https://arxiv.org/abs/2001.04451">Reformer: The Efficient Transformer</a> (Kitaev et al, 2020)</li>
-<li><a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a> (Vaswani et al, 2017)</li>
+<li><a href="https://arxiv.org/abs/1706.03762">Attention Is All We Need</a> (Vaswani et al, 2017)</li>
 <li><a href="https://arxiv.org/pdf/1802.05365.pdf">Deep contextualized word representations</a> (Peters et al, 2018)</li>
 <li><a href="https://arxiv.org/abs/1810.04805">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a> (Devlin et al, 2018)</li>
 <li><a href="https://arxiv.org/abs/2103.13076" title="(Kasai et all 2021)">Finetuning Pretrained Transformers into RNNs</a> (Kasai et all 2021)</li>
@@ -1302,18 +1343,24 @@ encoder/decoder</code></pre>
 <p>https://youtu.be/hAvtJ516Mw4</p>
 
 
+
 </section>
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{2021,
-  author = {},
-  title = {Week 3 {Question} {Answering}},
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-raffel2023exploringlimitstransferlearning" class="csl-entry" role="listitem">
+Raffel, Colin, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Michael Matena, Yanqi Zhou, Wei Li, and Peter J. Liu. 2023. <span>“Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer.”</span> <a href="https://arxiv.org/abs/1910.10683">https://arxiv.org/abs/1910.10683</a>.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2021,
+  author = {Bochman, Oren},
+  title = {Week 3 - {Question} {Answering}},
   date = {2021-04-14},
   url = {https://orenbochman.github.io/notes-nlp/posts/c4w3/},
   langid = {en}
 }
-</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-2021" class="csl-entry quarto-appendix-citeas" role="listitem">
-<span>“Week 3 Question Answering.”</span> 2021. April 14, 2021. <a href="https://orenbochman.github.io/notes-nlp/posts/c4w3/">https://orenbochman.github.io/notes-nlp/posts/c4w3/</a>.
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2021" class="csl-entry quarto-appendix-citeas" role="listitem">
+Bochman, Oren. 2021. <span>“Week 3 - Question Answering.”</span> April
+14, 2021. <a href="https://orenbochman.github.io/notes-nlp/posts/c4w3/">https://orenbochman.github.io/notes-nlp/posts/c4w3/</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {

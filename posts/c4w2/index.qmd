@@ -1,8 +1,8 @@
 ---
 date: 2021-03-31
-title: Week 2 Text Summarization
-subtitle: NLP with Attention Models
-description: "This week of the NLP Specialization, we unlock the secrets of Neural Text Summarization. We will building a powerful Transformer model to extract crucial information and create concise summaries. Through hands-on exercises using JAX, we will learn techniques like beam search and length normalization to enhance the quality of our summaries. Through hands-on exercises we will train our model on a dataset of articles. We will master the skills to create effective text summaries using state-of-the-art NLP techniques."
+title: "Week 2 - Text Summarization"
+subtitle: "NLP with Attention Models"
+description: "This week we unlock the secrets of Neural Text Summarization. We will building a powerful Transformer model to extract crucial information and create concise summaries. Through hands-on exercises using JAX, we will learn techniques like beam search and length normalization to enhance the quality of our summaries. Through hands-on exercises we will train our model on a dataset of articles."
 categories: 
   - NLP with Attention Models
   - Neural Machine Translation
@@ -21,35 +21,37 @@ categories:
   - Multi-head attention
   - Summarization task
 ---
+
 ![deeplearning.ai](/images/Course-Logo-4-1.webp){.column-margin .nolightbox}
 
+- I been interested in summarization task for many years.
 - I immersed myself in this material so I could real understand it.
 - I treated the assignments like small work or research project thinking how they could be made better and more rigorous.
-- I been interested in summarization task for many years.
 
 ::: {.callout-note}
 ## Learning objectives
 
 <!-- TODO: add links to repective sections -->
-- [x] Describe the three basic types of attention.
-- [x] Name the two types of layers in a Transformer.
-- [x] Define three main matrices in attention.
-- [x] Interpret the math behind scaled dot product attention, causal attention, and multi-head attention.
-- [x] Use articles and their summaries to create input features for training a text summarizer.
-- [x] Build the GPT-2 transformer-decoder model.
+- [x] [Describe the three basic types of attention](#sec-transformers-vs-rnns).
+- [X] [Name the two types of layers in a Transformer](#sec-transformers-vs-rnns).
+- [X] [Define three main matrices in attention](#sec-query-key-value).
+- [X] [Interpret the math behind scaled dot product attention, causal attention, and multi-head attention](#sec-dot-product-attention).
+- [X] [Use articles and their summaries to create input features for training a text summarizer](#sec-transformer-summarizer).
+- [X] [Build the GPT-2 transformer-decoder model](#sec-transformer-decoder).
 :::
-
-
 
 ::: {.callout-tip collapse=false}
 ## TL;DR neural network engineering
 <!-- TODO: better summary -->
+
+:::
 
 For the impatient  - We'll start with  NLP engineering insights from this week.
 
 <!-- TODO: add podcast for this week's material -->
 :::
 
+<!-- TODO: move this to a blog post
 
 ### What is attention ?
 
@@ -143,7 +145,7 @@ After input is processed by the heads their output is concatenated and processed
 
 Unlike the RNN which process information sequentially transforms need to provide the model with extra information to explicitly describe the order if the input sequences. 
 
-You might think this is added as an index but positional embedding is added as a low dimensional wave which can be added to an high dimensional embedding. (or concatenated)
+We might think this is added as an index but positional embedding is added as a low dimensional wave which can be added to an high dimensional embedding. (or concatenated)
 this is achieved using a special purpose layer.
 
 ```python
@@ -229,7 +231,9 @@ output tensor shape: (6, 2, 3)
   [0 1 0]]]
 </pre>
 
-## Video 1: Transformers vs RNNs
+-->
+
+## Transformers vs RNNs {#sec-transformers-vs-rnns}
 
 RNNs were a big breakthrough and became the state of the art (SOTA) for machine translation (MT).
 
@@ -248,9 +252,9 @@ However, as time went by and models got longer and deeper the biggest challenge 
 Which entailed that to process the word "you", the RNN it has to first go through "are" and then "you". 
 Two other issues with RNNs are the:
 
-### Information loss 
+### Information loss  {#sec-information-loss}
 
-It becomes harder to keep track of whether the subject is singular or plural as you move further away from the subject.
+It becomes harder to keep track of whether the subject is singular or plural as we move further away from the subject.
 
 
 ![Transformer](img/c4w2-12-transformer.png){.column-margin group="slides"}
@@ -263,9 +267,9 @@ in the encoder side
 - this is converted to K V matrices
 in the decoder side
 
-### Vanishing Gradient
+### Vanishing Gradient Problem {#sec-vanishing-gradient-problem}
 
-When gradients you back-propagate, the gradients can become really small and as a result.
+When gradients we back-propagate, the gradients can become really small and as a result.
 
 With small gradient the model will learn very little.
  
@@ -278,14 +282,14 @@ Transformers which are based on attention and don't require any sequential compu
 Additionally, the gradient steps that need to be taken from the last output to the first input in a transformer is just one. 
 For RNNs, the number of steps increases with longer sequences. Finally, transformers don't suffer from vanishing gradients problems that are related to the length of the sequences. 
 
-## Video 2: Transformer Applications
+## Transformer Applications {#sec-transformer-applications}
 
 ![application](img/c4w2-15-application.png){.column-margin group="slides"}
 Transformers have essentially replaced RNN,LSTM and GRUs in sequence processing.
 
 ![application-NLP](img/c4w2-16-application-NLP.png){.column-margin group="slides"}
 
-### Applications:
+### Applications of Transformers {#sec-applications-of-transformers}
 
 - Text summarization
 - Autocomplete
@@ -301,7 +305,7 @@ Transformers have essentially replaced RNN,LSTM and GRUs in sequence processing.
 
 ![sota](img/c4w2-17-sota.png){.column-margin group="slides"}
 
-### SOTA Transformers
+### SOTA Transformers {#sec-transformers-time-line}
 
 Transformers Time Line:
 
@@ -310,7 +314,7 @@ Transformers Time Line:
    -  BERT 
    -  T5  
 
-## T5 - Text-To-Text Transfer Transformer
+## T5 - Text-To-Text Transfer Transformer {#sec-t5}
 
 ![t5](img/c4w2-18-t5.gif){.column-margin group="slides"}
 
@@ -318,7 +322,7 @@ Transformers Time Line:
 
 [@DBLP:journals/corr/abs-1910-10683] introduced T5 which can do a number of tasks with a single model. While the earlier transformer models were able to score high in many different tasks without specific training. T5 is setup to handle different inputs and respond with output that is relevant to the requested task.
 
-### T5 Classification tasks  
+### T5 Classification tasks {#sec-t5-classification-tasks} 
 
 These tasks are selected using the initial string:
 - Translate English into German
@@ -327,7 +331,7 @@ These tasks are selected using the initial string:
 
 ![text-to-text-transformer](img/c4w2-19-text-to-text-transformer.png){.column-margin group="slides"}
 
-### T5 regression tasks
+### T5 regression tasks {#sec-t5-regression-tasks}
 
 - Stbs Sentence1 ... Stbs Sentence2 ...
 - Summarize: 
@@ -345,7 +349,7 @@ We are told that the transformers can do in one operation what RNN needed to do 
 ![summary of transformers](img/c4w2-20-summary-of-transformers.png){.column-margin group="slides"}
 
 
-## Video 3: Dot-Product Attention
+## Dot-Product Attention {#sec-dot-product-attention}
 
 ![outline-of-dot-product-attention](img/c4w2-22-outline-of-dot-product-attention.png){.column-margin group="slides"}
 
@@ -371,26 +375,36 @@ $$
 $$ 
 
 
-### Query, Key & Value
+### Query, Key & Value {#sec-query-key-value}
 
 ![queries-keys-values](img/c4w2-24-queries-keys-values.png){.column-margin group="slides"}
 
+I find it fascinating that the authors of Attention is all decided to motivate their work on a attention using the language of information retrieval. This makes understanding the concepts a little easier and has also lead to more recent work on LSTM to use this same language. In both case though the authors are interested in the ability of the neural network to use the wghiets that it has learned to process a long sequence of test and put together a coherent output based on distant and often sparse parts of the input. In a named entity recognition task the network has a fairly simple task to do - it needs to classify a few token based a few cues from the immediate context. But for the text summarization task the network has to understand the text and pick up the most salient bit while discarding the rest. 
+
+::: {.callout-note}
+## Query, Key & Value {.unnumbered}
+
 Attention uses three matrices which are formed as shown in the figure The **Query** $Q$, **Key** $K$ and **Value** $V$ are formed from the source and target (if there is no target then just from the source). Each word is converted into an embedding column vector and these are placed into the matracies as their columns. 
-In the master class embedded bellow Dr. Łukasz Kaiser talks about attention and here he is talking about solving the problem of retrieving information from a long sequence. At around 16 minutes in he call Q a query vector and K and V a memory, of all the words we have seen, which we want to access.
+
+In @vid-01-Attentional Dr. Łukasz Kaiser talks about attention and here he is talking about solving the problem of retrieving information from a long sequence. At around 16 minutes in he call Q a query vector and K and V a memory, of all the words we have seen, which we want to access.
 
 - The ***Q**uery* is the matrix formed from the column word vector for the German words. 
 - The ***K**ey* is the matrix formed from the column word vector for the English words. 
 - The ***V**alue* is the matrix formed from the column word vector for the English words.
 
-::: {.callout-note}
 K and V are the same
 :::
 
 Once these are called keys since we use them to are we doing a similarity lookup. And the second time they are called value because we use them in the activation when we apply the weights to them. The input and output sequences are mapped to an embedding layer to become the $Q$, $K$ and $V$ matrices. 
 
-{{< video https://www.youtube.com/embed/rBCqOTEfxvg >}}
+::: {#vid-01-Attentional .column-margin}
 
-Given an input, you transform it into a new representation or a column vector. Depending on the task you are working on, you will end up getting queries, keys, and values. Each column corresponds to a word in the figure above. Hence, when you compute the following: 
+{{< video https://youtu.be/rBCqOTEfxvg title="Masterclass on Attention is all you need" >}}
+
+Lukasz Kaiser's Masterclass on Attention is all you need 
+:::
+
+Given an input, we transform it into a new representation or a column vector. Depending on the task we are working on, we will end up getting queries, keys, and values. Each column corresponds to a word in the figure above. Hence, when we compute the following: 
 
 ![attention-formula](img/c4w2-26-dot-product-attention-math.png){.column-margin group="slides"}
 
@@ -416,13 +430,13 @@ $$
 W_A = softmax(QK^T)
 $$
 
-This concept implies that similar vectors are likely to have a higher score when you dot them with one another. You transform that score into a probability by using a softmax function. You can then multiply the output by 
+This concept implies that similar vectors are likely to have a higher score when we dot them with one another. We transform that score into a probability by using a softmax function. We can then multiply the output by 
 
-You can think of the **keys** and the **values** as being the same. Note that both $K$,$V$ are of dimension $L_k, D$. Each query $q_i$ picks the most similar key $k_j$.
+We can think of the **keys** and the **values** as being the same. Note that both $K$,$V$ are of dimension $L_k, D$. Each query $q_i$ picks the most similar key $k_j$.
 
 ![attention-formula](img/c4w2-27-attention-formula.png){.column-margin group="slides"}
 
-Queries are the German words and the keys are the English words. Once you have the attention weights, you can just multiply it by $V$ to get a weighted combination of the input. 
+Queries are the German words and the keys are the English words. Once we have the attention weights, we can just multiply it by $V$ to get a weighted combination of the input. 
 
 ![attention-quiz](img/c4w2-28-attention-quizz.png){.column-margin group="slides"}
 
@@ -433,7 +447,7 @@ another interesting point made in the preceding talk is that dot product attenti
 In [@DBLP:journals/corr/abs-2103-13076] there is a reversal of the trend from rnn to transformers. Here  the latest results show a an idea of training big transformers and then converting them to RNN to improve performance. (One get an RNN by training a transformer.)
 
 
-## V4: Causal Attention
+## V4: Causal Attention {#sec-causal-attention}
 
 - We are interested in three main types of attention. 
 - We'll see a brief overview of causal attention. 
@@ -445,7 +459,7 @@ In [@DBLP:journals/corr/abs-2103-13076] there is a reversal of the trend from rn
 In terms of use cases there are three types of attention mechanisms:
 
 
-### Scaled dot product attention:
+### Scaled dot product attention: {#sec-scaled-dot-product-attention}
 
   - AKA Encoder-Decoder attention.
   - one sentence in the decoder look at to another one in the encoder.
@@ -453,10 +467,10 @@ In terms of use cases there are three types of attention mechanisms:
     - seq2seq
     - machine translation.
 
-### Causal Attention:
+### Causal Attention: {#sec-causal-attention}
 
   - AKA self attention.
-  - attention is all you need.
+  - attention is all we need.
   - In the same sentence words attend to previous words. 
   - Future words have not been generated yet. 
   - use cases:
@@ -464,7 +478,7 @@ In terms of use cases there are three types of attention mechanisms:
     - text generation 
     - summarization.
   
-### Bi-directional self attention:
+### Bi-directional self attention: {#sec-bi-directional-self-attention}
 
   - In one sentence words look both at previous and future words.
   - use cases:
@@ -490,7 +504,7 @@ Mathematically, it looks like this:
 
 ![summary-for-causal-attention](img/c4w2-35-summary-for-causal-attention.png){.column-margin group="slides"}
 
-## V5: Multi-head Attention
+## V5: Multi-head Attention {#sec-multi-head-attention}
 
 ![outline-of-muti-head-attention](img/c4w2-40-outline-of-mutihead-attention.png){.column-margin group="slides"}
 Let's summarize the intuition behind **multi-head attention** and **scaled dot product attention**.
@@ -533,11 +547,11 @@ We could devise a number of subspace sampling schemes to give the k different at
 Each would specialize on a domain or on a interface between two domain or on all data but one domain.
 Language is rather redundant so they may be able to reconstruct most of the missing data - but at least they would specialize in a linguistically meaningful way.
 
-Given a word, you take its embedding then you multiply it by the $Q$, $K$, $V$ matrix to get the corresponding queries, keys and values. When you use multi-head attention, a head can learn different relationships between words from another head. 
+Given a word, we take its embedding then we multiply it by the $Q$, $K$, $V$ matrix to get the corresponding queries, keys and values. When we use multi-head attention, a head can learn different relationships between words from another head. 
 
 Here's one way to look at it: 
 
--  First, imagine that you have an embedding for a word. You multiply that embedding with $Q$ to get $q_1$, $K$ to get $k_1$, and V to get $v_1$
+-  First, imagine that we have an embedding for a word. We multiply that embedding with $Q$ to get $q_1$, $K$ to get $k_1$, and V to get $v_1$
 
 
 ![muti-head-attention-concatenation](img/c4w2-44-muti-head-attention-concatenation.png){.column-margin group="slides"}
@@ -557,17 +571,17 @@ Here's one way to look at it:
 
 ![muti-head-attention-math](img/c4w2-53-muti-head-attention-math.png){.column-margin group="slides"}
 
-- Next, you feed it to the linear layer, once you go through the linear layer for each word, you need to calculate a score. After that, you end up having an embedding for each word. But you still need to get the score for how much of each word you are going to use. For example, this will tell you how similar two words are $q_1$ and $k_1$or even $q_1$ and $k_2$  by doing a simple $q_1 \dot k_1$. You can take the softmax of those scores (the paper mentions that you have to divide by $\sqrt(d)$ to get a probability and then you multiply that by the value. That gives you the new representation of the word.)
-If you have many heads, you can concatenate them and then multiply again by a matrix that is of dimension (dim of each head by num heads - dim of each head) to get one final vector corresponding to each word. 
+- Next, we feed it to the linear layer, once we go through the linear layer for each word, we need to calculate a score. After that, we end up having an embedding for each word. But we still need to get the score for how much of each word we are going to use. For example, this will tell we how similar two words are $q_1$ and $k_1$or even $q_1$ and $k_2$  by doing a simple $q_1 \dot k_1$. We can take the softmax of those scores (the paper mentions that we have to divide by $\sqrt(d)$ to get a probability and then we multiply that by the value. That gives we the new representation of the word.)
+If we have many heads, we can concatenate them and then multiply again by a matrix that is of dimension (dim of each head by num heads - dim of each head) to get one final vector corresponding to each word. 
 
-Here is step by step guide, first you get the $Q$, $K$, $V$ matrices: 
-Note that the computation above was done for one head. If you have several heads, concretely nn, then you will have $Z_1, Z_2, \ldots, Z_n$. In which case, you can just concatenate them and multiply by a $W_O$ matrix as follows:
+Here is step by step guide, first we get the $Q$, $K$, $V$ matrices: 
+Note that the computation above was done for one head. If we have several heads, concretely nn, then we will have $Z_1, Z_2, \ldots, Z_n$. In which case, we can just concatenate them and multiply by a $W_O$ matrix as follows:
 
-Hence, the more heads you have, the more $Z$s you will end up concatenating and as a result, that will change the inner dimension of $W_O$, which will then project the combined embeddings into one final embedding. 
+Hence, the more heads we have, the more $Z$s we will end up concatenating and as a result, that will change the inner dimension of $W_O$, which will then project the combined embeddings into one final embedding. 
 
 ![summary-muti-head-attention](img/c4w2-49-summary-muti-head-attention.png){.column-margin group="slides"}
 
-## V6: Transformer Decoder
+## V6: Transformer Decoder {#sec-transformer-decoder}
 
 ![outline](img/c4w2-60-outline.png){.column-margin group="slides"}
 
@@ -590,7 +604,7 @@ the transformer decoder has two parts
 ![transformer-decoder-summary](img/c4w2-68-transformer-decoder-summary.png){.column-margin group="slides"}
 
 
-# V7: Transformer Summarizer
+# V7: Transformer Summarizer {#sec-transformer-summarizer}
 
 ![outline](img/c4w2-70-outline.png){.column-margin group="slides"}
 
@@ -614,7 +628,7 @@ Loss weights were created as a masks by the following code:
 
 ![cost-function](img/c4w2-73-cost-function.png){.column-margin group="slides"}
 
-## Cross entropy loss 
+## Cross entropy loss   {#sec-cross-entropy-loss}
 
 Cross-entropy loss, or log loss, measures the performance of a classification model whose output is a probability value between 0 and 1. Cross-entropy loss increases as the predicted probability diverges from the actual label.
 
@@ -655,16 +669,23 @@ I think these is much missing from this lesson about summerization. However ther
 I have quickly summarized one and should link to it from [here]() once it is published.
 
 
-## Lab1 : Attention
+## Lab1 : Attention {#sec-lab1-attention}
 
-This was a numpy based realization of dot product and multi-head attention.
+This was a numpy based realization of dot product and multi-head attention. 
 Some of the main assignment required porting this to Jax.
+
+[Attention lab](lab01.qmd)
 
 ## Lab2 : The Transformer Decoder
 
 this covered the transformer block
 
+[Transformer block lab](lab02.qmd)
+
+
 ## Assignment: Transformer Summarizer
+
+[Assignment](assignment.qmd)
 
 This long assignment primarily focused on dot product attention,  multi-head attention and on building the transformer blocks. These were manageable as their theory had been explained in the lectures and their code had already been covered in the labs. It glosses over the parts involving data processing, training, evaluation and the actual summarization task. The summarization is accomplished using maximum likelihood estimate. A beam search might have yielded better results.
 
@@ -675,11 +696,11 @@ The date as described by:
 >  [Get To The Point §4 (Abigail et all 2017) ](https://arxiv.org/pdf/1704.04368.pdf)
 We used the non anatomized version. However the earlier paper used a preprocessed version which replaced the named entities with token like `$entity5`. This is probably ideal in other situations like event processing where each event looks quite different unless one anatomizes them rendering them much more similar and hopefully helping the model generalize better by learning from the partitions induced by the equivalency relation. 
 
-## Expanding the lab to a project:
+## Expanding the lab to a project: {#sec-expanding-the-lab-to-a-project}
 
 This is one of the main areas I'd like to focus on for a project. I have in mind a tool for improving wikipedia article leads. Here is how I'd like to take this project to the next level:
 
-### more data
+### more data {#sec-more-data}
 
 train it on additional material:
 
@@ -691,7 +712,7 @@ train it on additional material:
     - summary (paragraph)
     - a synopsis (longer)
 
-### More algorithms
+### More algorithms {#sec-more-algorithms}
 
 - Using a reformer to handle longer texts like books.
 - Better summarization using: 
@@ -709,14 +730,14 @@ train it on additional material:
   - depend on the actual length of source and output.
   - use [tf-idf](https://en.wikipedia.org/wiki/Tf%E2%80%93idf) to make holes in the mask surrounding essential concepts.
 
-### Evaluation
+### Evaluation {#sec-evaluation}
 
 use sammy lib with
 
 - rouge-n metric
 - the pyramid metric
 
-### Extra features 
+### Extra features  {#sec-extra-features}
 
   - [ ] pages for paper reviews
   - [ ] pages for research questions
@@ -726,14 +747,13 @@ use sammy lib with
 - [ ] develop a f-score metric combining precision and recall for the summary of the abstract.
 - [ ] in academic writing one sentence per paragraphs should capture the main concept and it is generally the first second or the last. Is such a sentence is available identify it. This would be done by comparing each sentence with the rest of the paragraph.
 
-## Open question
+## Open question {#sec-open-question}
 
 For me the assignment raised a number of questions about what really going on here during training.
 
 I'll probably do this assignment again and look for some answers to my many questions. Once I have these I'll add them in the body of these notes.
 
-### Questions
-
+### Questions {#sec-questions}
 
 1. Loading and prepocessing the data:
    1. What is going on after we load the dataset - is there data augmentation?
@@ -778,7 +798,7 @@ I'll probably do this assignment again and look for some answers to my many ques
 
 1. [Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer] (Raffel et al, 2019)  
 1. [Reformer: The Efficient Transformer] (Kitaev et al, 2020)
-1. [Attention Is All You Need] (Vaswani et al, 2017)
+1. [Attention Is All We Need] (Vaswani et al, 2017)
 1. [Deep contextualized word representations] (Peters et al, 2018)
 1. [BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding] (Devlin et al, 2018)
 1. [Finetuning Pretrained Transformers into RNNs] (Kasai et all 2021)
@@ -825,7 +845,7 @@ run search and replace:
 
 [Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer]: https://arxiv.org/abs/1910.10683
 [Reformer: The Efficient Transformer]: https://arxiv.org/abs/2001.04451
-[Attention Is All You Need]: https://arxiv.org/abs/1706.03762 
+[Attention Is All We Need]: https://arxiv.org/abs/1706.03762 
 [Deep contextualized word representations]: https://arxiv.org/pdf/1802.05365.pdf
 [The Illustrated Transformer]: http://jalammar.github.io/illustrated-transformer/
 [The Illustrated GPT-2]: http://jalammar.github.io/illustrated-gpt2/

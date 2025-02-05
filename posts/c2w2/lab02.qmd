@@ -2,7 +2,7 @@
 date: 2020-10-23
 title: Parts-of-Speech Tagging - Working with tags and Numpy
 subtitle: "Probabilistic Models"
-description: "In this lab you will create a matrix using some tag information and then modify it using different approaches. This will serve as hands-on experience working with Numpy"
+description: "In this lab we will create a matrix using some tag information and then modify it using different approaches. This will serve as hands-on experience working with Numpy"
 categories: 
   - NLP 
   - Coursera 
@@ -15,7 +15,7 @@ jupyter: python3
 ![course banner](/images/Course-Logo-2-3.webp)
 :::
 
-In this lecture notebook you will create a matrix using some tag information and then modify it using different approaches.
+In this lecture notebook we will create a matrix using some tag information and then modify it using different approaches.
 This will serve as hands-on experience working with Numpy and as an introduction to some elements used for POS tagging.
 
 ```{python}
@@ -25,14 +25,14 @@ import pandas as pd
 
 ### Some information on tags
 
-For this notebook you will be using a toy example including only three tags (or states). In a real world application there are many more tags which can be found [here](https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html).
+For this notebook we will be using a toy example including only three tags (or states). In a real world application there are many more tags which can be found [here](https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html).
 
 ```{python}
 # Define tags for Adverb, Noun and To (the preposition) , respectively
 tags = ['RB', 'NN', 'TO']
 ```
 
-In this week's assignment you will construct some dictionaries that provide useful information of the tags and words you will be working with. 
+In this week's assignment we will construct some dictionaries that provide useful information of the tags and words we will be working with. 
 
 One of these dictionaries is the `transition_counts` which counts the number of times a particular tag happened next to another. The keys of this dictionary have the form `(previous_tag, tag)` and the values are the frequency of occurrences.
 
@@ -40,7 +40,7 @@ Another one is the `emission_counts` dictionary which will count the number of t
 
 In general think of `transition` when working with tags only and of `emission` when working with tags and words.
 
-In this notebook you will be looking at the first one:
+In this notebook we will be looking at the first one:
 
 ```{python}
 # Define 'transition_counts' dictionary
@@ -58,11 +58,11 @@ transition_counts = {
 }
 ```
 
-Notice that there are 9 combinations of the 3 tags used. Each tag can appear after the same tag so you should include those as well.
+Notice that there are 9 combinations of the 3 tags used. Each tag can appear after the same tag so we should include those as well.
 
 ### Using Numpy for matrix creation
 
-Now you will create a matrix that includes these frequencies using Numpy arrays:
+Now we will create a matrix that includes these frequencies using Numpy arrays:
 
 ```{python}
 # Store the number of tags in the 'num_tags' variable
@@ -75,14 +75,14 @@ transition_matrix = np.zeros((num_tags, num_tags))
 transition_matrix
 ```
 
-Visually you can see the matrix has the correct dimensions. Don't forget you can check this too using the `shape` attribute:
+Visually we can see the matrix has the correct dimensions. Don't forget we can check this too using the `shape` attribute:
 
 ```{python}
 # Print shape of the matrix
 transition_matrix.shape
 ```
 
-Before filling this matrix with the values of the `transition_counts` dictionary you should sort the tags so that their placement in the matrix is consistent:
+Before filling this matrix with the values of the `transition_counts` dictionary we should sort the tags so that their placement in the matrix is consistent:
 
 ```{python}
 # Create sorted version of the tag's list
@@ -92,7 +92,7 @@ sorted_tags = sorted(tags)
 sorted_tags
 ```
 
-To fill this matrix with the correct values you can use a `double for loop`. You could also use `itertools.product` to one line this double loop:
+To fill this matrix with the correct values we can use a `double for loop`. We could also use `itertools.product` to one line this double loop:
 
 ```{python}
 # Loop rows
@@ -110,7 +110,7 @@ transition_matrix
 
 Looks like this worked fine. However the matrix can be hard to read as `Numpy` is more about efficiency, rather than presenting values in a pretty format. 
 
-For this you can use a `Pandas DataFrame`. In particular, a function that takes the matrix as input and prints out a pretty version of it will be very useful:
+For this we can use a `Pandas DataFrame`. In particular, a function that takes the matrix as input and prints out a pretty version of it will be very useful:
 
 ```{python}
 # Define 'print_matrix' function
@@ -127,15 +127,15 @@ print_matrix(transition_matrix)
 
 That is a lot better, isn't it? 
 
-As you may have already deducted this matrix is not symmetrical.
+As we may have already deducted this matrix is not symmetrical.
 
 ### Working with Numpy for matrix manipulation
 
-Now that you got the matrix set up it is time to see how a matrix can be manipulated after being created. 
+Now that we got the matrix set up it is time to see how a matrix can be manipulated after being created. 
 
-`Numpy` allows vectorized operations which means that operations that would normally include looping over the matrix can be done in a simpler manner. This is consistent with treating numpy arrays as matrices since you get support for common matrix operations. You can do matrix multiplication, scalar multiplication, vector addition and many more!
+`Numpy` allows vectorized operations which means that operations that would normally include looping over the matrix can be done in a simpler manner. This is consistent with treating numpy arrays as matrices since we get support for common matrix operations. We can do matrix multiplication, scalar multiplication, vector addition and many more!
 
-For instance try scaling each value in the matrix by a factor of $\frac{1}{10}$. Normally you would loop over each value in the matrix, updating them accordingly. But in Numpy this is as easy as dividing the whole matrix by 10:
+For instance try scaling each value in the matrix by a factor of $\frac{1}{10}$. Normally we would loop over each value in the matrix, updating them accordingly. But in Numpy this is as easy as dividing the whole matrix by 10:
 
 ```{python}
 # Scale transition matrix
@@ -147,7 +147,7 @@ print_matrix(transition_matrix)
 
 Another trickier example is to normalize each row so that each value is equal to $\frac{value}{sum \,of \,row}$.
 
-This can be easily done with vectorization. First you will compute the sum of each row:
+This can be easily done with vectorization. First we will compute the sum of each row:
 
 ```{python}
 # Compute sum of row for each row
@@ -161,7 +161,7 @@ Notice that the `sum()` method was used. This method does exactly what its name 
 
 Also the `keepdims` parameter was set to `True` so the resulting array had shape `(3, 1)` rather than `(3,)`. This was done so that the axes were consistent with the desired operation. 
 
-When working with Numpy, always remember to check the shape of the arrays you are working with, many unexpected errors happen because of axes not being consistent. The `shape` attribute is your friend for these cases.
+When working with Numpy, always remember to check the shape of the arrays we are working with, many unexpected errors happen because of axes not being consistent. The `shape` attribute is your friend for these cases.
 
 ```{python}
 # Normalize transition matrix
@@ -171,13 +171,13 @@ transition_matrix = transition_matrix / rows_sum
 print_matrix(transition_matrix)
 ```
 
-Notice that the normalization that was carried out forces the sum of each row to be equal to `1`. You can easily check this by running the `sum` method on the resulting matrix:
+Notice that the normalization that was carried out forces the sum of each row to be equal to `1`. We can easily check this by running the `sum` method on the resulting matrix:
 
 ```{python}
 transition_matrix.sum(axis=1, keepdims=True)
 ```
 
-For a final example you are asked to modify each value of the diagonal of the matrix so that they are equal to the `log` of the sum of the current row plus the current value. When doing mathematical operations like this one don't forget to import the `math` module. 
+For a final example we are asked to modify each value of the diagonal of the matrix so that they are equal to the `log` of the sum of the current row plus the current value. When doing mathematical operations like this one don't forget to import the `math` module. 
 
 This can be done using a standard `for loop` or `vectorization`. You'll see both in action:
 
@@ -212,7 +212,7 @@ d = np.diag(t_matrix_np)
 d.shape
 ```
 
-You can save the diagonal in a numpy array using Numpy's `diag()` function. Notice that this array has shape `(3,)` so it is inconsistent with the dimensions of the `rows_sum` array which are `(3, 1)`. You'll have to reshape before moving forward. For this you can use Numpy's `reshape()` function, specifying the desired shape in a tuple:
+We can save the diagonal in a numpy array using Numpy's `diag()` function. Notice that this array has shape `(3,)` so it is inconsistent with the dimensions of the `rows_sum` array which are `(3, 1)`. You'll have to reshape before moving forward. For this we can use Numpy's `reshape()` function, specifying the desired shape in a tuple:
 
 ```{python}
 # Reshape diagonal numpy array
@@ -222,11 +222,11 @@ d = np.reshape(d, (3,1))
 d.shape
 ```
 
-Now that the diagonal has the correct shape you can do the vectorized operation by applying the `math.log()` function to the `rows_sum` array and adding the diagonal. 
+Now that the diagonal has the correct shape we can do the vectorized operation by applying the `math.log()` function to the `rows_sum` array and adding the diagonal. 
 
 To apply a function to each element of a numpy array use Numpy's `vectorize()` function providing the desired function as a parameter. This function returns a vectorized function that accepts a numpy array as a parameter. 
 
-To update the original matrix you can use Numpy's `fill_diagonal()` function.
+To update the original matrix we can use Numpy's `fill_diagonal()` function.
 
 ```{python}
 # Perform the vectorized operation
@@ -239,14 +239,14 @@ np.fill_diagonal(t_matrix_np, d)
 print_matrix(t_matrix_np)
 ```
 
-To perform a sanity check that both methods yield the same result you can compare both matrices. Notice that this operation is also vectorized so you will get the equality check for each element in both matrices:
+To perform a sanity check that both methods yield the same result we can compare both matrices. Notice that this operation is also vectorized so we will get the equality check for each element in both matrices:
 
 ```{python}
 # Check for equality
 t_matrix_for == t_matrix_np
 ```
 
-**Congratulations on finishing this lecture notebook!** Now you should be more familiar with some elements used by a POS tagger such as the `transition_counts` dictionary and with working with Numpy.
+**Congratulations on finishing this lecture notebook!** Now we should be more familiar with some elements used by a POS tagger such as the `transition_counts` dictionary and with working with Numpy.
 
 **Keep it up!**
 

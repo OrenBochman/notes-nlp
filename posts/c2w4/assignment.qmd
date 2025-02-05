@@ -23,28 +23,28 @@ Due to the Coursera Honor Code, I cannot provide the solutions to the assignment
 - It is setup to run without stopping for errors. 
 - It is also likely to be out of date as the course has had some updates since I took it.
 - Although I aced the course this assignment was the most time consuming.
-- Good luck with the assignment it should make you a better programmer.
-- It is also a good idea to go over it a few times until you can do it easily.
+- Good luck with the assignment it should make we a better programmer.
+- It is also a good idea to go over it a few times until we can do it easily.
 :::
 
 Welcome to the fourth (and last) programming assignment of Course 2! 
 
-In this assignment, you will practice how to compute word embeddings and use them for sentiment analysis.
-- To implement sentiment analysis, you can go beyond counting the number of positive words and negative words. 
-- You can find a way to represent each word numerically, by a vector. 
+In this assignment, we will practice how to compute word embeddings and use them for sentiment analysis.
+- To implement sentiment analysis, we can go beyond counting the number of positive words and negative words. 
+- We can find a way to represent each word numerically, by a vector. 
 - The vector could then represent syntactic (i.e. parts of speech) and semantic (i.e. meaning) structures. 
 
-In this assignment, you will explore a classic way of generating word embeddings or representations.
-- You will implement a famous model called the continuous bag of words (CBOW) model. 
+In this assignment, we will explore a classic way of generating word embeddings or representations.
+- We will implement a famous model called the continuous bag of words (CBOW) model. 
 
-By completing this assignment you will:
+By completing this assignment we will:
 
 - Train word vectors from scratch.
 - Learn how to create batches of data.
 - Understand how backpropagation works.
 - Plot and visualize your learned word vectors.
 
-Knowing how to train these models will give you a better understanding of word vectors, which are building blocks to many applications in natural language processing.
+Knowing how to train these models will give we a better understanding of word vectors, which are building blocks to many applications in natural language processing.
 
 
 ## Outline
@@ -71,7 +71,7 @@ Let's take a look at the following sentence:
 >**'I am happy because I am learning'**. 
 
 - In continuous bag of words (CBOW) modeling, we try to predict the center word given a few context words (the words around the center word).
-- For example, if you were to choose a context half-size of say $C = 2$, then you would try to predict the word **happy** given the context that includes 2 words before and 2 words after the center word:
+- For example, if we were to choose a context half-size of say $C = 2$, then we would try to predict the word **happy** given the context that includes 2 words before and 2 words after the center word:
 
 > $C$ words before: [I, am] 
 
@@ -98,9 +98,9 @@ Where $\bar x$ is the average of all the one hot vectors of the context words.
 Figure 2
 :::
 
-Once you have encoded all the context words, you can use $\bar x$ as the input to your model. 
+Once we have encoded all the context words, we can use $\bar x$ as the input to your model. 
 
-The architecture you will be implementing is as follows:
+The architecture we will be implementing is as follows:
 
 \begin{align}
  h &= W_1 \  X + b_1  \tag{1} \\
@@ -162,7 +162,7 @@ print("Word which has index 2743:  ",Ind2word[2743] )
 
 ###  Initializing the model
 
-You will now initialize two matrices and two vectors. 
+We will now initialize two matrices and two vectors. 
 - The first matrix ($W_1$) is of dimension $N \times V$, where $V$ is the number of words in your vocabulary and $N$ is the dimension of your word vector.
 - The second matrix ($W_2$) is of dimension $V \times N$. 
 - Vector $b_1$ has dimensions $N\times 1$
@@ -175,7 +175,7 @@ The overall structure of the model will look as in Figure 1, but at this stage w
 ### Exercise 01
 Please use [numpy.random.rand](https://numpy.org/doc/stable/reference/random/generated/numpy.random.rand.html) to generate matrices that are initialized with random values from a uniform distribution, ranging between 0 and 1.
 
-**Note:** In the next cell you will encounter a random seed. Please **DO NOT** modify this seed so your solution can be tested correctly.
+**Note:** In the next cell we will encounter a random seed. Please **DO NOT** modify this seed so your solution can be tested correctly.
 
 ```{python}
 # UNQ_C1 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)
@@ -246,12 +246,12 @@ $$ \text{softmax}(z_i) = \frac{e^{z_i} }{\sum_{i=0}^{V-1} e^{z_i} }  \tag{5} $$
 
 - Assume that the input $z$ to `softmax` is a 2D array
 - Each training example is represented by a column of shape (V, 1) in this 2D array.
-- There may be more than one column, in the 2D array, because you can put in a batch of examples to increase efficiency.  Let's call the batch size lowercase $m$, so the $z$ array has shape (V, m)
+- There may be more than one column, in the 2D array, because we can put in a batch of examples to increase efficiency.  Let's call the batch size lowercase $m$, so the $z$ array has shape (V, m)
 - When taking the sum from $i=1 \cdots V-1$, take the sum for each column (each example) separately.
 
 Please use
 - numpy.exp
-- numpy.sum (set the axis so that you take the sum of each column in z)
+- numpy.sum (set the axis so that we take the sum of each column in z)
 
 ```{python}
 # UNQ_C2 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)
@@ -303,7 +303,7 @@ Implement the forward propagation $z$ according to equations (1) to (3). <br>
  z &= W_2 \  a + b_2   \tag{3} \\
 \end{align}
 
-For that, you will use as activation the Rectified Linear Unit (ReLU) given by:
+For that, we will use as activation the Rectified Linear Unit (ReLU) given by:
 
 $$f(h)=\max (0,h) \tag{6}$$
 
@@ -313,7 +313,7 @@ $$f(h)=\max (0,h) \tag{6}$$
 </summary>
 <p>
 <ul>
-    <li>You can use numpy.maximum(x1,x2) to get the maximum of two values</li>
+    <li>We can use numpy.maximum(x1,x2) to get the maximum of two values</li>
     <li>Use numpy.dot(A,B) to matrix multiply A and B</li>
 </ul>
 </p>
@@ -460,8 +460,8 @@ tmp_cost 9.9560
 
 <a name='ex-04'></a>
 ### Exercise 04
-Now that you have understood how the CBOW model works, you will train it. <br>
-You created a function for the forward propagation. Now you will implement a function that computes the gradients to backpropagate the errors.
+Now that we have understood how the CBOW model works, we will train it. <br>
+We created a function for the forward propagation. Now we will implement a function that computes the gradients to backpropagate the errors.
 
 
 ```{python}
@@ -482,7 +482,7 @@ def back_prop(x, yhat, y, h, W1, W2, b1, b2, batch_size):
     ### START CODE HERE (Replace instanes of 'None' with your code) ###
     
     # Compute l1 as W2^T (Yhat - Y)
-    # Re-use it whenever you see W2^T (Yhat - Y) used to compute a gradient
+    # Re-use it whenever we see W2^T (Yhat - Y) used to compute a gradient
     l1 = None
     # Apply relu to l1
     l1 = None
@@ -577,9 +577,9 @@ tmp_grad_b2.shape (5778, 1)
 
 <a name='ex-05'></a>
 ### Exercise 05
-Now that you have implemented a function to compute the gradients, you will implement batch gradient descent over your training set. 
+Now that we have implemented a function to compute the gradients, we will implement batch gradient descent over your training set. 
 
-**Hint:** For that, you will use `initialize_model` and the `back_prop` functions which you just created (and the `compute_cost` function). You can also use the provided `get_batches` helper function:
+**Hint:** For that, we will use `initialize_model` and the `back_prop` functions which we just created (and the `compute_cost` function). We can also use the provided `get_batches` helper function:
 
 ```for x, y in get_batches(data, word2Ind, V, C, batch_size):```
 
@@ -676,7 +676,7 @@ Your numbers may differ a bit depending on which version of Python you're using.
 <a name='3'></a>
 ## 3.0 Visualizing the word vectors
 
-In this part you will visualize the word vectors trained using the function you just coded above. 
+In this part we will visualize the word vectors trained using the function we just coded above. 
 
 ```{python}
 # visualizing the word vectors here
@@ -701,7 +701,7 @@ for i, word in enumerate(words):
 pyplot.show()
 ```
 
-You can see that man and king are next to each other. However, we have to be careful with the interpretation of this projected word vectors, since the PCA depends on the projection -- as shown in the following illustration.
+We can see that man and king are next to each other. However, we have to be careful with the interpretation of this projected word vectors, since the PCA depends on the projection -- as shown in the following illustration.
 
 ```{python}
 result= compute_pca(X, 4)

@@ -26,20 +26,20 @@ Due to the Coursera Honor Code, I cannot provide the solutions to the assignment
 - It is setup to run without stopping for errors. 
 - It is also likely to be out of date as the course has had some updates since I took it.
 - Although I aced the course this assignment was the most time consuming.
-- Good luck with the assignment it should make you a better programmer.
-- It is also a good idea to go over it a few times until you can do it easily.
+- Good luck with the assignment it should make we a better programmer.
+- It is also a good idea to go over it a few times until we can do it easily.
 :::
 
 
 Welcome to the second assignment of Course 2 in the Natural Language Processing specialization. This assignment will develop skills in part-of-speech (POS) tagging, the process of assigning a part-of-speech tag (Noun, Verb, Adjective...) to each word in an input text.  Tagging is difficult because some words can represent more than one part of speech at different times. They are  **Ambiguous**. Let's look at the following example: 
 
 - The whole team played **well**. [adverb]
-- You are doing **well** for yourself. [adjective]
+- We are doing **well** for yourself. [adjective]
 - **Well**, this assignment took me forever to complete. [interjection]
 - The **well** is dry. [noun]
 - Tears were beginning to **well** in her eyes. [verb]
 
-Distinguishing the parts-of-speech of a word in a sentence will help you better understand the meaning of a sentence. This would be critically important in search queries. Identifying the proper noun, the organization, the stock symbol, or anything similar would greatly improve everything ranging from speech recognition to search. By completing this assignment, you will: 
+Distinguishing the parts-of-speech of a word in a sentence will help we better understand the meaning of a sentence. This would be critically important in search queries. Identifying the proper noun, the organization, the stock symbol, or anything similar would greatly improve everything ranging from speech recognition to search. By completing this assignment, we will: 
 
 - Learn how parts-of-speech tagging works
 - Compute the transition matrix A in a Hidden Markov Model
@@ -180,9 +180,9 @@ print(prep[0:10])
 
 ## Part 1.1 - Training {#1.1}
 
-You will start with the simplest possible parts-of-speech tagger and we will build up to the state of the art. 
+We will start with the simplest possible parts-of-speech tagger and we will build up to the state of the art. 
 
-In this section, you will find the words that are not ambiguous. 
+In this section, we will find the words that are not ambiguous. 
 
 - For example, the word `is` is a verb and it is not ambiguous. 
 - In the `WSJ` corpus, $86$% of the token are unambiguous (meaning they have only one tag) 
@@ -190,7 +190,7 @@ In this section, you will find the words that are not ambiguous.
 
 ![](img/pos.png){ style="width:400px;height:250px; group="slides"}
 
-Before you start predicting the tags of each word, you will need to compute a few dictionaries that will help you to generate the tables. 
+Before we start predicting the tags of each word, we will need to compute a few dictionaries that will help we to generate the tables. 
 
 #### Transition counts
 
@@ -204,28 +204,28 @@ $$
 
 This is the probability of a tag at position $i$ given the tag at position $i-1$.
 
-In order for you to compute equation 1, you will create a `transition_counts` dictionary where 
+In order for we to compute equation 1, we will create a `transition_counts` dictionary where 
 - The keys are `(prev_tag, tag)`
 - The values are the number of times those two tags appeared in that order. 
 
 #### Emission counts
 
-The second dictionary you will compute is the `emission_counts` dictionary. This dictionary will be used to compute:
+The second dictionary we will compute is the `emission_counts` dictionary. This dictionary will be used to compute:
 
 $$
 P(w_i|t_i)\tag{2}
 $$
 
 
-In other words, you will use it to compute the probability of a word given its tag. 
+In other words, we will use it to compute the probability of a word given its tag. 
 
-In order for you to compute equation 2, you will create an `emission_counts` dictionary where 
+In order for we to compute equation 2, we will create an `emission_counts` dictionary where 
 - The keys are `(tag, word)` 
 - The values are the number of times that pair showed up in your training set. 
 
 #### Tag counts
 
-The last dictionary you will compute is the `tag_counts` dictionary. 
+The last dictionary we will compute is the `tag_counts` dictionary. 
 - The key is the tag 
 - The value is the number of times each tag appeared.
 
@@ -240,7 +240,7 @@ The last dictionary you will compute is the `tag_counts` dictionary.
 
 Implementation note: This routine utilises `defaultdict`, which is a subclass of `dict`. 
 
-- A standard Python dictionary throws a *KeyError* if you try to access an item with a key that is not currently in the dictionary. 
+- A standard Python dictionary throws a *KeyError* if we try to access an item with a key that is not currently in the dictionary. 
 - In contrast, the *defaultdict* will create an item of the type of the argument, in this case an integer with the default value of 0. 
 - See [defaultdict](https://docs.python.org/3.3/library/collections.html#defaultdict-objects).
 
@@ -326,7 +326,7 @@ The 'states' are the Parts-of-speech designations found in the training data. Th
 - "NN" is noun, singular, 
 - 'NNS' is noun, plural. 
 - In addition, there are helpful tags like '--s--' which indicate a start of a sentence.
-- You can get a more complete description at [Penn Treebank II tag set](https://www.clips.uantwerpen.be/pages/mbsp-tags). 
+- We can get a more complete description at [Penn Treebank II tag set](https://www.clips.uantwerpen.be/pages/mbsp-tags). 
 
 ```{python}
 print("transition examples: ")
@@ -369,9 +369,9 @@ ambiguous word example:
 
 ### Part 1.2 - Testing {#1.2}
 
-Now you will test the accuracy of your parts-of-speech tagger using your `emission_counts` dictionary. 
-- Given your preprocessed test corpus `prep`, you will assign a parts-of-speech tag to every word in that corpus. 
-- Using the original tagged test corpus `y`, you will then compute what percent of the tags you got correct. 
+Now we will test the accuracy of your parts-of-speech tagger using your `emission_counts` dictionary. 
+- Given your preprocessed test corpus `prep`, we will assign a parts-of-speech tag to every word in that corpus. 
+- Using the original tagged test corpus `y`, we will then compute what percent of the tags we got correct. 
 
 
 ### Exercise 02 {#ex-02}
@@ -380,8 +380,8 @@ Now you will test the accuracy of your parts-of-speech tagger using your `emissi
 
 - This is a warm up exercise. 
 - To assign a part of speech to a word, assign the most frequent POS for that word in the training set. 
-- Then evaluate how well this approach works.  Each time you predict based on the most frequent POS for the given word, check whether the actual POS of that word is the same.  If so, the prediction was correct!
-- Calculate the accuracy as the number of correct predictions divided by the total number of words for which you predicted the POS tag.
+- Then evaluate how well this approach works.  Each time we predict based on the most frequent POS for the given word, check whether the actual POS of that word is the same.  If so, the prediction was correct!
+- Calculate the accuracy as the number of correct predictions divided by the total number of words for which we predicted the POS tag.
 
 ```{python}
 # UNQ_C2 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)
@@ -396,7 +396,7 @@ def predict_pos(prep, y, emission_counts, vocab, states):
         vocab: a dictionary where keys are words in vocabulary and value is an index
         states: a sorted list of all possible tags for this assignment
     Output: 
-        accuracy: Number of times you classified a word correctly
+        accuracy: Number of times we classified a word correctly
     '''
     
     # Initialize the number of correct predictions to zero
@@ -472,15 +472,15 @@ print(f"Accuracy of prediction using predict_pos is {accuracy_predict_pos:.4f}")
 Accuracy of prediction using predict_pos is 0.8889
 ```
 
-88.9% is really good for this warm up exercise. With hidden markov models, you should be able to get **95% accuracy.**
+88.9% is really good for this warm up exercise. With hidden markov models, we should be able to get **95% accuracy.**
 
 # Part 2: Hidden Markov Models for POS {#2}
 
-Now you will build something more context specific. Concretely, you will be implementing a Hidden Markov Model (HMM) with a Viterbi decoder
+Now we will build something more context specific. Concretely, we will be implementing a Hidden Markov Model (HMM) with a Viterbi decoder
 
-- The HMM is one of the most commonly used algorithms in Natural Language Processing, and is a foundation to many deep learning techniques you will see in this specialization. 
+- The HMM is one of the most commonly used algorithms in Natural Language Processing, and is a foundation to many deep learning techniques we will see in this specialization. 
 - In addition to parts-of-speech tagging, HMM is used in speech recognition, speech synthesis, etc. 
-- By completing this part of the assignment you will get a 95% accuracy on the same dataset you used in Part 1.
+- By completing this part of the assignment we will get a 95% accuracy on the same dataset we used in Part 1.
 
 The Markov Model contains a number of states and the probability of transition between those states. 
 
@@ -494,13 +494,13 @@ The Markov Model contains a number of states and the probability of transition b
 ## Part 2.1 Generating Matrices {#2.1}
 
 ### Creating the 'A' transition probabilities matrix
-Now that you have your `emission_counts`, `transition_counts`, and `tag_counts`, you will start implementing the Hidden Markov Model. 
+Now that we have your `emission_counts`, `transition_counts`, and `tag_counts`, we will start implementing the Hidden Markov Model. 
 
-This will allow you to quickly construct the 
+This will allow we to quickly construct the 
 - `A` transition probabilities matrix.
 - and the `B` emission probabilities matrix. 
 
-You will also use some smoothing when computing these matrices. 
+We will also use some smoothing when computing these matrices. 
 
 Here is an example of what the `A` transition matrix would look like (it is simplified to 5 tags for viewing. It is 46x46 in this assignment.):
 
@@ -517,7 +517,7 @@ Here is an example of what the `A` transition matrix would look like (it is simp
 
 Note that the matrix above was computed with smoothing. 
 
-Each cell gives you the probability to go from one part of speech to another.
+Each cell gives we the probability to go from one part of speech to another.
 
 - In other words, there is a 4.47e-8 chance of going from parts-of-speech `TO` to `RP`. 
 - The sum of each row has to equal 1, because we assume that the next POS tag must be one of the available columns in the table.
@@ -625,9 +625,9 @@ UH   1.030439e-05  1.030439e-05  1.030439e-05  0.061837  3.092348e-02
 
 ### Create the 'B' emission probabilities matrix
 
-Now you will create the `B` transition matrix which computes the emission probability. 
+Now we will create the `B` transition matrix which computes the emission probability. 
 
-You will use smoothing as defined below: 
+We will use smoothing as defined below: 
 
 $$
 P(w_i | t_i) = \frac{C(t_i, word_i)+ \alpha}{C(t_{i}) +\alpha * N}\tag{4}
@@ -765,20 +765,20 @@ RP   3.723317e-07  3.723317e-07  3.723317e-07  3.723317e-07  3.723317e-07
 
 # Part 3: Viterbi Algorithm and Dynamic Programming {#3}
 
-In this part of the assignment you will implement the Viterbi algorithm which makes use of dynamic programming. Specifically, you will use your two matrices, `A` and `B` to compute the Viterbi algorithm. We have decomposed this process into three main steps for you. 
+In this part of the assignment we will implement the Viterbi algorithm which makes use of dynamic programming. Specifically, we will use your two matrices, `A` and `B` to compute the Viterbi algorithm. We have decomposed this process into three main steps for you. 
 
-* **Initialization** - In this part you initialize the `best_paths` and `best_probabilities` matrices that you will be populating in `feed_forward`.
-* **Feed forward** - At each step, you calculate the probability of each path happening and the best paths up to that point. 
-* **Feed backward**: This allows you to find the best path with the highest probabilities. 
+* **Initialization** - In this part we initialize the `best_paths` and `best_probabilities` matrices that we will be populating in `feed_forward`.
+* **Feed forward** - At each step, we calculate the probability of each path happening and the best paths up to that point. 
+* **Feed backward**: This allows we to find the best path with the highest probabilities. 
 
 
 ## Part 3.1:  Initialization {#3.1}
 
-You will start by initializing two matrices of the same dimension. 
+We will start by initializing two matrices of the same dimension. 
 
 - best_probs: Each cell contains the probability of going from one POS tag to a word in the corpus.
 
-- best_paths: A matrix that helps you trace through the best possible path in the corpus. 
+- best_paths: A matrix that helps we trace through the best possible path in the corpus. 
 
 ### Exercise 05 {#ex-05}
 
@@ -788,7 +788,7 @@ Write a program below that initializes the `best_probs` and the `best_paths` mat
 Both matrices will be initialized to zero except for column zero of `best_probs`.  
 
 - Column zero of `best_probs` is initialized with the assumption that the first word of the corpus was preceded by a start token ("--s--"). 
-- This allows you to reference the **A** matrix for the transition probability
+- This allows we to reference the **A** matrix for the transition probability
 
 Here is how to initialize column 0 of `best_probs`:
 
@@ -898,7 +898,7 @@ best_paths[2,3]: 0.0000
 
 ## Part 3.2 Viterbi Forward (prediction) {#3.2}
 
-In this part of the assignment, you will implement the `viterbi_forward` segment. In other words, you will populate your `best_probs` and `best_paths` matrices.
+In this part of the assignment, we will implement the `viterbi_forward` segment. In other words, we will populate your `best_probs` and `best_paths` matrices.
 
 - Walk forward through the corpus.
 - For each word, compute a probability for each possible tag. 
@@ -1063,7 +1063,7 @@ best_probs[0,4]: -49.5601
 
 ## Part 3.3 Viterbi backward {#3.3}
 
-Now you will implement the Viterbi backward algorithm.
+Now we will implement the Viterbi backward algorithm.
 
 - The Viterbi backward algorithm gets the predictions of the POS tags for each word in the corpus using the `best_paths` and the `best_probs` matrices.
 
@@ -1216,7 +1216,7 @@ The prediction for pred[0:8] is:
  ['The', 'economy', "'s", 'temperature', 'will', 'be', 'taken'] 
 ```
 
-Now you just have to compare the predicted labels to the true labels to evaluate your model on the accuracy metric!
+Now we just have to compare the predicted labels to the true labels to evaluate your model on the accuracy metric!
 
 # Part 4: Predicting on a data set {#4}
 
@@ -1232,7 +1232,7 @@ print('Your corresponding label y is: ', y[3])
 ### Exercise 08 {#ex-08}
 
 Implement a function to compute the accuracy of the viterbi algorithm's POS tag predictions.
-- To split y into the word and its tag you can use `y.split()`. 
+- To split y into the word and its tag we can use `y.split()`. 
 
 ```{python}
 # UNQ_C8 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)
@@ -1286,17 +1286,17 @@ print(f"Accuracy of the Viterbi algorithm is {compute_accuracy(pred, y):.4f}")
 Accuracy of the Viterbi algorithm is 0.9531
 ```
 
-Congratulations you were able to classify the parts-of-speech with 95% accuracy. 
+Congratulations we were able to classify the parts-of-speech with 95% accuracy. 
 
 ### Key Points and overview
 
-In this assignment you learned about parts-of-speech tagging. 
+In this assignment we learned about parts-of-speech tagging. 
 
-- In this assignment, you predicted POS tags by walking forward through a corpus and knowing the previous word.
+- In this assignment, we predicted POS tags by walking forward through a corpus and knowing the previous word.
 - There are other implementations that use bidirectional POS tagging.
 - Bidirectional POS tagging requires knowing the previous word and the next word in the corpus when predicting the current word's POS tag.
-- Bidirectional POS tagging would tell you more about the POS instead of just knowing the previous word. 
-- Since you have learned to implement the unidirectional approach, you have the foundation to implement other POS taggers used in industry.
+- Bidirectional POS tagging would tell we more about the POS instead of just knowing the previous word. 
+- Since we have learned to implement the unidirectional approach, we have the foundation to implement other POS taggers used in industry.
 
 ### References
 
@@ -1307,7 +1307,7 @@ In this assignment you learned about parts-of-speech tagging.
 
 ::: {.callout-tip}
 
-If like me you find this challenging why not:
+If like me we find this challenging why not:
 
 - TODO: implement the HMM trifecta
     - [ ] Forward–backward - given a sequence of outputs, infer the most likely sequence of states

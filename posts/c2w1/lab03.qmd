@@ -7,7 +7,7 @@ jupyter: python3
 ![course banner](/images/Course-Logo-2-3.webp)
 :::
 
-Welcome to the first assignment of Course 2. This assignment will give you a chance to brush up on your python and probability skills. In doing so, you will implement an auto-correct system that is very effective and useful.
+Welcome to the first assignment of Course 2. This assignment will give we a chance to brush up on your python and probability skills. In doing so, we will implement an auto-correct system that is very effective and useful.
 
 ## Outline
 - [0. Overview](#0)
@@ -32,9 +32,9 @@ Welcome to the first assignment of Course 2. This assignment will give you a cha
 <a name='0'></a>
 ## 0. Overview
 
-You use autocorrect every day on your cell phone and computer. In this assignment, you will explore what really goes on behind the scenes. Of course, the model you are about to implement is not identical to the one used in your phone, but it is still quite good. 
+We use autocorrect every day on your cell phone and computer. In this assignment, we will explore what really goes on behind the scenes. Of course, the model we are about to implement is not identical to the one used in your phone, but it is still quite good. 
 
-By completing this assignment you will learn how to: 
+By completing this assignment we will learn how to: 
 
 - Get a word count given a corpus
 - Get a word probability in the corpus 
@@ -45,14 +45,14 @@ By completing this assignment you will learn how to:
 
 
 Similar systems are used everywhere. 
-- For example, if you type in the word **"I am lerningg"**, chances are very high that you meant to write **"learning"**, as shown in **Figure 1**. 
+- For example, if we type in the word **"I am lerningg"**, chances are very high that we meant to write **"learning"**, as shown in **Figure 1**. 
 
 <div style="width:image width px; font-size:100%; text-align:center;"><img src='auto-correct.png' alt="alternate text" width="width" height="height" style="width:300px;height:250px;" /> Figure 1 </div>
 
 <a name='0-1'></a>
 #### 0.1 Edit Distance
 
-In this assignment, you will implement models that correct words that are 1 and 2 edit distances away. 
+In this assignment, we will implement models that correct words that are 1 and 2 edit distances away. 
 - We say two words are n edit distance away from each other when we need n edits to change one word into another. 
 
 An edit could consist of one of the following options: 
@@ -62,10 +62,10 @@ An edit could consist of one of the following options:
 - Replace (change 1 letter to another): ‘jat’ => ‘hat, rat, cat, mat, ...’
 - Insert (add a letter): ‘te’ => ‘the, ten, ate, ...’
 
-You will be using the four methods above to implement an Auto-correct. 
-- To do so, you will need to compute probabilities that a certain word is correct given an input. 
+We will be using the four methods above to implement an Auto-correct. 
+- To do so, we will need to compute probabilities that a certain word is correct given an input. 
 
-This auto-correct you are about to implement was first created by [Peter Norvig](https://en.wikipedia.org/wiki/Peter_Norvig) in 2007. 
+This auto-correct we are about to implement was first created by [Peter Norvig](https://en.wikipedia.org/wiki/Peter_Norvig) in 2007. 
 - His [original article](https://norvig.com/spell-correct.html) may be a useful reference for this assignment.
 
 The goal of our spell check model is to compute the following probability:
@@ -74,7 +74,7 @@ $$P(c|w) = \frac{P(w|c)\times P(c)}{P(w)} \tag{Eqn-1}$$
 
 The equation above is [Bayes Rule](https://en.wikipedia.org/wiki/Bayes%27_theorem). 
 - Equation 1 says that the probability of a word being correct $P(c|w) $is equal to the probability of having a certain word $w$, given that it is correct $P(w|c)$, multiplied by the probability of being correct in general $P(C)$ divided by the probability of that word $w$ appearing $P(w)$ in general.
-- To compute equation 1, you will first import a data set and then create all the probabilities that you need using that data set. 
+- To compute equation 1, we will first import a data set and then create all the probabilities that we need using that data set. 
 
 <a name='1'></a>
 # Part 1: Data Preprocessing 
@@ -86,12 +86,12 @@ import numpy as np
 import pandas as pd
 ```
 
-As in any other machine learning task, the first thing you have to do is process your data set. 
+As in any other machine learning task, the first thing we have to do is process your data set. 
 - Many courses load in pre-processed data for you. 
-- However, in the real world, when you build these NLP systems, you load the datasets and process them.
+- However, in the real world, when we build these NLP systems, we load the datasets and process them.
 - So let's get some real world practice in pre-processing the data!
 
-Your first task is to read in a file called **'shakespeare.txt'** which is found in your file directory. To look at this file you can go to `File ==> Open `. 
+Your first task is to read in a file called **'shakespeare.txt'** which is found in your file directory. To look at this file we can go to `File ==> Open `. 
 
 <a name='ex-1'></a>
 ### Exercise 1
@@ -104,9 +104,9 @@ Implement the function `process_data` which
 3) Returns a list of words. 
 
 #### Options and Hints
-- If you would like more of a real-life practice, don't open the 'Hints' below (yet) and try searching the web to derive your answer.
-- If you want a little help, click on the green "General Hints" section by clicking on it with your mouse.
-- If you get stuck or are not getting the expected results, click on the green 'Detailed Hints' section to get hints for each step that you'll take to complete this function.
+- If we would like more of a real-life practice, don't open the 'Hints' below (yet) and try searching the web to derive your answer.
+- If we want a little help, click on the green "General Hints" section by clicking on it with your mouse.
+- If we get stuck or are not getting the expected results, click on the green 'Detailed Hints' section to get hints for each step that you'll take to complete this function.
 
 <details>    
 <summary>
@@ -133,7 +133,7 @@ Detailed hints if you're stuck
     <li>Choose whether to use either str.lower() or str.lowercase().  What is the difference?</li>
     <li>Use re.findall(pattern, string)</li>
     <li>Look for the "Raw String Notation" section in the Python 're' documentation to understand the difference between r'\W', r'\W' and '\\W'. </li>
-    <li>For the pattern, decide between using '\s', '\w', '\s+' or '\w+'.  What do you think are the differences?</li>
+    <li>For the pattern, decide between using '\s', '\w', '\s+' or '\w+'.  What do we think are the differences?</li>
 </ul>
 </p>
 
@@ -143,9 +143,9 @@ Detailed hints if you're stuck
 def process_data(file_name):
     """
     Input: 
-        A file_name which is found in your current directory. You just have to read it in. 
+        A file_name which is found in your current directory. We just have to read it in. 
     Output: 
-        words: a list containing all the words in the corpus (text file you read) in lower case. 
+        words: a list containing all the words in the corpus (text file we read) in lower case. 
     """
     words = [] # return this variable correctly
 
@@ -227,8 +227,8 @@ Implement a `get_count` which returns a dictionary where the key is a word and t
 <p>
 <ul>
     <li>Try implementing this using a for loop and a regular dictionary. This may be good practice for similar coding interview questions</li>
-    <li>You can also use defaultdict instead of a regualr dictionary, along with the for loop</li>
-    <li>Otherwise, to skip using a for loop, you can use Python's <a href="https://docs.python.org/3.7/library/collections.html#collections.Counter" > Counter class</a> </li>
+    <li>We can also use defaultdict instead of a regualr dictionary, along with the for loop</li>
+    <li>Otherwise, to skip using a for loop, we can use Python's <a href="https://docs.python.org/3.7/library/collections.html#collections.Counter" > Counter class</a> </li>
 </ul>
 </p>
 
@@ -280,7 +280,7 @@ For example, the probability of the word 'am' in the sentence **'I am happy beca
 
 $$P(am) = \frac{C(w_i)}{M} = \frac {2}{7} \tag{Eqn-3}.$$
 
-**Instructions:** Implement `get_probs` function which gives you the probability 
+**Instructions:** Implement `get_probs` function which gives we the probability 
 that a word occurs in a sample. This returns a dictionary where the keys are words, and the value for each word is its probability in the corpus of words.
 
 <details>    
@@ -292,7 +292,7 @@ General advice
 <ul>
     <li> Use dictionary.values() </li>
     <li> Use sum() </li>
-    <li> The cardinality (number of words in the corpus should be equal to len(word_l).  You will calculate this same number, but using the word count dictionary.</li>
+    <li> The cardinality (number of words in the corpus should be equal to len(word_l).  We will calculate this same number, but using the word count dictionary.</li>
 </ul>
     
 If you're using a for loop:
@@ -341,7 +341,7 @@ P('thee') is 0.0045
 <a name='2'></a>
 # Part 2: String Manipulations
 
-Now, that you have computed $P(w_i)$ for all the words in the corpus, you will write a few functions to manipulate strings so that you can edit the erroneous strings and return the right spellings of the words. In this section, you will implement four functions: 
+Now, that we have computed $P(w_i)$ for all the words in the corpus, we will write a few functions to manipulate strings so that we can edit the erroneous strings and return the right spellings of the words. In this section, we will implement four functions: 
 
 * `delete_letter`: given a word, it returns all the possible strings that have **one character removed**. 
 * `switch_letter`: given a word, it returns all the possible strings that have **two adjacent letters switched**.
@@ -350,13 +350,13 @@ Now, that you have computed $P(w_i)$ for all the words in the corpus, you will w
 
 #### List comprehensions
 
-String and list manipulation in python will often make use of a python feature called  [list comprehensions](https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions). The routines below will be described as using list comprehensions, but if you would rather implement them in another way, you are free to do so as long as the result is the same. Further, the following section will provide detailed instructions on how to use list comprehensions and how to implement the desired functions. If you are a python expert, feel free to skip the python hints and move to implementing the routines directly.
+String and list manipulation in python will often make use of a python feature called  [list comprehensions](https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions). The routines below will be described as using list comprehensions, but if we would rather implement them in another way, we are free to do so as long as the result is the same. Further, the following section will provide detailed instructions on how to use list comprehensions and how to implement the desired functions. If we are a python expert, feel free to skip the python hints and move to implementing the routines directly.
 
-Python List Comprehensions embed a looping structure inside of a list declaration, collapsing many lines of code into a single line. If you are not familiar with them, they seem slightly out of order relative to for loops. 
+Python List Comprehensions embed a looping structure inside of a list declaration, collapsing many lines of code into a single line. If we are not familiar with them, they seem slightly out of order relative to for loops. 
 
 <div style="width:image width px; font-size:100%; text-align:center;"><img src='GenericListComp3.PNG' alt="alternate text" width="width" height="height"  style="width:800px;height:400px;"/> Figure 2 </div>
 
-The diagram above shows that the components of a list comprehension are the same components you would find in a typical for loop that appends to a list, but in a different order. With that in mind, we'll continue the specifics of this assignment. We will be very descriptive for the first function, `deletes()`, and less so in later functions as you become familiar with list comprehensions.
+The diagram above shows that the components of a list comprehension are the same components we would find in a typical for loop that appends to a list, but in a different order. With that in mind, we'll continue the specifics of this assignment. We will be very descriptive for the first function, `deletes()`, and less so in later functions as we become familiar with list comprehensions.
 
 <a name='ex-4'></a>
 ### Exercise 4
@@ -365,17 +365,17 @@ The diagram above shows that the components of a list comprehension are the same
 
 For example, given the word **nice**, it would return the set: {'ice', 'nce', 'nic', 'nie'}. 
 
-**Step 1:** Create a list of 'splits'. This is all the ways you can split a word into Left and Right: For example,   
+**Step 1:** Create a list of 'splits'. This is all the ways we can split a word into Left and Right: For example,   
 'nice is split into : `[('', 'nice'), ('n', 'ice'), ('ni', 'ce'), ('nic', 'e'), ('nice', '')]`
 This is common to all four functions (delete, replace, switch, insert).
 
 <div style="width:image width px; font-size:100%; text-align:center;"><img src='Splits1.PNG' alt="alternate text" width="width" height="height" style="width:650px;height:200px;" /> Figure 3 </div>
 
 **Step 2:** This is specific to `delete_letter`. Here, we are generating all words that result from deleting one character.  
-This can be done in a single line with a list comprehension. You can make use of this type of syntax:  
+This can be done in a single line with a list comprehension. We can make use of this type of syntax:  
 `[f(a,b) for a, b in splits if condition]`  
 
-For our 'nice' example you get: 
+For our 'nice' example we get: 
 ['ice', 'nce', 'nie', 'nic']
 
 <div style="width:image width px; font-size:100%; text-align:center;"><img src='ListComp2.PNG' alt="alternate text" width="width" height="height" style="width:550px;height:300px;" /> Figure 4 </div>
@@ -388,9 +388,9 @@ Try this exercise with these levels of assistance.
 
     - Level 1. Try to think this through and implement this yourself.
     - Level 2. Click on the "Level 2 Hints" section for some hints to get started.
-    - Level 3. If you would prefer more guidance, please click on the "Level 3 Hints" cell for step by step instructions.
+    - Level 3. If we would prefer more guidance, please click on the "Level 3 Hints" cell for step by step instructions.
     
-- If you are still stuck, look at the images in the "list comprehensions" section above.
+- If we are still stuck, look at the images in the "list comprehensions" section above.
 
 <details>    
 <summary>
@@ -410,11 +410,11 @@ Try this exercise with these levels of assistance.
 <p>
 <ul>
     <li>splits: Use array slicing, like my_str[0:2], to separate a string into two pieces.</li>
-    <li>Do this in a loop or list comprehension, so that you have a list of tuples.
+    <li>Do this in a loop or list comprehension, so that we have a list of tuples.
     <li> For example, "cake" can get split into "ca" and "ke". They're stored in a tuple ("ca","ke"), and the tuple is appended to a list.  We'll refer to these as L and R, so the tuple is (L,R)</li>
-    <li>When choosing the range for your loop, if you input the word "cans" and generate the tuple  ('cans',''), make sure to include an if statement to check the length of that right-side string (R) in the tuple (L,R) </li>
-    <li>deletes: Go through the list of tuples and combine the two strings together. You can use the + operator to combine two strings</li>
-    <li>When combining the tuples, make sure that you leave out a middle character.</li>
+    <li>When choosing the range for your loop, if we input the word "cans" and generate the tuple  ('cans',''), make sure to include an if statement to check the length of that right-side string (R) in the tuple (L,R) </li>
+    <li>deletes: Go through the list of tuples and combine the two strings together. We can use the + operator to combine two strings</li>
+    <li>When combining the tuples, make sure that we leave out a middle character.</li>
     <li>Use array slicing to leave out the first character of the right substring.</li>
 </ul>
 </p>
@@ -426,7 +426,7 @@ Try this exercise with these levels of assistance.
 def delete_letter(word, verbose=False):
     '''
     Input:
-        word: the string/word for which you will generate all possible words 
+        word: the string/word for which we will generate all possible words 
                 in the vocabulary which have 1 missing character
     Output:
         delete_l: a list of all possible strings obtained by deleting 1 character from word
@@ -452,7 +452,7 @@ delete_word_l = delete_letter(word="cans",
 
 #### Expected Output
 ```CPP
-Note: You might get a slightly different result with split_l
+Note: We might get a slightly different result with split_l
 
 input word cans, 
 split_l = [('', 'cans'), ('c', 'ans'), ('ca', 'ns'), ('can', 's')], 
@@ -461,8 +461,8 @@ delete_l = ['ans', 'cns', 'cas', 'can']
 
 #### Note 1
 - Notice how it has the extra tuple `('cans', '')`.
-- This will be fine as long as you have checked the size of the right-side substring in tuple (L,R).
-- Can you explain why this will give you the same result for the list of deletion strings (delete_l)?
+- This will be fine as long as we have checked the size of the right-side substring in tuple (L,R).
+- Can we explain why this will give we the same result for the list of deletion strings (delete_l)?
 
 ```CPP
 input word cans, 
@@ -471,7 +471,7 @@ delete_l = ['ans', 'cns', 'cas', 'can']
 ```
 
 #### Note 2
-If you end up getting the same word as your input word, like this:
+If we end up getting the same word as your input word, like this:
 
 ```Python
 input word cans, 
@@ -479,8 +479,8 @@ split_l = [('', 'cans'), ('c', 'ans'), ('ca', 'ns'), ('can', 's'), ('cans', '')]
 delete_l = ['ans', 'cns', 'cas', 'can', 'cans']
 ```
 
-- Check how you set the `range`.
-- See if you check the length of the string on the right-side of the split.
+- Check how we set the `range`.
+- See if we check the length of the string on the right-side of the split.
 
 ```{python}
 # test # 2
@@ -510,7 +510,7 @@ Number of outputs of delete_letter('at') is 2
 Try this exercise with these levels of difficulty.  
 - Level 1. Try to think this through and implement this yourself.
 - Level 2. Click on the "Level 2 Hints" section for some hints to get started.
-- Level 3. If you would prefer more guidance, please click on the "Level 3 Hints" cell for step by step instructions.
+- Level 3. If we would prefer more guidance, please click on the "Level 3 Hints" cell for step by step instructions.
 
 <details>    
 <summary>
@@ -520,7 +520,7 @@ Try this exercise with these levels of difficulty.
 <ul>
     <li><a href="" > Use array slicing like my_string[0:2] </a> </li>
     <li><a href="" > Use list comprehensions or for loops </a> </li>
-    <li>To do a switch, think of the whole word as divided into 4 distinct parts.  Write out 'cupcakes' on a piece of paper and see how you can split it into ('cupc', 'k', 'a', 'es')</li>
+    <li>To do a switch, think of the whole word as divided into 4 distinct parts.  Write out 'cupcakes' on a piece of paper and see how we can split it into ('cupc', 'k', 'a', 'es')</li>
 </ul>
 </p>
 
@@ -532,9 +532,9 @@ Try this exercise with these levels of difficulty.
 <ul>
     <li>splits: Use array slicing, like my_str[0:2], to separate a string into two pieces.</li>
     <li>Splitting is the same as for delete_letter</li>
-    <li>To perform the switch, go through the list of tuples and combine four strings together. You can use the + operator to combine strings</li>
+    <li>To perform the switch, go through the list of tuples and combine four strings together. We can use the + operator to combine strings</li>
     <li>The four strings will be the left substring from the split tuple, followed by the first (index 1) character of the right substring, then the zero-th character (index 0) of the right substring, and then the remaining part of the right substring.</li>
-    <li>Unlike delete_letter, you will want to check that your right substring is at least a minimum length.  To see why, review the previous hint bullet point (directly before this one).</li>
+    <li>Unlike delete_letter, we will want to check that your right substring is at least a minimum length.  To see why, review the previous hint bullet point (directly before this one).</li>
 </ul>
 </p>
 
@@ -578,7 +578,7 @@ switch_l = ['tea', 'eat']
 
 #### Note 1
 
-You may get this:
+We may get this:
 ```Python
 Input word = eta 
 split_l = [('', 'eta'), ('e', 'ta'), ('et', 'a'), ('eta', '')] 
@@ -586,15 +586,15 @@ switch_l = ['tea', 'eat']
 ```
 - Notice how it has the extra tuple `('eta', '')`.
 - This is also correct.
-- Can you think of why this is the case?
+- Can we think of why this is the case?
 
 #### Note 2
 
-If you get an error
+If we get an error
 ```Python
 IndexError: string index out of range
 ```
-- Please see if you have checked the length of the strings when switching characters.
+- Please see if we have checked the length of the strings when switching characters.
 
 ```{python}
 # test # 2
@@ -674,7 +674,7 @@ replace_l ['aan', 'ban', 'caa', 'cab', 'cac', 'cad', 'cae', 'caf', 'cag', 'cah',
 - Note how the input word 'can' should not be one of the output words.
 
 #### Note 1
-If you get something like this:
+If we get something like this:
 
 ```Python
 Input word = can 
@@ -684,7 +684,7 @@ replace_l ['aan', 'ban', 'caa', 'cab', 'cac', 'cad', 'cae', 'caf', 'cag', 'cah',
 - Notice how split_l has an extra tuple `('can', '')`, but the output is still the same, so this is okay.
 
 #### Note 2
-If you get something like this:
+If we get something like this:
 ```Python
 Input word = can 
 split_l = [('', 'can'), ('c', 'an'), ('ca', 'n'), ('can', '')] 
@@ -754,7 +754,7 @@ Number of strings output by insert_letter('at') is 78
 
 #### Note 1
 
-If you get a split_l like this:
+If we get a split_l like this:
 ```Python
 Input word at 
 split_l = [('', 'at'), ('a', 't')] 
@@ -763,10 +763,10 @@ Number of strings output by insert_letter('at') is 52
 ```
 - Notice that split_l is missing the extra tuple ('at', '').  For insertion, we actually **WANT** this tuple.
 - The function is not creating all the desired output strings.
-- Check the range that you use for the for loop.
+- Check the range that we use for the for loop.
 
 #### Note 2
-If you see this:
+If we see this:
 ```Python
 Input word at 
 split_l = [('', 'at'), ('a', 't'), ('at', '')] 
@@ -774,9 +774,9 @@ insert_l = ['aat', 'bat', 'cat', 'dat', 'eat', 'fat', 'gat', 'hat', 'iat', 'jat'
 Number of strings output by insert_letter('at') is 52
 ```
 
-- Even though you may have fixed the split_l so that it contains the tuple `('at', '')`, notice that you're still missing some output strings.
+- Even though we may have fixed the split_l so that it contains the tuple `('at', '')`, notice that you're still missing some output strings.
     - Notice that it's missing strings such as 'ata', 'atb', 'atc' all the way to 'atz'.
-- To fix this, make sure that when you set insert_l, you allow the use of the empty string `''`.
+- To fix this, make sure that when we set insert_l, we allow the use of the empty string `''`.
 
 ```{python}
 # test # 2
@@ -793,7 +793,7 @@ Number of outputs of insert_letter('at') is 78
 
 # Part 3: Combining the edits
 
-Now that you have implemented the string manipulations, you will create two functions that, given a string, will return all the possible single and double edits on that string. These will be `edit_one_letter()` and `edit_two_letters()`.
+Now that we have implemented the string manipulations, we will create two functions that, given a string, will return all the possible single and double edits on that string. These will be `edit_one_letter()` and `edit_two_letters()`.
 
 <a name='3-1'></a>
 ## 3.1 Edit one letter
@@ -801,7 +801,7 @@ Now that you have implemented the string manipulations, you will create two func
 <a name='ex-8'></a>
 ### Exercise 8
 
-**Instructions**: Implement the `edit_one_letter` function to get all the possible edits that are one edit away from a word. The edits  consist of the replace, insert, delete, and optionally the switch operation. You should use the previous functions you have already implemented to complete this function. The 'switch' function  is a less common edit function, so its use will be selected by an "allow_switches" input argument.
+**Instructions**: Implement the `edit_one_letter` function to get all the possible edits that are one edit away from a word. The edits  consist of the replace, insert, delete, and optionally the switch operation. We should use the previous functions we have already implemented to complete this function. The 'switch' function  is a less common edit function, so its use will be selected by an "allow_switches" input argument.
 
 Note that those functions return *lists* while this function should return a *python set*. Utilizing a set eliminates any duplicate entries.
 
@@ -811,8 +811,8 @@ Note that those functions return *lists* while this function should return a *py
 </summary>
 <p>
 <ul>
-    <li> Each of the functions returns a list.  You can combine lists using the `+` operator. </li>
-    <li> To get unique strings (avoid duplicates), you can use the set() function. </li>
+    <li> Each of the functions returns a list.  We can combine lists using the `+` operator. </li>
+    <li> To get unique strings (avoid duplicates), we can use the set() function. </li>
 </ul>
 </p>
 
@@ -870,7 +870,7 @@ Number of outputs from edit_one_letter('at') is 129
 <a name='ex-9'></a>
 ### Exercise 9
 
-Now you can generalize this to implement to get two edits on a word. To do so, you would have to get all the possible edits on a single word and then for each modified word, you would have to modify it again. 
+Now we can generalize this to implement to get two edits on a word. To do so, we would have to get all the possible edits on a single word and then for each modified word, we would have to modify it again. 
 
 **Instructions**: Implement the `edit_two_letters` function that returns a set of words that are two edits away. Note that creating additional edits based on the `edit_one_letter` function may 'restore' some one_edits to zero or one edits. That is allowed here. This accounted for in get_corrections.
 
@@ -880,8 +880,8 @@ Now you can generalize this to implement to get two edits on a word. To do so, y
 </summary>
 <p>
 <ul>
-    <li>You will likely want to take the union of two sets.</li>
-    <li>You can either use set.union() or use the '|' (or operator) to union two sets</li>
+    <li>We will likely want to take the union of two sets.</li>
+    <li>We can either use set.union() or use the '|' (or operator) to union two sets</li>
     <li>See the documentation <a href="https://docs.python.org/2/library/sets.html" > Python sets </a> for examples of using operators or functions of the Python set.</li>
 </ul>
 </p>
@@ -933,13 +933,13 @@ Number of strings that are 2 edit distances from 'at' is 7154
 <a name='3-3'></a>
 ## Part 3-3: suggest spelling suggestions
 
-Now you will use your `edit_two_letters` function to get a set of all the possible 2 edits on your word. You will then use those strings to get the most probable word you meant to type aka your typing suggestion.
+Now we will use your `edit_two_letters` function to get a set of all the possible 2 edits on your word. We will then use those strings to get the most probable word we meant to type aka your typing suggestion.
 
 <a name='ex-10'></a>
 ### Exercise 10
 **Instructions**: Implement `get_corrections`, which returns a list of zero to n possible suggestion tuples of the form (word, probability_of_word). 
 
-**Step 1:** Generate suggestions for a supplied word: You'll use the edit functions you have developed. The 'suggestion algorithm' should follow this logic: 
+**Step 1:** Generate suggestions for a supplied word: You'll use the edit functions we have developed. The 'suggestion algorithm' should follow this logic: 
 * If the word is in the vocabulary, suggest the word. 
 * Otherwise, if there are suggestions from `edit_one_letter` that are in the vocabulary, use those. 
 * Otherwise, if there are suggestions from `edit_two_letters` that are in the vocabulary, use those. 
@@ -978,10 +978,10 @@ The logical `or` could be used to implement the suggestion algorithm very compac
 <ul>
     <li>edit_one_letter and edit_two_letters return *python sets*. </li>
     <li> Sets have a handy <a href="https://docs.python.org/2/library/sets.html" > set.intersection </a> feature</li>
-    <li>To find the keys that have the highest values in a dictionary, you can use the Counter dictionary to create a Counter object from a regular dictionary.  Then you can use Counter.most_common(n) to get the n most common keys.
+    <li>To find the keys that have the highest values in a dictionary, we can use the Counter dictionary to create a Counter object from a regular dictionary.  Then we can use Counter.most_common(n) to get the n most common keys.
     </li>
-    <li>To find the intersection of two sets, you can use set.intersection or the & operator.</li>
-    <li>If you are not as familiar with short circuit syntax (as shown above), feel free to use if else statements instead.</li>
+    <li>To find the intersection of two sets, we can use set.intersection or the & operator.</li>
+    <li>If we are not as familiar with short circuit syntax (as shown above), feel free to use if else statements instead.</li>
     <li>To use an if statement to check of a set is empty, use 'if not x:' syntax </li>
 </ul>
 </p>
@@ -996,7 +996,7 @@ def get_corrections(word, probs, vocab, n=2, verbose = False):
         word: a user entered string to check for suggestions
         probs: a dictionary that maps each word to its probability in the corpus
         vocab: a set containing all the vocabulary
-        n: number of possible word corrections you want returned in the dictionary
+        n: number of possible word corrections we want returned in the dictionary
     Output: 
         n_best: a list of tuples with the most probable n corrected words and their probabilities.
     '''
@@ -1044,18 +1044,18 @@ data type of corrections <class 'list'>
 <a name='4'></a>
 # Part 4: Minimum Edit distance
 
-Now that you have implemented your auto-correct, how do you evaluate the similarity between two strings? For example: 'waht' and 'what'
+Now that we have implemented your auto-correct, how do we evaluate the similarity between two strings? For example: 'waht' and 'what'
 
-Also how do you efficiently find the shortest path to go from the word, 'waht' to the word 'what'?
+Also how do we efficiently find the shortest path to go from the word, 'waht' to the word 'what'?
 
-You will implement a dynamic programming system that will tell you the minimum number of edits required to convert a string into another string.
+We will implement a dynamic programming system that will tell we the minimum number of edits required to convert a string into another string.
 
 <a name='4-1'></a>
 ### Part 4.1 Dynamic Programming
 
 Dynamic Programming breaks a problem down into subproblems which can be combined to form the final solution. Here, given a string source[0..i] and a string target[0..j], we will compute all the combinations of substrings[i, j] and calculate their edit distance. To do this efficiently, we will use a table to maintain the previously computed substrings and use those to calculate larger substrings.
 
-You have to create a matrix and update each element in the matrix as follows:  
+We have to create a matrix and update each element in the matrix as follows:  
 
 $$\text{Initialization}$$
 
@@ -1081,7 +1081,7 @@ rep\_cost; & if src[i]\neq tar[j]\\
 \tag{5}
 \end{align}
 
-So converting the source word **play** to the target word **stay**, using an input cost of one, a delete cost of 1, and replace cost of 2 would give you the following table:
+So converting the source word **play** to the target word **stay**, using an input cost of one, a delete cost of 1, and replace cost of 2 would give we the following table:
 <table style="width:20%">
 
   <tr>
@@ -1141,7 +1141,7 @@ So converting the source word **play** to the target word **stay**, using an inp
 </table>
 
 
-The operations used in this algorithm are 'insert', 'delete', and 'replace'. These correspond to the functions that you defined earlier: insert_letter(), delete_letter() and replace_letter(). switch_letter() is not used here.
+The operations used in this algorithm are 'insert', 'delete', and 'replace'. These correspond to the functions that we defined earlier: insert_letter(), delete_letter() and replace_letter(). switch_letter() is not used here.
 
 The diagram below describes how to initialize the table. Each entry in D[i,j] represents the minimum cost of converting string source[0:i] to string target[0:j]. The first column is initialized to represent the cumulative cost of deleting the source characters to convert string "EER" to "". The first row is initialized to represent the cumulative cost of inserting the target characters to convert from "" to "NEAR".
 
@@ -1197,8 +1197,8 @@ Again, the word "substitution" appears in the figure, but think of this as "repl
 def min_edit_distance(source, target, ins_cost = 1, del_cost = 1, rep_cost = 2):
     '''
     Input: 
-        source: a string corresponding to the string you are starting with
-        target: a string corresponding to the string you want to end with
+        source: a string corresponding to the string we are starting with
+        target: a string corresponding to the string we want to end with
         ins_cost: an integer setting the insert cost
         del_cost: an integer setting the delete cost
         rep_cost: an integer setting the replace cost
@@ -1333,18 +1333,18 @@ eer eer 0
 We have to allow single edits here because some two_edits will restore a single edit.
 
 # Submission
-Make sure you submit your assignment before you modify anything below
+Make sure we submit your assignment before we modify anything below
 
 <a name='5'></a>
 
 # Part 5: Optional - Backtrace
 
 
-Once you have computed your matrix using minimum edit distance, how would find the shortest path from the top left corner to the bottom right corner? 
+Once we have computed your matrix using minimum edit distance, how would find the shortest path from the top left corner to the bottom right corner? 
 
-Note that you could use backtrace algorithm.  Try to find the shortest path given the matrix that your `min_edit_distance` function returned.
+Note that we could use backtrace algorithm.  Try to find the shortest path given the matrix that your `min_edit_distance` function returned.
 
-You can use these [lecture slides on minimum edit distance](https://web.stanford.edu/class/cs124/lec/med.pdf) by Dan Jurafsky to learn about the algorithm for backtrace.
+We can use these [lecture slides on minimum edit distance](https://web.stanford.edu/class/cs124/lec/med.pdf) by Dan Jurafsky to learn about the algorithm for backtrace.
 
 ```{python}
 # Experiment with back trace - insert your code here

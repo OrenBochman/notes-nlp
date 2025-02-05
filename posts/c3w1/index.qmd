@@ -8,7 +8,7 @@ categories:
   - Coursera 
   - Notes
   - Sequence Models
-  - Sentiment Analysis
+  - Sentiment analysis task
 ---
 
 ::: {#fig-00 .column-margin}
@@ -38,12 +38,12 @@ My irreverent notes for Week 1 of the [Natural Language Processing with Sequence
 
 ## Neural Networks for Sentiment Analysis
 
-Previously in the course you did sentiment analysis with logistic regression and naive Bayes. Those models were in a sense more naive, and are not able to catch the sentiment off a tweet like: "I am not happy " or "If only it was a good day". When using a neural network to predict the sentiment of a sentence, you can use the following. Note that the image below has three outputs, in this case you might want to predict, "positive", "neutral ", or "negative". 
+Previously in the course we did sentiment analysis with logistic regression and naive Bayes. Those models were in a sense more naive, and are not able to catch the sentiment off a tweet like: "I am not happy " or "If only it was a good day". When using a neural network to predict the sentiment of a sentence, we can use the following. Note that the image below has three outputs, in this case we might want to predict, "positive", "neutral ", or "negative". 
 
 ![](img/slide01.png){.column-margin group="slides"}
 
-Note that the network above has three layers. To go from one layer to another you can use a 
-$W$ matrix to propagate to the next layer. Hence, we call this concept of going from the input until the final layer, forward propagation. To represent a tweet, you can use the following: 
+Note that the network above has three layers. To go from one layer to another we can use a 
+$W$ matrix to propagate to the next layer. Hence, we call this concept of going from the input until the final layer, forward propagation. To represent a tweet, we can use the following: 
 
 
 Note, that we add zeros for padding to match the size of the longest tweet. 
@@ -59,7 +59,7 @@ Trax has several advantages:
 - Parallel computing
 - Record algebraic computations for gradient evaluation
 
-Here is an example of how you can code a neural network in Trax: 
+Here is an example of how we can code a neural network in Trax: 
 
 ![](img/slide03.png){.column-margin group="slides"}
 
@@ -83,18 +83,18 @@ JAX library:
 
 ## Trax: Layers
 
-Trax makes use of classes. If you are not familiar with classes in python, don't worry about it, here is an example. 
+Trax makes use of classes. If we are not familiar with classes in python, don't worry about it, here is an example. 
 
 ![](img/slide04.png){.column-margin group="slides"}
 
 
-In the example above, you can see that a class takes in an `__init__` and a `__call__` method. 
+In the example above, we can see that a class takes in an `__init__` and a `__call__` method. 
 
-These methods allow you to initialize your internal variables and allow you to execute your function when called. 
+These methods allow we to initialize your internal variables and allow we to execute your function when called. 
 
-To the right you can see how you can initialize your class. When you call `MyClass(7)` , you are setting the $y$ variable to 7. Now when you call `f(3)` you are adding 7 + 3. 
+To the right we can see how we can initialize your class. When we call `MyClass(7)` , we are setting the $y$ variable to 7. Now when we call `f(3)` we are adding 7 + 3. 
 
-You can change the `my_method` function to do whatever you want, and you can have as many methods as you want in a class.  
+We can change the `my_method` function to do whatever we want, and we can have as many methods as we want in a class.  
 
 ## Lab: Classes and Subclasses
 
@@ -115,7 +115,7 @@ ReLU(x) is defined as max(0,x) for any input x.
 
 ## Serial Layer
 
-A serial layer allows you to compose layers in a serial arrangement:
+A serial layer allows we to compose layers in a serial arrangement:
 
 ![](img/slide07.png){.column-margin group="slides"}
 
@@ -123,11 +123,11 @@ It is a composition of sublayers. These layers are usually dense layers followed
 
 ## Other Layers
 
-Other layers could include embedding layers and mean layers. For example, you can learn word embeddings for each word in your vocabulary as follows: 
+Other layers could include embedding layers and mean layers. For example, we can learn word embeddings for each word in your vocabulary as follows: 
 
 ![](img/slide08.png){.column-margin group="slides"}
 
-The mean layer allows you to take the average of the embeddings. You can visualize it as follows: 
+The mean layer allows we to take the average of the embeddings. We can visualize it as follows: 
 
 ![](img/slide09.png){.column-margin group="slides"}
 
@@ -135,17 +135,17 @@ This layer does not have any trainable parameters.
 
 ## Training
 
-In Trax, the function grad allows you to compute the gradient. You can use it as follows: 
+In Trax, the function grad allows we to compute the gradient. We can use it as follows: 
 
 ![](img/slide10.png){.column-margin group="slides"}
 
-Now if you were to evaluate grad_f at a certain value, namely z, it would be the same as computing 6z+1.  Now to do the training, it becomes very simple: 
+Now if we were to evaluate grad_f at a certain value, namely z, it would be the same as computing 6z+1.  Now to do the training, it becomes very simple: 
 
 
 ![](img/slide11.png){.column-margin group="slides"}
 
 
-You simply compute the gradients by feeding in y.forward (the latest value of y), the weights, and the input x, and then it does the back-propagation for you in a single line. You can then have the loop that allows you to update the weights (i.e. gradient descent!).
+We simply compute the gradients by feeding in y.forward (the latest value of y), the weights, and the input x, and then it does the back-propagation for we in a single line. We can then have the loop that allows we to update the weights (i.e. gradient descent!).
 
 ## Lab: Data Generators
 

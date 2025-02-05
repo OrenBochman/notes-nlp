@@ -57,10 +57,10 @@ Previously we used a vector space model to represent this idea. Now we dive deep
 
 N-gram refer to howe we model the a sequence of N words. For example, a bigram model would model the probability of a word given the previous word. A trigram model would model the probability of a word given the previous bigram. And so on. These probabilities are derived by counting frequencies in a corpus of texts. 
 
-N-grams are fundamental and give you a foundation that will allow you to understand more complicated models in the specialization. They form the theoretical under pinning for the next two courses.
+N-grams are fundamental and give we a foundation that will allow we to understand more complicated models in the specialization. They form the theoretical under pinning for the next two courses.
 
 
-N-grams models allow us to predict the probabilities of certain words happening in a specific sequence. Using that, you can build an auto-correct or even a search suggestion tool. 
+N-grams models allow us to predict the probabilities of certain words happening in a specific sequence. Using that, we can build an auto-correct or even a search suggestion tool. 
 
 Other applications of N-gram language modeling include: 
 
@@ -74,7 +74,7 @@ Other applications of N-gram language modeling include:
 Description
 :::
 
-This week you are going to learn to:
+This week we are going to learn to:
 
 - Process a text corpus to N-gram language model
 - Handle out of vocabulary words
@@ -101,7 +101,7 @@ Now given the those definitions, we can label a sentence as follows:
 Description
 :::
 
-In other notation you can write: 
+In other notation we can write: 
 
 $$
 w_1^m = w_1 w_2 w_3 ... w_m
@@ -164,7 +164,7 @@ $$
 
 ## Sequence Probabilities
 
-You just saw how to compute sequence probabilities, their short comings, and finally how to approximate N-gram probabilities. In doing so, you try to approximate the probability of a sentence. For example, what is the probability of the following sentence: *The teacher drinks tea*. To compute it, you will make use of the following: 
+We just saw how to compute sequence probabilities, their short comings, and finally how to approximate N-gram probabilities. In doing so, we try to approximate the probability of a sentence. For example, what is the probability of the following sentence: *The teacher drinks tea*. To compute it, we will make use of the following: 
 
 $$
 P(B|A) = \frac{P(A,B)}{P(A)} \Rightarrow P(A,B) = P(A)P(B|A)
@@ -175,14 +175,14 @@ P(A,B,C,D) = P(A)P(B|A)P(C|A,B)P(D|A,B,C)
 $$
 
 
-To compute the probability of a sequence, you can compute the following:
+To compute the probability of a sequence, we can compute the following:
 
 $$
 P(\text{The teacher drinks tea}) = P(\text{The})P(\text{teacher}|\text{The})P(\text{drinks}|\text{The teacher})P(\text{tea}|\text{The teacher drinks})
 $$
 
 
-One of the main issues with computing the probabilities above is the corpus rarely contains the exact same phrases as the ones you computed your probabilities on. Hence, you can easily end up getting a probability of 0. The Markov assumption indicates that only the last word matters. Hence: 
+One of the main issues with computing the probabilities above is the corpus rarely contains the exact same phrases as the ones we computed your probabilities on. Hence, we can easily end up getting a probability of 0. The Markov assumption indicates that only the last word matters. Hence: 
 
 $$
 \text{Bigram} \qquad P(w_n | w_1^{n-1}) \approx P(w_n | w_{n-1})
@@ -196,7 +196,7 @@ $$
 \text{N-gram} \qquad P(w_n | w_1^{n-1}) \approx P(w_n | w_{n-N+1}^{n-1})
 $$
 
-You can model the entire sentence as follows: 
+We can model the entire sentence as follows: 
 
 $$
 P(w_1^n) = P(w_1)P(w_2|w_1)P(w_3|w_2)P(w_4|w_3) ... P(w_n|w_{n-1}) = \prod_{i=1}^{n} P(w_i|w_{i-1})
@@ -210,9 +210,9 @@ $$
 
 We usually start and end a sentence with the following tokens respectively: \<s> \</s>. 
 
-When computing probabilities using a unigram, you can append an \<s> in the beginning of the sentence. To generalize to an N-gram language model, you can add N-1 start tokens \<s>. 
+When computing probabilities using a unigram, we can append an \<s> in the beginning of the sentence. To generalize to an N-gram language model, we can add N-1 start tokens \<s>. 
 
-For the end of sentence token \</s>, you only need one even if it is an N-gram. Here is an example: 
+For the end of sentence token \</s>, we only need one even if it is an N-gram. Here is an example: 
 
 ::: {#fig-08 .column-margin}
 ![caption](img/slide08.png)
@@ -220,7 +220,7 @@ For the end of sentence token \</s>, you only need one even if it is an N-gram. 
 Description
 :::
 
-Make sure you know how to compute the probabilities above! 
+Make sure we know how to compute the probabilities above! 
 
 ## Lecture notebook: Corpus preprocessing for N-grams
 
@@ -252,7 +252,7 @@ Language model
 Log probability
 :::
 
-We covered a lot of concepts in the previous video.  You have seen: 
+We covered a lot of concepts in the previous video.  We have seen: 
 
 - Count matrix c.f @fig-09
 - Probability matrix c.f @fig-10
@@ -268,7 +268,7 @@ In the count matrix:
 Here is an example of the count matrix of a bigram. 
 
 
-To convert it into a probability matrix, you can use the following formula:
+To convert it into a probability matrix, we can use the following formula:
 
 $$
 P(w_n \mid w^{n-1}_{n-N+1}) = \frac{C(w^{n-1}_{n-N+1}, w_n)}{C(w^{n-1}_{n-N+1})}
@@ -279,9 +279,9 @@ sum(row) = \sum_{w \in V} C(w^{n-1}_{n-N+1}, w) = C(w^{n-1}_{n-N+1})
 $$ {#eq-row-sum}
 
 
-Now given the probability matrix, you can generate the language model. You can compute the sentence probability and the next word prediction. 
+Now given the probability matrix, we can generate the language model. We can compute the sentence probability and the next word prediction. 
 
-To compute the probability of a sequence, you needed to compute: 
+To compute the probability of a sequence, we needed to compute: 
 
 $$
 \begin{align*}
@@ -290,7 +290,7 @@ P(w_1^n) &= P(w_1)P(w_2|w_1)P(w_3|w_2)P(w_4|w_3) \ldots P(w_n|w_{n-1})  \\
 \end{align*}
 $$ {#eq-sequence-prob}
 
-To avoid underflow, you can multiply by the log. 
+To avoid underflow, we can multiply by the log. 
 
 $$ 
 \begin{align*}
@@ -299,7 +299,7 @@ $$
 \end{align*}
 $$ {#eq-log-sequence-prob}
 
-Finally, you can create a generative language model.
+Finally, we can create a generative language model.
 
 
 ::: {#fig-13 .column-margin}
@@ -348,7 +348,7 @@ PP(W) = \sqrt{ \prod_{i=1}^{m} \prod_{j=1}^{|s_i|} \frac{1}{P(w_j^{(i)} | w_{j-1
 $$
 
 
-​$w_j^{(i)}$ corresponds to the jth word in the ith sentence. If you were to concatenate all the sentences then $w_i$ is the ith word in the test set. To compute the log perplexity, you go from:
+​$w_j^{(i)}$ corresponds to the jth word in the ith sentence. If we were to concatenate all the sentences then $w_i$ is the ith word in the test set. To compute the log perplexity, we go from:
  
 $$
 PP(W) = \sqrt{ \prod_{i=1}^{m} \frac{1}{P(w_i | w_{i-1})}}
@@ -362,11 +362,11 @@ $$
 
 ## Out of Vocabulary Words
 
-Many times, you will be dealing with unknown words in the corpus. So how do you choose your vocabulary? What is a vocabulary?
+Many times, we will be dealing with unknown words in the corpus. So how do we choose your vocabulary? What is a vocabulary?
 
-A vocabulary is a set of unique words supported by your language model. In some tasks like speech recognition or question answering, you will encounter and generate words only from a fixed set of words. Hence, a **closed vocabulary**.  
+A vocabulary is a set of unique words supported by your language model. In some tasks like speech recognition or question answering, we will encounter and generate words only from a fixed set of words. Hence, a **closed vocabulary**.  
 
-**Open vocabulary** means that you may encounter words from outside the vocabulary, like a name of a new city in the training set. Here is one recipe that would allow you to handle unknown words. 
+**Open vocabulary** means that we may encounter words from outside the vocabulary, like a name of a new city in the training set. Here is one recipe that would allow we to handle unknown words. 
 
 - Create vocabulary V
 - Replace any word in corpus and not in V by \<UNK>
@@ -379,7 +379,7 @@ Count Matrix
 :::
 
 
-The example above shows how you can use min_frequency and replace all the words that show up fewer times than min_frequency by UNK. You can then treat UNK as a regular word. 
+The example above shows how we can use min_frequency and replace all the words that show up fewer times than min_frequency by UNK. We can then treat UNK as a regular word. 
 
 ### Criteria to create the vocabulary
 
@@ -443,7 +443,7 @@ When using back-off:
 Here is a [visualization](@fig-18) of the backoff process.
 
 
-You can also use interpolation when computing probabilities as follows: 
+We can also use interpolation when computing probabilities as follows: 
 
 $$
 \hat{P}(w_n | w_{n-2} W_{n-1}) = \lambda_1 \times P(w_n | w_{n-2} w_{n-1}) + \lambda_2 \times P(w_n | w_{n-1}) + \lambda_3 \times P(w_n) \qquad
@@ -459,7 +459,7 @@ $$
 ## Week Summary
 
 
-This week you learned the following concepts
+This week we learned the following concepts
 
 - N-Grams and probabilities
 - Approximate sentence probability from N-Grams

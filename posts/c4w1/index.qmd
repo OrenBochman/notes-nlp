@@ -1,47 +1,73 @@
 ---
 date: 2021-03-20
-title: Week 1 Neural Machine Translation
-subtitle: NLP with Attention Models
-description: "This week of the Specialization, we'll dive into the fundamentals of Neural Machine Translation (NMT). We'll learn about the encoder-decoder architecture, which forms the basis of NMT models, and explore attention mechanisms that enable the model to focus on different parts of the input sequence during translation. Through hands-on exercises, we'll implement an attention model for English to German translation using TensorFlow, train it on a dataset of sentence pairs, and evaluate its performance. By the end of this week, we'll have gained a solid understanding of NMT and its applications in language translation."
+title: "Week 1 - Neural Machine Translation"
+subtitle: "NLP with Attention Models"
+description: "This week we dive deep into the Neural Machine Translation. We'll learn about the encoder-decoder architecture, explore attention mechanisms that enable the model to focus on different parts of the input sequence during translation. In the hands-on exercises, we'll implement an attention model for English to German translation, train it on a dataset of sentence pairs, and evaluate its performance."
 categories: 
-  - NLP with Attention Models
-  - Neural Machine Translation
-  - Coursera 
-  - Notes
-  - NLP
-  - Deep Learning Algorithms
-  - Transformer
-  - Teacher forcing
-  - Positional encoding
-  - Seq2Seq
-  - Word alignment
   - Attention
-  - Dot product attention
-  - Translation task
   - Beam search
-  - MBR
   - BLEU 
   - ROUGE
+  - Coursera 
+  - NLP with Attention Models
+  - Notes
+  - Machine translation task
+  - MBR
+  - NLP
+  - Positional encoding
+  - Seq2Seq
+  - Transformer
+  - Teacher forcing
+  - Translation task
+  - Word alignment
+keywords:
+  - seq2seq models
+  - Dot product attention
+  - Deep Learning Algorithms
+  - Machine Translation
+  - Neural Machine Translation
+  - Translation evaluation metrics
+  - Encoder-Decoder architecture
+  - Minimum Bayes Risk (MBR)
 ---
 
-![deeplearning.ai](/images/Course-Logo-4-1.webp){.column-margin .nolightbox}
+![course banner](/images/Course-Logo-4-1.webp){.column-margin .nolightbox}
 
-# Natural Language Processing with Attention Models {#sec-sec-nlp-attention-models}
+::: {#sup-slide-deck .column-margin group="slides"}
+![This week's slides](slides.pdf){width="420px" height="340px" style="@page {size: 16in 9in;  margin: 0;}" group="slides"}
+:::
 
-Notes for: NLP with Attention Models Week 1
+My notes for Week 1 of the [Natural Language Processing with Attention Labels](https://www.coursera.org/learn/attention-models-in-nlp/home/info) Course in the Natural Language Processing Specialization Offered by [DeepLearning.AI](DeepLearning.AI) on [Coursera](https://www.coursera.org/)
 
-### Week's Learning Objectives: {#sec-sec-weeks-learning-objectives}
+::: {.callout-important}
+## Learning Objectives
 
-## TLDR: Neural Network engineering {#sec-sec-tldr-neural-network-engineering}
+- [x] [Explain how an Encoder/Decoder model works](#sec-sec-how-to-align-sequences)
+- [x] [Apply word alignment for machine translation](#sec-sec-how-to-align-sequences)
+- [x] [Train a Neural Machine Translation model with Attention](#sec-sec-how-to-align-sequences)
+- [x] [Develop intuition for how teacher forcing helps a translation model check its predictions](#sec-sec-how-to-align-sequences)
+- [x] [Use BLEU & ROUGE score to evaluate NMT text quality](#sec-sec-how-to-align-sequences)
+- [x] [Describe several decoding methods including MBR and Beam search](#sec-sec-how-to-align-sequences)
 
-### How do we learn to **align** two sequences? {#sec-sec-how-to-align-sequences}
+:::
 
--   Explain how an Encoder/Decoder model works
--   Apply word alignment for machine translation
--   Train a Neural Machine Translation model with Attention
--   Develop intuition for how teacher forcing helps a translation model checks its predictions
--   Use [**BLEU**](https://en.wikipedia.org/wiki/BLEU) score and [**ROUGE**](https://en.wikipedia.org/wiki/ROUGE_(metric)) score to evaluate machine-generated text quality
--   Describe several decoding methods including [MBR]() and [Beam search]()
+
+::: {.callout-warning collapse="false"}
+## TL;DR NMT :chart_with_upwards_trend:
+
+<!-- https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md#smileys--emotion -->
+
+![NMT in a nutshell](/images/in_a_nutshell.jpg)
+
+- **Seq2Seq** models are used for Neural Machine Translation (NMT) tasks.
+- **Attention** mechanisms help the model focus on different parts of the input sequence during translation.
+- **BLEU** and **ROUGE** are evaluation metrics for NMT.
+- **Decoding** methods like **Beam Search** and **Minimum Bayes Risk** help generate translations.
+
+
+:::
+
+<!-- move to blogpost
 
 ## TLDR: Neural Network engineering {#sec-sec-tldr-neural-network-engineering-2}
 
@@ -150,13 +176,15 @@ def jaccard_similarity(candidate, reference):
     return overlap
 ```
 
+-->
+
 # Video 1: Intro {#sec-sec-video1-intro}
 
 This course covers most modern practical NLP methods. We'll use a powerful technique called **attention** to build several different models. Some of the things we build using the attention mechanism, include a powerful language translation model, an algorithm capable of summarizing texts, a model that can actually answer questions about the piece of text, and a chat bot that we can actually have a conversation with.
 
 We also take another look at sentiment analysis.
 
-When it comes to modern deep learning, there's a sort of new normal, which is to say, most people aren't actually building and training models from scratch. Instead, it's more common to download a pre-trained model and then tweak it and find units for your specific use case. In this course, we show you how to build the models from scratch, but we also provide you custom pre-trained models that we created just for you. By training them continuously for weeks on the most powerful TPU clusters that are currently only available to researchers as Google.
+When it comes to modern deep learning, there's a sort of new normal, which is to say, most people aren't actually building and training models from scratch. Instead, it's more common to download a pre-trained model and then tweak it and find units for your specific use case. In this course, we show we how to build the models from scratch, but we also provide we custom pre-trained models that we created just for you. By training them continuously for weeks on the most powerful TPU clusters that are currently only available to researchers as Google.
 
 # Video 2: Seq2Seq {#sec-sec-video2-seq2seq}
 
@@ -166,14 +194,14 @@ When it comes to modern deep learning, there's a sort of new normal, which is to
 -   Seq2Seq model and its shortcomings
 -   Solution for the information bottleneck
 
-The sequential nature of models you learned in the previous course (RNNs, LSTMs, GRUs) does not allow for speed ups within training examples, which becomes critical at longer sequence lengths, as memory constraints limit batching across examples. (because you can run different batches or examples in parallel or even different directions)
+The sequential nature of models we learned in the previous course (RNNs, LSTMs, GRUs) does not allow for speed ups within training examples, which becomes critical at longer sequence lengths, as memory constraints limit batching across examples. (because we can run different batches or examples in parallel or even different directions)
 
 ![screenshot_of_outline_slide](img/c4w1_screenshot_01.png){.column-margin group="slides"}
 
-In other words, if you rely on sequences and you need to know the beginning of a text before being able to compute something about the ending of it, then you can not use parallel computing. You would have to wait until the initial computations are complete. This isn't good, because if your text is too long, then
+In other words, if we rely on sequences and we need to know the beginning of a text before being able to compute something about the ending of it, then we can not use parallel computing. We would have to wait until the initial computations are complete. This isn't good, because if your text is too long, then
 
-1.  It'll take a long time for you to process it and
-2.  There is the information loss mentioned earlier in the text as you approach the end.
+1.  It'll take a long time for we to process it and
+2.  There is the information loss mentioned earlier in the text as we approach the end.
 
 ## Seq2Seq model {#sec-sec-seq2seq-model}
 
@@ -220,7 +248,7 @@ Then we run the scores through a Softmax, squashing them  between 0 and 1, and g
 
 ## W1V4: Attention {#sec-w1v4-attention}
 
-The attention mechanism uses encoded representations of both the input or the encoder hidden states and the outputs or the decoder hidden states. The keys and values are pairs. Both of dimension NN, where NN is the input sequence length and comes from the encoder hidden states. Keys and values have their own respective matrices, but the matrices have the same shape and are often the same. While the queries come from the decoder hidden states. One way you can think of it is as follows. Imagine that you are translating English into German. You can represent the word embeddings in the English language as keys and values. The queries will then be the German equivalent. You can then calculate the dot product between the query and the key. Note that similar vectors have higher dot products and non-similar vectors will have lower dot products. The intuition here is that you want to identify the corresponding words in the queries that are similar to the keys. This would allow your model to "look" or focus on the right place when translating each word.
+The attention mechanism uses encoded representations of both the input or the encoder hidden states and the outputs or the decoder hidden states. The keys and values are pairs. Both of dimension NN, where NN is the input sequence length and comes from the encoder hidden states. Keys and values have their own respective matrices, but the matrices have the same shape and are often the same. While the queries come from the decoder hidden states. One way we can think of it is as follows. Imagine that we are translating English into German. We can represent the word embeddings in the English language as keys and values. The queries will then be the German equivalent. We can then calculate the dot product between the query and the key. Note that similar vectors have higher dot products and non-similar vectors will have lower dot products. The intuition here is that we want to identify the corresponding words in the queries that are similar to the keys. This would allow your model to "look" or focus on the right place when translating each word.
 
 We then run a Softmax:
 
@@ -236,7 +264,7 @@ $$
 softmax(QK^T )V  
 $$ {#sec-softmax-formula-2}
 
-In the matrix, the lighter square shows where the model is actually looking when making the translation of that word. This mapping isn't necessarily be one to one. The lighting just tells you to what extent is each word contributing to the input that's fed into the decoder. As you can see several words can contribute to translating another word, depending on the weights (output) of the softmax that we  use to create the new input. a picture of attention in translation with English to German An important thing to keep in mind is that the model should be flexible enough to connect each English word with its relevant German word, even if they don't appear in the same position in their respective sentences. In other words, it should be flexible enough to handle differences in grammar and word ordering in different languages.
+In the matrix, the lighter square shows where the model is actually looking when making the translation of that word. This mapping isn't necessarily be one to one. The lighting just tells we to what extent is each word contributing to the input that's fed into the decoder. As we can see several words can contribute to translating another word, depending on the weights (output) of the softmax that we  use to create the new input. a picture of attention in translation with English to German An important thing to keep in mind is that the model should be flexible enough to connect each English word with its relevant German word, even if they don't appear in the same position in their respective sentences. In other words, it should be flexible enough to handle differences in grammar and word ordering in different languages.
 
 In a situation like the one just mentioned, where the grammar of foreign language requires a difference word order than the other, the attention is so flexible enough to find the connection. The first four tokens, the agreements on the, are pretty straightforward, but then the grammatical structure between French and English changes. Now instead of looking at the corresponding fifth token to translate the French word zone, the attention knows to look further down at the eighth token, which corresponds to the English word area, glorious and necessary. It's pretty amazing, was a little matrix multiplication can do.
 
@@ -254,7 +282,7 @@ To get the BLEU score, the candidates and the references are usually based on an
 
 ![screenshot_of_outline_slide](img/c4w1_screenshot_10.png){.column-margin group="slides"}
 
-You would sum over the unique n-gram counts in the candidate and divide by the total number of words in the candidate. The same concept could apply to unigrams, bigrams, etc. One issue with the BLEU score is that it doesn't take into account semantics, so it doesn't take into account the order of the n-grams in the sentence.
+We would sum over the unique n-gram counts in the candidate and divide by the total number of words in the candidate. The same concept could apply to unigrams, bigrams, etc. One issue with the BLEU score is that it doesn't take into account semantics, so it doesn't take into account the order of the n-grams in the sentence.
 
 $$
 BLEU = BP\Bigl(\prod_{i=1}^{4}\text{precision}_i\Bigr)^{(1/4)}
@@ -284,7 +312,7 @@ $$
 Rouge_{recall} = \sum  \frac{(\{\text{prediction n-grams}\} \cap \{ \text{test n-grams}\})}{\vert{ \text{test n-grams}}\vert } 
 $$ {#eq-rouge-recall-formula}
 
-Rouge also allows you to compute precision as follows:
+Rouge also allows we to compute precision as follows:
 
 ![precision in ROUGE](img/c4w1_screenshot_12.png){.column-margin group="slides"}
 

@@ -1,4 +1,5 @@
 ---
+date: 2020-10-26
 title: 'Word Embeddings: Training the CBOW model'
 categories: 
   - NLP 
@@ -10,11 +11,16 @@ jupyter: python3
 #     error: true
 ---
 
-::: {#fig-00 .column-margin .nolightbox}
+::: {.column-margin .nolightbox}
 ![course banner](/images/Course-Logo-2-3.webp)
 :::
 
-In previous lecture notebooks you saw how to prepare data before feeding it to a continuous bag-of-words model, the model itself, its architecture and activation functions. This notebook will walk you through:
+In previous lecture notebooks we saw 
+
+1. how to prepare data before feeding it to a continuous bag-of-words model, 
+2. the model itself, its architecture and activation functions. 
+
+This notebook will walk we through:
 
 - Forward propagation.
 - Cross-entropy loss.
@@ -51,9 +57,9 @@ V = 5
 
 ### Initialization of the weights and biases
 
-Before you start training the neural network, you need to initialize the weight matrices and bias vectors with random values.
+Before we start training the neural network, we need to initialize the weight matrices and bias vectors with random values.
 
-In the assignment you will implement a function to do this yourself using `numpy.random.rand`. In this notebook, we've pre-populated these matrices and vectors for you.
+In the assignment we will implement a function to do this yourself using `numpy.random.rand`. In this notebook, we've pre-populated these matrices and vectors for you.
 
 ```{python}
 # Define first matrix of weights
@@ -93,7 +99,7 @@ print(f'size of b2: {b2.shape} (Vx1)')
 ```
 
 
-Before moving forward, you will need some functions and variables defined in previous notebooks. They can be found next. Be sure you understand everything that is going on in the next cell, if not consider doing a refresh of the first lecture notebook.
+Before moving forward, we will need some functions and variables defined in previous notebooks. They can be found next. Be sure we understand everything that is going on in the next cell, if not consider doing a refresh of the first lecture notebook.
 
 ```{python}
 # Define the tokenized version of the corpus
@@ -133,14 +139,14 @@ def get_training_example(words, C, word2Ind, V):
 
 Run the next cells to get the first training example, made of the vector representing the context words "i am because i", and the target which is the one-hot vector representing the center word "happy".
 
-> You don't need to worry about the Python syntax, but there are some explanations below if you want to know what's happening behind the scenes.
+> We don't need to worry about the Python syntax, but there are some explanations below if we want to know what's happening behind the scenes.
 
 ```{python}
 # Save generator object in the 'training_examples' variable with the desired arguments
 training_examples = get_training_example(words, 2, word2Ind, V)
 ```
 
-> `get_training_examples`, which uses the `yield` keyword, is known as a generator. When run, it builds an iterator, which is a special type of object that... you can iterate on (using a `for` loop for instance), to retrieve the successive values that the function generates.
+> `get_training_examples`, which uses the `yield` keyword, is known as a generator. When run, it builds an iterator, which is a special type of object that... we can iterate on (using a `for` loop for instance), to retrieve the successive values that the function generates.
 >
 > In this case `get_training_examples` `yield`s training examples, and iterating on `training_examples` will return the successive training examples.
 
@@ -149,9 +155,9 @@ training_examples = get_training_example(words, 2, word2Ind, V)
 x_array, y_array = next(training_examples)
 ```
 
-> `next` is another special keyword, which gets the next available value from an iterator. Here, you'll get the very first value, which is the first training example. If you run this cell again, you'll get the next value, and so on until the iterator runs out of values to return.
+> `next` is another special keyword, which gets the next available value from an iterator. Here, you'll get the very first value, which is the first training example. If we run this cell again, you'll get the next value, and so on until the iterator runs out of values to return.
 >
-> In this notebook `next` is used because you will only be performing one iteration of training. In this week's assignment with the full training over several iterations you'll use regular `for` loops with the iterator that supplies the training examples.
+> In this notebook `next` is used because we will only be performing one iteration of training. In this week's assignment with the full training over several iterations you'll use regular `for` loops with the iterator that supplies the training examples.
 
 The vector representing the context words, which will be fed into the neural network, is:
 
@@ -189,7 +195,7 @@ y.shape = (V, 1)
 print(f'y:\n{y}')
 ```
 
-Now you will need the activation functions seen before. Again, if this feel unfamiliar consider checking the previous lecture notebook. 
+Now we will need the activation functions seen before. Again, if this feel unfamiliar consider checking the previous lecture notebook. 
 
 ```{python}
 # Define the 'relu' function as seen in the previous lecture notebook
@@ -207,7 +213,7 @@ def softmax(z):
 
 ### Values of the hidden layer
 
-Now that you have initialized all the variables that you need for forward propagation, you can calculate the values of the hidden layer using the following formulas:
+Now that we have initialized all the variables that we need for forward propagation, we can calculate the values of the hidden layer using the following formulas:
 
 $$
 \begin{align}
@@ -216,7 +222,7 @@ $$
 \end{align}
 $$
 
-First, you can calculate the value of $\mathbf{z_1}$.
+First, we can calculate the value of $\mathbf{z_1}$.
 
 ```{python}
 # Compute z1 (values of first hidden layer before applying the ReLU function)
@@ -225,14 +231,14 @@ z1 = np.dot(W1, x) + b1
 
 > `np.dot` is numpy's function for matrix multiplication.
 
-As expected you get an $N$ by 1 matrix, or column vector with $N$ elements, where $N$ is equal to the embedding size, which is 3 in this example.
+As expected we get an $N$ by 1 matrix, or column vector with $N$ elements, where $N$ is equal to the embedding size, which is 3 in this example.
 
 ```{python}
 # Print z1
 z1
 ```
 
-You can now take the ReLU of $\mathbf{z_1}$ to get $\mathbf{h}$, the vector with the values of the hidden layer.
+We can now take the ReLU of $\mathbf{z_1}$ to get $\mathbf{h}$, the vector with the values of the hidden layer.
 
 ```{python}
 # Compute h (z1 after applying ReLU function)
@@ -246,7 +252,7 @@ Applying ReLU means that the negative element of $\mathbf{z_1}$ has been replace
 
 ### Values of the output layer
 
-Here are the formulas you need to calculate the values of the output layer, represented by the vector $\mathbf{\hat y}$:
+Here are the formulas we need to calculate the values of the output layer, represented by the vector $\mathbf{\hat y}$:
 
 $$
 \begin{align}
@@ -302,7 +308,7 @@ As you've performed the calculations with random matrices and vectors (apart fro
     <font size="3" color="darkgreen"><b>Solution</b></font>
 </summary>
 <p>The neural network predicted the word "happy": the largest element of $\mathbf{\hat y}$ is the third one, and the third word of the vocabulary is "happy".</p>
-<p>Here's how you could implement this in Python:</p>
+<p>Here's how we could implement this in Python:</p>
 <p><code>print(Ind2word[np.argmax(y_hat)])</code></p>
 </details>
 
@@ -310,9 +316,9 @@ Well done, you've completed the forward propagation phase!
 
 ## Cross-entropy loss
 
-Now that you have the network's prediction, you can calculate the cross-entropy loss to determine how accurate the prediction was compared to the actual target.
+Now that we have the network's prediction, we can calculate the cross-entropy loss to determine how accurate the prediction was compared to the actual target.
 
-> Remember that you are working on a single training example, not on a batch of examples, which is why you are using *loss* and not *cost*, which is the generalized form of loss.
+> Remember that we are working on a single training example, not on a batch of examples, which is why we are using *loss* and not *cost*, which is the generalized form of loss.
 
 First let's recall what the prediction was.
 
@@ -332,7 +338,7 @@ The formula for cross-entropy loss is:
 
 $$ J=-\sum\limits_{k=1}^{V}y_k\log{\hat{y}_k} \tag{6}$$
 
-**Try implementing the cross-entropy loss function so you get more familiar working with numpy**
+**Try implementing the cross-entropy loss function so we get more familiar working with numpy**
 
 Here are a some hints if you're stuck.
 
@@ -347,7 +353,7 @@ def cross_entropy_loss(y_predicted, y_actual):
 <summary>
     <font size="3" color="darkgreen"><b>Hint 1</b></font>
 </summary>
-    <p>To multiply two numpy matrices (such as <code>y</code> and <code>y_hat</code>) element-wise, you can simply use the <code>*</code> operator.</p>
+    <p>To multiply two numpy matrices (such as <code>y</code> and <code>y_hat</code>) element-wise, we can simply use the <code>*</code> operator.</p>
 </details>
 
 
@@ -355,7 +361,7 @@ def cross_entropy_loss(y_predicted, y_actual):
 <summary>
     <font size="3" color="darkgreen"><b>Hint 2</b></font>
 </summary>
-<p>Once you have a vector equal to the element-wise multiplication of <code>y</code> and <code>y_hat</code>, you can use <code>np.sum</code> to calculate the sum of the elements of this vector.</p>
+<p>Once we have a vector equal to the element-wise multiplication of <code>y</code> and <code>y_hat</code>, we can use <code>np.sum</code> to calculate the sum of the elements of this vector.</p>
 </details>
 
 
@@ -386,7 +392,7 @@ The actual learning will start during the next phase: backpropagation.
 
 ## Backpropagation
 
-The formulas that you will implement for backpropagation are the following.
+The formulas that we will implement for backpropagation are the following.
 
 $$
 \begin{align}
@@ -498,7 +504,7 @@ print(f'size of grad_b2: {grad_b2.shape} (Vx1)')
 
 ## Gradient descent
 
-During the gradient descent phase, you will update the weights and biases by subtracting $\alpha$ times the gradient from the original matrices and vectors, using the following formulas.
+During the gradient descent phase, we will update the weights and biases by subtracting $\alpha$ times the gradient from the original matrices and vectors, using the following formulas.
 
 $$
 \begin{align}
@@ -585,12 +591,12 @@ Expected output:
      [-0.35349417]
      [-0.0764456 ]]
 
-Congratulations, you have completed one iteration of training using one training example!
+Congratulations, we have completed one iteration of training using one training example!
 
-You'll need many more iterations to fully train the neural network, and you can optimize the learning process by training on batches of examples, as described in the lecture. You will get to do this during this week's assignment.
+You'll need many more iterations to fully train the neural network, and we can optimize the learning process by training on batches of examples, as described in the lecture. We will get to do this during this week's assignment.
 
 ### How this practice relates to and differs from the upcoming graded assignment
 
-- In the assignment, for each iteration of training you will use batches of examples instead of a single example. The formulas for forward propagation and backpropagation will be modified accordingly, and you will use cross-entropy cost instead of cross-entropy loss.
-- You will also complete several iterations of training, until you reach an acceptably low cross-entropy cost, at which point you can extract good word embeddings from the weight matrices.
+- In the assignment, for each iteration of training we will use batches of examples instead of a single example. The formulas for forward propagation and backpropagation will be modified accordingly, and we will use cross-entropy cost instead of cross-entropy loss.
+- We will also complete several iterations of training, until we reach an acceptably low cross-entropy cost, at which point we can extract good word embeddings from the weight matrices.
 

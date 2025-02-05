@@ -16,9 +16,9 @@ jupyter: python3
 :::
 
 
-In this lecture notebook you will create a vocabulary from a tagged dataset and learn how to deal with words that are not present in this vocabulary when working with other text sources. 
+In this lecture notebook we will create a vocabulary from a tagged dataset and learn how to deal with words that are not present in this vocabulary when working with other text sources. 
 
-Aside from this you will also learn how to:
+Aside from this we will also learn how to:
  
 - read text files
 - work with defaultdict
@@ -34,9 +34,9 @@ from collections import defaultdict
 
 A tagged dataset taken from the Wall Street Journal is provided in the file `WSJ_02-21.pos`. 
 
-To read this file you can use Python's context manager by using the `with` keyword and specifying the name of the file you wish to read. To actually save the contents of the file into memory you will need to use the `readlines()` method and store its return value in a variable. 
+To read this file we can use Python's context manager by using the `with` keyword and specifying the name of the file we wish to read. To actually save the contents of the file into memory we will need to use the `readlines()` method and store its return value in a variable. 
 
-Python's context managers are great because you don't need to explicitly close the connection to the file, this is done under the hood:
+Python's context managers are great because we don't need to explicitly close the connection to the file, this is done under the hood:
 
 ```{python}
 # Read lines from 'WSJ_02-21.pos' file and save them into the 'lines' variable
@@ -44,7 +44,7 @@ with open("WSJ_02-21.pos", 'r') as f:
     lines = f.readlines()
 ```
 
-To check the contents of the dataset you can print the first 5 lines:
+To check the contents of the dataset we can print the first 5 lines:
 
 ```{python}
 # Print columns for reference
@@ -57,7 +57,7 @@ for i in range(5):
 
 Each line within the dataset has a word followed by its corresponding tag. However since the printing was done using a formatted string it can be inferred that the **word** and the **tag** are separated by a tab (or some spaces) and there is a newline at the end of each line (notice that there is a space between each line). 
 
-If you want to understand the meaning of these tags you can take a look [here](https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html).
+If we want to understand the meaning of these tags we can take a look [here](https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html).
 
 To better understand how the information is structured in the dataset it is recommended to print an unformatted version of it:
 
@@ -70,7 +70,7 @@ Indeed there is a tab between the word and the tag and a newline at the end of e
 
 ### Creating a vocabulary
 
-Now that you understand how the dataset is structured, you will create a vocabulary out of it. A vocabulary is made up of every word that appeared at least 2 times in the dataset. 
+Now that we understand how the dataset is structured, we will create a vocabulary out of it. A vocabulary is made up of every word that appeared at least 2 times in the dataset. 
 For this, follow these steps:
 - Get only the words from the dataset
 - Use a defaultdict to count the number of times each word appears
@@ -78,16 +78,16 @@ For this, follow these steps:
 - Create a list out of the filtered dict
 - Sort the list
 
-For step 1 you can use the fact that every word and tag are separated by a tab and that words always come first. Using list comprehension the words list can be created like this:
+For step 1 we can use the fact that every word and tag are separated by a tab and that words always come first. Using list comprehension the words list can be created like this:
 
 ```{python}
 # Get the words from each line in the dataset
 words = [line.split('\t')[0] for line in lines]
 ```
 
-Step 2 can be done easily by leveraging `defaultdict`. In case you aren't familiar with defaultdicts they are a special kind of dictionaries that **return the "zero" value of a type if you try to access a key that does not exist**. Since you want the frequencies of words, you should define the defaultdict with a type of `int`. 
+Step 2 can be done easily by leveraging `defaultdict`. In case we aren't familiar with defaultdicts they are a special kind of dictionaries that **return the "zero" value of a type if we try to access a key that does not exist**. Since we want the frequencies of words, we should define the defaultdict with a type of `int`. 
 
-Now you don't need to worry about the case when the word is not present within the dictionary because getting the value for that key will simply return a zero. Isn't that cool?
+Now we don't need to worry about the case when the word is not present within the dictionary because getting the value for that key will simply return a zero. Isn't that cool?
 
 ```{python}
 # Define defaultdict of type 'int'
@@ -98,14 +98,14 @@ for word in words:
     freq[word] += 1
 ```
 
-Filtering the `freq` dictionary can be done using list comprehensions again (aren't they handy?). You should filter out words that appeared only once and also words that are just a newline character:
+Filtering the `freq` dictionary can be done using list comprehensions again (aren't they handy?). We should filter out words that appeared only once and also words that are just a newline character:
 
 ```{python}
 # Create the vocabulary by filtering the 'freq' dictionary
 vocab = [k for k, v in freq.items() if (v > 1 and k != '\n')]
 ```
 
-Finally, the `sort` method will take care of the final step. Notice that it changes the list directly so you don't need to reassign the `vocab` variable:
+Finally, the `sort` method will take care of the final step. Notice that it changes the list directly so we don't need to reassign the `vocab` variable:
 
 ```{python}
 # Sort the vocabulary
@@ -116,15 +116,15 @@ for i in range(4000, 4005):
     print(vocab[i])
 ```
 
-Now you have successfully created a vocabulary from the dataset. **Great job!** The vocabulary is quite extensive so it is not printed out but you can still do so by creating a cell and running something like `print(vocab)`. 
+Now we have successfully created a vocabulary from the dataset. **Great job!** The vocabulary is quite extensive so it is not printed out but we can still do so by creating a cell and running something like `print(vocab)`. 
 
-At this point you will usually write the vocabulary into a file for future use, but that is out of the scope of this notebook. If you are curious it is very similar to how you read the file at the beginning of this notebook.
+At this point we will usually write the vocabulary into a file for future use, but that is out of the scope of this notebook. If we are curious it is very similar to how we read the file at the beginning of this notebook.
 
 ## Processing new text sources
 
 ### Dealing with unknown words
 
-Now that you have a vocabulary, you will use it when processing new text sources. **A new text will have words that do not appear in the current vocabulary**. To tackle this, you can simply classify each new word as an unknown one, but you can do better by creating a function that tries to classify the type of each unknown word and assign it a corresponding `unknown token`. 
+Now that we have a vocabulary, we will use it when processing new text sources. **A new text will have words that do not appear in the current vocabulary**. To tackle this, we can simply classify each new word as an unknown one, but we can do better by creating a function that tries to classify the type of each unknown word and assign it a corresponding `unknown token`. 
 
 This function will do the following checks and return an appropriate token:
 
@@ -189,7 +189,7 @@ def assign_unk(word):
     return "--unk--"
 ```
 
-A POS tagger will always encounter words that are not within the vocabulary that is being used. By augmenting the dataset to include these `unknown word tokens` you are helping the tagger to have a better idea of the appropriate tag for these words. 
+A POS tagger will always encounter words that are not within the vocabulary that is being used. By augmenting the dataset to include these `unknown word tokens` we are helping the tagger to have a better idea of the appropriate tag for these words. 
 
 ### Getting the correct tag for a word
 
@@ -217,7 +217,7 @@ def get_word_tag(line, vocab):
     return word, tag
 ```
 
-Now you can try this function with some examples to test that it is working as intended:
+Now we can try this function with some examples to test that it is working as intended:
 
 ```{python}
 get_word_tag('\n', vocab)
@@ -247,7 +247,7 @@ This line includes a verb that is not present in the vocabulary.
 
 In this case the `assign_unk` is able to detect that it is a verb so it returns an `unknown verb token`.
 
-**Congratulations on finishing this lecture notebook!** Now you should be more familiar with working with text data and have a better understanding of how a basic POS tagger works.
+**Congratulations on finishing this lecture notebook!** Now we should be more familiar with working with text data and have a better understanding of how a basic POS tagger works.
 
 **Keep it up!**
 
