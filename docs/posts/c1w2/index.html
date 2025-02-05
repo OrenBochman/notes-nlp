@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Oren Bochman">
 <meta name="keywords" content="Bayes rule, Conditional Probability, Log-likelihood, Laplace smoothing">
 <meta name="description" content="The theory behind Bayes’ rule for conditional probabilities, and its application toward building a Naive Bayes tweet classifier">
 
@@ -268,6 +269,12 @@ window.Quarto = {
   
   <div class="quarto-title-meta column-body">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Oren Bochman </p>
+            </div>
+    </div>
       
       <div>
       <div class="quarto-title-meta-heading">Published</div>
@@ -572,7 +579,7 @@ Figure&nbsp;2
 </figcaption>
 </figure>
 </div></div>
-<p>Since I majored in Mathematics, I glossed over many details when I took the initial notes, since the course caters to all levels of students. When I migrated the notes from OneNotes to the web, I updated and reviewed the current course material and at times additional notes by <span class="citation" data-cites="Chadha2020NLP">(<a href="#ref-Chadha2020NLP" role="doc-biblioref"><strong>Chadha2020NLP?</strong></a>)</span> and <span class="citation" data-cites="jelliti2020nlp">(<a href="#ref-jelliti2020nlp" role="doc-biblioref">Jelliti 2020</a>)</span>. I have tried to add my own insights from other sources, books I read or others courses I have taken.</p>
+<p>My notes for Week 2 of the <a href="https://www.coursera.org/learn/classification-vector-spaces-in-nlp/home/welcome">Natural Language Processing with Probabilistic Models</a> Course in the Natural Language Processing Specialization Offered by <a href="DeepLearning.AI">DeepLearning.AI</a> on <a href="https://www.coursera.org/">Coursera</a></p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -587,7 +594,7 @@ Naïve Bayes
 </div>
 </div>
 <p>The following two results are due to <span class="citation" data-cites="NIPS2001_7b7a53e2">(<a href="#ref-NIPS2001_7b7a53e2" role="doc-biblioref"><strong>NIPS2001_7b7a53e2?</strong></a>)</span> by way of <a href="https://en.wikipedia.org/wiki/Naive_Bayes_classifier#cite_note-pair-17">Naive_Bayes_classifier</a> wikipedia article.</p>
-<p>Another detail that can help you make sense of this lesson is the following result relating Naïve Bayes to Logistic Regression which we covered last week. In the case of discrete inputs like indicator or frequency features for discrete events, naive Bayes classifiers form a generative-discriminative pair with multinomial logistic regression classifiers: each naive Bayes classifier can be considered a way of fitting a probability model that optimizes the joint likelihood <span class="math inline">p (C,x)</span>, while logistic regression fits the same probability model to optimize the conditional <span class="math inline">p(C ∣ x)</span>.</p>
+<p>Another detail that can help we make sense of this lesson is the following result relating Naïve Bayes to Logistic Regression which we covered last week. In the case of discrete inputs like indicator or frequency features for discrete events, naive Bayes classifiers form a generative-discriminative pair with multinomial logistic regression classifiers: each naive Bayes classifier can be considered a way of fitting a probability model that optimizes the joint likelihood <span class="math inline">p (C,x)</span>, while logistic regression fits the same probability model to optimize the conditional <span class="math inline">p(C ∣ x)</span>.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -642,7 +649,7 @@ Research questions
 <section id="probability-of-a-randomly-selected-tweets-sentiment" class="level2">
 <h2 class="anchored" data-anchor-id="probability-of-a-randomly-selected-tweets-sentiment">Probability of a randomly selected tweet’s sentiment</h2>
 <ul>
-<li>To calculate a <code>probability</code> of a certain event happening, you take the count of that specific event and divide it by the sum of all events.</li>
+<li>To calculate a <code>probability</code> of a certain event happening, we take the count of that specific event and divide it by the sum of all events.</li>
 <li>Furthermore, the sum of all probabilities has to equal 1. If we pick a tweet at random, what is the probability of it being <code>+</code>? We define an event <code>A:</code> “A tweet is positive” and calculate its probability</li>
 </ul>
 <p><span class="math display">
@@ -672,7 +679,7 @@ P(B) = P(\text{happy})=\frac{N_\text{happy}}{N}=\frac{4}{20}=0.2
 <p><a href="img/slide_026.png" class="lightbox" data-gallery="slides" title="Venn diagram for defining probabilities from events"><img src="img/slide_026.png" class="img-fluid figure-img" alt="Venn diagram for defining probabilities from events"></a></p>
 <figcaption>Venn diagram for defining probabilities from events</figcaption>
 </figure>
-</div></div><p>To compute the probability of 2 events happening like <code>happy</code> <strong>and</strong> <code>+</code> in the picture you would be looking at the intersection, or overlap of the two events, In this case, the red and the blue boxes overlap in three boxes, So the answer is: <span class="math display">
+</div></div><p>To compute the probability of 2 events happening like <code>happy</code> <strong>and</strong> <code>+</code> in the picture we would be looking at the intersection, or overlap of the two events, In this case, the red and the blue boxes overlap in three boxes, So the answer is: <span class="math display">
 P(A \cap B) = P(A,B) = \frac{2}{20}
 </span></p>
 <p>The Event “A is labeled <code>+</code>”, - The probability of events A shown as P(A) is calculated as the ratio between the count of positive tweets and the corpus divided by the total number of tweets in the corpus.</p>
@@ -1257,7 +1264,7 @@ p(T|+) = \prod^m_{i=1}P(w_i|+) \implies p(+|T)=\frac{P(+)}{P(T)} \prod^m_{i=1}P(
 <p><span class="math display">
 p(T|−) = \prod^m_{i=1}P(w_i|−) \implies p(−|T) =  \frac{P(−)}{P(T)} \prod^m_{i=1} P(w_i|−)
 </span></p>
-<p>Once you have the probabilities, you can compute the likelihood score as follows:</p>
+<p>Once we have the probabilities, we can compute the likelihood score as follows:</p>
 <p><strong>Tweet</strong>: <span style="color: blue;">I am happy today: I am learning</span>. - Since there is no entry for today in our conditional probabilities table, this implies that this word is not in your vocabulary. So we’ll ignore its contribution to the overall score. - All the neutral words in the tweet such as I and am cancel out in the expression, as shown in the figure below.</p>
 <p><span class="math display">
    \prod^m_{i=1} \frac{P(w_i|+)}{P(w_i|-)}= \frac {0.14}{0.10} =1.4 &gt; 1
@@ -1303,7 +1310,7 @@ Smoothing
 <figcaption>Laplace smoothing</figcaption>
 </figure>
 </div></div><p>The course introduces smoothing here since sparsity breaks the naive Bayes model. But smoothing and filtering are big topics in NLP and Data Science. I have added some extra info drawn from <span class="citation" data-cites="jurafsky2000speech">(<a href="#ref-jurafsky2000speech" role="doc-biblioref">Jurafsky and Martin 2000</a>)</span></p>
-<p><code>Laplace smoothing</code> also called <code>add one smoothing</code> replaces a distribution with zero probabilities (due to sparse data) with a distribution that steals some mass and spreads it over the points which were zero. It solves the data sparsity issue but <code>Laplace smoothing</code> will skew/bias the probabilities (it affects rare and common probabilities differently) giving you behavior that is hard to explain, as it assigns too much mass to unknown words. When we compute the conditional probability <span class="math inline">P(w|class)</span> using:</p>
+<p><code>Laplace smoothing</code> also called <code>add one smoothing</code> replaces a distribution with zero probabilities (due to sparse data) with a distribution that steals some mass and spreads it over the points which were zero. It solves the data sparsity issue but <code>Laplace smoothing</code> will skew/bias the probabilities (it affects rare and common probabilities differently) giving we behavior that is hard to explain, as it assigns too much mass to unknown words. When we compute the conditional probability <span class="math inline">P(w|class)</span> using:</p>
 <p><span class="math display">
 P(w_i|class) = \frac{freq(w_i,class)}{N_{class}} \qquad class \in \{ +, -\}
 </span></p>
@@ -1563,8 +1570,8 @@ ratio(w_i)=\frac{P(w_i|+)}{P(w_i|-)} \approx \frac{freq(w_i|+)+1}{freq(w_i|-)+1}
 </section>
 <section id="naïve-bayes-assumptions" class="level1">
 <h1>Naïve Bayes Assumptions</h1>
-<p>Naïve Bayes makes the <strong>independence</strong> assumption and is affected by the word frequencies in the corpus. For example, if you had the following <code>"It is sunny and hot in the Sahara desert."</code> `“It’s always cold and snowy in …”` In the first image, you can see the word sunny and hot tend to depend on each other and are correlated to a certain extent with the”desert”, Naïve Independence throughout,</p>
-<p>Furthermore, if you were to fill in the sentence on the right. this naïve model will assign equal weight to the words :</p>
+<p>Naïve Bayes makes the <strong>independence</strong> assumption and is affected by the word frequencies in the corpus. For example, if we had the following <code>"It is sunny and hot in the Sahara desert."</code> `“It’s always cold and snowy in …”` In the first image, we can see the word sunny and hot tend to depend on each other and are correlated to a certain extent with the”desert”, Naïve Independence throughout,</p>
+<p>Furthermore, if we were to fill in the sentence on the right. this naïve model will assign equal weight to the words :</p>
 <ul>
 <li>spring.</li>
 <li>summer,</li>
@@ -1598,24 +1605,22 @@ Chen, Stanley F., and Joshua T. Goodman. 1996. <span>“An Empirical Study of Sm
 <div id="ref-good1953population" class="csl-entry" role="listitem">
 Good, I. J. 1953. <span>“The Population Frequencies of Species and the Estimation of Population Parameters.”</span> <em>Biometrika</em> 40 (3-4): 237–64. <a href="https://doi.org/10.1093/biomet/40.3-4.237">https://doi.org/10.1093/biomet/40.3-4.237</a>.
 </div>
-<div id="ref-jelliti2020nlp" class="csl-entry" role="listitem">
-Jelliti, Ibrahim. 2020. <span>“NLP Specialization Courses Notes (Offered by Deeplearning.ai).”</span> <em>GitHub Repository</em>. <a href="https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization" class="uri">https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization</a>; GitHub. <a href="https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization">https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization</a>.
-</div>
 <div id="ref-jurafsky2000speech" class="csl-entry" role="listitem">
 Jurafsky, D., and J. H. Martin. 2000. <em>Speech and Language Processing: An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition</em>. Prentice Hall Series in Artificial Intelligence. Prentice Hall. <a href="https://books.google.co.il/books?id=85BvQgAACAAJ">https://books.google.co.il/books?id=85BvQgAACAAJ</a>.
 </div>
 <div id="ref-NEY19941" class="csl-entry" role="listitem">
 Ney, Hermann, Ute Essen, and Reinhard Kneser. 1994. <span>“On Structuring Probabilistic Dependences in Stochastic Language Modelling.”</span> <em>Computer Speech &amp; Language</em> 8 (1): 1–38. https://doi.org/<a href="https://doi.org/10.1006/csla.1994.1001">https://doi.org/10.1006/csla.1994.1001</a>.
 </div>
-</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{2020,
-  author = {},
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2020,
+  author = {Bochman, Oren},
   title = {Probability and {Bayes} {Rule}},
   date = {2020-10-23},
   url = {https://orenbochman.github.io/notes-nlp/posts/c1w2/},
   langid = {en}
 }
-</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-2020" class="csl-entry quarto-appendix-citeas" role="listitem">
-<span>“Probability and Bayes Rule.”</span> 2020. October 23, 2020. <a href="https://orenbochman.github.io/notes-nlp/posts/c1w2/">https://orenbochman.github.io/notes-nlp/posts/c1w2/</a>.
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2020" class="csl-entry quarto-appendix-citeas" role="listitem">
+Bochman, Oren. 2020. <span>“Probability and Bayes Rule.”</span> October
+23, 2020. <a href="https://orenbochman.github.io/notes-nlp/posts/c1w2/">https://orenbochman.github.io/notes-nlp/posts/c1w2/</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
