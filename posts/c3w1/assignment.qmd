@@ -1,11 +1,38 @@
 ---
-title: 'Assignment 1:  Sentiment with Deep Neural Networks'
+title: 'Assignment 1: Sentiment with Deep Neural Networks'
+subtitle: "Sequence Models"
+categories: 
+  - NLP 
+  - Coursera 
+  - Lab
+  - Sequence Models
 jupyter: python3
+execute: 
+    error: true
 ---
+::: {#fig-00 .column-margin .nolightbox}
+![course banner](/images/Course-Logo-2-3.webp)
+:::
+
+
+::: {.callout}
+## Honor code alert
+
+Due to the Coursera Honor Code, I cannot provide the solutions to the assignments. 
+
+- This notebook is the original notebook provided by the course
+- It is setup to run without stopping for errors. 
+- It is also likely to be out of date as the course has had some updates since I took it.
+- Although I aced the course this assignment was the most time consuming.
+- Good luck with the assignment it should make we a better programmer.
+- It is also a good idea to go over it a few times until we can do it easily.
+:::
 
 
 Welcome to the first assignment of course 3. In this assignment, you will explore sentiment analysis using deep neural networks. 
+
 ## Outline
+
 - [Part 1:  Import libraries and try out Trax](#1)
 - [Part 2:  Importing the data](#2)
     - [2.1  Loading in the data](#2.1)
@@ -33,11 +60,13 @@ Welcome to the first assignment of course 3. In this assignment, you will explor
 - [Part 6:  Testing with your own input](#6)
 
 
-In course 1, you implemented Logistic regression and Naive Bayes for sentiment analysis. However if you were to give your old models an example like:
+In course 1, you implemented **Logistic regression** and **Naive Bayes** for sentiment analysis. However if you were to give your old models an example like:
 
-<center> <span style='color:blue'> <b>This movie was almost good.</b> </span> </center>
+::: {style='text-align: center'}
+[**This movie was almost good.**]{style='color:blue'}
+:::
 
-Your model would have predicted a positive sentiment for that review. However, that sentence has a negative sentiment and indicates that the movie was not good. To solve those kinds of misclassifications, you will write a program that uses deep neural networks to identify sentiment in text. By completing this assignment, you will: 
+Your model would have predicted a positive sentiment for that review. However, that sentence has a **negative sentiment** and indicates that the movie was **not good**. To solve those kinds of misclassifications, you will write a program that uses deep neural networks to identify sentiment in text. By completing this assignment, you will: 
 
 - Understand how you can build/design a model using layers
 - Train a model using a training loop
@@ -54,8 +83,7 @@ Now we will show you how to compute the gradient of a certain function `f` by ju
 - Trax source code can be found on Github: [Trax](https://github.com/google/trax)
 - The Trax code also uses the JAX library: [JAX](https://jax.readthedocs.io/en/latest/index.html)
 
-<a name="1"></a>
-# Part 1:  Import libraries and try out Trax
+# Part 1:  Import libraries and try out Trax {#1}
 
 - Let's import libraries and look at an example of using the Trax library.
 
@@ -143,11 +171,9 @@ display(grad_calculation)
 
 The function returned by trax.fastmath.grad takes in x=5 and calculates the gradient of f, which is 2*x, which is 10. The value is also stored as a DeviceArray from the jax library.
 
-<a name="2"></a>
-# Part 2:  Importing the data
+# Part 2:  Importing the data {#2}
 
-<a name="2.1"></a>
-## 2.1  Loading in the data
+## 2.1  Loading in the data {#2.1}
 
 Import the data set.  
 - You may recognize this from earlier assignments in the specialization.
@@ -213,8 +239,8 @@ process_tweet(train_pos[0])
 
 Notice that the function `process_tweet` keeps key words, removes the hash # symbol, and ignores usernames (words that begin with '@').  It also returns a list of the words.
 
-<a name="2.2"></a>
-## 2.2  Building the vocabulary
+
+## 2.2  Building the vocabulary {#2.2}
 
 Now build the vocabulary.
 - Map each word in each tweet to an integer (an "index"). 
@@ -262,8 +288,8 @@ The dictionary `Vocab` will look like this:
 - Each unique word has a unique integer associated with it.
 - The total number of words in Vocab: 9088
 
-<a name="2.3"></a>
-## 2.3  Converting a tweet to a tensor
+
+## 2.3  Converting a tweet to a tensor {#2.3}
 
 Write a function that will convert each tweet to a tensor (a list of unique integer IDs representing the processed tweet).
 - Note, the returned data type will be a **regular Python `list()`**
@@ -290,9 +316,8 @@ Then it will convert each word into its unique integer
 ```
 - Notice that the word "maria" is not in the vocabulary, so it is assigned the unique integer associated with the `__UNK__` token, because it is considered "unknown."
 
+### Exercise 01 {#ex01}
 
-<a name="ex01"></a>
-### Exercise 01
 **Instructions:** Write a program `tweet_to_tensor` that takes in a tweet and converts it to an array of numbers. You can use the `Vocab` dictionary you just found to help create the tensor. 
 
 - Use the vocab_dict parameter and not a global variable.
@@ -308,6 +333,7 @@ Then it will convert each word into its unique integer
     <li>Use Python's Dictionary.get(key,value) so that the function returns a default value if the key is not found in the dictionary.</li>
 </ul>
 </p>
+</details>
 
 ```{python}
 #| colab: {}
@@ -430,8 +456,8 @@ def test_tweet_to_tensor():
 test_tweet_to_tensor()            
 ```
 
-<a name="2.4"></a>
-## 2.4  Creating a batch generator
+
+## 2.4  Creating a batch generator {#2.4}
 
 Most of the time in Natural Language Processing, and AI in general we use batches when training our data sets. 
 - If instead of training with batches of examples, you were to train a model with one example at a time, it would take a very long time to train the model. 
@@ -456,8 +482,9 @@ The generator returns the next batch each time it's called.
 -- Targets is the corresponding batch of labels that we train to generate.
 -- Loss weights here are just 1s with same shape as targets. Next week, you will use it to mask input padding.
 
-<a name="ex02"></a>
-### Exercise 02
+
+### Exercise 02 {#ex02}
+
 Implement `data_generator`.
 
 ```{python}
@@ -714,8 +741,8 @@ input tensor: [ 858  256 3652 5739  307 4458  567 1230 2767  328 1202 3761    0 
 
 Now that you have your train/val generators, you can just call them and they will return tensors which correspond to your tweets in the first column and their corresponding labels in the second column. Now you can go ahead and start building your neural network. 
 
-<a name="3"></a>
-# Part 3:  Defining classes
+
+# Part 3:  Defining classes {#3}
 
 In this part, you will write your own library of layers. It will be very similar
 to the one used in Trax and also in Keras and PyTorch. Writing your own small
@@ -758,15 +785,20 @@ class Layer(object):
         return self.forward(x)
 ```
 
-<a name="3.1"></a>
-## 3.1  ReLU class
+
+## 3.1  ReLU class {#3.1}
 You will now implement the ReLU activation function in a class below. The ReLU function looks as follows: 
-<img src = "relu.jpg" style="width:300px;height:150px;"/>
 
-$$ \mathrm{ReLU}(x) = \mathrm{max}(0,x) $$
+![ReLU](img/relu.jpg){width=300px height=150px}
 
-<a name="ex03"></a>
-### Exercise 03
+
+$$ 
+\mathrm{ReLU}(x) = \mathrm{max}(0,x) 
+$$
+
+
+### Exercise 03 {#ex03}
+
 **Instructions:** Implement the ReLU activation function below. Your function should take in a matrix or vector and it should transform all the negative numbers into 0 while keeping all the positive numbers intact. 
 
 <details>    
@@ -778,6 +810,7 @@ $$ \mathrm{ReLU}(x) = \mathrm{max}(0,x) $$
     <li>Please use numpy.maximum(A,k) to find the maximum between each element in A and a scalar k</li>
 </ul>
 </p>
+</details>
 
 ```{python}
 #| colab: {}
@@ -824,8 +857,7 @@ Output of Relu is:
  [0. 1. 2.]]
 ```
 
-<a name="3.2"></a>
-## 3.2  Dense class 
+## 3.2  Dense class {#3.2}
 
 ### Exercise
 
@@ -891,8 +923,7 @@ print("Weight matrix generated with a normal distribution with mean 0 and stdev 
 display(tmp_weight)
 ```
 
-<a name="ex04"></a>
-### Exercise 04
+### Exercise 04 {#ex04}
 
 Implement the `Dense` class.
 
@@ -967,12 +998,12 @@ Foward function output is  [[-3.0395496   0.9266802   2.5414743  -2.050473   -1.
   -1.7952735   0.94427425 -0.8980402  -3.7497487 ]]
 ```
 
-<a name="3.3"></a>
-## 3.3  Model
+
+## 3.3  Model {#3.3}
 
 Now you will implement a classifier using neural networks. Here is the model architecture you will be implementing. 
 
-<img src = "nn.jpg" style="width:400px;height:250px;"/>
+![NN](img/nn.jpg){width=400px height=250px}
 
 For the model implementation, you will use the Trax layers library `tl`.
 Note that the second character of `tl` is the lowercase of letter `L`, not the number 1. Trax layers are very similar to the ones you implemented above,
@@ -1072,8 +1103,9 @@ help(tl.LogSoftmax)
 
 - [tl.LogSoftmax](https://trax-ml.readthedocs.io/en/latest/trax.layers.html#trax.layers.core.LogSoftmax)
 
-<a name="ex05"></a>
-### Exercise 05
+
+### Exercise 05 {#ex05}
+
 Implement the classifier function. 
 
 ```{python}
@@ -1128,6 +1160,7 @@ display(tmp_model)
 ```
 
 ##### Expected Outout
+
 ```CPP
 <class 'trax.layers.combinators.Serial'>
 Serial[
@@ -1138,8 +1171,7 @@ Serial[
 ]
 ```
 
-<a name="4"></a>
-# Part 4:  Training
+# Part 4:  Training {#4}
 
 To train a model on a task, Trax defines an abstraction [`trax.supervised.training.TrainTask`](https://trax-ml.readthedocs.io/en/latest/trax.supervised.html#trax.supervised.training.TrainTask) which packages the train data, loss and optimizer (among other things) together into an object.
 
@@ -1187,8 +1219,8 @@ Notice some available optimizers include:
     sm3
 ```
 
-<a name="4.1"></a>
-## 4.1  Training the model
+
+## 4.1  Training the model {#4.1}
 
 Now you are going to train your model. 
 
@@ -1229,8 +1261,9 @@ output_dir_expand = os.path.expanduser(output_dir)
 print(output_dir_expand)
 ```
 
-<a name="ex06"></a>
-### Exercise 06
+
+### Exercise 06 {#ex06}
+
 **Instructions:** Implement `train_model` to train the model (`classifier` that you wrote earlier) for the given number of training steps (`n_steps`) using `TrainTask`, `EvalTask` and `Loop`.
 
 ```{python}
@@ -1306,8 +1339,8 @@ Step    100: eval  CrossEntropyLoss |  0.00210550
 Step    100: eval          Accuracy |  1.00000000
 ```
 
-<a name="4.2"></a>
-## 4.2  Practice Making a prediction
+
+## 4.2  Practice Making a prediction {#4.2}
 
 Now that you have trained a model, you can access it as `training_loop.model` object. We will actually use `training_loop.eval_model` and in the next weeks you will learn why we sometimes use a different model for evaluation, e.g., one without dropout. For now, make predictions with your model.
 
@@ -1347,6 +1380,7 @@ tmp_pred
 ```
 
 To turn these probabilities into categories (negative or positive sentiment prediction), for each row:
+
 - Compare the probabilities in each column.
 - If column 1 has a value greater than column 0, classify that as a positive tweet.
 - Otherwise if column 1 is less than or equal to column 0, classify that example as a negative tweet.
@@ -1361,6 +1395,7 @@ for i, p in enumerate(tmp_is_positive):
 ```
 
 Notice that since you are making a prediction using a training batch, it's more likely that the model's predictions match the actual targets (labels).  
+
 - Every prediction that the tweet is positive is also matching the actual target of 1 (positive sentiment).
 - Similarly, all predictions that the sentiment is not positive matches the actual target of 0 (negative sentiment)
 
@@ -1419,13 +1454,14 @@ However, we recommend that you keep track of the data type of your variables to 
 Hopefully you are now familiar with what kinds of inputs and outputs the model uses when making a prediction.
 - This will help you implement a function that estimates the accuracy of the model's predictions.
 
-<a name="5"></a>
-# Part 5:  Evaluation  
 
-<a name="5.1"></a>
-## 5.1  Computing the accuracy on a batch
+# Part 5:  Evaluation {#5} 
+
+
+## 5.1  Computing the accuracy on a batch {#5.1}
 
 You will now write a function that evaluates your model on the validation set and returns the accuracy. 
+
 - `preds` contains the predictions.
     - Its dimensions are `(batch_size, output_dim)`.  `output_dim` is two in this case.  Column 0 contains the probability that the tweet belongs to class 0 (negative sentiment). Column 1 contains probability that it belongs to class 1 (positive sentiment).
     - If the probability in column 1 is greater than the probability in column 0, then interpret this as the model's prediction that the example has label 1 (positive sentiment).  
@@ -1433,8 +1469,9 @@ You will now write a function that evaluates your model on the validation set an
 - `y` contains the actual labels.
 - `y_weights` contains the weights to give to predictions.
 
-<a name="ex07"></a>
-### Exercise 07
+
+### Exercise 07 {#ex07}
+
 Implement `compute_accuracy`.
 
 ```{python}
@@ -1516,12 +1553,13 @@ Model's prediction accuracy on a single training batch is: 100.0%
 Weighted number of correct predictions 64.0; weighted number of total observations predicted 64
 ```
 
-<a name="5.2"></a>
-## 5.2  Testing your model on Validation Data
+
+## 5.2  Testing your model on Validation Data {#5.2}
 
 Now you will write test your model's prediction accuracy on validation data. 
 
 This program will take in a data generator and your model. 
+
 - The generator allows you to get batches of data. You can use it with a `for` loop:
 
 ```
@@ -1530,6 +1568,7 @@ for batch in iterator:
 ```
 
 `batch` has dimensions `(X, Y, weights)`. 
+
 - Column 0 corresponds to the tweet as a tensor (input).
 - Column 1 corresponds to its target (actual label, positive or negative sentiment).
 - Column 2 corresponds to the weights associated (example weights)
@@ -1610,8 +1649,8 @@ print(f'The accuracy of your model on the validation set is {accuracy:.4f}', )
 The accuracy of your model on the validation set is 0.9931
 ```
 
-<a name="6"></a>
-# Part 6:  Testing with your own input
+
+# Part 6:  Testing with your own input {#6}
 
 Finally you will test with your own input. You will see that deepnets are more powerful than the older methods you have used before. Although you go close to 100% accuracy on the first two assignments, the task was way easier. 
 
@@ -1658,5 +1697,6 @@ Notice that the model works well even for complex sentences.
 ### On Deep Nets
 
 Deep nets allow you to understand and capture dependencies that you would have not been able to capture with a simple linear regression, or logistic regression. 
+
 - It also allows you to better use pre-trained embeddings for classification and tends to generalize better.
 
