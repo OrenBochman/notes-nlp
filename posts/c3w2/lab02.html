@@ -7,9 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Oren Bochman">
-<meta name="description" content="we cover Neural networks for deep learning, then build a tweet classifier that places tweets into positive or negative sentiment categories, using a DNN.">
 
-<title>Siamese Networks – NLP Specialization</title>
+<title>Working with JAX numpy and calculating perplexity: Ungraded Lecture Notebook – NLP Specialization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,27 +21,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-  margin-bottom: 0em;
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
 }
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -63,9 +76,6 @@ div.csl-indent {
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
-<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
-<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -200,7 +210,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/c3w1/index.html">Sequence Models</a></li><li class="breadcrumb-item"><a href="../../posts/c3w4/index.html">Chat Bots</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Working with JAX numpy and calculating perplexity: Ungraded Lecture Notebook</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -209,18 +219,13 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../posts/c3w1/index.html">Sequence Models</a></li><li class="breadcrumb-item"><a href="../../posts/c3w4/index.html">Chat Bots</a></li></ol></nav>
-      <h1 class="title">Siamese Networks</h1>
+    <div class="quarto-title column-body">
+      <h1 class="title">Working with JAX numpy and calculating perplexity: Ungraded Lecture Notebook</h1>
             <p class="subtitle lead">Sequence Models</p>
-                  <div>
-        <div class="description">
-          we cover Neural networks for deep learning, then build a tweet classifier that places tweets into positive or negative sentiment categories, using a DNN.
-        </div>
-      </div>
-                          <div class="quarto-categories">
+                                <div class="quarto-categories">
                 <div class="quarto-category">NLP</div>
                 <div class="quarto-category">Coursera</div>
-                <div class="quarto-category">notes</div>
+                <div class="quarto-category">Lab</div>
                 <div class="quarto-category">Sequence Models</div>
               </div>
                   </div>
@@ -239,7 +244,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Friday, October 23, 2020</p>
+        <p class="date">Saturday, October 24, 2020</p>
       </div>
     </div>
     
@@ -423,7 +428,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../posts/c3w4/index.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../posts/c3w4/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Chat Bots</span></a>
   </div>
 </li>
@@ -474,20 +479,9 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#siamese-network" id="toc-siamese-network" class="nav-link active" data-scroll-target="#siamese-network">Siamese Network</a></li>
-  <li><a href="#architecture" id="toc-architecture" class="nav-link" data-scroll-target="#architecture">Architecture</a></li>
-  <li><a href="#lab-creating-a-siamese-model-using-trax" id="toc-lab-creating-a-siamese-model-using-trax" class="nav-link" data-scroll-target="#lab-creating-a-siamese-model-using-trax">Lab: Creating a Siamese Model using Trax</a></li>
-  <li><a href="#cost-function" id="toc-cost-function" class="nav-link" data-scroll-target="#cost-function">Cost Function</a></li>
-  <li><a href="#triplets" id="toc-triplets" class="nav-link" data-scroll-target="#triplets">Triplets</a></li>
-  <li><a href="#computing-the-cost-i" id="toc-computing-the-cost-i" class="nav-link" data-scroll-target="#computing-the-cost-i">Computing the Cost I</a></li>
-  <li><a href="#computing-the-cost-ii" id="toc-computing-the-cost-ii" class="nav-link" data-scroll-target="#computing-the-cost-ii">Computing the Cost II</a></li>
-  <li><a href="#lab-lecture-notebook-modified-triplet-loss" id="toc-lab-lecture-notebook-modified-triplet-loss" class="nav-link" data-scroll-target="#lab-lecture-notebook-modified-triplet-loss">Lab: Lecture Notebook: Modified Triplet Loss</a></li>
-  <li><a href="#one-shot-learning" id="toc-one-shot-learning" class="nav-link" data-scroll-target="#one-shot-learning">One Shot Learning</a></li>
-  <li><a href="#training-testing" id="toc-training-testing" class="nav-link" data-scroll-target="#training-testing">Training / Testing</a></li>
-  <li><a href="#lab-evaluate-a-siamese-model" id="toc-lab-evaluate-a-siamese-model" class="nav-link" data-scroll-target="#lab-evaluate-a-siamese-model">Lab: Evaluate a Siamese Model</a></li>
-  <li><a href="#acknowledgments" id="toc-acknowledgments" class="nav-link" data-scroll-target="#acknowledgments">Acknowledgments</a></li>
+  <li><a href="#calculating-perplexity" id="toc-calculating-perplexity" class="nav-link active" data-scroll-target="#calculating-perplexity">Calculating Perplexity</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c3w4/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c3w2/lab02.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
@@ -497,293 +491,220 @@ window.Quarto = {
 
 
 
-<div class="no-row-height column-margin column-container"><div id="fig-00" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-figure quarto-figure-center">
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="../../images/Course-Logo-3-3.webp" class="lightbox" data-gallery="slides" title="course banner"><img src="../../images/Course-Logo-3-3.webp" class="img-fluid figure-img"></a></p>
+<p><img src="../../images/Course-Logo-3-3.webp" class="nolightbox img-fluid figure-img"></p>
 <figcaption>course banner</figcaption>
 </figure>
+</div></div><p>Normally you would import <code>numpy</code> and rename it as <code>np</code>.</p>
+<p>However in this week’s assignment you will notice that this convention has been changed.</p>
+<p>Now standard <code>numpy</code> is not renamed and <code>trax.fastmath.numpy</code> is renamed as <code>np</code>.</p>
+<p>The rationale behind this change is that you will be using Trax’s numpy (which is compatible with JAX) far more often. Trax’s numpy supports most of the same functions as the regular numpy so the change won’t be noticeable in most cases.</p>
+<div id="762af98a" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(jax.__version__)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0.5.0</code></pre>
 </div>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1
-</figcaption>
-</figure>
-</div><div id="fig-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="slides.pdf" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: "><embed src="slides.pdf" class="img-fluid"></a>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2
-</figcaption>
-</figure>
-</div></div>
-<p>My irreverent notes for Week 4 of the <a href="https://www.coursera.org/learn/sequence-models-in-nlp/home/welcome">Natural Language Processing with Sequence Models</a> Course in the Natural Language Processing Specialization Offered by <a href="DeepLearning.AI">DeepLearning.AI</a> on <a href="https://www.coursera.org/">Coursera</a></p>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Learning Objectives
+<div id="d7dabc21" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> trax</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> trax.fastmath.numpy <span class="im">as</span> np</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Setting random seeds</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> trax <span class="im">import</span> fastmath</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>seed<span class="op">=</span><span class="dv">32</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> fastmath.random.get_prng(seed)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#trax.supervised.trainer_lib.init_random_number_generators(32)</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>numpy.random.seed(<span class="dv">32</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>2025-02-05 18:35:59.720117: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1738773359.738712  542932 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1738773359.743780  542932 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered</code></pre>
 </div>
 </div>
-<div class="callout-body-container callout-body">
-<ul>
-<li>One shot learning</li>
-<li>Triplet loss</li>
-<li>Cosine similarity</li>
-<li>Siamese networks</li>
-<li>Data generators</li>
-</ul>
-</div>
-</div>
-<section id="siamese-network" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="siamese-network">Siamese Network</h2>
-<p>It is best to describe what a Siamese network is through an example.</p>
+<p>One important change to take into consideration is that the types of the resulting objects will be different depending on the version of numpy. With regular numpy you get <code>numpy.ndarray</code> but with Trax’s numpy you will get <code>jax.interpreters.xla.DeviceArray</code>. These two types map to each other. So if you find some error logs mentioning DeviceArray type, don’t worry about it, treat it like you would treat an ndarray and march ahead.</p>
+<p>You can get a randomized numpy array by using the <code>numpy.random.random()</code> function.</p>
+<p>This is one of the functionalities that Trax’s numpy does not currently support in the same way as the regular numpy.</p>
+<div id="ecb92c1e" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>numpy_array <span class="op">=</span> numpy.random.random((<span class="dv">5</span>,<span class="dv">10</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The regular numpy array looks like this:</span><span class="ch">\n\n</span><span class="ss"> </span><span class="sc">{</span>numpy_array<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"It is of type: </span><span class="sc">{</span><span class="bu">type</span>(numpy_array)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The regular numpy array looks like this:
 
-<div class="no-row-height column-margin column-container"><div id="fig-01" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide01.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;3: "><img src="img/slide01.png" class="img-fluid figure-img"></a>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3
-</figcaption>
-</figure>
-</div></div><p>Note that in the first example above, the two sentences mean the same thing but have completely different words. While in the second case, the two sentences mean completely different things but they have very similar words.</p>
-<p>Classification: learns what makes an input what it is.</p>
-<p>Siamese Networks: learns what makes two inputs the same</p>
-<p>Here are a few applications of siamese networks:</p>
+ [[0.85888927 0.37271115 0.55512878 0.95565655 0.7366696  0.81620514
+  0.10108656 0.92848807 0.60910917 0.59655344]
+ [0.09178413 0.34518624 0.66275252 0.44171349 0.55148779 0.70371249
+  0.58940123 0.04993276 0.56179184 0.76635847]
+ [0.91090833 0.09290995 0.90252139 0.46096041 0.45201847 0.99942549
+  0.16242374 0.70937058 0.16062408 0.81077677]
+ [0.03514717 0.53488673 0.16650012 0.30841038 0.04506241 0.23857613
+  0.67483453 0.78238275 0.69520163 0.32895445]
+ [0.49403187 0.52412136 0.29854125 0.46310814 0.98478429 0.50113492
+  0.39807245 0.72790532 0.86333097 0.02616954]]
 
-<div class="no-row-height column-margin column-container"><div id="fig-02" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide02.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Figure&nbsp;4: "><img src="img/slide02.png" class="img-fluid figure-img"></a>
+It is of type: &lt;class 'numpy.ndarray'&gt;</code></pre>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4
-</figcaption>
-</figure>
-</div></div></section>
-<section id="architecture" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="architecture">Architecture</h2>
-<p>The model architecture of a typical siamese network could look as follows:</p>
-
-<div class="no-row-height column-margin column-container"><div id="fig-03" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide03.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Figure&nbsp;5: "><img src="img/slide03.png" class="img-fluid figure-img"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5
-</figcaption>
-</figure>
-</div></div><p>These two sub-networks are sister-networks which come together to produce a similarity score. Not all Siamese networks will be designed to contain LSTMs. One thing to remember is that sub-networks share identical parameters. This means that we only need to train one set of weights and not two.</p>
-<p>The output of each sub-network is a vector. We can then run the output through a cosine similarity function to get the similarity score. In the next video, we will talk about the cost function for such a network.</p>
-</section>
-<section id="lab-creating-a-siamese-model-using-trax" class="level2">
-<h2 class="anchored" data-anchor-id="lab-creating-a-siamese-model-using-trax">Lab: Creating a Siamese Model using Trax</h2>
-<p><a href="lab01.qmd">Creating a Siamese Model using Trax</a></p>
-</section>
-<section id="cost-function" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="cost-function">Cost Function</h2>
-<p>Let us take a close look at the following slide:</p>
+<p>You can easily cast regular numpy arrays or lists into trax numpy arrays using the <code>trax.fastmath.numpy.array()</code> function:</p>
+<div id="d8a6de90" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>trax_numpy_array <span class="op">=</span> np.array(numpy_array)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The trax numpy array looks like this:</span><span class="ch">\n\n</span><span class="ss"> </span><span class="sc">{</span>trax_numpy_array<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"It is of type: </span><span class="sc">{</span><span class="bu">type</span>(trax_numpy_array)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The trax numpy array looks like this:
 
-<div class="no-row-height column-margin column-container"><div id="fig-04" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide04.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Figure&nbsp;6: "><img src="img/slide04.png" class="img-fluid figure-img"></a>
+ [[0.8588893  0.37271115 0.55512875 0.9556565  0.7366696  0.81620514
+  0.10108656 0.9284881  0.60910916 0.59655344]
+ [0.09178413 0.34518623 0.6627525  0.44171348 0.5514878  0.70371246
+  0.58940125 0.04993276 0.56179184 0.7663585 ]
+ [0.91090834 0.09290995 0.9025214  0.46096042 0.45201847 0.9994255
+  0.16242374 0.7093706  0.16062407 0.81077677]
+ [0.03514718 0.5348867  0.16650012 0.30841038 0.04506241 0.23857613
+  0.67483455 0.7823827  0.69520164 0.32895446]
+ [0.49403188 0.52412134 0.29854125 0.46310815 0.9847843  0.50113493
+  0.39807245 0.72790533 0.86333096 0.02616954]]
+
+It is of type: &lt;class 'jaxlib.xla_extension.ArrayImpl'&gt;</code></pre>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6
-</figcaption>
-</figure>
-</div></div><p>Note that when trying to compute the cost for a siamese network we use the triplet loss. The triplet loss usually consists of an Anchor and a Positive example. Note that the anchor and the positive example have a cosine similarity score that is very close to one. On the other hand, the anchor and the negative example have a cosine similarity score close to -1. Now we are ideally trying to optimize the following equation: <span class="math inline">−cos(A,P)+cos(A,N)≤0</span></p>
-<p>Note that if <span class="math inline">cos(A,P)=1</span> is 1 and <span class="math inline">cos(A,N)=−1</span>, then the equation is definitely less than 0. However, as <span class="math inline">cos(A,P)</span> deviates from 1 and <span class="math inline">cos(A,N)</span> deviates from -1, then we can end up getting a cost that is <span class="math inline">&gt; 0</span>. Here is a visualization that would help we understand what is going on. Feel free to play with different numbers.</p>
-
-<div class="no-row-height column-margin column-container"><div id="fig-05" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide05.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Figure&nbsp;7: "><img src="img/slide05.png" class="img-fluid figure-img"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7
-</figcaption>
-</figure>
-</div></div></section>
-<section id="triplets" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="triplets">Triplets</h2>
-<p>We will now build on top of our previous cost function. To get the full cost function we will add a margin.</p>
-
-<div class="no-row-height column-margin column-container"><div id="fig-06" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide06.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Figure&nbsp;8: "><img src="img/slide06.png" class="img-fluid figure-img"></a>
+<p>Hope you now understand the differences (and similarities) between these two versions and numpy. <strong>Great!</strong></p>
+<p>The previous section was a quick look at Trax’s numpy. However this notebook also aims to teach you how you can calculate the perplexity of a trained model.</p>
+<section id="calculating-perplexity" class="level2">
+<h2 class="anchored" data-anchor-id="calculating-perplexity">Calculating Perplexity</h2>
+<p>The perplexity is a metric that measures how well a probability model predicts a sample and it is commonly used to evaluate language models. It is defined as:</p>
+<p><span class="math display">P(W) = \sqrt[N]{\prod_{i=1}^{N} \frac{1}{P(w_i| w_1,...,w_{n-1})}}</span></p>
+<p>As an implementation hack, you would usually take the log of that formula (to enable us to use the log probabilities we get as output of our <code>RNN</code>, convert exponents to products, and products into sums which makes computations less complicated and computationally more efficient). You should also take care of the padding, since you do not want to include the padding when calculating the perplexity (because we do not want to have a perplexity measure artificially good). The algebra behind this process is explained next:</p>
+<p><span class="math display">log P(W) = {log\big(\sqrt[N]{\prod_{i=1}^{N} \frac{1}{P(w_i| w_1,...,w_{n-1})}}\big)}</span></p>
+<p><span class="math display"> = {log\big({\prod_{i=1}^{N} \frac{1}{P(w_i| w_1,...,w_{n-1})}}\big)^{\frac{1}{N}}}</span></p>
+<p><span class="math display"> = {log\big({\prod_{i=1}^{N}{P(w_i| w_1,...,w_{n-1})}}\big)^{-\frac{1}{N}}} </span> <span class="math display"> = -\frac{1}{N}{log\big({\prod_{i=1}^{N}{P(w_i| w_1,...,w_{n-1})}}\big)} </span> <span class="math display"> = -\frac{1}{N}{\big({\sum_{i=1}^{N}{logP(w_i| w_1,...,w_{n-1})}}\big)} </span></p>
+<p>You will be working with a real example from this week’s assignment. The example is made up of: - <code>predictions</code> : batch of tensors corresponding to lines of text predicted by the model. - <code>targets</code> : batch of actual tensors corresponding to lines of text.</p>
+<div id="6cdc2672" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> trax <span class="im">import</span> layers <span class="im">as</span> tl</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Load from .npy files</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>predictions <span class="op">=</span> numpy.load(<span class="st">'predictions.npy'</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>targets <span class="op">=</span> numpy.load(<span class="st">'targets.npy'</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Cast to jax.interpreters.xla.DeviceArray</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>predictions <span class="op">=</span> np.array(predictions)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>targets <span class="op">=</span> np.array(targets)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Print shapes</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'predictions has shape: </span><span class="sc">{</span>predictions<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'targets has shape: </span><span class="sc">{</span>targets<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>predictions has shape: (32, 64, 256)
+targets has shape: (32, 64)</code></pre>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8
-</figcaption>
-</figure>
-</div></div><p>Note that we added an <span class="math inline">α</span> in the equation above. This allows we to have a margin of “safety”. When computing the full cost, we take the max of that the outcome of <span class="math inline">−cos(A,P)+cos(A,N)+α</span> and 0. Note, we do not want to take a negative number as a cost.</p>
-<p>Here is a quick summary:</p>
-<ul>
-<li><p><span class="math inline">𝜶</span>: controls how far cos(A,P) is from cos(A,N)</p></li>
-<li><p>Easy negative triplet: cos(A,N) &lt; cos(A,P)</p></li>
-<li><p>Semi-hard negative triplet: cos(A,N) &lt; cos(A,P) &lt; cos(A,N) + 𝜶</p></li>
-<li><p>Hard negative triplet: cos(A,P) &lt; cos(A,N)</p></li>
-</ul>
-</section>
-<section id="computing-the-cost-i" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="computing-the-cost-i">Computing the Cost I</h2>
-<p>To compute the cost, we will prepare the batches as follows:</p>
-
-<div class="no-row-height column-margin column-container"><div id="fig-07" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-07-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide07.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Figure&nbsp;9: "><img src="img/slide07.png" class="img-fluid figure-img"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-07-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9
-</figcaption>
-</figure>
-</div></div><p>Note that each example, has a similar example to its right, but no other example means the same thing. We will now introduce hard negative mining.</p>
-
-<div class="no-row-height column-margin column-container"><div id="fig-08" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-08-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide08.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="Figure&nbsp;10: "><img src="img/slide08.png" class="img-fluid figure-img"></a>
+<p>Notice that the predictions have an extra dimension with the same length as the size of the vocabulary used.</p>
+<p>Because of this you will need a way of reshaping <code>targets</code> to match this shape. For this you can use <code>trax.layers.one_hot()</code>.</p>
+<p>Notice that <code>predictions.shape[-1]</code> will return the size of the last dimension of <code>predictions</code>.</p>
+<div id="ee9d1bc7" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>reshaped_targets <span class="op">=</span> tl.one_hot(targets, predictions.shape[<span class="op">-</span><span class="dv">1</span>]) <span class="co">#trax's one_hot function takes the input as one_hot(x, n_categories, dtype=optional)</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'reshaped_targets has shape: </span><span class="sc">{</span>reshaped_targets<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>reshaped_targets has shape: (32, 64, 256)</code></pre>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-08-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;10
-</figcaption>
-</figure>
-</div></div><p>Each horizontal vector corresponds to the encoding of the corresponding question. Now when we multiply the two matrices and compute the cosine, we get the following:</p>
-
-<div class="no-row-height column-margin column-container"><div id="fig-09" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-09-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide09.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="Figure&nbsp;11: "><img src="img/slide09.png" class="img-fluid figure-img"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-09-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;11
-</figcaption>
-</figure>
-</div></div><p>The diagonal line corresponds to scores of similar sentences, (normally they should be positive). The off-diagonals correspond to cosine scores between the anchor and the negative examples.</p>
-</section>
-<section id="computing-the-cost-ii" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="computing-the-cost-ii">Computing the Cost II</h2>
-<p>Now that we have the matrix with cosine similarity scores, which is the product of two matrices, we go ahead and compute the cost.</p>
-
-<div class="no-row-height column-margin column-container"><div id="fig-10" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide10.png" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="Figure&nbsp;12: "><img src="img/slide10.png" class="img-fluid figure-img"></a>
+<p>By calculating the product of the predictions and the reshaped targets and summing across the last dimension, the total log perplexity can be computed:</p>
+<div id="3ed8e551" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>total_log_ppx <span class="op">=</span> np.<span class="bu">sum</span>(predictions <span class="op">*</span> reshaped_targets, axis<span class="op">=</span> <span class="op">-</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;12
-</figcaption>
-</figure>
-</div></div><p>We now introduce two concepts, the <strong>mean_neg</strong>, which is the mean negative of all the other off diagonals in the row, and the <strong>closest_neg</strong>, which corresponds to the highest number in the off diagonals.</p>
-<p><span class="math inline">Cost = max(−cos(A,P)+cos(A,N)+α,0)</span></p>
-<p>So we will have two costs now:</p>
-<p><span class="math inline">Cost1 = max(−cos(A,P)+mean_n eg+α,0)</span></p>
-<p><span class="math inline">Cost2 = max(−cos(A,P)+closest_n eg+α,0)</span> ⁡ The full cost is defined as: Cost1 + Cost2.</p>
-</section>
-<section id="lab-lecture-notebook-modified-triplet-loss" class="level2">
-<h2 class="anchored" data-anchor-id="lab-lecture-notebook-modified-triplet-loss">Lab: Lecture Notebook: Modified Triplet Loss</h2>
-<p><a href="lab02.qmd">Modified Triplet Loss</a></p>
-</section>
-<section id="one-shot-learning" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="one-shot-learning">One Shot Learning</h2>
-<p>Imagine we are working in a bank and we need to verify the signature of a check. We can either build a classifier with K possible signatures as an output or we can build a classifier that tells we whether two signatures are the same.</p>
+<p>Now you will need to account for the padding so this metric is not artificially deflated (since a lower perplexity means a better model). For identifying which elements are padding and which are not, you can use <code>np.equal()</code> and get a tensor with <code>1s</code> in the positions of actual values and <code>0s</code> where there are paddings.</p>
+<div id="aa5a67b8" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>non_pad <span class="op">=</span> <span class="fl">1.0</span> <span class="op">-</span> np.equal(targets, <span class="dv">0</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'non_pad has shape: </span><span class="sc">{</span>non_pad<span class="sc">.</span>shape<span class="sc">}</span><span class="ch">\n</span><span class="ss">'</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'non_pad looks like this: </span><span class="ch">\n\n</span><span class="ss"> </span><span class="sc">{</span>non_pad<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>non_pad has shape: (32, 64)
 
-<div class="no-row-height column-margin column-container"><div id="fig-11" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide11.png" class="lightbox" data-gallery="quarto-lightbox-gallery-13" title="Figure&nbsp;13: "><img src="img/slide11.png" class="img-fluid figure-img"></a>
+non_pad looks like this: 
+
+ [[1. 1. 1. ... 0. 0. 0.]
+ [1. 1. 1. ... 0. 0. 0.]
+ [1. 1. 1. ... 0. 0. 0.]
+ ...
+ [1. 1. 1. ... 0. 0. 0.]
+ [1. 1. 1. ... 0. 0. 0.]
+ [1. 1. 1. ... 0. 0. 0.]]</code></pre>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;13
-</figcaption>
-</figure>
-</div></div><p>Hence, we resort to one shot learning. Instead of retraining your model for every signature, we can just learn a similarity score as follows:</p>
-
-<div class="no-row-height column-margin column-container"><div id="fig-12" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide12.png" class="lightbox" data-gallery="quarto-lightbox-gallery-14" title="Figure&nbsp;14: "><img src="img/slide12.png" class="img-fluid figure-img"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;14
-</figcaption>
-</figure>
-</div></div></section>
-<section id="training-testing" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="training-testing">Training / Testing</h2>
-<p>After preparing the batches of vectors, we can proceed to multiplying the two matrices.</p>
-<p>Here is a quick recap of the first step:</p>
-
-<div class="no-row-height column-margin column-container"><div id="fig-13" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide13.png" class="lightbox" data-gallery="quarto-lightbox-gallery-15" title="Figure&nbsp;15: "><img src="img/slide13.png" class="img-fluid figure-img"></a>
+<p>By computing the product of the total log perplexity and the non_pad tensor we remove the effect of padding on the metric:</p>
+<div id="720587d6" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>real_log_ppx <span class="op">=</span> total_log_ppx <span class="op">*</span> non_pad</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'real perplexity still has shape: </span><span class="sc">{</span>real_log_ppx<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>real perplexity still has shape: (32, 64)</code></pre>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;15
-</figcaption>
-</figure>
-</div></div><p>The next step is to implement the siamese model as follows:</p>
-<p>Finally when testing:</p>
-<ol type="1">
-<li>Convert two inputs into an array of numbers</li>
-<li>Feed it into your model</li>
-<li>Compare <span class="math inline">𝒗_1,𝒗_2</span> using cosine similarity</li>
-<li>Test against a threshold <span class="math inline">\tau</span></li>
-</ol>
-
-<div class="no-row-height column-margin column-container"><div id="fig-14" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide14.png" class="lightbox" data-gallery="quarto-lightbox-gallery-16" title="Figure&nbsp;16: "><img src="img/slide14.png" class="img-fluid figure-img"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;16
-</figcaption>
-</figure>
-</div></div></section>
-<section id="lab-evaluate-a-siamese-model" class="level2">
-<h2 class="anchored" data-anchor-id="lab-evaluate-a-siamese-model">Lab: Evaluate a Siamese Model</h2>
-<p><a href="lab03.qmd">Evaluate a Siamese Model</a></p>
-</section>
-<section id="acknowledgments" class="level2">
-<h2 class="anchored" data-anchor-id="acknowledgments">Acknowledgments</h2>
-<ul>
-<li><span class="citation" data-cites="Chadha2020DistilledNotesCourseraDLSpec">(<a href="#ref-Chadha2020DistilledNotesCourseraDLSpec" role="doc-biblioref">Chadha 2020</a>)</span> <a href="https://aman.ai/coursera-nlp/logistic-regression/">Aman Chadha’s Notes</a></li>
-<li><a href="https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization/tree/master/1%20-%20Natural%20Language%20Processing%20with%20Classification%20and%20Vector%20Spaces#testing-logistic-regression">Ibrahim Jelliti’s Notes</a></li>
-</ul>
+<p>You can check the effect of filtering out the padding by looking at the two log perplexity tensors:</p>
+<div id="7b933fc6" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'log perplexity tensor before filtering padding: </span><span class="ch">\n\n</span><span class="ss"> </span><span class="sc">{</span>total_log_ppx<span class="sc">}</span><span class="ch">\n</span><span class="ss">'</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'log perplexity tensor after filtering padding: </span><span class="ch">\n\n</span><span class="ss"> </span><span class="sc">{</span>real_log_ppx<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>log perplexity tensor before filtering padding: 
 
+ [[ -5.396545    -1.0311184   -0.66916656 ... -22.37673    -23.18771
+  -21.843483  ]
+ [ -4.5857706   -1.1341286   -8.538033   ... -20.15686    -26.837097
+  -23.57502   ]
+ [ -5.2223887   -1.2824144   -0.17312431 ... -21.328228   -19.854412
+  -33.88444   ]
+ ...
+ [ -5.396545   -17.291681    -4.360766   ... -20.825802   -21.065838
+  -22.443115  ]
+ [ -5.9313164  -14.247417    -0.2637329  ... -26.743248   -18.38433
+  -22.355278  ]
+ [ -5.670536    -0.10595131   0.         ... -23.332523   -28.087376
+  -23.878807  ]]
+
+log perplexity tensor after filtering padding: 
+
+ [[ -5.396545    -1.0311184   -0.66916656 ...  -0.          -0.
+   -0.        ]
+ [ -4.5857706   -1.1341286   -8.538033   ...  -0.          -0.
+   -0.        ]
+ [ -5.2223887   -1.2824144   -0.17312431 ...  -0.          -0.
+   -0.        ]
+ ...
+ [ -5.396545   -17.291681    -4.360766   ...  -0.          -0.
+   -0.        ]
+ [ -5.9313164  -14.247417    -0.2637329  ...  -0.          -0.
+   -0.        ]
+ [ -5.670536    -0.10595131   0.         ...  -0.          -0.
+   -0.        ]]</code></pre>
+</div>
+</div>
+<p>To get a single average log perplexity across all the elements in the batch you can sum across both dimensions and divide by the number of elements. Notice that the result will be the negative of the real log perplexity of the model:</p>
+<div id="4d42f6c2" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>log_ppx <span class="op">=</span> np.<span class="bu">sum</span>(real_log_ppx) <span class="op">/</span> np.<span class="bu">sum</span>(non_pad)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>log_ppx <span class="op">=</span> <span class="op">-</span>log_ppx</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'The log perplexity and perplexity of the model are respectively: </span><span class="sc">{</span>log_ppx<span class="sc">}</span><span class="ss"> and </span><span class="sc">{</span>np<span class="sc">.</span>exp(log_ppx)<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The log perplexity and perplexity of the model are respectively: 2.3281209468841553 and 10.258646965026855</code></pre>
+</div>
+</div>
+<p><strong>Congratulations on finishing this lecture notebook!</strong> Now you should have a clear understanding of how to work with Trax’s numpy and how to compute the perplexity to evaluate your language models. <strong>Keep it up!</strong></p>
 
 
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
-<div id="ref-Chadha2020DistilledNotesCourseraDLSpec" class="csl-entry" role="listitem">
-Chadha, Aman. 2020. <span>“Distilled Notes for the Natural Language Processing Specialization on Coursera (Offered by Deeplearning.ai).”</span> <a href="https://www.aman.ai" class="uri">https://www.aman.ai</a>. <a href="https://www.aman.ai">www.aman.ai</a>.
-</div>
-</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2020,
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2020,
   author = {Bochman, Oren},
-  title = {Siamese {Networks}},
-  date = {2020-10-23},
-  url = {https://orenbochman.github.io/notes-nlp/posts/c3w4/},
+  title = {Working with {JAX} Numpy and Calculating Perplexity:
+    {Ungraded} {Lecture} {Notebook}},
+  date = {2020-10-24},
+  url = {https://orenbochman.github.io/notes-nlp/posts/c3w2/lab02.html},
   langid = {en}
 }
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2020" class="csl-entry quarto-appendix-citeas" role="listitem">
-Bochman, Oren. 2020. <span>“Siamese Networks.”</span> October 23, 2020.
-<a href="https://orenbochman.github.io/notes-nlp/posts/c3w4/">https://orenbochman.github.io/notes-nlp/posts/c3w4/</a>.
+Bochman, Oren. 2020. <span>“Working with JAX Numpy and Calculating
+Perplexity: Ungraded Lecture Notebook.”</span> October 24, 2020. <a href="https://orenbochman.github.io/notes-nlp/posts/c3w2/lab02.html">https://orenbochman.github.io/notes-nlp/posts/c3w2/lab02.html</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -1361,44 +1282,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c3w4/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c3w2/lab02.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p>This page is built with 💛 and <a href="https://quarto.org/">Quarto</a>.</p>
 </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"closeEffect":"fade","descPosition":"right","loop":true,"openEffect":"fade","selector":".lightbox","skin":"my-css-class"});
-(function() {
-  let previousOnload = window.onload;
-  window.onload = () => {
-    if (previousOnload) {
-      previousOnload();
-    }
-    lightboxQuarto.on('slide_before_load', (data) => {
-      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-      const href = trigger.getAttribute('href');
-      if (href !== null) {
-        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
-        if (imgEl !== null) {
-          const srcAttr = imgEl.getAttribute("src");
-          if (srcAttr && srcAttr.startsWith("data:")) {
-            slideConfig.href = srcAttr;
-          }
-        }
-      } 
-    });
-  
-    lightboxQuarto.on('slide_after_load', (data) => {
-      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(slideNode);
-      }
-    });
-  
-  };
-  
-})();
-          </script>
 
 
 
