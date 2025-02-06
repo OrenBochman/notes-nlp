@@ -7,9 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Oren Bochman">
-<meta name="description" content="we cover Neural networks for deep learning, then build a tweet classifier that places tweets into positive or negative sentiment categories, using a DNN.">
 
-<title>Neural Networks for Sentiment Analysis – NLP Specialization</title>
+<title>Stack Semantics in Trax: Ungraded Lab – NLP Specialization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,27 +21,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-  margin-bottom: 0em;
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
 }
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -63,9 +76,6 @@ div.csl-indent {
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
-<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
-<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -95,54 +105,11 @@ div.csl-indent {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
-  <script>document.addEventListener("DOMContentLoaded", function () {
- var mathElements = document.getElementsByClassName("math");
- var macros = [];
- for (var i = 0; i < mathElements.length; i++) {
-  var texText = mathElements[i].firstChild;
-  if (mathElements[i].tagName == "SPAN") {
-   katex.render(texText.data, mathElements[i], {
-    displayMode: mathElements[i].classList.contains('display'),
-    throwOnError: false,
-    macros: macros,
-    fleqn: false
-   });
-}}});
-  </script>
-  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-sidebar floating nav-fixed slimcontent">
+<body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -200,7 +167,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Sequence Models</li><li class="breadcrumb-item"><a href="../../posts/c3w1/index.html">Neural Networks for Sentiment Analysis</a></li><li class="breadcrumb-item"><a href="../../posts/c3w1/index.html">Notes</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">NLP with Attention Models</li><li class="breadcrumb-item"><a href="../../posts/c4w1/index.html">Neural Machine Translation</a></li><li class="breadcrumb-item"><a href="../../posts/c4w1/lab01.html">L1 - Stack Semantics</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -209,22 +176,9 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Sequence Models</li><li class="breadcrumb-item"><a href="../../posts/c3w1/index.html">Neural Networks for Sentiment Analysis</a></li><li class="breadcrumb-item"><a href="../../posts/c3w1/index.html">Notes</a></li></ol></nav>
-      <h1 class="title">Neural Networks for Sentiment Analysis</h1>
-            <p class="subtitle lead">Sequence Models</p>
-                  <div>
-        <div class="description">
-          we cover Neural networks for deep learning, then build a tweet classifier that places tweets into positive or negative sentiment categories, using a DNN.
-        </div>
-      </div>
-                          <div class="quarto-categories">
-                <div class="quarto-category">NLP</div>
-                <div class="quarto-category">Coursera</div>
-                <div class="quarto-category">Notes</div>
-                <div class="quarto-category">Sequence Models</div>
-                <div class="quarto-category">Sentiment analysis task</div>
-              </div>
-                  </div>
+    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">NLP with Attention Models</li><li class="breadcrumb-item"><a href="../../posts/c4w1/index.html">Neural Machine Translation</a></li><li class="breadcrumb-item"><a href="../../posts/c4w1/lab01.html">L1 - Stack Semantics</a></li></ol></nav>
+      <h1 class="title">Stack Semantics in Trax: Ungraded Lab</h1>
+                      </div>
   </div>
     
   
@@ -240,7 +194,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Friday, October 23, 2020</p>
+        <p class="date">Thursday, February 6, 2025</p>
       </div>
     </div>
     
@@ -578,16 +532,16 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false">
  <span class="menu-text">Neural Networks for Sentiment Analysis</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../posts/c3w1/index.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../posts/c3w1/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Notes</span></a>
   </div>
 </li>
@@ -747,13 +701,13 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="true">
  <span class="menu-text">Neural Machine Translation</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../posts/c4w1/index.html" class="sidebar-item-text sidebar-link">
@@ -762,13 +716,13 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../posts/c4w1/lab01.qmd" class="sidebar-item-text sidebar-link">
+  <a href="../../posts/c4w1/lab01.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">L1 - Stack Semantics</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../posts/c4w1/lab02.qmd" class="sidebar-item-text sidebar-link">
+  <a href="../../posts/c4w1/lab02.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">L2 - BLEU Score</span></a>
   </div>
 </li>
@@ -903,398 +857,518 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#sec-course-intro" id="toc-sec-course-intro" class="nav-link active" data-scroll-target="#sec-course-intro">Course Intro</a></li>
-  <li><a href="#neural-networks-for-sentiment-analysis" id="toc-neural-networks-for-sentiment-analysis" class="nav-link" data-scroll-target="#neural-networks-for-sentiment-analysis">Neural Networks for Sentiment Analysis</a></li>
-  <li><a href="#sec-trax-nn" id="toc-sec-trax-nn" class="nav-link" data-scroll-target="#sec-trax-nn">Trax: Neural Networks</a></li>
-  <li><a href="#sec-trax-jax" id="toc-sec-trax-jax" class="nav-link" data-scroll-target="#sec-trax-jax">Trax and JAX, docs and code</a></li>
-  <li><a href="#sec-intro-trax" id="toc-sec-intro-trax" class="nav-link" data-scroll-target="#sec-intro-trax">Lab: Introduction to Trax</a></li>
-  <li><a href="#sec-trax-layers" id="toc-sec-trax-layers" class="nav-link" data-scroll-target="#sec-trax-layers">Trax: Layers</a></li>
-  <li><a href="#sec-why-trax" id="toc-sec-why-trax" class="nav-link" data-scroll-target="#sec-why-trax">Why we recommend Trax</a></li>
-  <li><a href="#lab-classes-and-subclasses" id="toc-lab-classes-and-subclasses" class="nav-link" data-scroll-target="#lab-classes-and-subclasses">Lab: Classes and Subclasses</a></li>
-  <li><a href="#dense-and-relu-layer" id="toc-dense-and-relu-layer" class="nav-link" data-scroll-target="#dense-and-relu-layer">Dense and ReLU layer</a></li>
-  <li><a href="#serial-layer" id="toc-serial-layer" class="nav-link" data-scroll-target="#serial-layer">Serial Layer</a></li>
-  <li><a href="#other-layers" id="toc-other-layers" class="nav-link" data-scroll-target="#other-layers">Other Layers</a>
+  <li><a href="#imports" id="toc-imports" class="nav-link active" data-scroll-target="#imports">Imports</a></li>
+  <li><a href="#the-tl.serial-combinator-is-stack-oriented." id="toc-the-tl.serial-combinator-is-stack-oriented." class="nav-link" data-scroll-target="#the-tl.serial-combinator-is-stack-oriented.">1. The tl.Serial Combinator is Stack Oriented.</a>
   <ul class="collapse">
-  <li><a href="#training" id="toc-training" class="nav-link" data-scroll-target="#training">Training</a></li>
+  <li><a href="#coding-the-example-in-the-table" id="toc-coding-the-example-in-the-table" class="nav-link" data-scroll-target="#coding-the-example-in-the-table">Coding the example in the table:</a></li>
   </ul></li>
-  <li><a href="#lab-data-generators" id="toc-lab-data-generators" class="nav-link" data-scroll-target="#lab-data-generators">Lab: Data Generators</a></li>
-  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">Resources:</a></li>
+  <li><a href="#the-tl.select-combinator-in-the-context-of-the-serial-combinator" id="toc-the-tl.select-combinator-in-the-context-of-the-serial-combinator" class="nav-link" data-scroll-target="#the-tl.select-combinator-in-the-context-of-the-serial-combinator">2. The tl.Select combinator in the context of the Serial combinator</a>
+  <ul class="collapse">
+  <li><a href="#first-example-of-tl.select" id="toc-first-example-of-tl.select" class="nav-link" data-scroll-target="#first-example-of-tl.select">First example of tl.Select</a></li>
+  <li><a href="#second-example-of-tl.select" id="toc-second-example-of-tl.select" class="nav-link" data-scroll-target="#second-example-of-tl.select">Second example of tl.Select</a></li>
+  </ul></li>
+  <li><a href="#the-tl.residual-combinator-in-the-context-of-the-serial-combinator" id="toc-the-tl.residual-combinator-in-the-context-of-the-serial-combinator" class="nav-link" data-scroll-target="#the-tl.residual-combinator-in-the-context-of-the-serial-combinator">3. The tl.Residual combinator in the context of the Serial combinator</a>
+  <ul class="collapse">
+  <li><a href="#tl.residual" id="toc-tl.residual" class="nav-link" data-scroll-target="#tl.residual">tl.Residual</a></li>
+  <li><a href="#a-slightly-trickier-example" id="toc-a-slightly-trickier-example" class="nav-link" data-scroll-target="#a-slightly-trickier-example">A slightly trickier example:</a></li>
+  </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c3w1/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c4w1/lab01.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-body" id="quarto-document-content">
 
 
 
 
 
+<p>In this ungraded lab, we will explain the stack semantics in Trax. This will help in understanding how to use layers like <code>Select</code> and <code>Residual</code> which gets . If you’ve taken a computer science class before, you will recall that a stack is a data structure that follows the Last In, First Out (LIFO) principle. That is, whatever is the latest element that is pushed into the stack will also be the first one to be popped out. If you’re not yet familiar with stacks, then you may find this <a href="https://www.tutorialspoint.com/python_data_structure/python_stack.htm">short tutorial</a> useful. In a nutshell, all you really need to remember is it puts elements one on top of the other. You should be aware of what is on top of the stack to know which element you will be popping. You will see this in the discussions below. Let’s get started!</p>
+<section id="imports" class="level2">
+<h2 class="anchored" data-anchor-id="imports">Imports</h2>
+<div id="4bff4a6a" class="cell" data-tags="[]" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np              <span class="co"># regular ol' numpy</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> trax <span class="im">import</span> layers <span class="im">as</span> tl   <span class="co"># core building block</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> trax <span class="im">import</span> shapes         <span class="co"># data signatures: dimensionality and type</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> trax <span class="im">import</span> fastmath       <span class="co"># uses jax, offers numpy on steroids</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>2025-02-06 21:09:28.955736: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1738868968.969295 1097049 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1738868968.975075 1097049 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered</code></pre>
+</div>
+</div>
+</section>
+<section id="the-tl.serial-combinator-is-stack-oriented." class="level2">
+<h2 class="anchored" data-anchor-id="the-tl.serial-combinator-is-stack-oriented.">1. The tl.Serial Combinator is Stack Oriented.</h2>
+<p>To understand how stack-orientation works in <a href="https://trax-ml.readthedocs.io/en/latest/">Trax</a>, most times one will be using the <code>Serial</code> layer. We will define two simple <a href="https://trax-ml.readthedocs.io/en/latest/notebooks/layers_intro.html?highlight=fn#With-the-Fn-layer-creating-function.">Function layers</a>: 1) Addition and 2) Multiplication.</p>
+<p>Suppose we want to make the simple calculation (3 + 4) * 15 + 3. <code>Serial</code> will perform the calculations in the following manner <code>3</code> <code>4</code> <code>add</code> <code>15</code> <code>mul</code> <code>3</code> <code>add</code>. The steps of the calculation are shown in the table below. The first column shows the operations made on the stack and the second column the output of those operations. Moreover, the rightmost element in the second column represents the top of the stack (e.g.&nbsp;in the second row, <code>Push(3)</code> pushes <code>3</code> on top of the stack and <code>4</code> is now under it).</p>
+<div style="text-align:center" width="50px">
+<img src="Stack1.png">
+</div>
+<p>After processing all the stack contains 108 which is the answer to our simple computation.</p>
+<p>From this, the following can be concluded: a stack-based layer has only one way to handle data, by taking one piece of data from atop the stack, termed popping, and putting data back atop the stack, termed pushing. Any expression that can be written conventionally, can be written in this form and thus be amenable to being interpreted by a stack-oriented layer like <code>Serial</code>.</p>
+<section id="coding-the-example-in-the-table" class="level3">
+<h3 class="anchored" data-anchor-id="coding-the-example-in-the-table">Coding the example in the table:</h3>
+<p><strong>Defining addition</strong></p>
+<div id="34f29b84" class="cell" data-tags="[]" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> Addition():</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    layer_name <span class="op">=</span> <span class="st">"Addition"</span>  <span class="co"># don't forget to give your custom layer a name to identify</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Custom function for the custom layer</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> func(x, y):</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x <span class="op">+</span> y</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> tl.Fn(layer_name, func)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Test it</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>add <span class="op">=</span> Addition()</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect properties</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Properties --"</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"name :"</span>, add.name)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"expected inputs :"</span>, add.n_in)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"promised outputs :"</span>, add.n_out, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Inputs</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.array([<span class="dv">3</span>])</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([<span class="dv">4</span>])</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Inputs --"</span>)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"x :"</span>, x, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"y :"</span>, y, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Outputs</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> add((x, y))</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Outputs --"</span>)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"z :"</span>, z)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>-- Properties --
+name : Addition
+expected inputs : 2
+promised outputs : 1 
 
-<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="../../images/Course-Logo-3-3.webp" class="nolightbox img-fluid figure-img"></p>
-<figcaption>course banner</figcaption>
-</figure>
-</div><div id="fig-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" style="@page {size: 16in 9in;  margin: 0;}">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="slides.pdf" class="lightbox" data-gallery="slides" title="This week’s slides"><embed src="slides.pdf" style="@page {size: 16in 9in;  margin: 0;}" width="420" height="340"></a></p>
-<figcaption>This week’s slides</figcaption>
-</figure>
+-- Inputs --
+x : [3] 
+
+y : [4] 
+
+-- Outputs --
+z : [7]</code></pre>
 </div>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1
-</figcaption>
-</figure>
-</div></div>
-<p>My notes for Week 1 of the <a href="https://www.coursera.org/learn/sequence-models-in-nlp/home/welcome">Natural Language Processing with Sequence Models</a> Course in the Natural Language Processing Specialization Offered by <a href="DeepLearning.AI">DeepLearning.AI</a> on <a href="https://www.coursera.org/">Coursera</a></p>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+<p><strong>Defining multiplication</strong></p>
+<div id="56b9477d" class="cell" data-tags="[]" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> Multiplication():</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    layer_name <span class="op">=</span> (</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Multiplication"</span>  <span class="co"># don't forget to give your custom layer a name to identify</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Custom function for the custom layer</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> func(x, y):</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x <span class="op">*</span> y</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> tl.Fn(layer_name, func)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Test it</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>mul <span class="op">=</span> Multiplication()</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect properties</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Properties --"</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"name :"</span>, mul.name)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"expected inputs :"</span>, mul.n_in)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"promised outputs :"</span>, mul.n_out, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Inputs</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.array([<span class="dv">7</span>])</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([<span class="dv">15</span>])</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Inputs --"</span>)</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"x :"</span>, x, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"y :"</span>, y, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Outputs</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> mul((x, y))</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Outputs --"</span>)</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"z :"</span>, z)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>-- Properties --
+name : Multiplication
+expected inputs : 2
+promised outputs : 1 
+
+-- Inputs --
+x : [7] 
+
+y : [15] 
+
+-- Outputs --
+z : [105]</code></pre>
 </div>
-<div class="callout-title-container flex-fill">
-Learning Objectives
+</div>
+<p><strong>Implementing the computations using Serial combinator.</strong></p>
+<div id="71b11e52" class="cell" data-tags="[]" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Serial combinator</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>serial <span class="op">=</span> tl.Serial(</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    Addition(), Multiplication(), Addition()  <span class="co"># add 3 + 4  # multiply result by 15</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialization</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> (np.array([<span class="dv">3</span>]), np.array([<span class="dv">4</span>]), np.array([<span class="dv">15</span>]), np.array([<span class="dv">3</span>]))  <span class="co"># input</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>serial.init(shapes.signature(x))  <span class="co"># initializing serial instance</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Serial Model --"</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(serial, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Properties --"</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"name :"</span>, serial.name)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"sublayers :"</span>, serial.sublayers)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"expected inputs :"</span>, serial.n_in)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"promised outputs :"</span>, serial.n_out, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Inputs</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Inputs --"</span>)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"x :"</span>, x, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Outputs</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> serial(x)</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Outputs --"</span>)</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"y :"</span>, y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>(((), (), ()), ((), (), ()))</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>-- Serial Model --
+Serial_in4[
+  Addition_in2
+  Multiplication_in2
+  Addition_in2
+] 
+
+-- Properties --
+name : Serial
+sublayers : [Addition_in2, Multiplication_in2, Addition_in2]
+expected inputs : 4
+promised outputs : 1 
+
+-- Inputs --
+x : (array([3]), array([4]), array([15]), array([3])) 
+
+-- Outputs --
+y : [108]</code></pre>
 </div>
 </div>
-<div class="callout-body-container callout-body">
-<ul>
-<li>Feature extraction</li>
-<li>Supervised machine learning</li>
-<li>Binary classification</li>
-<li>Text preprocessing</li>
-<li>ReLU</li>
-<li>Python classes</li>
-<li>Trax</li>
-<li>Neural networks</li>
-</ul>
+<p>The example with the two simple adition and multiplication functions that where coded together with the serial combinator show how stack semantics work in <code>Trax</code>.</p>
+</section>
+</section>
+<section id="the-tl.select-combinator-in-the-context-of-the-serial-combinator" class="level2">
+<h2 class="anchored" data-anchor-id="the-tl.select-combinator-in-the-context-of-the-serial-combinator">2. The tl.Select combinator in the context of the Serial combinator</h2>
+<p>Having understood how stack semantics work in <code>Trax</code>, we will demonstrate how the <a href="https://trax-ml.readthedocs.io/en/latest/trax.layers.html?highlight=select#trax.layers.combinators.Select">tl.Select</a> combinator works.</p>
+<section id="first-example-of-tl.select" class="level3">
+<h3 class="anchored" data-anchor-id="first-example-of-tl.select">First example of tl.Select</h3>
+<p>Suppose we want to make the simple calculation (3 + 4) * 3 + 4. We can use <code>Select</code> to perform the calculations in the following manner:</p>
+<ol type="1">
+<li><code>4</code></li>
+<li><code>3</code></li>
+<li><code>tl.Select([0,1,0,1])</code></li>
+<li><code>add</code></li>
+<li><code>mul</code></li>
+<li><code>add</code>.</li>
+</ol>
+<p>The <code>tl.Select</code> requires a list or tuple of 0-based indices to select elements relative to the top of the stack. For our example, the top of the stack is <code>3</code> (which is at index 0) then <code>4</code> (index 1) and we Select to add in an ordered manner to the top of the stack which after the command is <code>3</code> <code>4</code> <code>3</code> <code>4</code>. The steps of the calculation for our example are shown in the table below. As in the previous table each column shows the contents of the stack and the outputs after the operations are carried out.</p>
+<div style="text-align:center" width="20px">
+<img src="Stack2.png">
 </div>
+<p>After processing all the inputs the stack contains 25 which is the answer we get above.</p>
+<div id="c18d386f" class="cell" data-tags="[]" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>serial <span class="op">=</span> tl.Serial(tl.Select([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>]), Addition(), Multiplication(), Addition())</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialization</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> (np.array([<span class="dv">3</span>]), np.array([<span class="dv">4</span>]))  <span class="co"># input</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>serial.init(shapes.signature(x))  <span class="co"># initializing serial instance</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Serial Model --"</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(serial, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Properties --"</span>)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"name :"</span>, serial.name)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"sublayers :"</span>, serial.sublayers)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"expected inputs :"</span>, serial.n_in)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"promised outputs :"</span>, serial.n_out, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Inputs</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Inputs --"</span>)</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"x :"</span>, x, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Outputs</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> serial(x)</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Outputs --"</span>)</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"y :"</span>, y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>(((), (), (), ()), ((), (), (), ()))</code></pre>
 </div>
-<section id="sec-course-intro" class="level2">
-<h2 class="anchored" data-anchor-id="sec-course-intro">Course Intro</h2>
-<div class="callout callout-style-simple callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Course Intro Video Transcript
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<blockquote class="blockquote">
-<p>Welcome to the third course of this specialization. This course is called natural language processing with sequence models. In this course, here are some of the things you get to build. First, you take sentiment analysis to the next level with deep neural networks. You also build a language generator using RNNs or recurrent neural networks. You apply LSTM units. LSTM stands for long short term memory. You apply LCM units to the problem of named entity recognition. And, finally you use Siamese networks to identify duplicate questions like say if there’s an online discussion forum and different people are asking questions. Can you figure out if two different people ask essentially the same question but with different wording? With the skills you develop in this course, you’ll be able to build powerful NLP systems to solve problems across a wide range of industries. It is my pleasure to welcome Lukasz and Younes as your instructors for this course and they’re thrilled to dive into these topics with you. Younes, perhaps you could say a bit more about the applications that learners will build in this course.</p>
-</blockquote>
-<blockquote class="blockquote">
-<blockquote class="blockquote">
-<p>Sure thing. Thanks, Andrew. Well, I’d like to start by saying that in the first two courses of the specialization, you build a powerful foundation that will provide you with both the context and the fundamental skills you need to tackle this course. For example, you’ve already done sentiment analysis in course one with a simple naive Bayes classifier. But now, you will leverage the power of deep neural networks to build a much more robust sentiment analysis classifier. You’ve also seen how to do things like predict the next word in a sequence, using relatively simple n-gram language models in course two. In this course, you’ll create an advanced model using recurrent neural networks to generate text. You can think of this course as taking the step from foundational skills into building real world NLP applications.</p>
-</blockquote>
-</blockquote>
-<blockquote class="blockquote">
-<blockquote class="blockquote">
-<p>Very cool, Younes. I think that’s a great way to think about it. Lukasz, maybe you could say a bit more about the applications learners will get to build.</p>
-</blockquote>
-</blockquote>
-<blockquote class="blockquote">
-<blockquote class="blockquote">
-<p>Sure, thank you, Andrew. Well, as you saw in the first course, the problem of sentiment analysis is a really tricky one. But in many applications you want to determine the sentiment of a sentence. So it’s a really good problem to work on as well. With language modeling, which you’ll tackle in week two of this course, the problems you can solve are almost infinite. From translation to autocomplete to generating text from scratch. In week three of this course, you’ll work on named entity recognition, which is the problem of separating named entities in sentences, like people and places. This is a building block of many important NLP systems. Finally, in week four you will tackle the problem of identifying duplicates. The question whether two pieces of texts are duplicates of each other might not sound very interesting at first, but as you will see, it’s actually core building block of things like online forums and search engines and we’ll show you how to solve it. So we’re really excited to show you these applications and bring your skills to the next level.</p>
-</blockquote>
-</blockquote>
-<blockquote class="blockquote">
-<blockquote class="blockquote">
-<p>Thank you Lukasz and thank you Younes. This is going to be an exciting course, so let’s get started.</p>
-</blockquote>
-</blockquote>
-<blockquote class="blockquote">
-<blockquote class="blockquote">
-<p>Good luck.</p>
-</blockquote>
-</blockquote>
-<blockquote class="blockquote">
-<blockquote class="blockquote">
-<p>Have fun.</p>
-</blockquote>
-</blockquote>
-</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>-- Serial Model --
+Serial_in2[
+  Select[0,1,0,1]_in2_out4
+  Addition_in2
+  Multiplication_in2
+  Addition_in2
+] 
+
+-- Properties --
+name : Serial
+sublayers : [Select[0,1,0,1]_in2_out4, Addition_in2, Multiplication_in2, Addition_in2]
+expected inputs : 2
+promised outputs : 1 
+
+-- Inputs --
+x : (array([3]), array([4])) 
+
+-- Outputs --
+y : [25]</code></pre>
 </div>
 </div>
 </section>
-<section id="neural-networks-for-sentiment-analysis" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="neural-networks-for-sentiment-analysis">Neural Networks for Sentiment Analysis</h2>
-<p>Previously in the course we did sentiment analysis with logistic regression and naive Bayes. Those models were in a sense more naive, and are not able to catch the sentiment off a tweet like: “I am not happy” or “If only it was a good day”. When using a neural network to predict the sentiment of a sentence, we can use the following. Note that the image below has three outputs, in this case we might want to predict, “positive”, “neutral”, or “negative”.</p>
-<p class="page-columns page-full"><a href="img/slide01.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide01.png" class="img-fluid"></div></a></p>
-<p>Note that the network above has three layers. To go from one layer to another we can use a <span class="math inline">W</span> matrix to propagate to the next layer. Hence, we call this concept of going from the input until the final layer, forward propagation. To represent a tweet, we can use the following:</p>
-<p>Note, that we add zeros for padding to match the size of the longest tweet.</p>
-<p class="page-columns page-full"><a href="img/slide02.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide02.png" class="img-fluid"></div></a></p>
-<div class="callout callout-style-simple callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
+<section id="second-example-of-tl.select" class="level3">
+<h3 class="anchored" data-anchor-id="second-example-of-tl.select">Second example of tl.Select</h3>
+<p>Suppose we want to make the simple calculation (3 + 4) * 4. We can use <code>Select</code> to perform the calculations in the following manner:</p>
+<ol type="1">
+<li><code>4</code></li>
+<li><code>3</code></li>
+<li><code>tl.Select([0,1,0,1])</code></li>
+<li><code>add</code></li>
+<li><code>tl.Select([0], n_in=2)</code></li>
+<li><code>mul</code></li>
+</ol>
+<p>The example is a bit contrived but it demonstrates the flexibility of the command. The second <code>tl.Select</code> pops two elements (specified in n_in) from the stack starting from index 0 (i.e.&nbsp;top of the stack). This means that <code>7</code> and <code>3</code> will be popped out because <code>n_in = 2</code>) but only <code>7</code> is placed back on top because it only selects <code>[0]</code>. As in the previous table each column shows the contents of the stack and the outputs after the operations are carried out.</p>
+<div style="text-align:center" width="20px">
+<img src="Stack3.png">
 </div>
-<div class="callout-title-container flex-fill">
-Video Transcript
+<p>After processing all the inputs the stack contains 28 which is the answer we get above.</p>
+<div id="c8cf5020" class="cell" data-tags="[]" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>serial <span class="op">=</span> tl.Serial(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    tl.Select([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>]), Addition(), tl.Select([<span class="dv">0</span>], n_in<span class="op">=</span><span class="dv">2</span>), Multiplication()</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialization</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> (np.array([<span class="dv">3</span>]), np.array([<span class="dv">4</span>]))  <span class="co"># input</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>serial.init(shapes.signature(x))  <span class="co"># initializing serial instance</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Serial Model --"</span>)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(serial, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Properties --"</span>)</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"name :"</span>, serial.name)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"sublayers :"</span>, serial.sublayers)</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"expected inputs :"</span>, serial.n_in)</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"promised outputs :"</span>, serial.n_out, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Inputs</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Inputs --"</span>)</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"x :"</span>, x, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Outputs</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> serial(x)</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Outputs --"</span>)</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"y :"</span>, y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>(((), (), (), ()), ((), (), (), ()))</code></pre>
 </div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>-- Serial Model --
+Serial_in2[
+  Select[0,1,0,1]_in2_out4
+  Addition_in2
+  Select[0]_in2
+  Multiplication_in2
+] 
+
+-- Properties --
+name : Serial
+sublayers : [Select[0,1,0,1]_in2_out4, Addition_in2, Select[0]_in2, Multiplication_in2]
+expected inputs : 2
+promised outputs : 1 
+
+-- Inputs --
+x : (array([3]), array([4])) 
+
+-- Outputs --
+y : [28]</code></pre>
 </div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<blockquote class="blockquote">
-<p>This week I’ll show you how to create neural networks using layers. This simplifies the task a lot as you will see. Let’s dive in. First, you’ll revisit the general structure of neural networks and how they make predictions. I’ll show you the structure you’ll be using to perform sentiment analysis during this week. Neural networks are computational structures that, in a very simplistic way, attempt to mimic the way the human brain recognizes patterns. They’re used in many applications of artificial intelligence and have proven very effective on a variety of tasks, including those in NLP. Have a look at this example of a simple neural network with n input parameters, two hidden layers, and three output units. As inputs, this neural network receives a data representation x with n features, then performs computations in its hidden layers. Finally, it delivers an output which in this case has size 3. Let’s take a look at how it works mathematically. All the nodes every activation layer as a_i, where i is the layer’s number. First, define a_0 to be the input vector x. To get the values for each layer’s activation, a, you have to compute the value for z_i, which depends on both the weights matrix for that layer and the activations, a, from the previous layer. Finally, you get the values for each layer by applying an activation function, g, to the value of z. As you can see, this computation moves forward through the left of the neural network towards the right. That’s why this process is called forward propagation. For this module’s assignments, you’re going to implement a neural network that looks like this. As inputs, it will receive a simple vector representation of your tweets. It will have an embedding layer that will transform your representation into an optimal one for this task. Finally, it will have a hidden layer with a ReLU activation function and then output layer with the softmax function that will give you the probabilities for whether a tweet has a positive or negative sentiment. This neural network will allow you to predict sentiments for complex tweets, such as a tweet like this one that says, “This movie was almost good.” That you wouldn’t have been able to classify correctly using simpler methods such as Naive Bayes because they missed important information. The initial representation, x, that you’ll use for this neural network will be a vector of integers. Similar to your previous work with sentiment analysis, you will first need to list all of your words from your vocabulary. Next for this application, you’ll assign an integer index to each of them. Then for each word in your tweets add the index from your vocabulary to construct a vector like this one for every tweet. After you have all the vector representations of your tweets, you will need to identify the maximum vector size and fill every vector with zeros to match that size. This process is called padding and ensures that all of your vectors have the same size even if your tweets don’t. Let’s do a quick recap. At this point, you’re familiar with the general structure of the neural network that you’ll be using to classify sentiments for a set of complex nuance tweets. You also reviewed the integer representation that’s going to be used in this module. Next, I’ll introduce the tracks library for neural networks and demonstrate how the embedding layer works. I’ll see you later.</p>
-</blockquote>
 </div>
+<p><strong>In summary, what Select does in this example is a copy of the inputs in order to be used further along in the stack of operations.</strong></p>
+</section>
+</section>
+<section id="the-tl.residual-combinator-in-the-context-of-the-serial-combinator" class="level2">
+<h2 class="anchored" data-anchor-id="the-tl.residual-combinator-in-the-context-of-the-serial-combinator">3. The tl.Residual combinator in the context of the Serial combinator</h2>
+<section id="tl.residual" class="level3">
+<h3 class="anchored" data-anchor-id="tl.residual">tl.Residual</h3>
+<p><a href="https://arxiv.org/pdf/1512.03385.pdf">Residual networks</a> are frequently used to make deep models easier to train and you will be using it in the assignment as well. Trax already has a built in layer for this. The <a href="https://trax-ml.readthedocs.io/en/latest/trax.layers.html?highlight=residual#trax.layers.combinators.Residual">Residual layer</a> computes the element-wise sum of the <em>stack-top</em> input with the output of the layer series. For example, if we wanted the cumulative sum of the folowing series of computations (3 + 4) * 3 + 4. The result can be obtained with the use of the <code>Residual</code> combinator in the following manner</p>
+<ol type="1">
+<li><code>4</code></li>
+<li><code>3</code></li>
+<li><code>tl.Select([0,1,0,1])</code></li>
+<li><code>add</code></li>
+<li><code>mul</code></li>
+<li><code>tl.Residual</code>.</li>
+</ol>
+<p>For our example the top of the stack is <code>3</code> <code>4</code> and we select to add the same to numbers in an ordered manner to the top of the stack which after the command is <code>3</code> <code>4</code> <code>3</code> <code>4</code>. The steps of the calculation for our example are shown in the table below together with the cumulative sum which is the result of <code>tl.Residual</code>.</p>
+<div style="text-align:center" width="20px">
+<img src="Stack4.png">
+</div>
+<p>After processing all the inputs the stack contains 50 which is the cumulative sum of all the operations.</p>
+<div id="0e124dc7" class="cell" data-tags="[]" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>serial <span class="op">=</span> tl.Serial(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    tl.Select([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>]), Addition(), Multiplication(), Addition(), tl.Residual()</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialization</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> (np.array([<span class="dv">3</span>]), np.array([<span class="dv">4</span>]))  <span class="co"># input</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>serial.init(shapes.signature(x))  <span class="co"># initializing serial instance</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Serial Model --"</span>)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(serial, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Properties --"</span>)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"name :"</span>, serial.name)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"sublayers :"</span>, serial.sublayers)</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"expected inputs :"</span>, serial.n_in)</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"promised outputs :"</span>, serial.n_out, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Inputs</span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Inputs --"</span>)</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"x :"</span>, x, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Outputs</span></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> serial(x)</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Outputs --"</span>)</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"y :"</span>, y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code>(((), (), (), (), (((), ((), ())), ())),
+ ((), (), (), (), (((), ((), ())), ())))</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>-- Serial Model --
+Serial_in2[
+  Select[0,1,0,1]_in2_out4
+  Addition_in2
+  Multiplication_in2
+  Addition_in2
+  Serial[
+    Branch_out2[
+      None
+      Serial
+    ]
+    Add_in2
+  ]
+] 
+
+-- Properties --
+name : Serial
+sublayers : [Select[0,1,0,1]_in2_out4, Addition_in2, Multiplication_in2, Addition_in2, Serial[
+  Branch_out2[
+    None
+    Serial
+  ]
+  Add_in2
+]]
+expected inputs : 2
+promised outputs : 1 
+
+-- Inputs --
+x : (array([3]), array([4])) 
+
+-- Outputs --
+y : [50]</code></pre>
 </div>
 </div>
 </section>
-<section id="sec-trax-nn" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="sec-trax-nn">Trax: Neural Networks</h2>
-<p>Trax has several advantages:</p>
-<ul>
-<li>Runs fast on CPUs, GPUs and TPUs</li>
-<li>Parallel computing</li>
-<li>Record algebraic computations for gradient evaluation</li>
-</ul>
-<p>Here is an example of how we can code a neural network in Trax:</p>
-<p class="page-columns page-full"><a href="img/slide03.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide03.png" class="img-fluid"></div></a></p>
-<div class="callout callout-style-simple callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
+<section id="a-slightly-trickier-example" class="level3">
+<h3 class="anchored" data-anchor-id="a-slightly-trickier-example">A slightly trickier example:</h3>
+<p>Normally, the Residual layer will accept a layer as an argument and it will add the output of that layer to the current stack top input. In the example below, you’ll notice that in the last step, we specify <code>tl.Residual(Addition())</code>. If you refer to the same figure above, you’ll notice that the stack at that point has <code>21 4</code> where <code>21</code> is the top of the stack. The Residual layer remembers this value (i.e.&nbsp;<code>21</code>) so the result of the <code>Addition()</code> layer nested into it (i.e.&nbsp;<code>25</code>) is added to this stack top input to arrive at the result: <code>46</code>.</p>
+<div id="9afe4129" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>serial <span class="op">=</span> tl.Serial(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    tl.Select([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>]), Addition(), Multiplication(), tl.Residual(Addition()) </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialization</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> (np.array([<span class="dv">3</span>]), np.array([<span class="dv">4</span>]))  <span class="co"># input</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>serial.init(shapes.signature(x))  <span class="co"># initializing serial instance</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Serial Model --"</span>)</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(serial, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Properties --"</span>)</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"name :"</span>, serial.name)</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"sublayers :"</span>, serial.sublayers)</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"expected inputs :"</span>, serial.n_in)</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"promised outputs :"</span>, serial.n_out, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Inputs</span></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Inputs --"</span>)</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"x :"</span>, x, <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Outputs</span></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> serial(x)</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-- Outputs --"</span>)</span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"y :"</span>, y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>(((), (), (), (((), ((), ())), ())), ((), (), (), (((), ((), ())), ())))</code></pre>
 </div>
-<div class="callout-title-container flex-fill">
-Video Transcript
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<!-- add video transcript here -->
-</div>
-</div>
-</div>
-</section>
-<section id="sec-trax-jax" class="level2">
-<h2 class="anchored" data-anchor-id="sec-trax-jax">Trax and JAX, docs and code</h2>
-<p>Official Trax documentation maintained by the Google Brain team:</p>
-<ul>
-<li>https://trax-ml.readthedocs.io/en/latest/</li>
-</ul>
-<p>Trax source code on GitHub:</p>
-<ul>
-<li>https://github.com/google/trax</li>
-</ul>
-<p>JAX library:</p>
-<ul>
-<li>https://jax.readthedocs.io/en/latest/index.html</li>
-</ul>
-</section>
-<section id="sec-intro-trax" class="level2">
-<h2 class="anchored" data-anchor-id="sec-intro-trax">Lab: Introduction to Trax</h2>
-<p><a href="../../posts/c3w1/lab01.html">Introduction to Trax</a></p>
-</section>
-<section id="sec-trax-layers" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="sec-trax-layers">Trax: Layers</h2>
-<p>Trax makes use of classes. If we are not familiar with classes in python, don’t worry about it, here is an example.</p>
-<p class="page-columns page-full"><a href="img/slide04.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide04.png" class="img-fluid"></div></a></p>
-<p>In the example above, we can see that a class takes in an <code>__init__</code> and a <code>__call__</code> method.</p>
-<p>These methods allow we to initialize your internal variables and allow we to execute your function when called.</p>
-<p>To the right we can see how we can initialize your class. When we call <code>MyClass(7)</code> , we are setting the <span class="math inline">y</span> variable to 7. Now when we call <code>f(3)</code> we are adding 7 + 3.</p>
-<p>We can change the <code>my_method</code> function to do whatever we want, and we can have as many methods as we want in a class.</p>
-<div class="callout callout-style-simple callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Video Transcript
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<blockquote class="blockquote">
-<p>To create a neural network out of layers, you need to put them together. In a deep network, you run them one after the other in a sequential way. Let me show you how you can do this. First, you will observe how a basic neural network is defined in Trax. Then I’ll show you some of the benefits of using a framework like TensorFlow, which is the framework that Trax is built on. Let’s take this network architecture as an example. In this model, you have two hidden layers with sigmoid activation functions and an output layer with softmax activation. In Trax, you’ll need to specify the type of model architecture.<br>
-For simple architectures like this one, you’ll use a serial model. To start, list the layers from left to right, or from your input variables to the output layer. In this case, first you have a dense layer with four units, and then assign the sigmoid activation function to that layer. After that, repeat the process for the second hidden layer and the output layer. You can specify any architecture you like in the simple way. Note that, this way to specify your models architecture, follows the order in which the computations are made in your neural network. There are several advantages to using libraries like Trax, such as they’re designed to perform computations efficiently in hardware like CPUs, GPUs, and even TPUs. They allow you to easily perform parallel computing by running gear models on multiple machines or course simultaneously. They keep a record of all the algebraic operations on your neural net in the order of computation. So they are able to compute the gradients of your model automatically. There are many open source frameworks out there, and Trax is one of the latest.<br>
-It’s based on TensorFlow. You might be already familiar with TensorFlow, PyTorch, and JAX. If you’re not familiar with those, don’t worry. I’ll show you the basics of Trax and you’ll be able to implement amazing NLP models. So far, I showed you how to define a model in Trax with the simple sequential architecture, and I pointed out some of the advantages to be had, like computational efficiency and parallel computing.</p>
-</blockquote>
-<blockquote class="blockquote">
-<p>Next, I’ll get into more detail on how to use Trax.</p>
-</blockquote>
+<div class="cell-output cell-output-stdout">
+<pre><code>-- Serial Model --
+Serial_in2[
+  Select[0,1,0,1]_in2_out4
+  Addition_in2
+  Multiplication_in2
+  Serial_in2[
+    Branch_in2_out2[
+      None
+      Addition_in2
+    ]
+    Add_in2
+  ]
+] 
+
+-- Properties --
+name : Serial
+sublayers : [Select[0,1,0,1]_in2_out4, Addition_in2, Multiplication_in2, Serial_in2[
+  Branch_in2_out2[
+    None
+    Addition_in2
+  ]
+  Add_in2
+]]
+expected inputs : 2
+promised outputs : 1 
+
+-- Inputs --
+x : (array([3]), array([4])) 
+
+-- Outputs --
+y : [46]</code></pre>
 </div>
 </div>
-</div>
-</section>
-<section id="sec-why-trax" class="level2">
-<h2 class="anchored" data-anchor-id="sec-why-trax">Why we recommend Trax</h2>
-<div class="callout callout-style-simple callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Video Transcript
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<blockquote class="blockquote">
-<p>Hi. My name is Lukasz, and I want to tell you in this video why we made the machine learning library Trax. This is a little bit of a personal story for me. I’ve been at Google for about seven years now. I’m a researcher in the Google Brain Team. But before I was a researcher, I was a software engineer. I worked on a lot of machine learning projects and frameworks. This journey for me ended in the Trax library. I believe Trax is currently the best library to learn and to productionize machine learning research and machine learning models, especially sequenced models, models like transformer and models that are used in natural language processing. The reasons I believe that come from a personal journey that I took that led me here. I will tell you a little bit about myself and how I came here, and then I’ll tell you why I think Trax is the best thing to use currently for machine learning, especially in natural language processing. My journey with machine learning and machine learning frameworks started around 2014-15 when we were making TensorFlow. TensorFlow is, you probably know, is a big machine learning systems, it has about 100 million downloads by now. It was released in November 2015. It was a very emotional moment for all of us when we were releasing it. At that point, we were not sure if deep learning will become as big as it did. We were not sure how many users there will be. What we wanted to do was a system that’s primarily very fast, that can run distributed machine learning systems, large-scale fast training. The main focus was speed. A secondary focus was to make it easy to program the systems that wasn’t a reader, but it was not the most important thing. After releasing TensorFlow, I worked on machine translation and especially on the Google’s Neural Machine Translation System. This was the first system using deep sequence models that was used by the Google Translate team that was actually released as a product. It’s handling all of Google translations these days. Every language that we have has a neural model. It started with LSTMs and RNN models, and now it’s a lot of transformers. We released that in 2016 based on the TensorFlow framework. These models, they’re amazing. They’re much better than the previous phrase-based translation models, but they took a long time to train. They were training for days on clusters of GPUs at that time. This was not practical for anyone else to do rather than Google. This was only because we had this TensorFlow system, a large group of engineers who would ferry very well, and we were training for days and days. That was great. But I felt like this is not satisfactory because no one else can do that. It’s not possible to be done at the university. You cannot launch a startup doing that, because it was impossible if you were not Google, or maybe from Microsoft, but no one else. I wanted to change that. To do that, we created the Tensor2Tensor Library. The Tensor2Tensor Library, which was released in 2017, started with the thought that we should make this deep learning research, especially for sequence models, widely accessible. This was not working with these large RNN models, but while writing the library, we created this transformer model. This transformer has taken NLP by storm because it allows you to train much faster. At that time within a few days, now, it’s less than a day in a matter of hours on an 8 GPU system. You can create translation models that surpass any RNN models. The Tensor2Tensor library has become already widely used. It’s used in production Google systems. It’s used by some very large companies in the world and it has led to a number of startups that they know about that basically exists thanks to this library. You can say, well, this is done and this is good, but, the problem is, it’s become complicated and it’s not nice to learn and it’s become very hard to do new researcher. Around 2018, we decided it’s time to improve. As time moves on, we need to do even better, and this is how we created Trax. Trax is a deep-learning library that’s focused on clear code and speed. Let me tell you why, so, if you think carefully what you want from a deep-learning library, there are really two things that matters. You want the the programmers to be efficient and you want the code to run fast, and this is because what costs you is the time of the programmer, and the money you need to pay for running your training code. Programmer’s time is very important. You need to use it efficiently, but in deep learning you’re training big models and these costs money too. For example, using eight GPUs on-demand from the Cloud, can cost $20 an hour almost. But using the preemptible eight could TPU costs only $1.40. In Trax, you can use one or the other without changing a single character in your code. How does Trax make programmers sufficient? Well, it was redesigned from the bottom-up to be easy to debug and understand. You can literally read Trax code and understand what’s going to come. This is not the case in some other libraries, this is unluckily of the case anymore in TensorFlow. But, you can say, well it used to be the case, but nowadays TensorFlow, even when we clean up the code, it needs to be backwards compatible. It carries the weight of these years of development, and this is crazy errors of Machine Learning. There is a lot of baggage that it just has to carry because it’s backward compatible. What we do in Trax is we break the backwards compatibility. This means you need to learn new things. This carries some price. But what you get for that price, is that it’s a newly cleanly designed library which has four models, not just primitives to build them, but also four models with dataset bindings, we regression test these models daily because we use these libraries, so we know every day these monster running. It’s like a new programming language. It costs a little bit to learn, this is a new thing, but it makes your life much more efficient. To make this point point clear, the Adam Optimizer, the most popular optimizer in machine learning timesteps. On the left, you see a screenshot from the paper that introduced data, and you see it has like about seven lines. Next is just a part of the Adam implementation and patronage, which is one of the cleanest ones actually and you need to know way more, you need to know what are parameter groups, you need to know secret keys into these groups that key parameters by some means, you need to do seven stick initialization and some conditional to introduce either and other things. On the right, you see the Adam optimizer in TensorFlow and Keras and as you’ll see it’s even longer. You need to apply it to resource variables and two non-research variables and you need to know what these are. The reason they exist is historical. Currently we only use resource variables, but we have to support people who used the old non-research variables too. There are a lot of things that in 2020 you actually don’t need anymore, but they have to be there and painted and in TensorFlow code. While if you go to Trax code, this is the full code of Adam and Trax. It’s very similar for the paper. That’s the whole point. Because if you’re implementing a new paper or if you’re learning and you want to find, in the code of the framework, where are the equations from the paper, you can really do with this here. So that is the benefit of Trax. The price of this benefit is that you’re using a new thing. But there is a huge gain that comes to you when you’re actually debugging your code. When you’re debugging your code, you will hit lines that are in the framework. So you will actually need to understand these lines, which means you need to understand all of these PyTorch and all of these TensorFlow if you use those. But in Trax, you only need to understand these Trax lines. It’s much easier to debug, which makes programmers more efficient. Now this efficiency would not be worth that much if the code is running slow. Hey, there’s a lot of beautiful things where you can program things in a few line, but the run so slowly that it’s actually useless. Not so in Trax because we use the just-in-time compiler technology that was built in the last six years of TensorFlow. It’s called XLA, and we use it on top of Trax. These teams have put tremendous effort to make this coat the fastest code on the planet. There is an industry competition called MLPerf. In 2020, JAX actually won this competition, being the fastest transformer to ever be benchmarked independently. So JAX transformer ran in 0.26 of a minute, so in about 16 seconds, I think, while the fastest TensorFlow transformer on the same hardware took 0.35 minutes. So you see, it’s almost 50 percent slower. The fastest PyTorch, but this was not on TPU, took 0.62. So being two times faster is significant game. It’s not clear you’ll get the same gain in any model on other hardware. There was a lot of work to tune it for this particular model hardware. But in general, Trax runs fast. This means, you’ll pay less for the TPUs and GPUs you’ll be running on Cloud. It’s also tested with TPUs on Colab. Colabs are the IPython notebooks that Google gives you for free. You can select a hardware accelerator, you can select TPU and run the same code with no changes. It’s GPU, TPU, or CPU, on this Colab, where you’re getting an eight-code TPU for free. So you can test your code there and then run it on Cloud for much cheaper than other frameworks, and it really runs fast. So these are the reasons to use Trax, and for me, Trax is also super fun. It’s super fun to learn, it’s super fun to use, because we had the liberty to do things from scratch using many years of experience now. You can write model using combinators. This is a whole transformer language model on the left. On the right, you can see it’s from a README. This is everything you need to run a pre-trained model and get your translations. So this gave us the opportunity to clean up the framework, clean up the code, make sure it runs really fast. It’s a lot of fun to use. So I encourage you come check it out. See how you can use Trax for your own machine learning endeavors, both for research. If you want to start a startup or if you want to run it for a big company, I think Trax will be there for you.</p>
-</blockquote>
-</div>
-</div>
-</div>
-</section>
-<section id="lab-classes-and-subclasses" class="level2">
-<h2 class="anchored" data-anchor-id="lab-classes-and-subclasses">Lab: Classes and Subclasses</h2>
-<p><a href="../../posts/c3w1/lab02.html">Classes and Subclasses</a></p>
-</section>
-<section id="dense-and-relu-layer" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="dense-and-relu-layer">Dense and ReLU layer</h2>
-<p>The Dense layer is the computation of the inner product between a set of trainable weights (weight matrix) and an input vector. The visualization of the dense layer could be seen in the image below.</p>
-<p class="page-columns page-full"><a href="img/slide05.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide05.png" class="img-fluid"></div></a></p>
-<p>The orange box shows the dense layer. An activation layer is the set of blue nodes. Concretely one of the most commonly used activation layers is the rectified linear unit (ReLU).</p>
-<p class="page-columns page-full"><a href="img/slide06.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide06.png" class="img-fluid"></div></a></p>
-<p>ReLU(x) is defined as max(0,x) for any input x.</p>
-<div class="callout callout-style-simple callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Video Transcript
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-7" class="callout-7-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<blockquote class="blockquote">
-<p>Now, I’ll show you dense and ReLU layers. First, I’ll show you dense layers and then ReLU layers. Suppose that you have a simple serial model like this one. Let’s focus on the first parts of the model. Here, you have an input vector X fully connected to a layer of activations. To get the value of z, let’s go into the activations. You will have to compute the inner products between a set of trainable weights and the input vector. This single computation is called a dense layer. The ReLU layer is much simpler. Let’s take the same model you’ve been working with.<br>
-The ReLU layer is an activation layer that typically follows a dense fully connected layer, and transforms any negative values to zero before sending them onto the next layer. To do this, the ReLU layer computes the function g, which returns a value of zero for all negative values of z, and z for all positive ones. You’ve now seen the dense layer and the ReLU layer. Next, I’ll show you how to put a model together.</p>
-</blockquote>
-</div>
-</div>
-</div>
-</section>
-<section id="serial-layer" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="serial-layer">Serial Layer</h2>
-<p>A serial layer allows we to compose layers in a serial arrangement:</p>
-<p class="page-columns page-full"><a href="img/slide07.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide07.png" class="img-fluid"></div></a></p>
-<p>It is a composition of sublayers. These layers are usually dense layers followed by activation layers.</p>
-<div class="callout callout-style-simple callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Video Transcript
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<blockquote class="blockquote">
-<p>To create a neural network out of layers, you need to put them together. In a deep network, you run them one after the other in a sequential way. Let me show you how you can do this. Previously, you saw how to define layers, and I showed you how the dense and ReLU layers performed single steps of forward propagation. Now, I’ll show you how to define a serial neural network as a composition of layers thats operates in a sequence. Imagine, a basic neural network like this one. You have some dense layers and activation layers, and the sequential arrangements of those layers is done in tracts, when you define a serial layer. You could think of this new serial layer as your whole neural network model in one layer. Let’s summarize what you just learned. A serial layer is a composition of sublayers that operates sequentially to perform the forward computation of your entire model. Coming up, I’ll introduce some additional layers and the training procedure.</p>
-</blockquote>
-</div>
-</div>
-</div>
-</section>
-<section id="other-layers" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="other-layers">Other Layers</h2>
-<p>Other layers could include embedding layers and mean layers. For example, we can learn word embeddings for each word in your vocabulary as follows:</p>
-<p class="page-columns page-full"><a href="img/slide08.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide08.png" class="img-fluid"></div></a></p>
-<p>The mean layer allows we to take the average of the embeddings. We can visualize it as follows:</p>
-<p class="page-columns page-full"><a href="img/slide09.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide09.png" class="img-fluid"></div></a></p>
-<p>This layer does not have any trainable parameters.</p>
-<div class="callout callout-style-simple callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Video Transcript
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-9" class="callout-9-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<blockquote class="blockquote">
-<p>Earlier, you worked with a few different ways to represent text data. When using neural networks for NLP tasks, embedding layers are often included in the model. Going forward, I will introduce embedding layers, and explain why you will need to include layers such as the mean layer in serial models directly after your embedding layer. Let’s now dive into the embedding layer. In NLP, you usually have a set of unique words called the vocabulary. An embedding layer takes an index assigned to each word from your vocabulary and maps it to a representation of that word with a determined dimension. In this example, embedding of size equal to two. For instance, the embedding layer in this example, we’ll return a vector equal to 0.020, and 0.006 for the word I, and negative 0.009 and 0.050 for the word NLP. Every value from this part of the table is trainable in tracks. When using an embedding layer in your model, you will learn the representation that gives the best performance for your NLP task. For the embedding layer in your model, you’d have to learn a matrix of weights, of size equal to your vocabulary times the dimension of the embedding. The size of the embedding could be treated as a hyperparameter in your model. With this layer, your model can learn or improve the word embeddings for your NLP task like it improves the weights matrices on each layer.</p>
-<p>The embedding layer is able to map words to embeddings. If you had a series of words, like a tweet that says, “I am happy,” the embedding layer will map each of those words to their corresponding embedding, and return a matrix of word embeddings. If you had padded vectors representing your tweets, you could unroll this matrix and feed its values to the next layer on the neural network. But in doing this, you might end up with lots of parameters to train. As an alternative, you could just take the mean of each feature from the embedding, and that’s exactly what the mean layer does in tracks. After the mean layer, you will have the same number of features as you’re embedding size. Even for sequences of texts, those are very long. Note that this layer doesn’t have any trainable parameters because it’s only computing the mean of the word embeddings.</p>
-<p>At this point, you are familiar with what’s embedding layers, and mean layers are, and how they work. An important takeaway here is that using an embedding layer in your model allows you to learn a good representation of your vocabulary for the specific task you’re working on, and that’s the mean layer takes a matrix of embeddings, and returns a vector representation for a set of words, like tweets.</p>
-</blockquote>
-</div>
-</div>
-</div>
-<section id="training" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="training">Training</h3>
-<p>In Trax, the function grad allows we to compute the gradient. We can use it as follows:</p>
-<p class="page-columns page-full"><a href="img/slide10.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide10.png" class="img-fluid"></div></a></p>
-<p>Now if we were to evaluate grad_f at a certain value, namely z, it would be the same as computing 6z+1. Now to do the training, it becomes very simple:</p>
-<p class="page-columns page-full"><a href="img/slide11.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide11.png" class="img-fluid"></div></a></p>
-<p>We simply compute the gradients by feeding in y.forward (the latest value of y), the weights, and the input x, and then it does the back-propagation for we in a single line. We can then have the loop that allows we to update the weights (i.e.&nbsp;gradient descent!).</p>
-<div class="callout callout-style-simple callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Video Transcript
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-10" class="callout-10-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<blockquote class="blockquote">
-<p>To train a neural network, you need to compute gradients. You’ve done it by hand earlier in this specialization, and you’ve seen that it can be quite complex. But you know what? You don’t have to necessarily do it by yourself. Deep learning frameworks can do it for you. Let’s dive in. I will show you how the trax grad function allows you to easily compute gradients, which will allow you to perform back-propagation and train your model. You will see how easy it is compared to back propagating by hand. Computing ingredients using Trax is pretty straightforward. Suppose that you have the following equation, f of x, whose gradient with respect to x is equal to this derivative. To get that derivative in Trax, define the function <span class="math inline">f</span> that takes in <span class="math inline">x</span>, and then just call the grad function with f as its single parameter. The function grad will return a function that computes the gradient of <span class="math inline">f</span>. That’s nice.</p>
-<p>Using the grad function to train a model is similarly painless. Suppose that you have a neural network model y. To get the gradient of your model, just apply the grad function with the forward method of your model as a single parameter. Then evaluate the gradient with your weights and inputs. Notice the double sets of parentheses.<br>
-The first one passes the arguments for the grad function, and the second one, the arguments for the function returned by grad. After you have the gradients for your model, just iterate until convergence is reached.</p>
-<p>That’s it, forward and back-propagation performed in a single line. This final block is gradient descent. You can always change the optimization algorithm if necessary. So let’s summarize. Having a defined model in Trax, make training significantly easier than computing forward and back-propagation by hand because the built-in grad function automatically computes everything you need.</p>
-</blockquote>
-<blockquote class="blockquote">
-<p>In the programming assignments from this module, you’ll be able to define and train a neural network using Trax.</p>
-<p>Good luck, and have fun. This was the last video of the week. You now know how to create neural networks with layers and how to train them.</p>
-<p>Next, you will learn even more complex layers and built networks that perform better.</p>
-</blockquote>
-</div>
-</div>
-</div>
-</section>
-</section>
-<section id="lab-data-generators" class="level2">
-<h2 class="anchored" data-anchor-id="lab-data-generators">Lab: Data Generators</h2>
-<p><a href="../../posts/c3w1/lab03.html">Data Generators</a></p>
-</section>
-<section id="resources" class="level1">
-<h1>Resources:</h1>
-<ul>
-<li><span class="citation" data-cites="Chadha2020DistilledNotesCourseraDLSpec">(<a href="#ref-Chadha2020DistilledNotesCourseraDLSpec" role="doc-biblioref">Chadha 2020</a>)</span> <a href="https://aman.ai/coursera-nlp/logistic-regression/">Aman Chadha’s Notes</a></li>
-<li><a href="https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization/tree/master/3%20-%20Natural%20Language%20Processing%20with%20Sequence%20Models">Ibrahim Jelliti’s Notes</a></li>
-</ul>
 
 
-
+</section>
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
-<div id="ref-Chadha2020DistilledNotesCourseraDLSpec" class="csl-entry" role="listitem">
-Chadha, Aman. 2020. <span>“Distilled Notes for the Natural Language Processing Specialization on Coursera (Offered by Deeplearning.ai).”</span> <a href="https://www.aman.ai" class="uri">https://www.aman.ai</a>. <a href="https://www.aman.ai">www.aman.ai</a>.
-</div>
-</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2020,
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2025,
   author = {Bochman, Oren},
-  title = {Neural {Networks} for {Sentiment} {Analysis}},
-  date = {2020-10-23},
-  url = {https://orenbochman.github.io/notes-nlp/posts/c3w1/},
+  title = {Stack {Semantics} in {Trax:} {Ungraded} {Lab}},
+  date = {2025-02-06},
+  url = {https://orenbochman.github.io/notes-nlp/posts/c4w1/lab01.html},
   langid = {en}
 }
-</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2020" class="csl-entry quarto-appendix-citeas" role="listitem">
-Bochman, Oren. 2020. <span>“Neural Networks for Sentiment
-Analysis.”</span> October 23, 2020. <a href="https://orenbochman.github.io/notes-nlp/posts/c3w1/">https://orenbochman.github.io/notes-nlp/posts/c3w1/</a>.
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2025" class="csl-entry quarto-appendix-citeas" role="listitem">
+Bochman, Oren. 2025. <span>“Stack Semantics in Trax: Ungraded
+Lab.”</span> February 6, 2025. <a href="https://orenbochman.github.io/notes-nlp/posts/c4w1/lab01.html">https://orenbochman.github.io/notes-nlp/posts/c4w1/lab01.html</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -1872,44 +1946,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c3w1/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c4w1/lab01.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p>This page is built with 💛 and <a href="https://quarto.org/">Quarto</a>.</p>
 </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"closeEffect":"fade","descPosition":"right","loop":true,"openEffect":"fade","selector":".lightbox","skin":"my-css-class"});
-(function() {
-  let previousOnload = window.onload;
-  window.onload = () => {
-    if (previousOnload) {
-      previousOnload();
-    }
-    lightboxQuarto.on('slide_before_load', (data) => {
-      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-      const href = trigger.getAttribute('href');
-      if (href !== null) {
-        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
-        if (imgEl !== null) {
-          const srcAttr = imgEl.getAttribute("src");
-          if (srcAttr && srcAttr.startsWith("data:")) {
-            slideConfig.href = srcAttr;
-          }
-        }
-      } 
-    });
-  
-    lightboxQuarto.on('slide_after_load', (data) => {
-      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(slideNode);
-      }
-    });
-  
-  };
-  
-})();
-          </script>
 
 
 

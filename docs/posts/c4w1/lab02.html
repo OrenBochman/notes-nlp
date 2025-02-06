@@ -7,9 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Oren Bochman">
-<meta name="description" content="we cover Neural networks for deep learning, then build a tweet classifier that places tweets into positive or negative sentiment categories, using a DNN.">
 
-<title>Neural Networks for Sentiment Analysis – NLP Specialization</title>
+<title>Calculating the Bilingual Evaluation Understudy (BLEU) score: Ungraded Lab – NLP Specialization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,27 +21,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-  margin-bottom: 0em;
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
 }
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -142,7 +155,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-sidebar floating nav-fixed slimcontent">
+<body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -200,7 +213,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Sequence Models</li><li class="breadcrumb-item"><a href="../../posts/c3w1/index.html">Neural Networks for Sentiment Analysis</a></li><li class="breadcrumb-item"><a href="../../posts/c3w1/index.html">Notes</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">NLP with Attention Models</li><li class="breadcrumb-item"><a href="../../posts/c4w1/index.html">Neural Machine Translation</a></li><li class="breadcrumb-item"><a href="../../posts/c4w1/lab02.html">L2 - BLEU Score</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -209,22 +222,9 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Sequence Models</li><li class="breadcrumb-item"><a href="../../posts/c3w1/index.html">Neural Networks for Sentiment Analysis</a></li><li class="breadcrumb-item"><a href="../../posts/c3w1/index.html">Notes</a></li></ol></nav>
-      <h1 class="title">Neural Networks for Sentiment Analysis</h1>
-            <p class="subtitle lead">Sequence Models</p>
-                  <div>
-        <div class="description">
-          we cover Neural networks for deep learning, then build a tweet classifier that places tweets into positive or negative sentiment categories, using a DNN.
-        </div>
-      </div>
-                          <div class="quarto-categories">
-                <div class="quarto-category">NLP</div>
-                <div class="quarto-category">Coursera</div>
-                <div class="quarto-category">Notes</div>
-                <div class="quarto-category">Sequence Models</div>
-                <div class="quarto-category">Sentiment analysis task</div>
-              </div>
-                  </div>
+    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">NLP with Attention Models</li><li class="breadcrumb-item"><a href="../../posts/c4w1/index.html">Neural Machine Translation</a></li><li class="breadcrumb-item"><a href="../../posts/c4w1/lab02.html">L2 - BLEU Score</a></li></ol></nav>
+      <h1 class="title">Calculating the Bilingual Evaluation Understudy (BLEU) score: Ungraded Lab</h1>
+                      </div>
   </div>
     
   
@@ -240,7 +240,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Friday, October 23, 2020</p>
+        <p class="date">Thursday, February 6, 2025</p>
       </div>
     </div>
     
@@ -578,16 +578,16 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false">
  <span class="menu-text">Neural Networks for Sentiment Analysis</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 show">  
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../posts/c3w1/index.html" class="sidebar-item-text sidebar-link active">
+  <a href="../../posts/c3w1/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Notes</span></a>
   </div>
 </li>
@@ -747,13 +747,13 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="true">
  <span class="menu-text">Neural Machine Translation</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth2 ">  
+      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../posts/c4w1/index.html" class="sidebar-item-text sidebar-link">
@@ -762,13 +762,13 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../posts/c4w1/lab01.qmd" class="sidebar-item-text sidebar-link">
+  <a href="../../posts/c4w1/lab01.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">L1 - Stack Semantics</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../posts/c4w1/lab02.qmd" class="sidebar-item-text sidebar-link">
+  <a href="../../posts/c4w1/lab02.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">L2 - BLEU Score</span></a>
   </div>
 </li>
@@ -903,398 +903,452 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#sec-course-intro" id="toc-sec-course-intro" class="nav-link active" data-scroll-target="#sec-course-intro">Course Intro</a></li>
-  <li><a href="#neural-networks-for-sentiment-analysis" id="toc-neural-networks-for-sentiment-analysis" class="nav-link" data-scroll-target="#neural-networks-for-sentiment-analysis">Neural Networks for Sentiment Analysis</a></li>
-  <li><a href="#sec-trax-nn" id="toc-sec-trax-nn" class="nav-link" data-scroll-target="#sec-trax-nn">Trax: Neural Networks</a></li>
-  <li><a href="#sec-trax-jax" id="toc-sec-trax-jax" class="nav-link" data-scroll-target="#sec-trax-jax">Trax and JAX, docs and code</a></li>
-  <li><a href="#sec-intro-trax" id="toc-sec-intro-trax" class="nav-link" data-scroll-target="#sec-intro-trax">Lab: Introduction to Trax</a></li>
-  <li><a href="#sec-trax-layers" id="toc-sec-trax-layers" class="nav-link" data-scroll-target="#sec-trax-layers">Trax: Layers</a></li>
-  <li><a href="#sec-why-trax" id="toc-sec-why-trax" class="nav-link" data-scroll-target="#sec-why-trax">Why we recommend Trax</a></li>
-  <li><a href="#lab-classes-and-subclasses" id="toc-lab-classes-and-subclasses" class="nav-link" data-scroll-target="#lab-classes-and-subclasses">Lab: Classes and Subclasses</a></li>
-  <li><a href="#dense-and-relu-layer" id="toc-dense-and-relu-layer" class="nav-link" data-scroll-target="#dense-and-relu-layer">Dense and ReLU layer</a></li>
-  <li><a href="#serial-layer" id="toc-serial-layer" class="nav-link" data-scroll-target="#serial-layer">Serial Layer</a></li>
-  <li><a href="#other-layers" id="toc-other-layers" class="nav-link" data-scroll-target="#other-layers">Other Layers</a>
+  <li><a href="#part-1-bleu-score" id="toc-part-1-bleu-score" class="nav-link active" data-scroll-target="#part-1-bleu-score">Part 1: BLEU Score</a>
   <ul class="collapse">
-  <li><a href="#training" id="toc-training" class="nav-link" data-scroll-target="#training">Training</a></li>
+  <li><a href="#importing-the-libraries" id="toc-importing-the-libraries" class="nav-link" data-scroll-target="#importing-the-libraries">1.1 Importing the Libraries</a></li>
+  <li><a href="#defining-the-bleu-score" id="toc-defining-the-bleu-score" class="nav-link" data-scroll-target="#defining-the-bleu-score">1.2 Defining the BLEU Score</a></li>
+  <li><a href="#explaining-the-bleu-score" id="toc-explaining-the-bleu-score" class="nav-link" data-scroll-target="#explaining-the-bleu-score">1.3 Explaining the BLEU score</a>
+  <ul class="collapse">
+  <li><a href="#brevity-penalty-example" id="toc-brevity-penalty-example" class="nav-link" data-scroll-target="#brevity-penalty-example">Brevity Penalty (example):</a></li>
+  <li><a href="#n-gram-precision-example" id="toc-n-gram-precision-example" class="nav-link" data-scroll-target="#n-gram-precision-example">N-Gram Precision (example):</a></li>
+  <li><a href="#n-gram-bleu-score-example" id="toc-n-gram-bleu-score-example" class="nav-link" data-scroll-target="#n-gram-bleu-score-example">N-gram BLEU score (example):</a></li>
   </ul></li>
-  <li><a href="#lab-data-generators" id="toc-lab-data-generators" class="nav-link" data-scroll-target="#lab-data-generators">Lab: Data Generators</a></li>
-  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">Resources:</a></li>
+  <li><a href="#example-calculations-of-the-bleu-score" id="toc-example-calculations-of-the-bleu-score" class="nav-link" data-scroll-target="#example-calculations-of-the-bleu-score">1.4 Example Calculations of the BLEU score</a>
+  <ul class="collapse">
+  <li><a href="#step-1-computing-the-brevity-penalty" id="toc-step-1-computing-the-brevity-penalty" class="nav-link" data-scroll-target="#step-1-computing-the-brevity-penalty">STEP 1: Computing the Brevity Penalty</a></li>
+  <li><a href="#step-2-computing-the-precision" id="toc-step-2-computing-the-precision" class="nav-link" data-scroll-target="#step-2-computing-the-precision">STEP 2: Computing the Precision</a></li>
+  <li><a href="#step-3-computing-the-bleu-score" id="toc-step-3-computing-the-bleu-score" class="nav-link" data-scroll-target="#step-3-computing-the-bleu-score">STEP 3: Computing the BLEU score</a></li>
+  <li><a href="#step-4-testing-with-our-example-reference-and-candidates-sentences" id="toc-step-4-testing-with-our-example-reference-and-candidates-sentences" class="nav-link" data-scroll-target="#step-4-testing-with-our-example-reference-and-candidates-sentences">STEP 4: Testing with our Example Reference and Candidates Sentences</a></li>
+  <li><a href="#step-5-comparing-the-results-from-our-code-with-the-sacrebleu-library" id="toc-step-5-comparing-the-results-from-our-code-with-the-sacrebleu-library" class="nav-link" data-scroll-target="#step-5-comparing-the-results-from-our-code-with-the-sacrebleu-library">STEP 5: Comparing the Results from our Code with the SacreBLEU Library</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#part-2-bleu-computation-on-a-corpus" id="toc-part-2-bleu-computation-on-a-corpus" class="nav-link" data-scroll-target="#part-2-bleu-computation-on-a-corpus">Part 2: BLEU computation on a corpus</a>
+  <ul class="collapse">
+  <li><a href="#loading-data-sets-for-evaluation-using-the-bleu-score" id="toc-loading-data-sets-for-evaluation-using-the-bleu-score" class="nav-link" data-scroll-target="#loading-data-sets-for-evaluation-using-the-bleu-score">Loading Data Sets for Evaluation Using the BLEU Score</a></li>
+  </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c3w1/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c4w1/lab02.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
+<main class="content quarto-banner-title-block column-body" id="quarto-document-content">
 
 
 
 
 
-
-<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<p>In this ungraded lab, we will implement a popular metric for evaluating the quality of machine-translated text: the BLEU score proposed by Kishore Papineni, et al.&nbsp;In their 2002 paper <a href="https://www.aclweb.org/anthology/P02-1040.pdf">“BLEU: a Method for Automatic Evaluation of Machine Translation”</a>, the BLEU score works by comparing “candidate” text to one or more “reference” translations. The result is better the closer the score is to 1. Let’s see how to get this value in the following sections.</p>
+<section id="part-1-bleu-score" class="level1">
+<h1>Part 1: BLEU Score</h1>
+<section id="importing-the-libraries" class="level2">
+<h2 class="anchored" data-anchor-id="importing-the-libraries">1.1 Importing the Libraries</h2>
+<p>We will first start by importing the Python libraries we will use in the first part of this lab. For learning, we will implement our own version of the BLEU Score using Numpy. To verify that our implementation is correct, we will compare our results with those generated by the <a href="https://github.com/mjpost/sacrebleu">SacreBLEU library</a>. This package provides hassle-free computation of shareable, comparable, and reproducible BLEU scores. It also knows all the standard test sets and handles downloading, processing, and tokenization.</p>
+<div id="75020328" class="cell" data-tags="[]" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np                  <span class="co"># import numpy to make numerical computations.</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> nltk                         <span class="co"># import NLTK to handle simple NL tasks like tokenization.</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>nltk.download(<span class="st">"punkt"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nltk.util <span class="im">import</span> ngrams</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter     <span class="co"># import the Counter module.</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip3 install <span class="st">'sacrebleu'</span>           <span class="co"># install the sacrebleu package.</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sacrebleu                    <span class="co"># import sacrebleu in order compute the BLEU score.</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt     <span class="co"># import pyplot in order to make some illustrations.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[nltk_data] Downloading package punkt to /home/oren/nltk_data...
+[nltk_data]   Package punkt is already up-to-date!</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>True</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Requirement already satisfied: sacrebleu in /home/oren/work/notes/notes-nlp/.venv/lib/python3.10/site-packages (2.5.1)
+Requirement already satisfied: colorama in /home/oren/work/notes/notes-nlp/.venv/lib/python3.10/site-packages (from sacrebleu) (0.4.6)
+Requirement already satisfied: portalocker in /home/oren/work/notes/notes-nlp/.venv/lib/python3.10/site-packages (from sacrebleu) (3.1.1)
+Requirement already satisfied: regex in /home/oren/work/notes/notes-nlp/.venv/lib/python3.10/site-packages (from sacrebleu) (2024.11.6)
+Requirement already satisfied: lxml in /home/oren/work/notes/notes-nlp/.venv/lib/python3.10/site-packages (from sacrebleu) (5.3.0)
+Requirement already satisfied: tabulate&gt;=0.8.9 in /home/oren/work/notes/notes-nlp/.venv/lib/python3.10/site-packages (from sacrebleu) (0.9.0)
+Requirement already satisfied: numpy&gt;=1.17 in /home/oren/work/notes/notes-nlp/.venv/lib/python3.10/site-packages (from sacrebleu) (2.0.2)</code></pre>
+</div>
+</div>
+</section>
+<section id="defining-the-bleu-score" class="level2">
+<h2 class="anchored" data-anchor-id="defining-the-bleu-score">1.2 Defining the BLEU Score</h2>
+<p>You have seen the formula for calculating the BLEU score in this week’s lectures. More formally, we can express the BLEU score as:</p>
+<p><span class="math display">BLEU = BP\Bigl(\prod_{i=1}^{4}precision_i\Bigr)^{(1/4)}</span></p>
+<p>with the Brevity Penalty and precision defined as:</p>
+<p><span class="math display">BP = min\Bigl(1, e^{(1-({ref}/{cand}))}\Bigr)</span></p>
+<p><span class="math display">precision_i = \frac {\sum_{snt \in{cand}}\sum_{i\in{snt}}min\Bigl(m^{i}_{cand}, m^{i}_{ref}\Bigr)}{w^{i}_{t}}</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">m^{i}_{cand}</span>, is the count of i-gram in candidate matching the reference translation.</li>
+<li><span class="math inline">m^{i}_{ref}</span>, is the count of i-gram in the reference translation.</li>
+<li><span class="math inline">w^{i}_{t}</span>, is the total number of i-grams in candidate translation.</li>
+</ul>
+</section>
+<section id="explaining-the-bleu-score" class="level2">
+<h2 class="anchored" data-anchor-id="explaining-the-bleu-score">1.3 Explaining the BLEU score</h2>
+<section id="brevity-penalty-example" class="level3">
+<h3 class="anchored" data-anchor-id="brevity-penalty-example">Brevity Penalty (example):</h3>
+<div id="39745cfe" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ref_length <span class="op">=</span> np.ones(<span class="dv">100</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>can_length <span class="op">=</span> np.linspace(<span class="fl">1.5</span>, <span class="fl">0.5</span>, <span class="dv">100</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> ref_length <span class="op">/</span> can_length</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> <span class="dv">1</span> <span class="op">-</span> x</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.exp(y)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.minimum(np.ones(y.shape), y)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Code for in order to make the plot</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>lines <span class="op">=</span> ax.plot(x, y)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    xlabel<span class="op">=</span><span class="st">"Ratio of the length of the reference to the candidate text"</span>,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    ylabel<span class="op">=</span><span class="st">"Brevity Penalty"</span>,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<pre><code>[Text(0.5, 0, 'Ratio of the length of the reference to the candidate text'),
+ Text(0, 0.5, 'Brevity Penalty')]</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
 <figure class="figure">
-<p><img src="../../images/Course-Logo-3-3.webp" class="nolightbox img-fluid figure-img"></p>
-<figcaption>course banner</figcaption>
+<p><a href="lab02_files/figure-html/cell-3-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="lab02_files/figure-html/cell-3-output-2.png" width="589" height="429" class="figure-img"></a></p>
 </figure>
-</div><div id="fig-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" style="@page {size: 16in 9in;  margin: 0;}">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-figure quarto-figure-center">
+</div>
+</div>
+</div>
+<p>The brevity penalty penalizes generated translations that are too short compared to the closest reference length with an exponential decay. The brevity penalty compensates for the fact that the BLEU score has no recall term.</p>
+</section>
+<section id="n-gram-precision-example" class="level3">
+<h3 class="anchored" data-anchor-id="n-gram-precision-example">N-Gram Precision (example):</h3>
+<div id="be505a71" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> {<span class="st">"1-gram"</span>: <span class="fl">0.8</span>, <span class="st">"2-gram"</span>: <span class="fl">0.7</span>, <span class="st">"3-gram"</span>: <span class="fl">0.6</span>, <span class="st">"4-gram"</span>: <span class="fl">0.5</span>}</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>names <span class="op">=</span> <span class="bu">list</span>(data.keys())</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>values <span class="op">=</span> <span class="bu">list</span>(data.values())</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>bars <span class="op">=</span> ax.bar(names, values)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(ylabel<span class="op">=</span><span class="st">"N-gram precision"</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
 <figure class="figure">
-<p><a href="slides.pdf" class="lightbox" data-gallery="slides" title="This week’s slides"><embed src="slides.pdf" style="@page {size: 16in 9in;  margin: 0;}" width="420" height="340"></a></p>
-<figcaption>This week’s slides</figcaption>
+<p><a href="lab02_files/figure-html/cell-4-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="lab02_files/figure-html/cell-4-output-1.png" width="589" height="411" class="figure-img"></a></p>
 </figure>
 </div>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1
-</figcaption>
+</div>
+<p>The n-gram precision counts how many unigrams, bigrams, trigrams, and four-grams (i=1,…,4) match their n-gram counterpart in the reference translations. This term acts as a precision metric. Unigrams account for adequacy while longer n-grams account for fluency of the translation. To avoid overcounting, the n-gram counts are clipped to the maximal n-gram count occurring in the reference (<span class="math inline">m_{n}^{ref}</span>). Typically precision shows exponential decay with the with the degree of the n-gram.</p>
+</section>
+<section id="n-gram-bleu-score-example" class="level3">
+<h3 class="anchored" data-anchor-id="n-gram-bleu-score-example">N-gram BLEU score (example):</h3>
+<div id="e7acb0b1" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> {<span class="st">"1-gram"</span>: <span class="fl">0.8</span>, <span class="st">"2-gram"</span>: <span class="fl">0.77</span>, <span class="st">"3-gram"</span>: <span class="fl">0.74</span>, <span class="st">"4-gram"</span>: <span class="fl">0.71</span>}</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>names <span class="op">=</span> <span class="bu">list</span>(data.keys())</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>values <span class="op">=</span> <span class="bu">list</span>(data.values())</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>bars <span class="op">=</span> ax.bar(names, values)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(ylabel<span class="op">=</span><span class="st">"Modified N-gram precision"</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="lab02_files/figure-html/cell-5-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="lab02_files/figure-html/cell-5-output-1.png" width="589" height="411" class="figure-img"></a></p>
 </figure>
-</div></div>
-<p>My notes for Week 1 of the <a href="https://www.coursera.org/learn/sequence-models-in-nlp/home/welcome">Natural Language Processing with Sequence Models</a> Course in the Natural Language Processing Specialization Offered by <a href="DeepLearning.AI">DeepLearning.AI</a> on <a href="https://www.coursera.org/">Coursera</a></p>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Learning Objectives
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<ul>
-<li>Feature extraction</li>
-<li>Supervised machine learning</li>
-<li>Binary classification</li>
-<li>Text preprocessing</li>
-<li>ReLU</li>
-<li>Python classes</li>
-<li>Trax</li>
-<li>Neural networks</li>
-</ul>
-</div>
-</div>
-<section id="sec-course-intro" class="level2">
-<h2 class="anchored" data-anchor-id="sec-course-intro">Course Intro</h2>
-<div class="callout callout-style-simple callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Course Intro Video Transcript
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<blockquote class="blockquote">
-<p>Welcome to the third course of this specialization. This course is called natural language processing with sequence models. In this course, here are some of the things you get to build. First, you take sentiment analysis to the next level with deep neural networks. You also build a language generator using RNNs or recurrent neural networks. You apply LSTM units. LSTM stands for long short term memory. You apply LCM units to the problem of named entity recognition. And, finally you use Siamese networks to identify duplicate questions like say if there’s an online discussion forum and different people are asking questions. Can you figure out if two different people ask essentially the same question but with different wording? With the skills you develop in this course, you’ll be able to build powerful NLP systems to solve problems across a wide range of industries. It is my pleasure to welcome Lukasz and Younes as your instructors for this course and they’re thrilled to dive into these topics with you. Younes, perhaps you could say a bit more about the applications that learners will build in this course.</p>
-</blockquote>
-<blockquote class="blockquote">
-<blockquote class="blockquote">
-<p>Sure thing. Thanks, Andrew. Well, I’d like to start by saying that in the first two courses of the specialization, you build a powerful foundation that will provide you with both the context and the fundamental skills you need to tackle this course. For example, you’ve already done sentiment analysis in course one with a simple naive Bayes classifier. But now, you will leverage the power of deep neural networks to build a much more robust sentiment analysis classifier. You’ve also seen how to do things like predict the next word in a sequence, using relatively simple n-gram language models in course two. In this course, you’ll create an advanced model using recurrent neural networks to generate text. You can think of this course as taking the step from foundational skills into building real world NLP applications.</p>
-</blockquote>
-</blockquote>
-<blockquote class="blockquote">
-<blockquote class="blockquote">
-<p>Very cool, Younes. I think that’s a great way to think about it. Lukasz, maybe you could say a bit more about the applications learners will get to build.</p>
-</blockquote>
-</blockquote>
-<blockquote class="blockquote">
-<blockquote class="blockquote">
-<p>Sure, thank you, Andrew. Well, as you saw in the first course, the problem of sentiment analysis is a really tricky one. But in many applications you want to determine the sentiment of a sentence. So it’s a really good problem to work on as well. With language modeling, which you’ll tackle in week two of this course, the problems you can solve are almost infinite. From translation to autocomplete to generating text from scratch. In week three of this course, you’ll work on named entity recognition, which is the problem of separating named entities in sentences, like people and places. This is a building block of many important NLP systems. Finally, in week four you will tackle the problem of identifying duplicates. The question whether two pieces of texts are duplicates of each other might not sound very interesting at first, but as you will see, it’s actually core building block of things like online forums and search engines and we’ll show you how to solve it. So we’re really excited to show you these applications and bring your skills to the next level.</p>
-</blockquote>
-</blockquote>
-<blockquote class="blockquote">
-<blockquote class="blockquote">
-<p>Thank you Lukasz and thank you Younes. This is going to be an exciting course, so let’s get started.</p>
-</blockquote>
-</blockquote>
-<blockquote class="blockquote">
-<blockquote class="blockquote">
-<p>Good luck.</p>
-</blockquote>
-</blockquote>
-<blockquote class="blockquote">
-<blockquote class="blockquote">
-<p>Have fun.</p>
-</blockquote>
-</blockquote>
 </div>
 </div>
 </div>
-</section>
-<section id="neural-networks-for-sentiment-analysis" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="neural-networks-for-sentiment-analysis">Neural Networks for Sentiment Analysis</h2>
-<p>Previously in the course we did sentiment analysis with logistic regression and naive Bayes. Those models were in a sense more naive, and are not able to catch the sentiment off a tweet like: “I am not happy” or “If only it was a good day”. When using a neural network to predict the sentiment of a sentence, we can use the following. Note that the image below has three outputs, in this case we might want to predict, “positive”, “neutral”, or “negative”.</p>
-<p class="page-columns page-full"><a href="img/slide01.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide01.png" class="img-fluid"></div></a></p>
-<p>Note that the network above has three layers. To go from one layer to another we can use a <span class="math inline">W</span> matrix to propagate to the next layer. Hence, we call this concept of going from the input until the final layer, forward propagation. To represent a tweet, we can use the following:</p>
-<p>Note, that we add zeros for padding to match the size of the longest tweet.</p>
-<p class="page-columns page-full"><a href="img/slide02.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide02.png" class="img-fluid"></div></a></p>
-<div class="callout callout-style-simple callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Video Transcript
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<blockquote class="blockquote">
-<p>This week I’ll show you how to create neural networks using layers. This simplifies the task a lot as you will see. Let’s dive in. First, you’ll revisit the general structure of neural networks and how they make predictions. I’ll show you the structure you’ll be using to perform sentiment analysis during this week. Neural networks are computational structures that, in a very simplistic way, attempt to mimic the way the human brain recognizes patterns. They’re used in many applications of artificial intelligence and have proven very effective on a variety of tasks, including those in NLP. Have a look at this example of a simple neural network with n input parameters, two hidden layers, and three output units. As inputs, this neural network receives a data representation x with n features, then performs computations in its hidden layers. Finally, it delivers an output which in this case has size 3. Let’s take a look at how it works mathematically. All the nodes every activation layer as a_i, where i is the layer’s number. First, define a_0 to be the input vector x. To get the values for each layer’s activation, a, you have to compute the value for z_i, which depends on both the weights matrix for that layer and the activations, a, from the previous layer. Finally, you get the values for each layer by applying an activation function, g, to the value of z. As you can see, this computation moves forward through the left of the neural network towards the right. That’s why this process is called forward propagation. For this module’s assignments, you’re going to implement a neural network that looks like this. As inputs, it will receive a simple vector representation of your tweets. It will have an embedding layer that will transform your representation into an optimal one for this task. Finally, it will have a hidden layer with a ReLU activation function and then output layer with the softmax function that will give you the probabilities for whether a tweet has a positive or negative sentiment. This neural network will allow you to predict sentiments for complex tweets, such as a tweet like this one that says, “This movie was almost good.” That you wouldn’t have been able to classify correctly using simpler methods such as Naive Bayes because they missed important information. The initial representation, x, that you’ll use for this neural network will be a vector of integers. Similar to your previous work with sentiment analysis, you will first need to list all of your words from your vocabulary. Next for this application, you’ll assign an integer index to each of them. Then for each word in your tweets add the index from your vocabulary to construct a vector like this one for every tweet. After you have all the vector representations of your tweets, you will need to identify the maximum vector size and fill every vector with zeros to match that size. This process is called padding and ensures that all of your vectors have the same size even if your tweets don’t. Let’s do a quick recap. At this point, you’re familiar with the general structure of the neural network that you’ll be using to classify sentiments for a set of complex nuance tweets. You also reviewed the integer representation that’s going to be used in this module. Next, I’ll introduce the tracks library for neural networks and demonstrate how the embedding layer works. I’ll see you later.</p>
-</blockquote>
-</div>
-</div>
-</div>
-</section>
-<section id="sec-trax-nn" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="sec-trax-nn">Trax: Neural Networks</h2>
-<p>Trax has several advantages:</p>
-<ul>
-<li>Runs fast on CPUs, GPUs and TPUs</li>
-<li>Parallel computing</li>
-<li>Record algebraic computations for gradient evaluation</li>
-</ul>
-<p>Here is an example of how we can code a neural network in Trax:</p>
-<p class="page-columns page-full"><a href="img/slide03.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide03.png" class="img-fluid"></div></a></p>
-<div class="callout callout-style-simple callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Video Transcript
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<!-- add video transcript here -->
-</div>
-</div>
-</div>
-</section>
-<section id="sec-trax-jax" class="level2">
-<h2 class="anchored" data-anchor-id="sec-trax-jax">Trax and JAX, docs and code</h2>
-<p>Official Trax documentation maintained by the Google Brain team:</p>
-<ul>
-<li>https://trax-ml.readthedocs.io/en/latest/</li>
-</ul>
-<p>Trax source code on GitHub:</p>
-<ul>
-<li>https://github.com/google/trax</li>
-</ul>
-<p>JAX library:</p>
-<ul>
-<li>https://jax.readthedocs.io/en/latest/index.html</li>
-</ul>
-</section>
-<section id="sec-intro-trax" class="level2">
-<h2 class="anchored" data-anchor-id="sec-intro-trax">Lab: Introduction to Trax</h2>
-<p><a href="../../posts/c3w1/lab01.html">Introduction to Trax</a></p>
-</section>
-<section id="sec-trax-layers" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="sec-trax-layers">Trax: Layers</h2>
-<p>Trax makes use of classes. If we are not familiar with classes in python, don’t worry about it, here is an example.</p>
-<p class="page-columns page-full"><a href="img/slide04.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide04.png" class="img-fluid"></div></a></p>
-<p>In the example above, we can see that a class takes in an <code>__init__</code> and a <code>__call__</code> method.</p>
-<p>These methods allow we to initialize your internal variables and allow we to execute your function when called.</p>
-<p>To the right we can see how we can initialize your class. When we call <code>MyClass(7)</code> , we are setting the <span class="math inline">y</span> variable to 7. Now when we call <code>f(3)</code> we are adding 7 + 3.</p>
-<p>We can change the <code>my_method</code> function to do whatever we want, and we can have as many methods as we want in a class.</p>
-<div class="callout callout-style-simple callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Video Transcript
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<blockquote class="blockquote">
-<p>To create a neural network out of layers, you need to put them together. In a deep network, you run them one after the other in a sequential way. Let me show you how you can do this. First, you will observe how a basic neural network is defined in Trax. Then I’ll show you some of the benefits of using a framework like TensorFlow, which is the framework that Trax is built on. Let’s take this network architecture as an example. In this model, you have two hidden layers with sigmoid activation functions and an output layer with softmax activation. In Trax, you’ll need to specify the type of model architecture.<br>
-For simple architectures like this one, you’ll use a serial model. To start, list the layers from left to right, or from your input variables to the output layer. In this case, first you have a dense layer with four units, and then assign the sigmoid activation function to that layer. After that, repeat the process for the second hidden layer and the output layer. You can specify any architecture you like in the simple way. Note that, this way to specify your models architecture, follows the order in which the computations are made in your neural network. There are several advantages to using libraries like Trax, such as they’re designed to perform computations efficiently in hardware like CPUs, GPUs, and even TPUs. They allow you to easily perform parallel computing by running gear models on multiple machines or course simultaneously. They keep a record of all the algebraic operations on your neural net in the order of computation. So they are able to compute the gradients of your model automatically. There are many open source frameworks out there, and Trax is one of the latest.<br>
-It’s based on TensorFlow. You might be already familiar with TensorFlow, PyTorch, and JAX. If you’re not familiar with those, don’t worry. I’ll show you the basics of Trax and you’ll be able to implement amazing NLP models. So far, I showed you how to define a model in Trax with the simple sequential architecture, and I pointed out some of the advantages to be had, like computational efficiency and parallel computing.</p>
-</blockquote>
-<blockquote class="blockquote">
-<p>Next, I’ll get into more detail on how to use Trax.</p>
-</blockquote>
-</div>
-</div>
-</div>
-</section>
-<section id="sec-why-trax" class="level2">
-<h2 class="anchored" data-anchor-id="sec-why-trax">Why we recommend Trax</h2>
-<div class="callout callout-style-simple callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Video Transcript
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<blockquote class="blockquote">
-<p>Hi. My name is Lukasz, and I want to tell you in this video why we made the machine learning library Trax. This is a little bit of a personal story for me. I’ve been at Google for about seven years now. I’m a researcher in the Google Brain Team. But before I was a researcher, I was a software engineer. I worked on a lot of machine learning projects and frameworks. This journey for me ended in the Trax library. I believe Trax is currently the best library to learn and to productionize machine learning research and machine learning models, especially sequenced models, models like transformer and models that are used in natural language processing. The reasons I believe that come from a personal journey that I took that led me here. I will tell you a little bit about myself and how I came here, and then I’ll tell you why I think Trax is the best thing to use currently for machine learning, especially in natural language processing. My journey with machine learning and machine learning frameworks started around 2014-15 when we were making TensorFlow. TensorFlow is, you probably know, is a big machine learning systems, it has about 100 million downloads by now. It was released in November 2015. It was a very emotional moment for all of us when we were releasing it. At that point, we were not sure if deep learning will become as big as it did. We were not sure how many users there will be. What we wanted to do was a system that’s primarily very fast, that can run distributed machine learning systems, large-scale fast training. The main focus was speed. A secondary focus was to make it easy to program the systems that wasn’t a reader, but it was not the most important thing. After releasing TensorFlow, I worked on machine translation and especially on the Google’s Neural Machine Translation System. This was the first system using deep sequence models that was used by the Google Translate team that was actually released as a product. It’s handling all of Google translations these days. Every language that we have has a neural model. It started with LSTMs and RNN models, and now it’s a lot of transformers. We released that in 2016 based on the TensorFlow framework. These models, they’re amazing. They’re much better than the previous phrase-based translation models, but they took a long time to train. They were training for days on clusters of GPUs at that time. This was not practical for anyone else to do rather than Google. This was only because we had this TensorFlow system, a large group of engineers who would ferry very well, and we were training for days and days. That was great. But I felt like this is not satisfactory because no one else can do that. It’s not possible to be done at the university. You cannot launch a startup doing that, because it was impossible if you were not Google, or maybe from Microsoft, but no one else. I wanted to change that. To do that, we created the Tensor2Tensor Library. The Tensor2Tensor Library, which was released in 2017, started with the thought that we should make this deep learning research, especially for sequence models, widely accessible. This was not working with these large RNN models, but while writing the library, we created this transformer model. This transformer has taken NLP by storm because it allows you to train much faster. At that time within a few days, now, it’s less than a day in a matter of hours on an 8 GPU system. You can create translation models that surpass any RNN models. The Tensor2Tensor library has become already widely used. It’s used in production Google systems. It’s used by some very large companies in the world and it has led to a number of startups that they know about that basically exists thanks to this library. You can say, well, this is done and this is good, but, the problem is, it’s become complicated and it’s not nice to learn and it’s become very hard to do new researcher. Around 2018, we decided it’s time to improve. As time moves on, we need to do even better, and this is how we created Trax. Trax is a deep-learning library that’s focused on clear code and speed. Let me tell you why, so, if you think carefully what you want from a deep-learning library, there are really two things that matters. You want the the programmers to be efficient and you want the code to run fast, and this is because what costs you is the time of the programmer, and the money you need to pay for running your training code. Programmer’s time is very important. You need to use it efficiently, but in deep learning you’re training big models and these costs money too. For example, using eight GPUs on-demand from the Cloud, can cost $20 an hour almost. But using the preemptible eight could TPU costs only $1.40. In Trax, you can use one or the other without changing a single character in your code. How does Trax make programmers sufficient? Well, it was redesigned from the bottom-up to be easy to debug and understand. You can literally read Trax code and understand what’s going to come. This is not the case in some other libraries, this is unluckily of the case anymore in TensorFlow. But, you can say, well it used to be the case, but nowadays TensorFlow, even when we clean up the code, it needs to be backwards compatible. It carries the weight of these years of development, and this is crazy errors of Machine Learning. There is a lot of baggage that it just has to carry because it’s backward compatible. What we do in Trax is we break the backwards compatibility. This means you need to learn new things. This carries some price. But what you get for that price, is that it’s a newly cleanly designed library which has four models, not just primitives to build them, but also four models with dataset bindings, we regression test these models daily because we use these libraries, so we know every day these monster running. It’s like a new programming language. It costs a little bit to learn, this is a new thing, but it makes your life much more efficient. To make this point point clear, the Adam Optimizer, the most popular optimizer in machine learning timesteps. On the left, you see a screenshot from the paper that introduced data, and you see it has like about seven lines. Next is just a part of the Adam implementation and patronage, which is one of the cleanest ones actually and you need to know way more, you need to know what are parameter groups, you need to know secret keys into these groups that key parameters by some means, you need to do seven stick initialization and some conditional to introduce either and other things. On the right, you see the Adam optimizer in TensorFlow and Keras and as you’ll see it’s even longer. You need to apply it to resource variables and two non-research variables and you need to know what these are. The reason they exist is historical. Currently we only use resource variables, but we have to support people who used the old non-research variables too. There are a lot of things that in 2020 you actually don’t need anymore, but they have to be there and painted and in TensorFlow code. While if you go to Trax code, this is the full code of Adam and Trax. It’s very similar for the paper. That’s the whole point. Because if you’re implementing a new paper or if you’re learning and you want to find, in the code of the framework, where are the equations from the paper, you can really do with this here. So that is the benefit of Trax. The price of this benefit is that you’re using a new thing. But there is a huge gain that comes to you when you’re actually debugging your code. When you’re debugging your code, you will hit lines that are in the framework. So you will actually need to understand these lines, which means you need to understand all of these PyTorch and all of these TensorFlow if you use those. But in Trax, you only need to understand these Trax lines. It’s much easier to debug, which makes programmers more efficient. Now this efficiency would not be worth that much if the code is running slow. Hey, there’s a lot of beautiful things where you can program things in a few line, but the run so slowly that it’s actually useless. Not so in Trax because we use the just-in-time compiler technology that was built in the last six years of TensorFlow. It’s called XLA, and we use it on top of Trax. These teams have put tremendous effort to make this coat the fastest code on the planet. There is an industry competition called MLPerf. In 2020, JAX actually won this competition, being the fastest transformer to ever be benchmarked independently. So JAX transformer ran in 0.26 of a minute, so in about 16 seconds, I think, while the fastest TensorFlow transformer on the same hardware took 0.35 minutes. So you see, it’s almost 50 percent slower. The fastest PyTorch, but this was not on TPU, took 0.62. So being two times faster is significant game. It’s not clear you’ll get the same gain in any model on other hardware. There was a lot of work to tune it for this particular model hardware. But in general, Trax runs fast. This means, you’ll pay less for the TPUs and GPUs you’ll be running on Cloud. It’s also tested with TPUs on Colab. Colabs are the IPython notebooks that Google gives you for free. You can select a hardware accelerator, you can select TPU and run the same code with no changes. It’s GPU, TPU, or CPU, on this Colab, where you’re getting an eight-code TPU for free. So you can test your code there and then run it on Cloud for much cheaper than other frameworks, and it really runs fast. So these are the reasons to use Trax, and for me, Trax is also super fun. It’s super fun to learn, it’s super fun to use, because we had the liberty to do things from scratch using many years of experience now. You can write model using combinators. This is a whole transformer language model on the left. On the right, you can see it’s from a README. This is everything you need to run a pre-trained model and get your translations. So this gave us the opportunity to clean up the framework, clean up the code, make sure it runs really fast. It’s a lot of fun to use. So I encourage you come check it out. See how you can use Trax for your own machine learning endeavors, both for research. If you want to start a startup or if you want to run it for a big company, I think Trax will be there for you.</p>
-</blockquote>
-</div>
-</div>
-</div>
-</section>
-<section id="lab-classes-and-subclasses" class="level2">
-<h2 class="anchored" data-anchor-id="lab-classes-and-subclasses">Lab: Classes and Subclasses</h2>
-<p><a href="../../posts/c3w1/lab02.html">Classes and Subclasses</a></p>
-</section>
-<section id="dense-and-relu-layer" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="dense-and-relu-layer">Dense and ReLU layer</h2>
-<p>The Dense layer is the computation of the inner product between a set of trainable weights (weight matrix) and an input vector. The visualization of the dense layer could be seen in the image below.</p>
-<p class="page-columns page-full"><a href="img/slide05.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide05.png" class="img-fluid"></div></a></p>
-<p>The orange box shows the dense layer. An activation layer is the set of blue nodes. Concretely one of the most commonly used activation layers is the rectified linear unit (ReLU).</p>
-<p class="page-columns page-full"><a href="img/slide06.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide06.png" class="img-fluid"></div></a></p>
-<p>ReLU(x) is defined as max(0,x) for any input x.</p>
-<div class="callout callout-style-simple callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Video Transcript
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-7" class="callout-7-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<blockquote class="blockquote">
-<p>Now, I’ll show you dense and ReLU layers. First, I’ll show you dense layers and then ReLU layers. Suppose that you have a simple serial model like this one. Let’s focus on the first parts of the model. Here, you have an input vector X fully connected to a layer of activations. To get the value of z, let’s go into the activations. You will have to compute the inner products between a set of trainable weights and the input vector. This single computation is called a dense layer. The ReLU layer is much simpler. Let’s take the same model you’ve been working with.<br>
-The ReLU layer is an activation layer that typically follows a dense fully connected layer, and transforms any negative values to zero before sending them onto the next layer. To do this, the ReLU layer computes the function g, which returns a value of zero for all negative values of z, and z for all positive ones. You’ve now seen the dense layer and the ReLU layer. Next, I’ll show you how to put a model together.</p>
-</blockquote>
-</div>
-</div>
-</div>
-</section>
-<section id="serial-layer" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="serial-layer">Serial Layer</h2>
-<p>A serial layer allows we to compose layers in a serial arrangement:</p>
-<p class="page-columns page-full"><a href="img/slide07.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide07.png" class="img-fluid"></div></a></p>
-<p>It is a composition of sublayers. These layers are usually dense layers followed by activation layers.</p>
-<div class="callout callout-style-simple callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Video Transcript
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<blockquote class="blockquote">
-<p>To create a neural network out of layers, you need to put them together. In a deep network, you run them one after the other in a sequential way. Let me show you how you can do this. Previously, you saw how to define layers, and I showed you how the dense and ReLU layers performed single steps of forward propagation. Now, I’ll show you how to define a serial neural network as a composition of layers thats operates in a sequence. Imagine, a basic neural network like this one. You have some dense layers and activation layers, and the sequential arrangements of those layers is done in tracts, when you define a serial layer. You could think of this new serial layer as your whole neural network model in one layer. Let’s summarize what you just learned. A serial layer is a composition of sublayers that operates sequentially to perform the forward computation of your entire model. Coming up, I’ll introduce some additional layers and the training procedure.</p>
-</blockquote>
-</div>
-</div>
-</div>
-</section>
-<section id="other-layers" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="other-layers">Other Layers</h2>
-<p>Other layers could include embedding layers and mean layers. For example, we can learn word embeddings for each word in your vocabulary as follows:</p>
-<p class="page-columns page-full"><a href="img/slide08.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide08.png" class="img-fluid"></div></a></p>
-<p>The mean layer allows we to take the average of the embeddings. We can visualize it as follows:</p>
-<p class="page-columns page-full"><a href="img/slide09.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide09.png" class="img-fluid"></div></a></p>
-<p>This layer does not have any trainable parameters.</p>
-<div class="callout callout-style-simple callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Video Transcript
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-9" class="callout-9-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<blockquote class="blockquote">
-<p>Earlier, you worked with a few different ways to represent text data. When using neural networks for NLP tasks, embedding layers are often included in the model. Going forward, I will introduce embedding layers, and explain why you will need to include layers such as the mean layer in serial models directly after your embedding layer. Let’s now dive into the embedding layer. In NLP, you usually have a set of unique words called the vocabulary. An embedding layer takes an index assigned to each word from your vocabulary and maps it to a representation of that word with a determined dimension. In this example, embedding of size equal to two. For instance, the embedding layer in this example, we’ll return a vector equal to 0.020, and 0.006 for the word I, and negative 0.009 and 0.050 for the word NLP. Every value from this part of the table is trainable in tracks. When using an embedding layer in your model, you will learn the representation that gives the best performance for your NLP task. For the embedding layer in your model, you’d have to learn a matrix of weights, of size equal to your vocabulary times the dimension of the embedding. The size of the embedding could be treated as a hyperparameter in your model. With this layer, your model can learn or improve the word embeddings for your NLP task like it improves the weights matrices on each layer.</p>
-<p>The embedding layer is able to map words to embeddings. If you had a series of words, like a tweet that says, “I am happy,” the embedding layer will map each of those words to their corresponding embedding, and return a matrix of word embeddings. If you had padded vectors representing your tweets, you could unroll this matrix and feed its values to the next layer on the neural network. But in doing this, you might end up with lots of parameters to train. As an alternative, you could just take the mean of each feature from the embedding, and that’s exactly what the mean layer does in tracks. After the mean layer, you will have the same number of features as you’re embedding size. Even for sequences of texts, those are very long. Note that this layer doesn’t have any trainable parameters because it’s only computing the mean of the word embeddings.</p>
-<p>At this point, you are familiar with what’s embedding layers, and mean layers are, and how they work. An important takeaway here is that using an embedding layer in your model allows you to learn a good representation of your vocabulary for the specific task you’re working on, and that’s the mean layer takes a matrix of embeddings, and returns a vector representation for a set of words, like tweets.</p>
-</blockquote>
-</div>
-</div>
-</div>
-<section id="training" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="training">Training</h3>
-<p>In Trax, the function grad allows we to compute the gradient. We can use it as follows:</p>
-<p class="page-columns page-full"><a href="img/slide10.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide10.png" class="img-fluid"></div></a></p>
-<p>Now if we were to evaluate grad_f at a certain value, namely z, it would be the same as computing 6z+1. Now to do the training, it becomes very simple:</p>
-<p class="page-columns page-full"><a href="img/slide11.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide11.png" class="img-fluid"></div></a></p>
-<p>We simply compute the gradients by feeding in y.forward (the latest value of y), the weights, and the input x, and then it does the back-propagation for we in a single line. We can then have the loop that allows we to update the weights (i.e.&nbsp;gradient descent!).</p>
-<div class="callout callout-style-simple callout-note no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Video Transcript
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-10" class="callout-10-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<blockquote class="blockquote">
-<p>To train a neural network, you need to compute gradients. You’ve done it by hand earlier in this specialization, and you’ve seen that it can be quite complex. But you know what? You don’t have to necessarily do it by yourself. Deep learning frameworks can do it for you. Let’s dive in. I will show you how the trax grad function allows you to easily compute gradients, which will allow you to perform back-propagation and train your model. You will see how easy it is compared to back propagating by hand. Computing ingredients using Trax is pretty straightforward. Suppose that you have the following equation, f of x, whose gradient with respect to x is equal to this derivative. To get that derivative in Trax, define the function <span class="math inline">f</span> that takes in <span class="math inline">x</span>, and then just call the grad function with f as its single parameter. The function grad will return a function that computes the gradient of <span class="math inline">f</span>. That’s nice.</p>
-<p>Using the grad function to train a model is similarly painless. Suppose that you have a neural network model y. To get the gradient of your model, just apply the grad function with the forward method of your model as a single parameter. Then evaluate the gradient with your weights and inputs. Notice the double sets of parentheses.<br>
-The first one passes the arguments for the grad function, and the second one, the arguments for the function returned by grad. After you have the gradients for your model, just iterate until convergence is reached.</p>
-<p>That’s it, forward and back-propagation performed in a single line. This final block is gradient descent. You can always change the optimization algorithm if necessary. So let’s summarize. Having a defined model in Trax, make training significantly easier than computing forward and back-propagation by hand because the built-in grad function automatically computes everything you need.</p>
-</blockquote>
-<blockquote class="blockquote">
-<p>In the programming assignments from this module, you’ll be able to define and train a neural network using Trax.</p>
-<p>Good luck, and have fun. This was the last video of the week. You now know how to create neural networks with layers and how to train them.</p>
-<p>Next, you will learn even more complex layers and built networks that perform better.</p>
-</blockquote>
-</div>
-</div>
-</div>
+<p>When the n-gram precision is multiplied by the BP, then the exponential decay of n-grams is almost fully compensated. The BLEU score corresponds to a geometric average of this modified n-gram precision.</p>
 </section>
 </section>
-<section id="lab-data-generators" class="level2">
-<h2 class="anchored" data-anchor-id="lab-data-generators">Lab: Data Generators</h2>
-<p><a href="../../posts/c3w1/lab03.html">Data Generators</a></p>
-</section>
-<section id="resources" class="level1">
-<h1>Resources:</h1>
-<ul>
-<li><span class="citation" data-cites="Chadha2020DistilledNotesCourseraDLSpec">(<a href="#ref-Chadha2020DistilledNotesCourseraDLSpec" role="doc-biblioref">Chadha 2020</a>)</span> <a href="https://aman.ai/coursera-nlp/logistic-regression/">Aman Chadha’s Notes</a></li>
-<li><a href="https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization/tree/master/3%20-%20Natural%20Language%20Processing%20with%20Sequence%20Models">Ibrahim Jelliti’s Notes</a></li>
-</ul>
+<section id="example-calculations-of-the-bleu-score" class="level2">
+<h2 class="anchored" data-anchor-id="example-calculations-of-the-bleu-score">1.4 Example Calculations of the BLEU score</h2>
+<p>In this example we will have a reference translation and 2 candidates translations. We will tokenize all sentences using the NLTK package introduced in Course 2 of this NLP specialization.</p>
+<div id="a3f19160" class="cell" data-tags="[]" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>reference <span class="op">=</span> <span class="st">"The NASA Opportunity rover is battling a massive dust storm on planet Mars."</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>candidate_1 <span class="op">=</span> <span class="st">"The Opportunity rover is combating a big sandstorm on planet Mars."</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>candidate_2 <span class="op">=</span> <span class="st">"A NASA rover is fighting a massive storm on planet Mars."</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>tokenized_ref <span class="op">=</span> nltk.word_tokenize(reference.lower())</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>tokenized_cand_1 <span class="op">=</span> nltk.word_tokenize(candidate_1.lower())</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>tokenized_cand_2 <span class="op">=</span> nltk.word_tokenize(candidate_2.lower())</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>reference<span class="sc">}</span><span class="ss"> -&gt; </span><span class="sc">{</span>tokenized_ref<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>candidate_1<span class="sc">}</span><span class="ss"> -&gt; </span><span class="sc">{</span>tokenized_cand_1<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>candidate_2<span class="sc">}</span><span class="ss"> -&gt; </span><span class="sc">{</span>tokenized_cand_2<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The NASA Opportunity rover is battling a massive dust storm on planet Mars. -&gt; ['the', 'nasa', 'opportunity', 'rover', 'is', 'battling', 'a', 'massive', 'dust', 'storm', 'on', 'planet', 'mars', '.']
 
+
+The Opportunity rover is combating a big sandstorm on planet Mars. -&gt; ['the', 'opportunity', 'rover', 'is', 'combating', 'a', 'big', 'sandstorm', 'on', 'planet', 'mars', '.']
+
+
+A NASA rover is fighting a massive storm on planet Mars. -&gt; ['a', 'nasa', 'rover', 'is', 'fighting', 'a', 'massive', 'storm', 'on', 'planet', 'mars', '.']</code></pre>
+</div>
+</div>
+<section id="step-1-computing-the-brevity-penalty" class="level3">
+<h3 class="anchored" data-anchor-id="step-1-computing-the-brevity-penalty">STEP 1: Computing the Brevity Penalty</h3>
+<div id="9a93851e" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> brevity_penalty(reference, candidate):</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    ref_length <span class="op">=</span> <span class="bu">len</span>(reference)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    can_length <span class="op">=</span> <span class="bu">len</span>(candidate)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Brevity Penalty</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> ref_length <span class="op">&gt;</span> can_length:</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        BP <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>        penalty <span class="op">=</span> <span class="dv">1</span> <span class="op">-</span> (ref_length <span class="op">/</span> can_length)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>        BP <span class="op">=</span> np.exp(penalty)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> BP</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-2-computing-the-precision" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-computing-the-precision">STEP 2: Computing the Precision</h3>
+<div id="509ec0f6" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> clipped_precision(reference, candidate):</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Bleu score function given a original and a machine translated sentences</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    clipped_precision_score <span class="op">=</span> []</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">5</span>):</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        candidate_n_gram <span class="op">=</span> Counter(</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>            ngrams(candidate, i)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        )  <span class="co"># counts of n-gram n=1...4 tokens for the candidate</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>        reference_n_gram <span class="op">=</span> Counter(</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>            ngrams(reference, i)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>        )  <span class="co"># counts of n-gram n=1...4 tokens for the reference</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>        c <span class="op">=</span> <span class="bu">sum</span>(</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>            reference_n_gram.values()</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>        )  <span class="co"># sum of the values of the reference the denominator in the precision formula</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> j <span class="kw">in</span> reference_n_gram:  <span class="co"># for every n_gram token in the reference</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> j <span class="kw">in</span> candidate_n_gram:  <span class="co"># check if it is in the candidate n-gram</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> (</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>                    reference_n_gram[j] <span class="op">&gt;</span> candidate_n_gram[j]</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>                ):  <span class="co"># if the count of the reference n-gram is bigger</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># than the corresponding count in the candidate n-gram</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>                    reference_n_gram[j] <span class="op">=</span> candidate_n_gram[</span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>                        j</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>                    ]  <span class="co"># then set the count of the reference n-gram to be equal</span></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>                    <span class="co"># to the count of the candidate n-gram</span></span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>                reference_n_gram[j] <span class="op">=</span> <span class="dv">0</span>  <span class="co"># else reference n-gram = 0</span></span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>        clipped_precision_score.append(<span class="bu">sum</span>(reference_n_gram.values()) <span class="op">/</span> c)</span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>    weights <span class="op">=</span> [<span class="fl">0.25</span>] <span class="op">*</span> <span class="dv">4</span></span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>    s <span class="op">=</span> (w_i <span class="op">*</span> np.log(p_i) <span class="cf">for</span> w_i, p_i <span class="kw">in</span> <span class="bu">zip</span>(weights, clipped_precision_score))</span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>    s <span class="op">=</span> np.exp(np.<span class="bu">sum</span>(s))</span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> s</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-3-computing-the-bleu-score" class="level3">
+<h3 class="anchored" data-anchor-id="step-3-computing-the-bleu-score">STEP 3: Computing the BLEU score</h3>
+<div id="c74e1455" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> bleu_score(reference, candidate):</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    BP <span class="op">=</span> brevity_penalty(reference, candidate)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    precision <span class="op">=</span> clipped_precision(reference, candidate)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> BP <span class="op">*</span> precision</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-4-testing-with-our-example-reference-and-candidates-sentences" class="level3">
+<h3 class="anchored" data-anchor-id="step-4-testing-with-our-example-reference-and-candidates-sentences">STEP 4: Testing with our Example Reference and Candidates Sentences</h3>
+<div id="dc976070" class="cell" data-tags="[]" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Results reference versus candidate 1 our own code BLEU: "</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">round</span>(bleu_score(tokenized_ref, tokenized_cand_1) <span class="op">*</span> <span class="dv">100</span>, <span class="dv">1</span>),</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Results reference versus candidate 2 our own code BLEU: "</span>,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">round</span>(bleu_score(tokenized_ref, tokenized_cand_2) <span class="op">*</span> <span class="dv">100</span>, <span class="dv">1</span>),</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Results reference versus candidate 1 our own code BLEU:  27.4
+Results reference versus candidate 2 our own code BLEU:  35.0</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/tmp/ipykernel_1096692/273199063.py:40: DeprecationWarning: Calling np.sum(generator) is deprecated, and in the future will give a different result. Use np.sum(np.fromiter(generator)) or the python sum builtin instead.
+  s = np.exp(np.sum(s))</code></pre>
+</div>
+</div>
+</section>
+<section id="step-5-comparing-the-results-from-our-code-with-the-sacrebleu-library" class="level3">
+<h3 class="anchored" data-anchor-id="step-5-comparing-the-results-from-our-code-with-the-sacrebleu-library">STEP 5: Comparing the Results from our Code with the SacreBLEU Library</h3>
+<div id="dd729a98" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Results reference versus candidate 1 sacrebleu library sentence BLEU: "</span>,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">round</span>(sacrebleu.corpus_bleu(reference, candidate_1).score, <span class="dv">1</span>),</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Results reference versus candidate 2 sacrebleu library sentence BLEU: "</span>,</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">round</span>(sacrebleu.corpus_bleu(reference, candidate_2).score, <span class="dv">1</span>),</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Results reference versus candidate 1 sacrebleu library sentence BLEU:  0.0
+Results reference versus candidate 2 sacrebleu library sentence BLEU:  0.0</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="part-2-bleu-computation-on-a-corpus" class="level1">
+<h1>Part 2: BLEU computation on a corpus</h1>
+<section id="loading-data-sets-for-evaluation-using-the-bleu-score" class="level2">
+<h2 class="anchored" data-anchor-id="loading-data-sets-for-evaluation-using-the-bleu-score">Loading Data Sets for Evaluation Using the BLEU Score</h2>
+<p>In this section, we will show a simple pipeline for evaluating machine translated text. Due to storage and speed constraints, we will not be using our own model in this lab (you’ll get to do that in the assignment!). Instead, we will be using <a href="https://translate.google.com">Google Translate</a> to generate English to German translations and we will evaluate it against a known evaluation set. There are three files we will need:</p>
+<ol type="1">
+<li>A source text in English. In this lab, we will use the first 1671 words of the <a href="http://statmt.org/wmt19/translation-task.html">wmt19</a> evaluation dataset downloaded via SacreBLEU. We just grabbed a subset because of limitations in the number of words that can be translated using Google Translate.</li>
+<li>A reference translation to German of the corresponding first 1671 words from the original English text. This is also provided by SacreBLEU.</li>
+<li>A candidate machine translation to German from the same 1671 words. This is generated by feeding the source text to a machine translation model. As mentioned above, we will use Google Translate to generate the translations in this file.</li>
+</ol>
+<p>With that, we can now compare the reference an candidate translation to get the BLEU Score.</p>
+<div id="1ed521ff" class="cell" data-tags="[]" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading the raw data</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>wmt19news_src <span class="op">=</span> <span class="bu">open</span>(<span class="st">"wmt19_src.txt"</span>, <span class="st">"rU"</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>wmt19news_src_1 <span class="op">=</span> wmt19news_src.read()</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>wmt19news_src.close()</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>wmt19news_ref <span class="op">=</span> <span class="bu">open</span>(<span class="st">"wmt19_ref.txt"</span>, <span class="st">"rU"</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>wmt19news_ref_1 <span class="op">=</span> wmt19news_ref.read()</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>wmt19news_ref.close()</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>wmt19news_can <span class="op">=</span> <span class="bu">open</span>(<span class="st">"wmt19_can.txt"</span>, <span class="st">"rU"</span>)</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>wmt19news_can_1 <span class="op">=</span> wmt19news_can.read()</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>wmt19news_can.close()</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Tokenizing the raw data</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>tokenized_corpus_src <span class="op">=</span> nltk.word_tokenize(wmt19news_src_1.lower())</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>tokenized_corpus_ref <span class="op">=</span> nltk.word_tokenize(wmt19news_ref_1.lower())</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>tokenized_corpus_cand <span class="op">=</span> nltk.word_tokenize(wmt19news_can_1.lower())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Inspecting the first sentence of the data.</p>
+<div id="d563c3f5" class="cell" data-tags="[]" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"English source text:"</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>wmt19news_src_1[<span class="dv">0</span>:<span class="dv">170</span>]<span class="sc">}</span><span class="ss"> -&gt; </span><span class="sc">{</span>tokenized_corpus_src[<span class="dv">0</span>:<span class="dv">30</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"German reference translation:"</span>)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>wmt19news_ref_1[<span class="dv">0</span>:<span class="dv">219</span>]<span class="sc">}</span><span class="ss"> -&gt; </span><span class="sc">{</span>tokenized_corpus_ref[<span class="dv">0</span>:<span class="dv">35</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"German machine translation:"</span>)</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>wmt19news_can_1[<span class="dv">0</span>:<span class="dv">199</span>]<span class="sc">}</span><span class="ss"> -&gt; </span><span class="sc">{</span>tokenized_corpus_cand[<span class="dv">0</span>:<span class="dv">29</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>English source text:
+
+
+﻿Welsh AMs worried about 'looking like muppets'
+There is consternation among some AMs at a suggestion their title should change to MWPs (Member of the Welsh Parliament).
+ -&gt; ['\ufeffwelsh', 'ams', 'worried', 'about', "'looking", 'like', 'muppets', "'", 'there', 'is', 'consternation', 'among', 'some', 'ams', 'at', 'a', 'suggestion', 'their', 'title', 'should', 'change', 'to', 'mwps', '(', 'member', 'of', 'the', 'welsh', 'parliament', ')']
+
+
+German reference translation:
+
+
+﻿Walisische Ageordnete sorgen sich "wie Dödel auszusehen"
+Es herrscht Bestürzung unter einigen Mitgliedern der Versammlung über einen Vorschlag, der ihren Titel zu MWPs (Mitglied der walisischen Parlament) ändern soll.
+ -&gt; ['\ufeffwalisische', 'ageordnete', 'sorgen', 'sich', '``', 'wie', 'dödel', 'auszusehen', "''", 'es', 'herrscht', 'bestürzung', 'unter', 'einigen', 'mitgliedern', 'der', 'versammlung', 'über', 'einen', 'vorschlag', ',', 'der', 'ihren', 'titel', 'zu', 'mwps', '(', 'mitglied', 'der', 'walisischen', 'parlament', ')', 'ändern', 'soll', '.']
+
+
+German machine translation:
+
+
+﻿Walisische AMs machten sich Sorgen, dass sie wie Muppets aussehen könnten
+Einige AMs sind bestürzt über den Vorschlag, ihren Titel in MWPs (Mitglied des walisischen Parlaments) zu ändern.
+Es ist auf -&gt; ['\ufeffwalisische', 'ams', 'machten', 'sich', 'sorgen', ',', 'dass', 'sie', 'wie', 'muppets', 'aussehen', 'könnten', 'einige', 'ams', 'sind', 'bestürzt', 'über', 'den', 'vorschlag', ',', 'ihren', 'titel', 'in', 'mwps', '(', 'mitglied', 'des', 'walisischen', 'parlaments']</code></pre>
+</div>
+</div>
+<div id="5c90c064" class="cell" data-tags="[]" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Results reference versus candidate 1 our own BLEU implementation: "</span>,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">round</span>(bleu_score(tokenized_corpus_ref, tokenized_corpus_cand) <span class="op">*</span> <span class="dv">100</span>, <span class="dv">1</span>),</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Results reference versus candidate 1 our own BLEU implementation:  23.6</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/tmp/ipykernel_1096692/273199063.py:40: DeprecationWarning: Calling np.sum(generator) is deprecated, and in the future will give a different result. Use np.sum(np.fromiter(generator)) or the python sum builtin instead.
+  s = np.exp(np.sum(s))</code></pre>
+</div>
+</div>
+<div id="54590c18" class="cell" data-tags="[]" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Results reference versus candidate 1 sacrebleu library BLEU: "</span>,</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">round</span>(sacrebleu.corpus_bleu(wmt19news_ref_1, wmt19news_can_1).score, <span class="dv">1</span>),</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Results reference versus candidate 1 sacrebleu library BLEU:  0.0</code></pre>
+</div>
+</div>
+<p><strong>BLEU Score Interpretation on a Corpus</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 85%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Score</th>
+<th style="text-align: center;">Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">&lt; 10</td>
+<td style="text-align: center;">Almost useless</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">10 - 19</td>
+<td style="text-align: center;">Hard to get the gist</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">20 - 29</td>
+<td style="text-align: center;">The gist is clear, but has significant grammatical errors</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">30 - 40</td>
+<td style="text-align: center;">Understandable to good translations</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">40 - 50</td>
+<td style="text-align: center;">High quality translations</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">50 - 60</td>
+<td style="text-align: center;">Very high quality, adequate, and fluent translations</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">&gt; 60</td>
+<td style="text-align: center;">Quality often better than human</td>
+</tr>
+</tbody>
+</table>
+<p>From the table above (taken <a href="https://cloud.google.com/translate/automl/docs/evaluate">here</a>), we can see the gist of the translation is clear but has significant grammatical errors. Nonetheless, the results of our coded BLEU score are almost identical to those of the SacreBLEU package.</p>
 
 
 </section>
+</section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
-<div id="ref-Chadha2020DistilledNotesCourseraDLSpec" class="csl-entry" role="listitem">
-Chadha, Aman. 2020. <span>“Distilled Notes for the Natural Language Processing Specialization on Coursera (Offered by Deeplearning.ai).”</span> <a href="https://www.aman.ai" class="uri">https://www.aman.ai</a>. <a href="https://www.aman.ai">www.aman.ai</a>.
-</div>
-</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2020,
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2025,
   author = {Bochman, Oren},
-  title = {Neural {Networks} for {Sentiment} {Analysis}},
-  date = {2020-10-23},
-  url = {https://orenbochman.github.io/notes-nlp/posts/c3w1/},
+  title = {Calculating the {Bilingual} {Evaluation} {Understudy}
+    {(BLEU)} Score: {Ungraded} {Lab}},
+  date = {2025-02-06},
+  url = {https://orenbochman.github.io/notes-nlp/posts/c4w1/lab02.html},
   langid = {en}
 }
-</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2020" class="csl-entry quarto-appendix-citeas" role="listitem">
-Bochman, Oren. 2020. <span>“Neural Networks for Sentiment
-Analysis.”</span> October 23, 2020. <a href="https://orenbochman.github.io/notes-nlp/posts/c3w1/">https://orenbochman.github.io/notes-nlp/posts/c3w1/</a>.
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2025" class="csl-entry quarto-appendix-citeas" role="listitem">
+Bochman, Oren. 2025. <span>“Calculating the Bilingual Evaluation
+Understudy (BLEU) Score: Ungraded Lab.”</span> February 6, 2025. <a href="https://orenbochman.github.io/notes-nlp/posts/c4w1/lab02.html">https://orenbochman.github.io/notes-nlp/posts/c4w1/lab02.html</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -1872,7 +1926,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c3w1/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c4w1/lab02.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p>This page is built with 💛 and <a href="https://quarto.org/">Quarto</a>.</p>
 </div>
