@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Oren Bochman">
+<meta name="keywords" content="Cosine similarity, Data generators, Hard negative mining, Modified Triplet Loss, Margin of safety, Cost function for Siamese networks">
 <meta name="description" content="we cover Neural networks for deep learning, then build a tweet classifier that places tweets into positive or negative sentiment categories, using a DNN.">
 
 <title>Siamese Networks – NLP Specialization</title>
@@ -222,6 +223,10 @@ window.Quarto = {
                 <div class="quarto-category">Coursera</div>
                 <div class="quarto-category">notes</div>
                 <div class="quarto-category">Sequence Models</div>
+                <div class="quarto-category">LSTM</div>
+                <div class="quarto-category">Siamese networks</div>
+                <div class="quarto-category">One shot learning</div>
+                <div class="quarto-category">Triplet loss</div>
               </div>
                   </div>
   </div>
@@ -246,6 +251,13 @@ window.Quarto = {
       
     </div>
     
+
+  <div>
+    <div class="keywords">
+      <div class="block-title">Keywords</div>
+      <p>Cosine similarity, Data generators, Hard negative mining, Modified Triplet Loss, Margin of safety, Cost function for Siamese networks</p>
+    </div>
+  </div>
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
@@ -902,18 +914,19 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#siamese-network" id="toc-siamese-network" class="nav-link active" data-scroll-target="#siamese-network">Siamese Network</a></li>
-  <li><a href="#architecture" id="toc-architecture" class="nav-link" data-scroll-target="#architecture">Architecture</a></li>
-  <li><a href="#lab-creating-a-siamese-model-using-trax" id="toc-lab-creating-a-siamese-model-using-trax" class="nav-link" data-scroll-target="#lab-creating-a-siamese-model-using-trax">Lab: Creating a Siamese Model using Trax</a></li>
-  <li><a href="#cost-function" id="toc-cost-function" class="nav-link" data-scroll-target="#cost-function">Cost Function</a></li>
-  <li><a href="#triplets" id="toc-triplets" class="nav-link" data-scroll-target="#triplets">Triplets</a></li>
-  <li><a href="#computing-the-cost-i" id="toc-computing-the-cost-i" class="nav-link" data-scroll-target="#computing-the-cost-i">Computing the Cost I</a></li>
-  <li><a href="#computing-the-cost-ii" id="toc-computing-the-cost-ii" class="nav-link" data-scroll-target="#computing-the-cost-ii">Computing the Cost II</a></li>
-  <li><a href="#lab-lecture-notebook-modified-triplet-loss" id="toc-lab-lecture-notebook-modified-triplet-loss" class="nav-link" data-scroll-target="#lab-lecture-notebook-modified-triplet-loss">Lab: Lecture Notebook: Modified Triplet Loss</a></li>
-  <li><a href="#one-shot-learning" id="toc-one-shot-learning" class="nav-link" data-scroll-target="#one-shot-learning">One Shot Learning</a></li>
-  <li><a href="#training-testing" id="toc-training-testing" class="nav-link" data-scroll-target="#training-testing">Training / Testing</a></li>
-  <li><a href="#lab-evaluate-a-siamese-model" id="toc-lab-evaluate-a-siamese-model" class="nav-link" data-scroll-target="#lab-evaluate-a-siamese-model">Lab: Evaluate a Siamese Model</a></li>
-  <li><a href="#acknowledgments" id="toc-acknowledgments" class="nav-link" data-scroll-target="#acknowledgments">Acknowledgments</a></li>
+  <li><a href="#sec-siamese-network" id="toc-sec-siamese-network" class="nav-link active" data-scroll-target="#sec-siamese-network">Siamese Network</a></li>
+  <li><a href="#sec-architecture" id="toc-sec-architecture" class="nav-link" data-scroll-target="#sec-architecture">Architecture</a></li>
+  <li><a href="#sec-lab-siamese" id="toc-sec-lab-siamese" class="nav-link" data-scroll-target="#sec-lab-siamese">Lab: Creating a Siamese Model using Trax</a></li>
+  <li><a href="#sec-cost-function" id="toc-sec-cost-function" class="nav-link" data-scroll-target="#sec-cost-function">Cost Function</a></li>
+  <li><a href="#sec-triplets" id="toc-sec-triplets" class="nav-link" data-scroll-target="#sec-triplets">Triplets</a></li>
+  <li><a href="#sec-computing-cost-1" id="toc-sec-computing-cost-1" class="nav-link" data-scroll-target="#sec-computing-cost-1">Computing the Cost I</a></li>
+  <li><a href="#sec-computing-cost-2" id="toc-sec-computing-cost-2" class="nav-link" data-scroll-target="#sec-computing-cost-2">Computing the Cost II</a></li>
+  <li><a href="#sec-lab-modified" id="toc-sec-lab-modified" class="nav-link" data-scroll-target="#sec-lab-modified">Lab: Lecture Notebook: Modified Triplet Loss</a></li>
+  <li><a href="#sec-one-shot" id="toc-sec-one-shot" class="nav-link" data-scroll-target="#sec-one-shot">One Shot Learning</a></li>
+  <li><a href="#sec-training-testing" id="toc-sec-training-testing" class="nav-link" data-scroll-target="#sec-training-testing">Training and Testing</a></li>
+  <li><a href="#sec-lab-evaluate" id="toc-sec-lab-evaluate" class="nav-link" data-scroll-target="#sec-lab-evaluate">Lab: Evaluate a Siamese Model</a></li>
+  <li><a href="#sec-reflections" id="toc-sec-reflections" class="nav-link" data-scroll-target="#sec-reflections">Reflections</a></li>
+  <li><a href="#sec-acknowledgments" id="toc-sec-acknowledgments" class="nav-link" data-scroll-target="#sec-acknowledgments">Acknowledgments</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/c3w4/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -924,28 +937,28 @@ window.Quarto = {
 
 
 
+<!-- TODO: link to Hinton course notes lesson with Siamese networks -->
+<!-- TODO: find the papers on Siamese networks and Triplet loss -->
 
-<div class="no-row-height column-margin column-container"><div id="fig-00" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="no-row-height column-margin column-container"><div class="nolightbox">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="../../images/Course-Logo-3-3.webp" class="lightbox" data-gallery="slides" title="course banner"><img src="../../images/Course-Logo-3-3.webp" class="img-fluid figure-img"></a></p>
+<p><a href="../../images/Course-Logo-3-3.webp" class="lightbox" data-gallery="slides" title="course banner"><img src="../../images/Course-Logo-3-3.webp" class="img-fluid figure-img" alt="course banner"></a></p>
 <figcaption>course banner</figcaption>
 </figure>
 </div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1
-</figcaption>
+</div><div id="sup-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" style="@page {size: 16in 9in;  margin: 0;}">
+<figure class="quarto-float quarto-float-sup figure">
+<div aria-describedby="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="slides.pdf" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="This week’s slides"><embed src="slides.pdf" style="@page {size: 16in 9in;  margin: 0;}" width="420" height="340"></a></p>
+<figcaption>This week’s slides</figcaption>
 </figure>
-</div><div id="fig-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="slides.pdf" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: "><embed src="slides.pdf" class="img-fluid"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-sup quarto-uncaptioned" id="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Supplementary Figure&nbsp;1
 </figcaption>
 </figure>
 </div></div>
@@ -960,235 +973,587 @@ Learning Objectives
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<ul>
-<li>One shot learning</li>
-<li>Triplet loss</li>
-<li>Cosine similarity</li>
-<li>Siamese networks</li>
-<li>Data generators</li>
+<ul class="task-list">
+<li><label><input type="checkbox" checked=""><a href="#sec-one-shot">One shot learning</a></label></li>
+<li><label><input type="checkbox" checked=""><a href="#sec-triplets">Triplet loss</a></label></li>
+<li><label><input type="checkbox" checked=""><a href="#sec-cosine-similarity">Cosine similarity</a></label></li>
+<li><label><input type="checkbox" checked=""><a href="#sec-siamese-network">Siamese networks</a></label></li>
+<li><label><input type="checkbox" checked=""><a href="#sec-data-generators">Data generators</a></label></li>
 </ul>
 </div>
 </div>
-<section id="siamese-network" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="siamese-network">Siamese Network</h2>
+<section id="sec-siamese-network" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-siamese-network">Siamese Network</h2>
 <p>It is best to describe what a Siamese network is through an example.</p>
 
-<div class="no-row-height column-margin column-container"><div id="fig-01" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div class="no-row-height column-margin column-container"><div id="fig-01" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide01.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;3: "><img src="img/slide01.png" class="img-fluid figure-img"></a>
+<a href="img/slide01.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;1: Comparisons questions pairs"><img src="img/slide01.png" class="img-fluid figure-img"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Comparisons questions pairs
 </figcaption>
 </figure>
 </div></div><p>Note that in the first example above, the two sentences mean the same thing but have completely different words. While in the second case, the two sentences mean completely different things but they have very similar words.</p>
-<p>Classification: learns what makes an input what it is.</p>
-<p>Siamese Networks: learns what makes two inputs the same</p>
+<ul>
+<li><strong>Classification</strong>: learns what makes an input what it is.</li>
+<li><strong>Siamese Networks</strong>: learns what makes two inputs the same</li>
+</ul>
 <p>Here are a few applications of siamese networks:</p>
 
-<div class="no-row-height column-margin column-container"><div id="fig-02" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div class="no-row-height column-margin column-container"><div id="fig-02" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide02.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Figure&nbsp;4: "><img src="img/slide02.png" class="img-fluid figure-img"></a>
+<a href="img/slide02.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Figure&nbsp;2: NLP applications of Siamese Networks include, comparing two signatures, comparing questions or search engine queries,"><img src="img/slide02.png" class="img-fluid figure-img"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: NLP applications of Siamese Networks include, comparing two signatures, comparing questions or search engine queries,
 </figcaption>
 </figure>
-</div></div></section>
-<section id="architecture" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="architecture">Architecture</h2>
+</div></div><div class="callout callout-style-simple callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Video Transcript
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<blockquote class="blockquote">
+<p>In this video you’re going to learn about a special type of neural network known as the Siamese network. It is a neural network made up of two identical neural networks which are merged at the end. This type of architecture has many applications and NLP. And in this video, you’ll see the different examples where you can use it.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Consider the following question. How old are you? And what is your age? You can see that these questions don’t have any words in common. However, they both mean the same thing. On the other hand, if you were to look at the following questions, where are you from? And where are you going? You can see that the first three words are the same. However, the last word completely changes the meaning of each question. This example shows that comparing meaning is not as simple as just comparing words. Coming up, you’re going to see how you can use Siamese networks to compare the meaning of word sequences, and identify question duplicates, which is a very important NLP application at the core of platforms like Stack Overflow or Quora.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Before these platforms allow you to post a new question, they want to be sure that your question hasn’t already been posted by somebody else. Now take this sentence, I’m happy because I’m learning, and consider it in the context of sentiment analysis and binary classification. Now in training a classification algorithm, you discover what features give the statement a positive or negative sentiment.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>With Siamese networks you’ll be aiming to identify what’s makes two input similar, and what makes them different. Take a look at these two questions. What is your age? And how old are you? When you build a Siamese model, you’re trying to identify the difference or the similarity between these two questions. You do this by computing a single similarity score, representing the relationship between the two questions. And based on that score when compared against a threshold, you can predict whether these two are the same or different.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Siamese networks have many applications in NLP, you can use them to authenticate handwritten checks by determining whether two signatures are the same or not. You can use them to identify question duplicates on platforms like Quora or Stack Overflow.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>And you can use them in search engine queries to predict whether a new query is similar to the one that was already executed. These are just a few examples, but there are many more applications of Siamese networks in NLP.</p>
+</blockquote>
+<p>You can use Siamese networks in many types of NLP applications. In the next video, I’ll walk you through the architecture that is used in this type of model. And I’ll show you how you can use it in a text. I’ll see you in the next video.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-architecture" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-architecture">Architecture</h2>
 <p>The model architecture of a typical siamese network could look as follows:</p>
 
-<div class="no-row-height column-margin column-container"><div id="fig-03" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div class="no-row-height column-margin column-container"><div id="fig-03" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide03.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Figure&nbsp;5: "><img src="img/slide03.png" class="img-fluid figure-img"></a>
+<a href="img/slide03.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Figure&nbsp;3: The architecture of a typical siamese network has two sub-networks consisting of embedding LSTMs and a cosine similarity function that evaluates their outputs."><img src="img/slide03.png" class="img-fluid figure-img"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: The architecture of a typical siamese network has two sub-networks consisting of embedding LSTMs and a cosine similarity function that evaluates their outputs.
 </figcaption>
 </figure>
 </div></div><p>These two sub-networks are sister-networks which come together to produce a similarity score. Not all Siamese networks will be designed to contain LSTMs. One thing to remember is that sub-networks share identical parameters. This means that we only need to train one set of weights and not two.</p>
 <p>The output of each sub-network is a vector. We can then run the output through a cosine similarity function to get the similarity score. In the next video, we will talk about the cost function for such a network.</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Video Transcript
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Siamese networks have a special type of architecture. <mark>They have <strong>two identical sub-networks</strong> which are merged together through a <strong>dense layer</strong> to produce a final output or its <strong>similarity score</strong>.</mark> I like to think of these two sub-networks as sister-networks which come together to produce a similarity score.</p>
+<p>In <a href="#fig-03" class="quarto-xref">Figure&nbsp;3</a> we can see the model architecture for a Siamese network. Note that the architecture presented here is just an example. Not all Siamese networks will be designed to contain LSTMs.</p>
+<p>On the left, you have two inputs which represents Question 1 and Question 2. You will take each question, transform it into an embedding and then you’ll run the embedding through an LSTM layer to model the questions meaning. Each LSTM outputs a vector.</p>
+<p>In this architecture, you have two identical sub-networks.<br>
+One for Question 1 and the second for Question 2. <mark>An important note here is that the sub-networks share identical parameters. That is the learned parameters of each sub-network are exactly the same. So you actually only need to train one sets of weights, not two.</mark></p>
+<p>Then given the two outputs vectors, one corresponding to each question, find their cosine similarity.</p>
+<section id="what-is-cosine-similarity" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="what-is-cosine-similarity">What is cosine similarity?</h4>
+<p>Recall that the cosine similarity is a measure of similarity between two vectors. When two vectors point generally in the same direction, the cosine of the angle between them is near one. For vectors that point in opposite directions, the cosine of the angle between them is minus one. If that sounds unfamiliar don’t worry.</p>
+<p>Right now you just need to know that the cosine similarity tells you how similar two vectors are. In this case, it tells you how similar the two questions are.</p>
+<p>The cosine similarity gives the Siamese networks prediction, denoted here by the variable y-hat, which will be a value between minus one and positive one.</p>
 </section>
-<section id="lab-creating-a-siamese-model-using-trax" class="level2">
-<h2 class="anchored" data-anchor-id="lab-creating-a-siamese-model-using-trax">Lab: Creating a Siamese Model using Trax</h2>
+<section id="how-do-we-interpret-y-hat-and-tau" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="how-do-we-interpret-y-hat-and-tau">How do we interpret y-hat and tau?</h4>
+<p>If y-hat is less than or equal to some threshold, tau, then you will say that the input questions are different. If y-hat is greater than tau, then you will say that they are the same.</p>
+<p><mark>The threshold tau is a parameter that you will choose based on how often you want to interpret cosine similarity to indicate that two questions are similar or not.</mark> A higher threshold means that only very similar sentences will be considered similar.</p>
+</section>
+<section id="how-would-we-walking-through-the-architecture" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="how-would-we-walking-through-the-architecture">How would we walking through the architecture</h4>
+<p>If you think of this process as a series of steps you take to get from your inputs to your outputs, it would go something like this; you start with a model architecture for a Siamese network made up of two identical sub-networks. In this case, your inputs are questions that you feed into each sub-network and each question gets transformed into an embedding and pass through an LSTM layer. Then you take the outputs of each of the sub-networks and compare them using cosine similarity to get your y-hat.</p>
+<p>After seeing the model architecture, I’ll start talking about different cost functions you can use for this type of architecture.</p>
+</section>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-lab-siamese" class="level2">
+<h2 class="anchored" data-anchor-id="sec-lab-siamese">Lab: Creating a Siamese Model using Trax</h2>
 <p><a href="../../posts/c3w4/lab01.html">Creating a Siamese Model using Trax</a></p>
 </section>
-<section id="cost-function" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="cost-function">Cost Function</h2>
+<section id="sec-cost-function" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-cost-function">Cost Function</h2>
 <p>Let us take a close look at the following slide:</p>
 
-<div class="no-row-height column-margin column-container"><div id="fig-04" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div class="no-row-height column-margin column-container"><div id="fig-04" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide04.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Figure&nbsp;6: "><img src="img/slide04.png" class="img-fluid figure-img"></a>
+<a href="img/slide04.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Figure&nbsp;4: Understanding the triplet loss cost function"><img src="img/slide04.png" class="img-fluid figure-img"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Understanding the triplet loss cost function
 </figcaption>
 </figure>
 </div></div><p>Note that when trying to compute the cost for a siamese network we use the triplet loss. The triplet loss usually consists of an Anchor and a Positive example. Note that the anchor and the positive example have a cosine similarity score that is very close to one. On the other hand, the anchor and the negative example have a cosine similarity score close to -1. Now we are ideally trying to optimize the following equation: <span class="math inline">−cos(A,P)+cos(A,N)≤0</span></p>
 <p>Note that if <span class="math inline">cos(A,P)=1</span> is 1 and <span class="math inline">cos(A,N)=−1</span>, then the equation is definitely less than 0. However, as <span class="math inline">cos(A,P)</span> deviates from 1 and <span class="math inline">cos(A,N)</span> deviates from -1, then we can end up getting a cost that is <span class="math inline">&gt; 0</span>. Here is a visualization that would help we understand what is going on. Feel free to play with different numbers.</p>
 
-<div class="no-row-height column-margin column-container"><div id="fig-05" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div class="no-row-height column-margin column-container"><div id="fig-05" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide05.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Figure&nbsp;7: "><img src="img/slide05.png" class="img-fluid figure-img"></a>
+<a href="img/slide05.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Figure&nbsp;5: A worked example of triplet loss"><img src="img/slide05.png" class="img-fluid figure-img"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: A worked example of triplet loss
 </figcaption>
 </figure>
-</div></div></section>
-<section id="triplets" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="triplets">Triplets</h2>
+</div><div id="fig-loss-function" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-loss-function-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/slide05.1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Figure&nbsp;6: Chart for the loss function"><img src="img/slide05.1.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-loss-function-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: Chart for the loss function
+</figcaption>
+</figure>
+</div></div>
+<div class="callout callout-style-simple callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Video Transcript
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<blockquote class="blockquote">
+<p>I’ll now show you a simple loss function you can use in your Siamese network.</p>
+<p>Just as a recap, this is the overall structure of the Siamese network, which enables you to predict whether two questions are similar or different, or the outputs of the network, you are able to calculate y-hat, which is the similarity between the two questions.</p>
+<p>Now, I’ll show you a loss function for a Siamese network.</p>
+</blockquote>
+<section id="what-are-positive-and-negative-questions" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="what-are-positive-and-negative-questions">What are positive and negative questions?</h4>
+<blockquote class="blockquote">
+<p>I’ll starts by looking at this first question, which is, “How old are you?” I’ll call this first question the anchor, which I’m going to use to compare against two other questions relative to the anchor.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Other questions that have the same meaning as the anchor are called <strong>positive questions</strong>. Whereas questions that do not have the same meaning as the anchor are called <strong>negative questions</strong>.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Note that the meaning of positive and negative in the context of finding question duplicates is referring to whether a question is similar to the anchor or not, and <mark>not whether it has a positive or negative sentiment</mark>.</p>
+</blockquote>
+</section>
+<section id="what-is-a-positive-question" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="what-is-a-positive-question">What is a positive question?</h4>
+<blockquote class="blockquote">
+<p>The question, “What is your age?” is considered a positive question relative to the anchor, because “How old are you?” and “What is your age?” mean the same thing.</p>
+</blockquote>
+</section>
+<section id="what-is-a-negative-question" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="what-is-a-negative-question">What is a negative question?</h4>
+<blockquote class="blockquote">
+<p>This other question, “Where are you from?” is considered a negative question because it does not have the same meaning as the anchor question.</p>
+</blockquote>
+</section>
+<section id="what-is-cosine-similarity-1" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="what-is-cosine-similarity-1">What is cosine similarity?</h4>
+<blockquote class="blockquote">
+<p>Here’s a definition of cosine similarity between two vectors. <a href="#fig-04" class="quarto-xref">Figure&nbsp;4</a> That will be the similarity of function s. To train your model, you’ll be comparing the vectors that are outputs by each sub-network using similarity.</p>
+<p>So for this example, you’re going to take the similarity between A and P, where A refers to the anchor question, and P refers to the positive question.</p>
+<p><mark>Similarity is bounded between negative one and one.</mark> So for vectors that are completely different, the similarity is near negative one, and for vectors that are nearly identical, there similarity is close to positive one.</p>
+<p>For a well-trained model, you would like to see a similarity close to one when comparing the anchor and the positive example. Similarly, when comparing the anchor to the negative example, a successful model should yield a similarity close to negative one.</p>
+</blockquote>
+</section>
+<section id="how-do-you-compute-the-loss" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="how-do-you-compute-the-loss">How do you compute the loss?</h4>
+<blockquote class="blockquote">
+<p>To begin building a loss function, you start with the similarity of A and N and subtract the similarity of A and P to calculate the difference.</p>
+<p>What you have here <a href="#fig-loss-function" class="quarto-xref">Figure&nbsp;6</a> is a loss function that allows you to determine whether your model is roughly doing what you hope it will do.</p>
+<p>Namely, finding that the anchor and the positive example are similar, and that the anchor and the negative example are different.</p>
+<p>As the difference gets bigger or smaller along the x-axis, the loss gets bigger or smaller along the y-axis.</p>
+<p>When minimizing the loss in training, you are in effect minimizing this difference. You’ve started seeing a difference approach which will allow you to build a different cost function.</p>
+</blockquote>
+</section>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-triplets" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-triplets">Triplets</h2>
 <p>We will now build on top of our previous cost function. To get the full cost function we will add a margin.</p>
 
-<div class="no-row-height column-margin column-container"><div id="fig-06" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div class="no-row-height column-margin column-container"><div id="fig-06" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide06.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Figure&nbsp;8: "><img src="img/slide06.png" class="img-fluid figure-img"></a>
+<a href="img/slide06.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Figure&nbsp;7: Adding a margin to the triplet loss"><img src="img/slide06.png" class="img-fluid figure-img"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7: Adding a margin to the triplet loss
 </figcaption>
 </figure>
-</div></div><p>Note that we added an <span class="math inline">α</span> in the equation above. This allows we to have a margin of “safety”. When computing the full cost, we take the max of that the outcome of <span class="math inline">−cos(A,P)+cos(A,N)+α</span> and 0. Note, we do not want to take a negative number as a cost.</p>
+</div></div><p>Note that we added an <span class="math inline">α</span> in the equation above. This allows we to have a margin of “safety”.<br>
+When computing the full cost, we take the <code>max</code> of that the outcome of <span class="math inline">−cos(A,P)+cos(A,N)+α</span> and 0. Note, we do not want to take a negative number as a cost.</p>
 <p>Here is a quick summary:</p>
 <ul>
-<li><p><span class="math inline">𝜶</span>: controls how far cos(A,P) is from cos(A,N)</p></li>
-<li><p>Easy negative triplet: cos(A,N) &lt; cos(A,P)</p></li>
-<li><p>Semi-hard negative triplet: cos(A,N) &lt; cos(A,P) &lt; cos(A,N) + 𝜶</p></li>
-<li><p>Hard negative triplet: cos(A,P) &lt; cos(A,N)</p></li>
+<li><p><span class="math inline">𝜶</span>: controls how far <span class="math inline">cos(A,P)</span> is from <span class="math inline">cos(A,N)</span></p></li>
+<li><p>Easy negative triplet: <span class="math inline">cos(A,N) &lt; cos(A,P)</span></p></li>
+<li><p>Semi-hard negative triplet: $cos(A,N) &lt; cos(A,P) &lt; cos(A,N) + 𝜶 $</p></li>
+<li><p>Hard negative triplet: <span class="math inline">cos(A,P) &lt; cos(A,N)</span></p></li>
 </ul>
+<div class="callout callout-style-simple callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Video Transcript
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<blockquote class="blockquote">
+<p>You will now explore triplets. You’ll see how you can build pairs of inputs. Rather than just classifying what’s an input is, you’re going to build something that will allow you to identify the difference between two inputs. Let’s see how this works.</p>
+<p>Here are three questions where the first one, <code>how old are you</code>, is the <strong>anchor</strong>. The second one is <strong>a positive example</strong>, <code>what is your age?</code> The third one, <code>where are you from?</code> is <strong>a negative example</strong>.</p>
+<p>Having the three components here is what gives rise to the name triplets, which is to say, an anchor being used in conjunction with a positive and negative pairing. Accordingly, triplet loss is the name for a loss function that uses three components. <mark>The intuition behind this simple function is to minimize the difference between the similarity of A and N, and the similarity of A and P.</mark> You already know that, as the difference gets bigger or smaller along the x axis, the loss gets bigger or smaller along the y axis.</p>
+</blockquote>
+<section id="do-we-want-the-loss-to-be-less-than-zero" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="do-we-want-the-loss-to-be-less-than-zero">Do we want the loss to be less than zero?</h4>
+<blockquote class="blockquote">
+<p>But notice, when the difference is less than zero, do you also want the loss to be less than zero? Let’s think about this for a moment.</p>
+<p>If you gave the model a positive loss value, the model uses this to update its weight to improve.</p>
+<p>If you gave the model a negative loss value, this is like telling the model, “Good job. Please update your weight to the worst next time.”</p>
+<p>So you don’t actually want to give the model a loss value that’s less than zero. In other words, when the model is doing a good job, you don’t want it to undo a its update. To make sure that the model doesn’t update itself to do worse, you can modify the loss so that whenever the diff is less than zero, the loss should just be zero. When the loss is zero, we’re effectively not asking the model to update it’s weights, because it is performing as expected for that training example. The loss-function now cannot take on negative values. If the difference is less than or equal to 0, the loss is 0. If the difference is greater than 0, then the loss is equal to the difference.</p>
+<p>Notice the non-linearity happens at the origin of this line chart.</p>
+<p>But you might also wonder what’s happens when the model is correct but only by a tiny bits? The model is still correct if the difference is a tiny number, that is less than zero.</p>
+<p>What if you want the model to still learn from this example, and ask it to predict a wider difference for this training example?</p>
+<p>You can think of shifting this loss function a little to the left, by a margin that we’ll refer to as Alpha. Let’s say we chose Alpha to be 0.2, if the difference between similarities is very small, like negative 0.1, then if you add it to the Alpha of 0.2, the result is still greater than 0. The sum of the diff plus Alpha can be considered a positive loss that tells the model to learn from this example.</p>
+<p>You can see this visually in the line chart. <!-- figure --> The loss function is shifted to the left by the amount Alpha. The diff is along the horizontal axis. When the difference is less than zero but small in magnitude, the loss is greater than zero. So if the difference is smaller in magnitude than Alpha, then there is still a loss. <mark>This loss tells the model that it can still improve and learn from this training example.</mark> Triplet loss, as the difference with a margin Alpha, is what you will implement in the assignments which you will code like this, which is the triplet loss function for A, P and N. A small detail worth noting.</p>
+<p>In these explanations, I’ve been using similarity because that’s what will be used in the programming assignments, so similarity of <span class="math inline">v_1</span>, <span class="math inline">v_2</span>.</p>
+<p>But if you were to read the literature, you might find d of <span class="math inline">v_1</span>, <span class="math inline">v_2</span> used also, where this <span class="math inline">d</span> could be any function that calculates the distance between two vectors. A distance metric is the mirror image of a similarity metric, and a similarity metric can be derived from a distance metric.</p>
+<p>One example of a distance metric is <strong>Euclidean distance</strong>.</p>
+</blockquote>
 </section>
-<section id="computing-the-cost-i" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="computing-the-cost-i">Computing the Cost I</h2>
+<section id="how-do-we-pick-good-triplets" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="how-do-we-pick-good-triplets">How do we pick good triplets?</h4>
+<blockquote class="blockquote">
+<p>Selecting triplets A, P, and N for training involves two steps; first, select a pair of questions that are known to be duplicates to serve as the anchor and positive, and you’ll do this from the training set; second, select a question that is known to be difference in meaning from the anchor, to form the anchor and the negative pair.</p>
+</blockquote>
+</section>
+<section id="why-not-use-random-triplets" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="why-not-use-random-triplets">Why not use random triplets?</h4>
+<blockquote class="blockquote">
+<p>If you were to select triplets at random, you’d be likely to select non-duplicative pairs A and N, where the loss is 0.<br>
+The loss is zero whenever the model correctly predicts that A and P are more similar relative to A and N.</p>
+<p>When the loss is 0, the network has nothing more to learn from the triplets example. So we can train more efficiently if we choose triplets that show the model when it’s incorrect, so that’s just going to adjust it’s weight and improve.</p>
+</blockquote>
+</section>
+<section id="what-are-hard-triplets" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="what-are-hard-triplets">What are hard triplets?</h4>
+<blockquote class="blockquote">
+<p>Instead of selecting random triplets, you’ll specifically select so-called <strong>hard triplets</strong>. That is, triplets that are more difficult to train on. <mark>Hard triplets are those where the similarity between anchor and negative is very close to, but still smaller than the similarity between anchor and positive.</mark> When the model encounters a hard triplet, the learning algorithm needs to adjust its weight, so that’s it’s going to yield similarities that line up with the real-world labels. So by selecting hard triplets, focusing the training on doing better, on the difficult cases, that it’s predicting incorrectly.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>I spoke about easy and hard triplets. I also spoke about a margin. In the next video, you’ll see how all these concepts come together to help us create a cost function.</p>
+</blockquote>
+</section>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-computing-cost-1" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-computing-cost-1">Computing the Cost I</h2>
 <p>To compute the cost, we will prepare the batches as follows:</p>
 
-<div class="no-row-height column-margin column-container"><div id="fig-07" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div class="no-row-height column-margin column-container"><div id="fig-07" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-07-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide07.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Figure&nbsp;9: "><img src="img/slide07.png" class="img-fluid figure-img"></a>
+<a href="img/slide07.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="Figure&nbsp;8: An example batch of question pairs"><img src="img/slide07.png" class="img-fluid figure-img"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-07-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-07-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8: An example batch of question pairs
 </figcaption>
 </figure>
-</div></div><p>Note that each example, has a similar example to its right, but no other example means the same thing. We will now introduce hard negative mining.</p>
+</div></div><p>Note that each example, has a similar example to its right, but no other example means the same thing. We will now introduce <strong>hard negative mining</strong>.</p>
 
-<div class="no-row-height column-margin column-container"><div id="fig-08" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div class="no-row-height column-margin column-container"><div id="fig-08" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-08-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide08.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="Figure&nbsp;10: "><img src="img/slide08.png" class="img-fluid figure-img"></a>
+<a href="img/slide08.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="Figure&nbsp;9: Hard negative mining"><img src="img/slide08.png" class="img-fluid figure-img"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-08-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;10
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-08-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9: Hard negative mining
 </figcaption>
 </figure>
 </div></div><p>Each horizontal vector corresponds to the encoding of the corresponding question. Now when we multiply the two matrices and compute the cosine, we get the following:</p>
 
-<div class="no-row-height column-margin column-container"><div id="fig-09" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div class="no-row-height column-margin column-container"><div id="fig-09" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-09-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide09.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="Figure&nbsp;11: "><img src="img/slide09.png" class="img-fluid figure-img"></a>
+<a href="img/slide09.png" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="Figure&nbsp;10: Understanding Cost matrix for a batch of question pairs"><img src="img/slide09.png" class="img-fluid figure-img"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-09-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;11
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-09-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10: Understanding Cost matrix for a batch of question pairs
 </figcaption>
 </figure>
 </div></div><p>The diagonal line corresponds to scores of similar sentences, (normally they should be positive). The off-diagonals correspond to cosine scores between the anchor and the negative examples.</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Video Transcript
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Welcome back. As promised, you’ll see how everything fits together now. You will start by building a cost function, and then you will use gradient descent to optimize this cost function. Let’s take a look at how this works. To compute the cost, begin by preparing the data in batches. Here you have the questions, what is your age and how old are you? You can see these are duplicates, because they mean the same thing. Can you see me and are you seeing me? Are also duplicates. Where are thou and where are you? Are duplicates too. As are, when is the game and what time is the game? So with four pairs, you have batch size of four. Here we will use the letter b to stand for batch size. Something that’s very important to note is that each question has its corresponding duplicate to the left or right of it. That is, in each row all of the sentences in the columns are duplicates. But you will notice that each question has no duplicates above or below it. That is, for any column, none of the rows in those column contain a sentence that is a duplicate of another sentence in those column. So this is how you prepare the batches. Now, let me show you how you will want to organize the data in this way. Given the first batch, you’re going to run it through this model to get a vector v_1 with dimensions one row by five columns. The number of columns shown in this matrix is equal to the dimension of your embedding layer, which in this case is five. I’ll refer to this dimension of the embedding layer as d model for each question in the batch. I haven’t talked about the dimension of the embedding layer yet, but don’t worry, it will become more clear once you’re working with the code. The important takeaway is that the dimension of the embedding, the model, is a parameter that determines the dimensions of the weights through each layer in the model, and thus determines the size of the outputs vector. The model is running a batch size that is greater than one. So the v_1 outputs is actually a matrix of stacked vectors like this. In this visual example, there are four rows in this matrix to indicate that there are four observations in this batch. The batch size is four. Our subscript to observations in the batch as v_1_1, v_1_2, and so on corresponding to the vector outputs for each question in the batch. You’ll do the same thing for the batch of v_2 vectors. Each question in the batch 1 is a duplicate of its corresponding question in batch 2. But none of the questions in batch 1 are duplicates of each other. The same applies to batch 2. Here, for example, v_1_1 is a duplicate of v_2_1, as are the rest of the respective row pairs. But v_1_1 is not a duplicates of any other rows in v_1. The last step is to combine the two branches of the Siamese network by calculating the similarity between all vector pair combinations of v_1 with v_2. For this example with a batch size of four, you might get a matrix of similarities that looks like this. The diagonal is a key feature here. These values are the similarities for all your positive examples, the question duplicates. Notice that all the values are generally greater than the numbers in the off diagonals. So the model is performing as you would expect for duplicates questions, because you would expect that the question duplicates to have higher similarity compared to the non-duplicates. In the upper right and lower left, you have the similarities for all the negative examples. These are the results for the non-duplicates pairs. Notice that most of these numbers are lower than the similarities that’s are along the diagonal. Also notice that you can have negative example question pairs that still have a similarity greater than zero. The range of similarity ranges from negative 1 to positive 1, but there isn’t any special requirements that a similarity greater than zero indicates duplicates or that’s a similarity less than zero indicates non-duplicates. What’s matters for a properly functioning model is that it generally finds that duplicates have a higher similarity relative to non-duplicates. Creating non-duplicates pairs like this removes the need for additional non-duplicate examples and the input data, which turns out to be a big deal. Instead of needing to sets up specific batches with negative examples, your model can learn from them in the existing question duplicates batches. Now, you can just stop here and use these similarities with the triplet loss function you already know shown here. Then the overall costs for your Siamese network will be the sum of these individual losses over the training sets. Here you can see that superscripts i refers to a specific training example and there are m observations, but there are more techniques available that’s can vastly improve upon model performance. I’ll show you those next.</p>
+</div>
+</div>
+</div>
 </section>
-<section id="computing-the-cost-ii" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="computing-the-cost-ii">Computing the Cost II</h2>
+<section id="sec-computing-cost-2" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-computing-cost-2">Computing the Cost II</h2>
 <p>Now that we have the matrix with cosine similarity scores, which is the product of two matrices, we go ahead and compute the cost.</p>
 
-<div class="no-row-height column-margin column-container"><div id="fig-10" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div class="no-row-height column-margin column-container"><div id="fig-10" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide10.png" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="Figure&nbsp;12: "><img src="img/slide10.png" class="img-fluid figure-img"></a>
+<a href="img/slide10.png" class="lightbox" data-gallery="quarto-lightbox-gallery-13" title="Figure&nbsp;11: "><img src="img/slide10.png" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;12
+Figure&nbsp;11
 </figcaption>
 </figure>
 </div></div><p>We now introduce two concepts, the <strong>mean_neg</strong>, which is the mean negative of all the other off diagonals in the row, and the <strong>closest_neg</strong>, which corresponds to the highest number in the off diagonals.</p>
-<p><span class="math inline">Cost = max(−cos(A,P)+cos(A,N)+α,0)</span></p>
+<p><span class="math display">
+Cost = \max(−\cos(A,P)+\cos(A,N)+α,0)
+</span></p>
 <p>So we will have two costs now:</p>
-<p><span class="math inline">Cost1 = max(−cos(A,P)+mean_n eg+α,0)</span></p>
-<p><span class="math inline">Cost2 = max(−cos(A,P)+closest_n eg+α,0)</span> ⁡ The full cost is defined as: Cost1 + Cost2.</p>
+<p><span class="math display">
+Cost_1 = \max(−\cos(A,P)+ mean_n eg + α,0)
+</span></p>
+<p><span class="math display">
+Cost_2 = \max(−\cos(A,P)+ closest_n eg + α,0)
+</span> ⁡</p>
+<p>The full cost is defined as: Cost1 + Cost2.</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Video Transcript
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<blockquote class="blockquote">
+<p>Previously, you set up the training data into two specific batches, each batch containing no duplicate questions within it. You ran those batches through one sub network each. And that’s produced a vector of supports per question. Which has dimension 1 by d_model, where d_model is the embedding dimension. And is equal to the number of columns in the matrix, which is five, at least in this example. The <span class="math inline">v_1</span> vectors for a single batch are stuck together. And in this case, the batch size is the number of rows shown in this matrix, which is four. You can see a similar batch of <span class="math inline">v_2</span> vectors as well. The last step was to combine the two branches of the Siamese network. By calculating the similarity between all vector pair combinations of the <span class="math inline">v_1</span> vectors and <span class="math inline">v_2</span> vectors. For this example with a batch size of four, that last step would produce a matrix of similarities that looks something like this.</p>
+</blockquote>
+<section id="what-are-the-attributes-of-this-matrix" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="what-are-the-attributes-of-this-matrix">What are the attributes of this matrix?</h4>
+<blockquote class="blockquote">
+<p>This matrix has some important attributes. The similarities along the green diagonal contain similarities for the duplicate questions. For a well trained model, these values should be greater than similarities for the off-diagonals. Reflecting the fact that the network produces similar vector outputs for duplicate questions. The orange values in the upper right and lower left are similarities for the non duplicate questions.</p>
+<p>Now this is where things get really interesting. You can use this off diagonal information to make some modifications to the loss function and really improve your models performance. To do so, I’m going to make use of two concepts.</p>
+</blockquote>
 </section>
-<section id="lab-lecture-notebook-modified-triplet-loss" class="level2">
-<h2 class="anchored" data-anchor-id="lab-lecture-notebook-modified-triplet-loss">Lab: Lecture Notebook: Modified Triplet Loss</h2>
+<section id="what-is-the-mean-negative" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="what-is-the-mean-negative">What is the mean negative?</h4>
+<blockquote class="blockquote">
+<p>The first concept is the mean negative, which is just the mean or average of all the off-diagonal values in each row. Notice that off-diagonal elements can still be positive numbers. So when I say mean negative, I’m referring to the mean of the similarity for negative examples, not the mean of negative numbers in a row.</p>
+<p>For example, the mean negative of the first row is just the mean of all the off-diagonal values in that row.</p>
+<p>In this case, -0.8, 0.3 and -0.5, excluding the value 0.9, which is on the diagonal. You can use the mean negative to help speed up training by modifying the loss function, which I’ll show you soon.</p>
+</blockquote>
+</section>
+<section id="what-is-the-closest-negative" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="what-is-the-closest-negative">What is the closest negative?</h4>
+<blockquote class="blockquote">
+<p>The next concept is what’s called the closest negative. As mentioned earlier, because of the way you define the triplet loss function, you’ll need to choose so called hard triplets to train on. What this means is that for training, you want to choose triplets where the cosine similarity of the negative example is close to the similarity of the positive example.</p>
+<p>This forces your model to learn what differentiates these examples and ultimately drive those similarity values further apart through training. To do this, you’ll search each row in your output matrix for the closest negative. Which is to say the off diagonal value which is closest to, but still less than the value on the on diagonal for that row. So in this first row, the value on the diagonal is 0.9. So the closest off-diagonal elements in this case is 0.3. What this means is that this negative example with a similarity of 0.3 has the most to offer your model in terms of learning opportunity.</p>
+</blockquote>
+</section>
+<section id="how-do-we-use-these-new-concepts" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="how-do-we-use-these-new-concepts">How do we use these new concepts ?</h4>
+<blockquote class="blockquote">
+<p>To make use of these new concepts, recall that the triplet loss was defined as the max of the similarity of A and N minus the similarity of A and B plus the margin alpha and 0. Also recall that we refer to the difference between the two similarities with the variable named diff.</p>
+<p>Here, we’re just writing out the definition of diff. So in order to minimize the loss you want this diff plus the margin alpha to be less than or equal to 0. I’ll introduce loss 1 to be the max of the mean negative minus the similarity of A and P plus alpha and 0. The change between the formulas for triplet loss and loss 1 is the replacement of similarity of A and N. With the mean negative, this helps the model converge faster during training by reducing noise. It reduces noise by training on just the average of several observations, rather than training the model on each of these off-diagonal examples.</p>
+<p>So why does taking the average of several observations usually reduce noise? Well, we define noise to be a small value that comes from a distribution that is centered around 0. So in other words, the average of several noise values is usually 0. So if we took the average of several examples, this has the effect of cancelling out the individual noise from those observations. Then loss 2 will be the max of the closest negative minus the similarity of A and B plus alpha and 0.</p>
+<p>The difference between the formulas this time is the replacement of the cosine of A and N. With the closest negative, this helps create a slightly larger penalty by diminishing the effects of the otherwise more negative similarity of A and N that it replaces.</p>
+<p>You can think of the closest negative as finding the negative example that results in the smallest difference between the two cosine similarities. If you had that small difference to alpha, then you’re able to generate the largest loss among all of the other examples in that row.</p>
+<p>By focusing the training on the examples that produce higher loss values, you make the model update its weights more.</p>
+<p>To learn from these more difficult examples, then you can define the full loss as loss 1 + loss 2. And you will use this new full loss as an improved triplet loss in the assignments. The overall costs for your Siamese network will be the sum of these individual losses over the training sets.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>In the next video, you will use this cost function in one shot learning. One shot learning is a very effective technique that can save you a lot of time when comparing the authenticity of checks or of any other type of inputs</p>
+</blockquote>
+</section>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-lab-modified" class="level2">
+<h2 class="anchored" data-anchor-id="sec-lab-modified">Lab: Lecture Notebook: Modified Triplet Loss</h2>
 <p><a href="../../posts/c3w4/lab02.html">Modified Triplet Loss</a></p>
 </section>
-<section id="one-shot-learning" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="one-shot-learning">One Shot Learning</h2>
+<section id="sec-one-shot" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-one-shot">One Shot Learning</h2>
 <p>Imagine we are working in a bank and we need to verify the signature of a check. We can either build a classifier with K possible signatures as an output or we can build a classifier that tells we whether two signatures are the same.</p>
 
-<div class="no-row-height column-margin column-container"><div id="fig-11" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div class="no-row-height column-margin column-container"><div id="fig-11" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide11.png" class="lightbox" data-gallery="quarto-lightbox-gallery-13" title="Figure&nbsp;13: "><img src="img/slide11.png" class="img-fluid figure-img"></a>
+<a href="img/slide11.png" class="lightbox" data-gallery="quarto-lightbox-gallery-14" title="Figure&nbsp;12: Classification vs one shot learning"><img src="img/slide11.png" class="img-fluid figure-img"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;13
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;12: Classification vs one shot learning
 </figcaption>
 </figure>
 </div></div><p>Hence, we resort to one shot learning. Instead of retraining your model for every signature, we can just learn a similarity score as follows:</p>
 
-<div class="no-row-height column-margin column-container"><div id="fig-12" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div class="no-row-height column-margin column-container"><div id="fig-12" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide12.png" class="lightbox" data-gallery="quarto-lightbox-gallery-14" title="Figure&nbsp;14: "><img src="img/slide12.png" class="img-fluid figure-img"></a>
+<a href="img/slide12.png" class="lightbox" data-gallery="quarto-lightbox-gallery-15" title="Figure&nbsp;13: "><img src="img/slide12.png" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-12-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;14
+Figure&nbsp;13
 </figcaption>
 </figure>
-</div></div></section>
-<section id="training-testing" class="level2 page-columns page-full">
-<h2 class="anchored" data-anchor-id="training-testing">Training / Testing</h2>
+</div></div><div class="callout callout-style-simple callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Video Transcript
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<blockquote class="blockquote">
+<p>Let’s say that you’re trying to identify whether the author for a certain poem is Lucas or not. You can either take all of Lucas’ poems and put them into datasets, and instead of predicting K classes, you will now predict K plus 1 classes. All the previous poems of other authors plus Lucas’, so that’s why it’s k plus 1. Or you can compare one of Lucas’ poems to another poem, and that is where one-shot learning comes in. In this video, I’ll show you how you can do that. To understand the difference between classification and one-shot learning, first consider identifying or classifying signatures based on one through K possible classes. You might use some classification model trained on the K classes, probably with a softmax function at the end to find the maximum probability. Then at recognition time, classify the input signature to one of those corresponding classes. That’s great if you have a signature list that’s rarely changes. But what if you get a new signature to classify? It would be expensive to retrain the model every time this happens, and besides, unless you have a great many examples of that new signature, model training won’t work very well. In one-shot learning, you need to be able to recognize a signature repeatedly from just one example. You can do this with a learned similarity function. Then you can test a similarity score against some threshold to see if two signatures are the same. So the problem changes to determining which class to instead measuring similarity between two classes. This is very useful, especially in banks, for example. Every time there’s a new signature, you can’t retrain your entire system to classify the signatures into K possible outputs. So instead, you just learn a similarity function that can be used to calculate a similarity score. That can in turn be used to identify whether two signatures are the same. You already did this using cosine similarity as the similarity function. If the result was greater than some threshold Tau, you determine the inputs to be the same. In the case of comparing signatures, if the similarity is less than or equal to Tau, then the signatures are different. In this video, I spoke about one-shot learning and I told you why it is a very effective technique. One-shot learning makes use of Siamese networks. In the next video, I’ll show you how you can train and test your Siamese network.</p>
+</blockquote>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-training-testing" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-training-testing">Training and Testing</h2>
 <p>After preparing the batches of vectors, we can proceed to multiplying the two matrices.</p>
 <p>Here is a quick recap of the first step:</p>
 
-<div class="no-row-height column-margin column-container"><div id="fig-13" class="quarto-float quarto-figure quarto-figure-center anchored">
+<div class="no-row-height column-margin column-container"><div id="fig-13" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide13.png" class="lightbox" data-gallery="quarto-lightbox-gallery-15" title="Figure&nbsp;15: "><img src="img/slide13.png" class="img-fluid figure-img"></a>
+<a href="img/slide13.png" class="lightbox" data-gallery="quarto-lightbox-gallery-16" title="Figure&nbsp;14: Preparing batches of questions"><img src="img/slide13.png" class="img-fluid figure-img"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;15
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-13-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;14: Preparing batches of questions
 </figcaption>
 </figure>
 </div></div><p>The next step is to implement the siamese model as follows:</p>
-<p>Finally when testing:</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-14" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/slide14.png" class="lightbox" data-gallery="quarto-lightbox-gallery-17" title="Figure&nbsp;15: Reviewing the architecture of the siamese networks"><img src="img/slide14.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15: Reviewing the architecture of the siamese networks
+</figcaption>
+</figure>
+</div></div><p>Finally when testing:</p>
 <ol type="1">
 <li>Convert two inputs into an array of numbers</li>
 <li>Feed it into your model</li>
-<li>Compare <span class="math inline">𝒗_1,𝒗_2</span> using cosine similarity</li>
+<li>Compare <span class="math inline">𝒗_1,𝒗_2</span> using <em>cosine similarity</em></li>
 <li>Test against a threshold <span class="math inline">\tau</span></li>
 </ol>
-
-<div class="no-row-height column-margin column-container"><div id="fig-14" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide14.png" class="lightbox" data-gallery="quarto-lightbox-gallery-16" title="Figure&nbsp;16: "><img src="img/slide14.png" class="img-fluid figure-img"></a>
+<div class="callout callout-style-simple callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-14-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;16
-</figcaption>
-</figure>
-</div></div></section>
-<section id="lab-evaluate-a-siamese-model" class="level2">
-<h2 class="anchored" data-anchor-id="lab-evaluate-a-siamese-model">Lab: Evaluate a Siamese Model</h2>
+<div class="callout-title-container flex-fill">
+Video Transcript
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<blockquote class="blockquote">
+<p>In this video, you’re goingto see what the dataset would look like for a Siamese network. I’ll show you how you can train your model and then you can use that model to test your Siamese network. Let’s take a look at how you can do this. You’ll be using the Quora question duplicates datasets for this week’s programming assignment. It looks like this. It consists of a collection of question pairs within its duplicates Boolean for each question. For example, for Question 1 and Question 2, “What is your age?” and “How old are you?” Its duplicate equals “true” because these two questions are duplicates. “Where are you from?” and “Where are you going?” are not duplicates, so it’s false and so on. This dataset gives your model plenty of examples to learn from. First, you will process the dataset so that it looks like this. You will pre-process the data into batches of size b. The corresponding questions from each batch are duplicates. For example, the first question in Batch 1, “What is your age?” is a duplicate of the first question in Batch 2, “How old are you?” The second question in Batch 1 is a duplicate of the second question in Batch 2 and so on.</p>
+<p>Note however, that there are no duplicates within an individual batch. If I call this <span class="math inline">q1_a</span>, this <span class="math inline">q2_a</span>, then <span class="math inline">q1_a</span> and <span class="math inline">q2_a</span> are duplicates. If this was <span class="math inline">q1_b</span> and this was <span class="math inline">q2_b</span>, then <span class="math inline">q1_b</span> and <span class="math inline">q2_b</span> are duplicates. However, <span class="math inline">q1_a</span> and <span class="math inline">q1_b</span> are not duplicates. Similarly, <span class="math inline">q2_a</span> and <span class="math inline">q2_b</span> are not duplicates. I’ll show you how to prepare the batches in such a way that no question within the same batch is duplicated. Finally, you’ll use these inputs to get outputs vectors for each batch. Then, you can calculate the cosine similarity between each pair of output vectors. This is the Siamese model that you’ll be implementing in the assignment. You’ll create a subnetwork, which is then duplicated and drawn in parallel. In each subnetwork, you got the embedding, run it through the LSTM, take your vector output, and then use them to find the cosine similarity.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>An important note here, is that the learned parameters of the subnetworks are exactly the same between the two subnetworks. So you are actually only training one sets of weights, not two. When testing the model, you will perform one-shot learning. The goal is to find a similarity score between two inputs questions. First, convert each input into an array of numbers. Feed these into your model. Compare the subnetwork outputs <span class="math inline">v_1</span> and <span class="math inline">v_2</span> using cosine similarity for a similarity score. Then, test the score against some threshold Tau, and if the cosine similarity is greater than Tau, then the questions are classified as duplicates.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Note that both $tau$ and the margin <span class="math inline">\alpha</span> from the last function are <strong>tunable hyperparameters</strong>.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Congratulations, you now know how to train your Siamese network and you know how to test it. In this week’s programming exercise, you’ll be using a Siamese network to identify whether a question is a duplicate or not. Specifically, you’ll be using the Quora question duplicate data sets, and using that, you’ll be able to get a very good accuracy.</p>
+</blockquote>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-lab-evaluate" class="level2">
+<h2 class="anchored" data-anchor-id="sec-lab-evaluate">Lab: Evaluate a Siamese Model</h2>
 <p><a href="../../posts/c3w4/lab03.html">Evaluate a Siamese Model</a></p>
 </section>
-<section id="acknowledgments" class="level2">
-<h2 class="anchored" data-anchor-id="acknowledgments">Acknowledgments</h2>
+<section id="sec-reflections" class="level2">
+<h2 class="anchored" data-anchor-id="sec-reflections">Reflections</h2>
+<ul>
+<li><p>Could we improve the model by Can we give each LSTM it own loss function?</p></li>
+<li><p>What are some typical use cases for using Siamese networks?</p>
+<ul>
+<li><strong>Face recognition</strong>. The faces are very different from each other but we don’t want to retrain the model for every new face - we typically want to check if a face is the same as one of the faces on file.</li>
+<li><strong>Signature verification</strong> is a good example of a use case for Siamese networks. We want to check if a signatures we get is sufficiently similar to the few samples we have on file.</li>
+<li><strong>One shot learning</strong> is another area where Siamese networks could be useful.</li>
+</ul></li>
+<li><p>In which NLP tasks are Siamese networks utilized?</p>
+<ul>
+<li><strong>Search engine queries</strong> are often challenging since they are very brief compared to the documents they are searching for, and so they tend to miss the best variation for some query. Also the distribution has many similar queries and a long tail of unique queries.</li>
+<li><strong>Question-Answering</strong> sites like Stack overflow or Quora is another place where Siamese networks could be useful. The crowd sourcing works better if the questions are not repeated so that all the answers are in one place.</li>
+<li><strong>Paraphrase detection</strong> is another area where Siamese networks could be useful. The paraphrase could be a completely different sentence but the meaning remains the same.</li>
+<li><strong>Spam detection</strong> is another area where Siamese networks could be useful. The spammer could change the words in the spam message but the meaning remains the same.</li>
+</ul></li>
+<li><p>How can we improve the model by using a different similarity function?</p></li>
+<li><p>Are there any benefits to use Location sensitive hashing with the cosine similarity function ?</p></li>
+</ul>
+</section>
+<section id="sec-acknowledgments" class="level2">
+<h2 class="anchored" data-anchor-id="sec-acknowledgments">Acknowledgments</h2>
 <ul>
 <li><span class="citation" data-cites="Chadha2020DistilledNotesCourseraDLSpec">(<a href="#ref-Chadha2020DistilledNotesCourseraDLSpec" role="doc-biblioref">Chadha 2020</a>)</span> <a href="https://aman.ai/coursera-nlp/logistic-regression/">Aman Chadha’s Notes</a></li>
 <li><a href="https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization/tree/master/1%20-%20Natural%20Language%20Processing%20with%20Classification%20and%20Vector%20Spaces#testing-logistic-regression">Ibrahim Jelliti’s Notes</a></li>
