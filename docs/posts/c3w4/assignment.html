@@ -247,7 +247,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">Thursday, February 6, 2025</p>
+        <p class="date">Friday, February 7, 2025</p>
       </div>
     </div>
     
@@ -769,19 +769,19 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../posts/c4w1/lab01.qmd" class="sidebar-item-text sidebar-link">
+  <a href="../../posts/c4w1/lab01.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">L1 - Stack Semantics</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../posts/c4w1/lab02.qmd" class="sidebar-item-text sidebar-link">
+  <a href="../../posts/c4w1/lab02.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">L2 - BLEU Score</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../posts/c4w1/assignment.qmd" class="sidebar-item-text sidebar-link">
+  <a href="../../posts/c4w1/assignment.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">A4 - NMT with Attention</span></a>
   </div>
 </li>
@@ -804,19 +804,19 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../posts/c4w2/lab01.qmd" class="sidebar-item-text sidebar-link">
+  <a href="../../posts/c4w2/lab01.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">L1 - Attention</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../posts/c4w2/lab02.qmd" class="sidebar-item-text sidebar-link">
+  <a href="../../posts/c4w2/lab02.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">L2 - The Transformer Decoder</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../posts/c4w2/assignment.qmd" class="sidebar-item-text sidebar-link">
+  <a href="../../posts/c4w2/assignment.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">A4 - Transformer Summarizer</span></a>
   </div>
 </li>
@@ -857,7 +857,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../posts/c4w3/assignment.qmd" class="sidebar-item-text sidebar-link">
+  <a href="../../posts/c4w3/assignment.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">A4 - Question Answering</span></a>
   </div>
 </li>
@@ -1054,7 +1054,7 @@ Honor code alert
 <section id="loading-in-the-data" class="level3">
 <h3 class="anchored" data-anchor-id="loading-in-the-data">1.1 Loading in the data</h3>
 <p>You will be using the Quora question answer dataset to build a model that could identify similar questions. This is a useful task because you don’t want to have several versions of the same question posted. Several times when teaching I end up responding to similar questions on piazza, or on other community forums. This data set has been labeled for you. Run the cell below to import some of the packages you will be using.</p>
-<div id="1c5f9e88" class="cell" data-execution_count="2">
+<div id="e58272b6" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> nltk</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> trax</span>
@@ -1066,31 +1066,21 @@ Honor code alert
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random <span class="im">as</span> rnd</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># set random seeds</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>trax.supervised.trainer_lib.init_random_number_generators(<span class="dv">34</span>)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>rnd.seed(<span class="dv">34</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> trax <span class="im">import</span> fastmath</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>seed<span class="op">=</span><span class="dv">34</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> fastmath.random.get_prng(seed)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#trax.supervised.trainer_lib.init_random_number_generators(34)</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>rnd.seed(seed)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>2025-02-05 21:49:40.336562: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+<pre><code>2025-02-07 11:04:04.532866: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:477] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
 WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-E0000 00:00:1738784980.354192  609749 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
-E0000 00:00:1738784980.360264  609749 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered</code></pre>
-</div>
-<div class="cell-output cell-output-error">
-<div class="ansi-escaped-output">
-<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">AttributeError</span>                            Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[1], line 12</span>
-<span class="ansi-green-fg ansi-bold">      9</span> <span style="font-weight:bold;color:rgb(0,135,0)">import</span><span style="color:rgb(188,188,188)"> </span><span style="font-weight:bold;color:rgb(0,0,255)">random</span><span style="color:rgb(188,188,188)"> </span><span style="font-weight:bold;color:rgb(0,135,0)">as</span><span style="color:rgb(188,188,188)"> </span><span style="font-weight:bold;color:rgb(0,0,255)">rnd</span>
-<span class="ansi-green-fg ansi-bold">     11</span> <span style="font-style:italic;color:rgb(95,135,135)"># set random seeds</span>
-<span class="ansi-green-fg">---&gt; 12</span> <span class="ansi-yellow-bg">trax</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">supervised</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">trainer_lib</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">init_random_number_generators</span>(<span style="color:rgb(98,98,98)">34</span>)
-<span class="ansi-green-fg ansi-bold">     13</span> rnd<span style="color:rgb(98,98,98)">.</span>seed(<span style="color:rgb(98,98,98)">34</span>)
-
-<span class="ansi-red-fg">AttributeError</span>: module 'trax.supervised.trainer_lib' has no attribute 'init_random_number_generators'</pre>
-</div>
+E0000 00:00:1738919044.548480   57666 cuda_dnn.cc:8310] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+E0000 00:00:1738919044.553001   57666 cuda_blas.cc:1418] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered</code></pre>
 </div>
 </div>
 <p><strong>Notice that for this assignment Trax’s numpy is referred to as <code>fastnp</code>, while regular numpy is referred to as <code>np</code>.</strong></p>
 <p>You will now load in the data set. We have done some preprocessing for you. If you have taken the deeplearning specialization, this is a slightly different training method than the one you have seen there. If you have not, then don’t worry about it, we will explain everything.</p>
-<div id="d6daa7be" class="cell" data-execution_count="3">
+<div id="447733f3" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">"questions.csv"</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>N<span class="op">=</span><span class="bu">len</span>(data)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Number of question pairs: '</span>, N)</span>
@@ -1164,7 +1154,7 @@ File <span class="ansi-green-fg">~/work/notes/notes-nlp/.venv/lib/python3.10/sit
 </div>
 </div>
 <p>We first split the data into a train and test set. The test set will be used later to evaluate our model.</p>
-<div id="679f49f2" class="cell" data-execution_count="4">
+<div id="13568ef1" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>N_train <span class="op">=</span> <span class="dv">300000</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>N_test  <span class="op">=</span> <span class="dv">10</span><span class="op">*</span><span class="dv">1024</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>data_train <span class="op">=</span> data[:N_train]</span>
@@ -1188,7 +1178,7 @@ Cell <span class="ansi-green-fg">In[3], line 3</span>
 </div>
 <p>As explained in the lectures, we select only the question pairs that are duplicate to train the model. <br> We build two batches as input for the Siamese network and we assume that question <span class="math inline">q1_i</span> (question <span class="math inline">i</span> in the first batch) is a duplicate of <span class="math inline">q2_i</span> (question <span class="math inline">i</span> in the second batch), but all other questions in the second batch are not duplicates of <span class="math inline">q1_i</span>.<br>
 The test set uses the original pairs of questions and the status describing if the questions are duplicates.</p>
-<div id="39875ee4" class="cell" data-execution_count="5">
+<div id="dcba3d5f" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>td_index <span class="op">=</span> (data_train[<span class="st">'is_duplicate'</span>] <span class="op">==</span> <span class="dv">1</span>).to_numpy()</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>td_index <span class="op">=</span> [i <span class="cf">for</span> i, x <span class="kw">in</span> <span class="bu">enumerate</span>(td_index) <span class="cf">if</span> x] </span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'number of duplicate questions: '</span>, <span class="bu">len</span>(td_index))</span>
@@ -1206,7 +1196,7 @@ Cell <span class="ansi-green-fg">In[4], line 1</span>
 </div>
 </div>
 </div>
-<div id="f4dbcf22" class="cell" data-execution_count="6">
+<div id="27f32c6b" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(data_train[<span class="st">'question1'</span>][<span class="dv">5</span>])  <span class="co">#  Example of question duplicates (first one in data)</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(data_train[<span class="st">'question2'</span>][<span class="dv">5</span>])</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'is_duplicate: '</span>, data_train[<span class="st">'is_duplicate'</span>][<span class="dv">5</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1223,7 +1213,7 @@ Cell <span class="ansi-green-fg">In[5], line 1</span>
 </div>
 </div>
 </div>
-<div id="fa0d8426" class="cell" data-execution_count="7">
+<div id="477f391f" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Q1_train_words <span class="op">=</span> np.array(data_train[<span class="st">'question1'</span>][td_index])</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>Q2_train_words <span class="op">=</span> np.array(data_train[<span class="st">'question2'</span>][td_index])</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1245,7 +1235,7 @@ Cell <span class="ansi-green-fg">In[6], line 1</span>
 </div>
 <p>Above, you have seen that you only took the duplicated questions for training our model. <br>You did so on purpose, because the data generator will produce batches <span class="math inline">([q1_1, q1_2, q1_3, ...]</span>, <span class="math inline">[q2_1, q2_2,q2_3, ...])</span> where <span class="math inline">q1_i</span> and <span class="math inline">q2_k</span> are duplicate if and only if <span class="math inline">i = k</span>.</p>
 <p><br>Let’s print to see what your data looks like.</p>
-<div id="fc8d6d2c" class="cell" data-execution_count="8">
+<div id="c43aa161" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'TRAINING QUESTIONS:</span><span class="ch">\n</span><span class="st">'</span>)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Question 1: '</span>, Q1_train_words[<span class="dv">0</span>])</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Question 2: '</span>, Q2_train_words[<span class="dv">0</span>], <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</span>
@@ -1276,7 +1266,7 @@ Cell <span class="ansi-green-fg">In[7], line 2</span>
 </div>
 <p>You will now encode each word of the selected duplicate pairs with an index. <br> Given a question, you can then just encode it as a list of numbers.</p>
 <p>First you tokenize the questions using <code>nltk.word_tokenize</code>. <br> You need a python default dictionary which later, during inference, assigns the values <span class="math inline">0</span> to all Out Of Vocabulary (OOV) words.<br> Then you encode each word of the selected duplicate pairs with an index. Given a question, you can then just encode it as a list of numbers.</p>
-<div id="25812065" class="cell" data-execution_count="9">
+<div id="ec6b0ea3" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#create arrays</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>Q1_train <span class="op">=</span> np.empty_like(Q1_train_words)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>Q2_train <span class="op">=</span> np.empty_like(Q2_train_words)</span>
@@ -1297,7 +1287,7 @@ Cell <span class="ansi-green-fg">In[8], line 2</span>
 </div>
 </div>
 </div>
-<div id="8f4c6a8b" class="cell" data-execution_count="10">
+<div id="8896456c" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Building the vocabulary with the train set         (this might take a minute)</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> defaultdict</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1327,7 +1317,7 @@ Cell <span class="ansi-green-fg">In[9], line 7</span>
 </div>
 </div>
 </div>
-<div id="7e8711f2" class="cell" data-execution_count="11">
+<div id="31544186" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(vocab[<span class="st">'&lt;PAD&gt;'</span>])</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(vocab[<span class="st">'Astrology'</span>])</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(vocab[<span class="st">'Astronomy'</span>])  <span class="co">#not in vocabulary, returns 0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1337,7 +1327,7 @@ Cell <span class="ansi-green-fg">In[9], line 7</span>
 0</code></pre>
 </div>
 </div>
-<div id="0f68db3e" class="cell" data-execution_count="12">
+<div id="4fcb06d5" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> idx <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(Q1_test_words)): </span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    Q1_test[idx] <span class="op">=</span> nltk.word_tokenize(Q1_test_words[idx])</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    Q2_test[idx] <span class="op">=</span> nltk.word_tokenize(Q2_test_words[idx])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1354,7 +1344,7 @@ Cell <span class="ansi-green-fg">In[11], line 1</span>
 </div>
 </div>
 </div>
-<div id="b6572857" class="cell" data-execution_count="13">
+<div id="7a6a5fe7" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Train set has reduced to: '</span>, <span class="bu">len</span>(Q1_train) ) </span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Test set length: '</span>, <span class="bu">len</span>(Q1_test) ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-error">
@@ -1374,7 +1364,7 @@ Cell <span class="ansi-green-fg">In[12], line 1</span>
 <section id="converting-a-question-to-a-tensor" class="level3">
 <h3 class="anchored" data-anchor-id="converting-a-question-to-a-tensor">1.2 Converting a question to a tensor</h3>
 <p>You will now convert every question to a tensor, or an array of numbers, using your vocabulary built above.</p>
-<div id="a7056f41" class="cell" data-execution_count="14">
+<div id="118e7809" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Converting questions to array of integers</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(Q1_train)):</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    Q1_train[i] <span class="op">=</span> [vocab[word] <span class="cf">for</span> word <span class="kw">in</span> Q1_train[i]]</span>
@@ -1398,7 +1388,7 @@ Cell <span class="ansi-green-fg">In[13], line 2</span>
 </div>
 </div>
 </div>
-<div id="baaada89" class="cell" data-execution_count="15">
+<div id="3f2c04a1" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'first question in the train set:</span><span class="ch">\n</span><span class="st">'</span>)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(Q1_train_words[<span class="dv">0</span>], <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>) </span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'encoded version:'</span>)</span>
@@ -1427,7 +1417,7 @@ Cell <span class="ansi-green-fg">In[14], line 2</span>
 </div>
 </div>
 <p>You will now split your train set into a training/validation set so that you can use it to train and evaluate your Siamese model.</p>
-<div id="7e956a8c" class="cell" data-execution_count="16">
+<div id="51c3d60f" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Splitting the data</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>cut_off <span class="op">=</span> <span class="bu">int</span>(<span class="bu">len</span>(Q1_train)<span class="op">*</span><span class="fl">.8</span>)</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>train_Q1, train_Q2 <span class="op">=</span> Q1_train[:cut_off], Q2_train[:cut_off]</span>
@@ -1472,7 +1462,7 @@ Implement the data generator below. Here are some things you will need.</p>
 <li>Use yield to return <code>input1, input2</code>.</li>
 <li>Don’t forget to reset <code>input1, input2</code> to empty arrays at the end (data generator resumes from where it last left).</li>
 </ul>
-<div id="a7cf9034" class="cell" data-execution_count="17">
+<div id="1a4171df" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C1 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co"># GRADED FUNCTION: data_generator</span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> data_generator(Q1, Q2, batch_size, pad<span class="op">=</span><span class="dv">1</span>, shuffle<span class="op">=</span><span class="va">True</span>):</span>
@@ -1543,7 +1533,7 @@ Implement the data generator below. Here are some things you will need.</p>
 <span id="cb20-68"><a href="#cb20-68" aria-hidden="true" tabindex="-1"></a>            <span class="co"># reset the batches</span></span>
 <span id="cb20-69"><a href="#cb20-69" aria-hidden="true" tabindex="-1"></a>            input1, input2 <span class="op">=</span> [], []  <span class="co"># reset the batches</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="1aa353cc" class="cell" data-execution_count="18">
+<div id="ee6f690b" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>batch_size <span class="op">=</span> <span class="dv">2</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>res1, res2 <span class="op">=</span> <span class="bu">next</span>(data_generator(train_Q1, train_Q2, batch_size))</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"First questions  : "</span>,<span class="st">'</span><span class="ch">\n</span><span class="st">'</span>, res1, <span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</span>
@@ -1623,7 +1613,7 @@ Cell <span class="ansi-green-fg">In[17], line 2</span>
 </ul></li>
 <li><code>tl.parallel</code>: It is a combinator layer (like <code>Serial</code>) that applies a list of layers in parallel to its inputs. <a href="https://trax-ml.readthedocs.io/en/latest/trax.layers.html#trax.layers.combinators.Parallel">docs</a> / <a href="https://github.com/google/trax/blob/37aba571a89a8ad86be76a569d0ec4a46bdd8642/trax/layers/combinators.py#L152">source code</a></li>
 </ul>
-<div id="1bb14255" class="cell" data-execution_count="19">
+<div id="94ba78d8" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C2 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># GRADED FUNCTION: Siamese</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> Siamese(vocab_size<span class="op">=</span><span class="bu">len</span>(vocab), d_model<span class="op">=</span><span class="dv">128</span>, mode<span class="op">=</span><span class="st">'train'</span>):</span>
@@ -1656,7 +1646,7 @@ Cell <span class="ansi-green-fg">In[17], line 2</span>
 <span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Setup the Siamese network model</p>
-<div id="e6821c96" class="cell" data-execution_count="20">
+<div id="6927b5e4" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check your model</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> Siamese()</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1769,7 +1759,7 @@ File <span class="ansi-green-fg">~/work/notes/notes-nlp/.venv/lib/python3.10/sit
 <p><code>triple_loss</code> is the <code>fastnp.mean</code> of the sum of the two individual losses.</p>
 Once you have this code matching the expected results, you can clip out the section between ### START CODE HERE and ### END CODE HERE it out and insert it into TripletLoss below.
 </details>
-<div id="e760abe7" class="cell" data-execution_count="21">
+<div id="b7938550" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C3 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co"># GRADED FUNCTION: TripletLossFn</span></span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> TripletLossFn(v1, v2, margin<span class="op">=</span><span class="fl">0.25</span>):</span>
@@ -1813,7 +1803,7 @@ Once you have this code matching the expected results, you can clip out the sect
 <span id="cb27-41"><a href="#cb27-41" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb27-42"><a href="#cb27-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> triplet_loss</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="f2dd9e8e" class="cell" data-execution_count="22">
+<div id="7aea77f3" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>v1 <span class="op">=</span> np.array([[<span class="fl">0.26726124</span>, <span class="fl">0.53452248</span>, <span class="fl">0.80178373</span>],[<span class="fl">0.5178918</span> , <span class="fl">0.57543534</span>, <span class="fl">0.63297887</span>]])</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>v2 <span class="op">=</span> np.array([[ <span class="fl">0.26726124</span>,  <span class="fl">0.53452248</span>,  <span class="fl">0.80178373</span>],[<span class="op">-</span><span class="fl">0.5178918</span> , <span class="op">-</span><span class="fl">0.57543534</span>, <span class="op">-</span><span class="fl">0.63297887</span>]])</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>TripletLossFn(v2,v1)</span>
@@ -1842,7 +1832,7 @@ Cell <span class="ansi-green-fg">In[20], line 19</span>, in <span class="ansi-cy
 <p><strong>Expected Output:</strong></p>
 <div class="sourceCode" id="cb29"><pre class="sourceCode cpp code-with-copy"><code class="sourceCode cpp"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>Triplet Loss<span class="op">:</span> <span class="fl">0.5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To make a layer out of a function with no trainable variables, use <code>tl.Fn</code>.</p>
-<div id="569219e2" class="cell" data-execution_count="23">
+<div id="6d41fcbd" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> functools <span class="im">import</span> partial</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> TripletLoss(margin<span class="op">=</span><span class="fl">0.25</span>):</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    triplet_loss_fn <span class="op">=</span> partial(TripletLossFn, margin<span class="op">=</span>margin)</span>
@@ -1854,7 +1844,7 @@ Cell <span class="ansi-green-fg">In[20], line 19</span>, in <span class="ansi-cy
 <section id="part-3-training" class="level1">
 <h1>Part 3: Training</h1>
 <p>Now you are going to train your model. As usual, you have to define the cost function and the optimizer. You also have to feed in the built model. Before, going into the training, we will use a special data set up. We will define the inputs using the data generator we built above. The lambda function acts as a seed to remember the last batch that was given. Run the cell below to get the question pairs inputs.</p>
-<div id="5705d863" class="cell" data-execution_count="24">
+<div id="aa68182b" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>batch_size <span class="op">=</span> <span class="dv">256</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>train_generator <span class="op">=</span> data_generator(train_Q1, train_Q2, batch_size, vocab[<span class="st">'&lt;PAD&gt;'</span>])</span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>val_generator <span class="op">=</span> data_generator(val_Q1, val_Q2, batch_size, vocab[<span class="st">'&lt;PAD&gt;'</span>])</span>
@@ -1895,7 +1885,7 @@ Cell <span class="ansi-green-fg">In[23], line 2</span>
 </ul>
 <p>You will be using your triplet loss function with Adam optimizer. Please read the <a href="https://trax-ml.readthedocs.io/en/latest/trax.optimizers.html?highlight=adam#trax.optimizers.adam.Adam">trax</a> documentation to get a full understanding.</p>
 <p>This function should return a <code>training.Loop</code> object. To read more about this check the <a href="https://trax-ml.readthedocs.io/en/latest/trax.supervised.html?highlight=loop#trax.supervised.training.Loop">docs</a>.</p>
-<div id="31a128c5" class="cell" data-execution_count="25">
+<div id="4133288d" class="cell" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>lr_schedule <span class="op">=</span> trax.lr.warmup_and_rsqrt_decay(<span class="dv">400</span>, <span class="fl">0.01</span>)</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C4 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
@@ -1959,7 +1949,7 @@ Cell <span class="ansi-green-fg">In[24], line 5</span>
 </div>
 </div>
 </div>
-<div id="cbf61162" class="cell" data-execution_count="26">
+<div id="617a31ee" class="cell" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>train_steps <span class="op">=</span> <span class="dv">5</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>training_loop <span class="op">=</span> train_model(Siamese, TripletLoss, lr_schedule)</span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>training_loop.run(train_steps)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1986,7 +1976,7 @@ Cell <span class="ansi-green-fg">In[25], line 2</span>
 <section id="evaluating-your-siamese-network" class="level3">
 <h3 class="anchored" data-anchor-id="evaluating-your-siamese-network">4.1 Evaluating your siamese network</h3>
 <p>In this section you will learn how to evaluate a Siamese network. You will first start by loading a pretrained model and then you will use it to predict.</p>
-<div id="9aeb061f" class="cell" data-execution_count="27">
+<div id="6f5ad136" class="cell" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading in the saved model</span></span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> Siamese()</span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>model.init_from_file(<span class="st">'model.pkl.gz'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -2050,7 +2040,7 @@ File <span class="ansi-green-fg">~/work/notes/notes-nlp/.venv/lib/python3.10/sit
 <li>compute the final accuracy and return</li>
 </ul>
 <p>Due to some limitations of this environment, running classify multiple times may result in the kernel failing. If that happens <em>Restart Kernal &amp; clear output</em> and then run from the top. During development, consider using a smaller set of data to reduce the number of calls to model().</p>
-<div id="7313865b" class="cell" data-execution_count="28">
+<div id="6186c70a" class="cell" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C5 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co"># GRADED FUNCTION: classify</span></span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> classify(test_Q1, test_Q2, y, threshold, model, vocab, data_generator<span class="op">=</span>data_generator, batch_size<span class="op">=</span><span class="dv">64</span>):</span>
@@ -2095,7 +2085,7 @@ File <span class="ansi-green-fg">~/work/notes/notes-nlp/.venv/lib/python3.10/sit
 <span id="cb35-42"><a href="#cb35-42" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb35-43"><a href="#cb35-43" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> accuracy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="787d8bd2" class="cell" data-execution_count="29">
+<div id="21eb1c78" class="cell" data-execution_count="28">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this takes around 1 minute</span></span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>accuracy <span class="op">=</span> classify(Q1_test,Q2_test, y_test, <span class="fl">0.7</span>, model, vocab, batch_size <span class="op">=</span> <span class="dv">512</span>) </span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy"</span>, accuracy)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -2124,7 +2114,7 @@ Accuracy ~0.69</p>
 <section id="ex06" class="level3">
 <h3 class="anchored" data-anchor-id="ex06">Exercise 06</h3>
 <p><strong>Instructions:</strong> - Tokenize your question using <code>nltk.word_tokenize</code> - Create Q1,Q2 by encoding your questions as a list of numbers using vocab - pad Q1,Q2 with next(data_generator([Q1], [Q2],1,vocab[‘<pad>’])) - use model() to create v1, v2 - compute the cosine similarity (dot product) of v1, v2 - compute res by comparing d to the threshold</pad></p>
-<div id="c1f7e821" class="cell" data-execution_count="30">
+<div id="ae1a03ac" class="cell" data-execution_count="29">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># UNQ_C6 (UNIQUE CELL IDENTIFIER, DO NOT EDIT)</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="co"># GRADED FUNCTION: predict</span></span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> predict(question1, question2, threshold, model, vocab, data_generator<span class="op">=</span>data_generator, verbose<span class="op">=</span><span class="va">False</span>):</span>
@@ -2175,7 +2165,7 @@ Accuracy ~0.69</p>
 <span id="cb37-48"><a href="#cb37-48" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-49"><a href="#cb37-49" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> res</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="4b8f069d" class="cell" data-execution_count="31">
+<div id="b650da17" class="cell" data-execution_count="30">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Feel free to try with your own questions</span></span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>question1 <span class="op">=</span> <span class="st">"When will I see you?"</span></span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>question2 <span class="op">=</span> <span class="st">"When can I see you again?"</span></span>
@@ -2205,7 +2195,7 @@ Cell <span class="ansi-green-fg">In[30], line 5</span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>d   <span class="op">=</span>  <span class="fl">0.88113236</span></span>
 <span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span>  True</span>
 <span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>True</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div id="ed1cd723" class="cell" data-execution_count="32">
+<div id="96df7888" class="cell" data-execution_count="31">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Feel free to try with your own questions</span></span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>question1 <span class="op">=</span> <span class="st">"Do they enjoy eating the dessert?"</span></span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>question2 <span class="op">=</span> <span class="st">"Do they like hiking in the desert?"</span></span>
@@ -2252,13 +2242,13 @@ Cell <span class="ansi-green-fg">In[31], line 5</span>
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2025,
   author = {Bochman, Oren},
   title = {Assignment 4: {Question} Duplicates},
-  date = {2025-02-06},
+  date = {2025-02-07},
   url = {https://orenbochman.github.io/notes-nlp/posts/c3w4/assignment.html},
   langid = {en}
 }
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2025" class="csl-entry quarto-appendix-citeas" role="listitem">
 Bochman, Oren. 2025. <span>“Assignment 4: Question Duplicates.”</span>
-February 6, 2025. <a href="https://orenbochman.github.io/notes-nlp/posts/c3w4/assignment.html">https://orenbochman.github.io/notes-nlp/posts/c3w4/assignment.html</a>.
+February 7, 2025. <a href="https://orenbochman.github.io/notes-nlp/posts/c3w4/assignment.html">https://orenbochman.github.io/notes-nlp/posts/c3w4/assignment.html</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {

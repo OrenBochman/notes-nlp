@@ -76,6 +76,7 @@ You will process the data first and then pad in a similar way you have done in t
 <a name='1'></a>
 
 # Part 1: Importing the Data
+
 <a name='1.1'></a>
 
 ### 1.1 Loading in the data
@@ -96,8 +97,11 @@ import pandas as pd
 import random as rnd
 
 # set random seeds
-trax.supervised.trainer_lib.init_random_number_generators(34)
-rnd.seed(34)
+from trax import fastmath
+seed=34
+rng = fastmath.random.get_prng(seed)
+#trax.supervised.trainer_lib.init_random_number_generators(34)
+rnd.seed(seed)
 ```
 
 **Notice that for this assignment Trax's numpy is referred to as `fastnp`, while regular numpy is referred to as `np`.**
