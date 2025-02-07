@@ -1,20 +1,18 @@
 ---
 title: 'Reformer Efficient Attention: Ungraded Lab'
-jupyter:
-  jupytext:
-    formats: ipynb,py:percent
-  kernelspec:
-    display_name: Python 3
-    language: python
-    name: python3
+jupyter: python3
+execute: 
+    error: true
+#draft: true
 ---
 
 The videos describe two 'reforms' made to the Transformer to make it more memory and compute efficient. The *Reversible Layers* reduce memory and *Locality Sensitive Hashing(LSH)* reduces the cost of the Dot Product attention for large input sizes. This ungraded lab will look more closely at LSH and how it is used in the Reformer model.
 
 Specifically, the notebook has 3 goals
-* review dot-product self attention for reference
-* examine LSH based self attention
-* extend our understanding and familiarity with Trax infrastructure
+
+- review dot-product self attention for reference
+- examine LSH based self attention
+- extend our understanding and familiarity with Trax infrastructure
 
 ## Outline
 - [Part 1:  Trax Efficient Attention classes](#1)
@@ -31,19 +29,16 @@ Specifically, the notebook has 3 goals
     - [3.5  OurLSHSelfAttention](#3.5)
 
 
-<a name="1"></a>
-## Part 1.0  Trax Efficient Attention classes
+## Part 1.0  Trax Efficient Attention classes {#1}
+
 Trax is similar to other popular NN development platforms such as Keras (now integrated into Tensorflow) and Pytorch in that it uses 'layers' as a useful level of abstraction. Layers are often represented as *classes*. We're going to improve our understanding of Trax by locally extending the classes used in the attention layers. We will extend only the 'forward' functions and utilize the existing attention layers as parent classes. The original code can be found at [github:trax/layers/Research/Efficient_attention](https://github.com/google/trax/blob/v1.3.4/trax/layers/research/efficient_attention.py). This link references release 1.3.4 but note that this is under the 'research' directory as this is an area of active research. When accessing the code on Github for review on this assignment, be sure you select the 1.3.4 release tag, the master copy may have new changes.:
-<img src = "C4W4_LN2_image11.PNG" height="250" width="250">
-<center><b>Figure 1: Reference Tag 1.3.4 on github</b></center>
 
 
+![Reference Tag 1.3.4 on github](img/C4W4_LN2_image11.PNG){#fig-01 width=250 height=250} 
 
 While Trax uses classes liberally, we have not built many classes in the course so far. Let's spend a few moments reviewing the classes we will be using.
-<img src = "C4W4_LN2_image1.PNG" height="788" width="1561">
 
-<center><b>Figure 2: Classes from Trax/layers/Research/Efficient_Attention.py that we will be utilizing.</b></center>
-
+![Classes from Trax/layers/Research/Efficient_Attention.py that we will be utilizing](img/C4W4_LN2_image1.PNG){#fig-02 width=1561 height=788}
 
 
 Starting on the right in the diagram below you see EfficientAttentionBase. The parent to this class is the base.layer which has the routines used by all layers. EfficientAttentionBase leaves many routines to be overridden by child classes - but it has an important feature in the *Forward* routine. It supports a `use_reference_code` capability that selects implementations that limit some of the complexities to provide a more easily understood version of the algorithms. In particular, it implements a nested loop that treats each *'example, head'* independently. This simplifies our work as we need only worry about matrix operations on one *'example, head'* at a time. This loop calls *forward_unbatched*, which is the child process that we will be overriding.
@@ -54,23 +49,22 @@ Below that is the LSHSelfAttention. This is the routine used in the Reformer arc
 
 The code we will be working with is from the Trax source, and as such has implementation details that will make it a bit harder to follow. However, it will allow use of the results along with the rest of the Trax infrastructure. I will try to briefly describe these as they arise. The [Trax documentation](https://trax-ml.readthedocs.io/en/latest/) can also be referenced.
 
-<a name="1.2"></a>
-## Part 1.2  Trax Details
+## Part 1.2  Trax Details {#1.2}
+
 The goal in this notebook is to override a few routines in the Trax classes with our own versions. To maintain their functionality in a full Trax environment, many of the details we might ignore in example version of routines will be maintained in this code. Here are some of the considerations that may impact our code:
+
 * Trax operates with multiple back-end libraries, we will see special cases that will utilize unique features.
 * 'Fancy' numpy indexing is not supported in all backend environments and must be emulated in other ways.
 * Some operations don't have gradients for backprop and must be ignored or include forced re-evaluation.
 
 Here are some of the functions we may see:
+
 * Abstracted as `fastmath`, Trax supports multiple backend's such as [Jax](https://github.com/google/jax) and [Tensorflow2](https://github.com/tensorflow/tensorflow)
 * [tie_in](https://jax.readthedocs.io/en/latest/_autosummary/jax.lax.tie_in.html): Some non-numeric operations must be invoked during backpropagation. Normally, the gradient compute graph would determine invocation but these functions are not included. To force re-evaluation, they are 'tied' to other numeric operations using tie_in.
 * [stop_gradient](https://trax-ml.readthedocs.io/en/latest/trax.fastmath.html): Some operations are intentionally excluded from backprop gradient calculations by setting their gradients to zero.
 * Below we will execute `from trax.fastmath import numpy as np `, this uses accelerated forms of numpy functions. This is, however a *subset* of numpy
 
 ```{python}
-#| colab: {}
-#| colab_type: code
-#| tags: []
 import os
 import trax
 from trax import layers as tl  # core building block
@@ -88,35 +82,40 @@ from trax.layers import (
     permute_via_gather,
     permute_via_sort,
 )
+
+
+# def tie_in(x, y):
+#   if fastmath.backend_name() == 'jax':
+#     return jax.lax.tie_in(x, y)
+#   return y
+
 ```
 
-<a name="2"></a>
-## Part 2  Full Dot-Product Self Attention
-<a name="1.2"></a>
-### Part 2.1 Description
-<img src = "C4W4_LN2_image2.PNG" height="200" width="600">
 
-<center><b>Figure 3: Project datapath and primary data structures and where they are implemented</b></center>
+
+## Part 2  Full Dot-Product Self Attention {#2}
+
+
+### Part 2.1 Description {#2.1}
+
+![Project datapath and primary data structures and where they are implemented](img/C4W4_LN2_image2.PNG){#fig-03 width=600 height=200}
 
 The diagram above shows many of the familiar data structures and operations related to attention and describes the routines in which they are implemented. We will start by working on *our_simple_attend* or our simpler version of the original *attend* function. We will review the steps in performing dot-product attention with more focus on the details of the operations and their significance. This is useful when comparing to LSH attention. Note we will be discussing a single example/head unless otherwise specified.
 
-<img src = "C4W4_LN2_image3.PNG" height="250" width="700">
-
-<center><b>Figure 4: dot-product of Query and Key</b></center>
+![Dot-product of Query and Key](img/C4W4_LN2_image3.PNG){#fig-04 width=700 height=250}
 
 The *attend* function receives *Query* and *Key*. As a reminder, they are produced by a matrix multiply of all the inputs with a single set of weights. We will describe the inputs as *embeddings* assuming an NLP application, however, this is not required. This matrix multiply very much like a convolutional network where a set of weights (a filter) slide across the input vectors leaving behind a map of the similarity of the input to the filter. In this case, the filters are the weight matrices $W^Q$ and $W^K$. The resulting maps are Q and K. Q and K have the dimensions of (n_seq, n_q) where n_seq is the number input embeddings and n_q or n_k is the selected size of the Q or K vectors. Note the shading of Q and K, this reflects the fact that each entry is associated with a particular input embedding. You will note later in the code that K is optional. Apparently, similar results can be achieved using Query alone saving the compute and storage associated with K. In that case, the dot-product in *attend* is matmul(q,q). Note the resulting dot-product (*Dot*) entries describe a complete (n_seq,n_seq) map of the similarity of all entries of q vs all entries of k. This is reflected in the notation in the dot-product boxes of $w_n$,$w_m$ representing word_n, word_m. Note that each row of *Dot* describes the relationship of an input embedding, say $w_0$, with every other input.
 
 In some applications some values are masked. This can be used, for example to exclude results that occur later in time (causal) or to mask padding or other inputs.
-<img src = "C4W4_LN2_image4.PNG" height="300" width="900">
 
-<center><b>Figure 5: Masking</b></center>
+![Masking](img/C4W4_LN2_image4.PNG){#fig-05 width=900 height=300}
+
 
 
 The routine below *mask_self_attention* implements a flexible masking capability. The masking is controlled by the information in q_info and kv_info.
 
 ```{python}
-#| colab: {}
-#| colab_type: code
+
 def mask_self_attention(
     dots, q_info, kv_info, causal=True, exclude_self=True, masked=False
 ):
@@ -135,19 +134,27 @@ def mask_self_attention(
 ```
 
 A SoftMax is applied per row of the *Dot* matrix to scale the values in the row between 0 and 1.
-<img src = "C4W4_LN2_image5.PNG" height="300" width="900">
 
-<center><b>Figure 6: SoftMax per row of Dot</b></center>
+![SoftMax per row of Dot](img/C4W4_LN2_image5.PNG){#fig-06 width=900 height=300}
 
-<a name="2.1.1"></a>
-### Part 2.1.1 our_softmax
+### Part 2.1.1 our_softmax {#2.1.1}
 
 This code uses a separable form of the softmax calculation. Recall the softmax:
-$$ softmax(x_i)=\frac{\exp(x_i)}{\sum_j \exp(x_j)}\tag{1}$$
+$$ 
+softmax(x_i)=\frac{\exp(x_i)}{\sum_j \exp(x_j)}\tag{1}
+$$
+
 This can be alternately implemented as:
-$$ logsumexp(x)=\log{({\sum_j \exp(x_j)})}\tag{2}$$
-$$ softmax(x_i)=\exp({x_i - logsumexp(x)})\tag{3}$$
+$$ 
+logsumexp(x)=\log{({\sum_j \exp(x_j)})}\tag{2}
+$$
+
+$$ 
+softmax(x_i)=\exp({x_i - logsumexp(x)})\tag{3}
+$$
+
 The work below will maintain a copy of the logsumexp allowing the softmax to be completed in sections. You will see how this is useful later in the LSHSelfAttention class.
+
 We'll create a routine to implement that here with the addition of a passthrough. The matrix operations we will be working on below are easier to follow if we can maintain integer values. So, for tests, we will skip the softmax in some cases.
 
 ```{python}
@@ -164,7 +171,6 @@ def our_softmax(x, passthrough=False):
 Let's check our implementation.
 
 ```{python}
-#| tags: []
 ## compare softmax(a) using both methods
 a = np.array([1.0, 2.0, 3.0, 4.0])
 sma = np.exp(a) / sum(np.exp(a))
@@ -175,20 +181,17 @@ print(a_logsumexp)
 ```
 
 The purpose of the dot-product is to 'focus attention' on some of the inputs. Dot now has entries appropriately scaled to enhance some values and reduce others. These are now applied to the $V$ entries.
-<img src = "C4W4_LN2_image6.PNG" height="300" width="900">
 
-<center><b>Figure 7: Applying Attention to $V$</b></center>
+![Applying Attention to V](img/C4W4_LN2_image6.PNG){#fig-07 width=900 height=300}
 
 $V$ is of size (n_seq,n_v). Note the shading in the diagram. This is to draw attention to the operation of the matrix multiplication. This is detailed below.
 
-<img src = "C4W4_LN2_image7.PNG" height="300" width="600"/>
-
-<center><b>Figure 7: The Matrix Multiply applies attention to the values of V</b></center>
+![Matrix Multiply](img/C4W4_LN2_image7.PNG){#fig-08 width=900 height=300}
 
 $V$ is formed by a matrix multiply of the input embedding with the weight matrix $W^v$ whose values were set by backpropagation. The row entries of $V$ are then related to the corresponding input embedding. The matrix multiply weights first column of V, representing a section of each of the input embeddings, with the first row of Dot, representing the similarity of $W_0$ and each word of the input embedding and deposits the value in $Z$
 
-<a name="2.2"></a>
-### Part 2.2  our_simple_attend
+### Part 2.2  our_simple_attend {#2.2}
+
 In this section we'll work on an implementation of *attend* whose operations you can see in figure 3. It is a slightly simplified version of the routine in [efficient_attention.py](https://github.com/google/trax/blob/v1.3.4/trax/layers/research/efficient_attention.py). We will fill in a few lines of code. The main goal is to become familiar with the routine. You have implemented similar functionality in a previous assignment.
 
 **Instructions**
@@ -197,8 +200,6 @@ In this section we'll work on an implementation of *attend* whose operations you
 **Step 3:** matrix multiply (np.matmul) dots and v.
 
 ```{python}
-#| colab: {}
-#| colab_type: code
 def our_simple_attend(
     q, k=None, v=None,
     mask_fn=None, q_info=None, kv_info=None,
@@ -234,7 +235,7 @@ def our_simple_attend(
   k = k / np.sqrt(k.shape[-1])
 
   # Dot-product attention.
-  kr = np.swapaxes(k, -1, -2)  #note the fancy transpose for later..
+  kr = np.swapaxes(k, -1, -2)  # note the fancy transpose for later..
 
 ## Step 1  ##
   dots = np.matmul(q, kr )
@@ -247,6 +248,7 @@ def our_simple_attend(
   # Softmax.
   #dots_logsumexp = fastmath.logsumexp(dots, axis=-1, keepdims=True)  #original
   #dots = np.exp(dots - dots_logsumexp)  #original
+  
 ## Step 2  ##
   #replace with our_softmax()
   dots, dots_logsumexp = our_softmax(dots, passthrough=passthrough)
@@ -272,8 +274,6 @@ def our_simple_attend(
 ```
 
 ```{python}
-#| colab: {base_uri: https://localhost:8080/, height: 202}
-#| colab_type: code
 seq_len = 8
 emb_len = 5
 d_qk = 3
@@ -300,6 +300,7 @@ print(o, "\n", logits)
 <summary>
     <font size="3"><b> Expected Output </b></font>
 </summary>
+</details>
 
 **Expected Output**
 ```
@@ -316,13 +317,15 @@ Our attend out2 (8, 4)
  [0.56753993 0.72232544 0.5141734  0.46625748]
  [0.57100445 0.70785505 0.5325362  0.4590797 ]]
  [2.6512175 2.1914332 2.6630518 2.7792363 2.4583826 2.5421977 2.4145055
- 2.5111294]```
+ 2.5111294]
+ ```
 
 <details>
 <summary>
     <font size="3"><b> completed code for reference </b></font>
 </summary>
     This notebook is ungraded, so for reference, the completed code follows:
+</details>
 
 ```
 def our_simple_attend(
@@ -397,14 +400,13 @@ def our_simple_attend(
   return out, dots_logsumexp
 ```
 
-<a name="2.3"></a>
-## Part 2.3  Class OurSelfAttention
+## Part 2.3  Class OurSelfAttention {#2.3}
+
 Here we create our own self attention layer by creating a class `OurSelfAttention`. The parent class will be the tl.SelfAttention layer in Trax. We will only override the `forward_unbatched` routine.
+
 We're not asking you to modify anything in this routine. There are some comments to draw your attention to a few lines.
 
 ```{python}
-#| colab: {}
-#| colab_type: code
 class OurSelfAttention(tl.SelfAttention):
     """Our self-attention. Just the Forward Function."""
 
@@ -472,9 +474,6 @@ class OurSelfAttention(tl.SelfAttention):
 ```
 
 ```{python}
-#| colab: {}
-#| colab_type: code
-#| lines_to_next_cell: 2
 causal = False
 masked = False
 mask = None
@@ -504,8 +503,6 @@ _, _ = osa.init(tl.shapes.signature(x), rng=rng_osa)
 ```
 
 ```{python}
-#| colab: {base_uri: https://localhost:8080/, height: 790}
-#| colab_type: code
 osa(x)
 ```
 
@@ -514,8 +511,10 @@ osa(x)
     <font size="3"><b> Expected Output </b></font>
 </summary>
 
+
 **Expected Output**
 Notice a few things:
+
 * the w_q (and w_k) matrices are applied to each row or each embedding on the input. This is similar to the filter operation in convolution
 * forward_unbatched is called 3 times. This is because we have 3 heads in this example.
 
@@ -1299,17 +1298,19 @@ def dotandv(sq, sv, undo_sort, kv_chunk_len, n_hashes, seqlen, passthrough, verb
 
     return(o)
 ```
+</details>
 
 Great! You have now done examples code for most of the operation that are unique to the LSH version of self-attention. I'm sure at this point you are wondering what happens if the number of entries in a bucket is not evenly distributed the way our example is. It is possible, for example for all of the `seqlen` entries to land in one bucket. Further, since the buckets are not aligned, our 'chunks' may be misaligned with the start of the bucket. The implementation addresses this by attending to adjacent chunks as was described in the lecture:
 
-<img src = "C4W4_LN2_image13.PNG" height="400" width="750">
-<center><b>Figure 12: Misaligned Access, looking before and after </b></center>
+![Misaligned Access, looking before and after](img/C4W4_LN2_image13.PNG){#fig-12 width="750px" height="400px"}
+
 
 Hopefully, having implemented parts of this, you will appreciate this diagram more fully.
 
 
-<a name="3.5"></a>
-## Part 3.5 OurLSHSelfAttention
+
+
+## Part 3.5 OurLSHSelfAttention {#3.5}
 
 You can examine the full implementations below. Area's we did not 'attend to' in our implementations above include variable bucket sizes and masking. We will instantiate a layer of the full implementation below. We tried to use the same variable names above to make it easier to decipher the full version. Note that some of the functionality we implemented in our routines is split between `attend` and `forward_unbatched`. We've inserted our version of hash below, but use the original version of `attend`.
 
@@ -1594,7 +1595,9 @@ DeviceArray([[[ 6.6842824e-01, -1.1364323e-01, -5.4430610e-01,
               [ 6.1286640e-01, -8.1027031e-02, -4.8148823e-01,
                 1.9373313e-01,  3.1555295e-02],
               [ 7.2203505e-01, -1.0199660e-01, -5.5215168e-01,
-                1.7872262e-01, -2.2289157e-02]]], dtype=float32)```
+                1.7872262e-01, -2.2289157e-02]]], dtype=float32)
+```
+</details>
 
 **Congratuations!** you have created a custom layer and have become familiar with LSHSelfAttention.
 

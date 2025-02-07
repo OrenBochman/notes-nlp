@@ -1,12 +1,8 @@
 ---
 title: 'Putting the "Re" in Reformer: Ungraded Lab'
-jupyter:
-  jupytext:
-    formats: ipynb,py:percent
-  kernelspec:
-    display_name: Python 3
-    language: python
-    name: python3
+jupyter: python3
+execute: 
+    error: true
 ---
 
 This ungraded lab will explore Reversible Residual Networks. You will use these networks in this week's assignment that utilizes the Reformer model. It is based on on the Transformer model you already know, but with two unique features.
@@ -39,20 +35,23 @@ from trax.shapes import ShapeDtype
 from trax.shapes import signature
 ```
 
-## Part 1.0  Residual Networks
+## Part 1.0  Residual Networks {#1}
+
 [Deep Residual Networks ](https://arxiv.org/abs/1512.03385) (Resnets) were introduced to improve convergence in deep networks. Residual Networks introduce a shortcut connection around one or more layers in a deep network as shown in the diagram below from the original paper.
 
-<center><img src = "Revnet7.PNG" height="250" width="250"></center>
-<center><b>Figure 1: Residual Network diagram from original paper</b></center>
+
+![Residual Network diagram from original paper](img/Revnet7.PNG){#fig-01 width="250" height="250"}
 
 The [Trax documentation](https://trax-ml.readthedocs.io/en/latest/notebooks/layers_intro.html#2.-Inputs-and-Outputs) describes an implementation of Resnets using `branch`. We'll explore that here by implementing a simple resnet built from simple function based layers. Specifically, we'll build a 4 layer network based on two functions, 'F' and 'G'.
 
-<img src = "Revnet8.PNG" height="200" width="1400">
-<center><b>Figure 2: 4 stage Residual network</b></center>
+![4 stage Residual network](img/Revnet8.PNG){#fig-02 width="1400" height="200"}
+
 Don't worry about the lengthy equations. Those are simply there to be referenced later in the notebook.
 
-<a name="1.1"></a>
-### Part 1.1  Branch
+
+
+### Part 1.1  Branch {#1.1}
+ 
 Trax `branch` figures prominently in the residual network layer so we will first examine it. You can see from the figure above that we will need a function that will copy an input and send it down multiple paths. This is accomplished with a  [branch layer](https://trax-ml.readthedocs.io/en/latest/trax.layers.html#module-trax.layers.combinators), one of the Trax 'combinators'. Branch is a combinator that applies a list of layers in parallel to copies of inputs. Lets try it out!  First we will need some layers to play with. Let's build some from functions.
 
 ```{python}
