@@ -75,49 +75,6 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
-  <script>document.addEventListener("DOMContentLoaded", function () {
- var mathElements = document.getElementsByClassName("math");
- var macros = [];
- for (var i = 0; i < mathElements.length; i++) {
-  var texText = mathElements[i].firstChild;
-  if (mathElements[i].tagName == "SPAN") {
-   katex.render(texText.data, mathElements[i], {
-    displayMode: mathElements[i].classList.contains('display'),
-    throwOnError: false,
-    macros: macros,
-    fleqn: false
-   });
-}}});
-  </script>
-  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../../../../styles.css">
 </head>
@@ -789,18 +746,8 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#dot-product-attention" id="toc-dot-product-attention" class="nav-link active" data-scroll-target="#dot-product-attention">Dot-Product Attention</a>
-  <ul class="collapse">
-  <li><a href="#neural-machine-translation" id="toc-neural-machine-translation" class="nav-link" data-scroll-target="#neural-machine-translation">§2 Neural Machine Translation:</a></li>
-  <li><a href="#overview-of-attention" id="toc-overview-of-attention" class="nav-link" data-scroll-target="#overview-of-attention">§3 Overview of attention</a></li>
-  <li><a href="#global-attention" id="toc-global-attention" class="nav-link" data-scroll-target="#global-attention">§3.1 Global attention</a>
-  <ul class="collapse">
-  <li><a href="#dot-product-attention-1" id="toc-dot-product-attention-1" class="nav-link" data-scroll-target="#dot-product-attention-1">Dot product attention:</a></li>
-  <li><a href="#general-attention" id="toc-general-attention" class="nav-link" data-scroll-target="#general-attention">General attention:</a></li>
-  <li><a href="#concatenative-attention" id="toc-concatenative-attention" class="nav-link" data-scroll-target="#concatenative-attention">Concatenative attention:</a></li>
-  </ul></li>
-  <li><a href="#local-attention" id="toc-local-attention" class="nav-link" data-scroll-target="#local-attention">§3.2 Local Attention</a></li>
-  </ul></li>
+  <li><a href="#abstract" id="toc-abstract" class="nav-link active" data-scroll-target="#abstract">Abstract</a></li>
+  <li><a href="#the-paper" id="toc-the-paper" class="nav-link" data-scroll-target="#the-paper">The Paper</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/review/paper/deep-contextualized-word-representations/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -817,168 +764,21 @@ window.Quarto = {
 <p><a href="../../../../images/literature-review-open-book.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Litrature review"><img src="../../../../images/literature-review-open-book.jpg" class="img-fluid figure-img" alt="Litrature review"></a></p>
 <figcaption>Litrature review</figcaption>
 </figure>
-</div></div><section id="dot-product-attention" class="level1">
-<h1>Dot-Product Attention</h1>
-<p><strong>Dot-Product attention</strong> is the first of three attention mechanisms covered in the course and the simplest covered in this paper. Dot-Product Attention is a good fit, in an engineering sense, for a encoder-decoder architecture with tasks where the source source sequence is fully available at the start and the tasks is mapping or transformation the source sequence to an output sequence like in alignment, or translation.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/paper-eata-01-nmt.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="rnn"><img src="img/paper-eata-01-nmt.png" class="img-fluid figure-img" alt="rnn"></a></p>
-<figcaption>rnn</figcaption>
-</figure>
-</div>
-The first assignment in the course using encoder decoder LSTM model with attention is so similar to the setup disused in this paper, I would not be surprised if it may well have inspired it.
-<hr>
-<p>This is a review of the paper in which scaled dot product attention was introduced in 2015 by <em>Minh-Thang Luong, Hieu Pham, Christopher D. Manning</em> in <a href="https://arxiv.org/pdf/1508.04025v5.pdf">Effective Approaches to Attention-based Neural Machine Translation</a> which is available at <a href="https://paperswithcode.com/paper/effective-approaches-to-attention-based">papers with code</a>. In this paper they tried to take the attention mechanism being used in other tasks and to distill it to its essence and at the same time to also find a more general form.</p>
-<center>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: center;">Global Attention</th>
-<th style="text-align: center;">Local Attention</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;"><img src="img/paper-eata-02-attention-global.png" class="img-fluid"></td>
-<td style="text-align: center;"><img src="img/paper-eata-03-attention-local.png" class="img-fluid"></td>
-</tr>
-</tbody>
-</table>
-</center>
-They also came up with a interesting way to visualize the alignment’s attention mechanism. <img src="img/c4w2-22-alignment-visulization.png" class="img-fluid" alt="alignment-visulization">
-<hr>
-<p>So to recap: Luong et all were focused on alignment problem in NMT. When they try to tackle it using attention as function of the content and a function of its location. They came up with a number of ways to distill and generalize the attention mechanism.</p>
-<hr>
-<!--more-->
-<hr>
-<p><img src="img/dcwr-page-001.png" class="img-fluid" alt="page 1"> Attention was just another engineering technique to improve alignment and it had not yet taken center stage in the models, as it would in <a href="img/https://arxiv.org/abs/1706.03762">Attention Is All We Need</a> (Vaswani et al, 2017).I find it useful to garner the concepts and intuition which inspired these researchers to adapt attention and how they come up with this form of attention. The abstract begins with: &gt; “An attentional mechanism has lately been used to improve neural machine translation (NMT) by selectively focusing on parts of the source sentence during translation.” which was covered in last lesson. The abstract continues with: &gt; “This paper examines two simple and effective classes of attentional mechanism: a <strong>global</strong> approach which always attends to <strong>all</strong> source words and a <strong>local</strong> one that only looks at a <strong>subset</strong> of source words at a time.” talks about</p>
-<hr>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/dcwr-page-002.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="page 2"><img src="img/dcwr-page-002.png" class="img-fluid figure-img" alt="page 2"></a></p>
-<figcaption>page 2</figcaption>
-</figure>
-</div>
-<section id="neural-machine-translation" class="level2">
-<h2 class="anchored" data-anchor-id="neural-machine-translation">§2 Neural Machine Translation:</h2>
-<p>This section provides a summary of the the NMT task using 4 equations: In particular they note that in the decoder the conditional probability of the target given the source is of the form: <span class="math display"> log \space p(y \vert x) = \sum_{j=1}^m log \space p (y_j \vert y_{&lt;j} , s) </span> Where <span class="math inline">x_i</span> are the <em>source</em> sentence and <span class="math inline">y_i</span> are the <em>target</em> sentence. <span class="math display"> p (y_j \vert y{&lt;j} , s) = softmax (g(h_j)) </span> Here, <span class="math inline">h_j</span> is the RNN hidden unit, abstractly computed as: <span class="math display"> h_j = f(h_{j-1},s) </span> Our training objective is formulated as follows <span class="math display">
-J_t=\sum_{(x,y)\in D} -log \space p(x \vert y)
-</span></p>
-<p>With D being our parallel training corpus.</p>
-<hr>
-</section>
-<section id="overview-of-attention" class="level2">
-<h2 class="anchored" data-anchor-id="overview-of-attention">§3 Overview of attention</h2>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/./page-003.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="page 3"><img src="img/./page-003.png" class="img-fluid figure-img" alt="page 3"></a></p>
-<figcaption>page 3</figcaption>
-</figure>
-</div>
-<p>Next they provide a recap of the attention mechanism to set their starting point: &gt;Specifically, given the target hidden state <span class="math inline">h_t</span> and the source-side context vector <span class="math inline">c_t</span>, we employ a simple concatenation layer to combine the information from both vectors to produce an attentional hidden state as follows:</p>
-<p><span class="math display">
-\bar{h}_t = tanh(W_c[c_t;h_t])
-</span></p>
+</div></div><section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
 <blockquote class="blockquote">
-<p>The attentional vector <span class="math inline">\bar{h}_t</span> is then fed through the softmax layer to produce the predictive distribution formulated as:</p>
+<p>We introduce a new type of deep contextualized word representation that models both</p>
+<ol type="1">
+<li><p>complex characteristics of word use (e.g., syntax and semantics), and</p></li>
+<li><p>how these uses vary across linguistic contexts (i.e., to model polysemy).</p></li>
+</ol>
+<p>Our word vectors are learned functions of the internal states of a deep bidirectional language model (biLM), which is pretrained on a large text corpus. We show that these representations can be easily added to existing models and significantly improve the state of the art across six challenging NLP problems, including question answering, textual entailment and sentiment analysis. We also present an analysis showing that exposing the deep internals of the pre-trained network is crucial, allowing downstream models to mix different types of semi-supervision signals.</p>
 </blockquote>
-<p><span class="math display">
-p(y_t|y{&lt;t}, x) = softmax(W_s\bar{h}_t)
-</span></p>
 </section>
-<section id="global-attention" class="level2">
-<h2 class="anchored" data-anchor-id="global-attention">§3.1 Global attention</h2>
-<p>This is defined in §3.1 of the paper as:</p>
-<p><span class="math display">
-\begin{align}
-   a_t(s) &amp; = align(h_t,\bar{h}_s)  \newline
-   &amp; = \frac{ e^{score(h_t,\bar{h}_s)} }{ \sum_{s'} e^{score(h_t,\bar{h}_s)} } \newline
-   &amp; = softmax(score(h_t,\bar{h}_s))
-\end{align}
-</span></p>
-<p>where <span class="math inline">h_t</span> and <span class="math inline">h_s</span> are the target and source sequences and <span class="math inline">score()</span> which is referred to as a <em>content-based</em> function as one of three alternative forms provided:</p>
-<section id="dot-product-attention-1" class="level3">
-<h3 class="anchored" data-anchor-id="dot-product-attention-1">Dot product attention:</h3>
-<p><span class="math display">
-score(h_t,\bar{h}_s)=h_t^T\bar{h}_s
-</span> This form combines the source and target using a dot product. Geometrically this essentially a projection operation.</p>
-</section>
-<section id="general-attention" class="level3">
-<h3 class="anchored" data-anchor-id="general-attention">General attention:</h3>
-<p><span class="math display">
-score(h_t,\bar{h}_s)=h_t^TW_a\bar{h}_s
-</span></p>
-<p>this form combines the source and target using a dot product after applying a learned attention weights to the source. Geometrically this is a projection of the target on a linear transformation of the source or <strong>scaled dot product attention</strong> as it is now known</p>
-</section>
-<section id="concatenative-attention" class="level3">
-<h3 class="anchored" data-anchor-id="concatenative-attention">Concatenative attention:</h3>
-<p><span class="math display"> score(h_t,\bar{h}_s)=v_a^T tanh(W_a [h_t;\bar{h}_s]) </span> This is a little puzzling <span class="math inline">v_a^T</span> is not accounted for and seems to be a learned attention vector which is projected onto the linearly weighted combination of the hidden states of the encoder and decoder. they also mention having considered using a <em>location based function</em> location :</p>
-<p><span class="math display"> a_t = softmax(W_a h_t) </span></p>
-which is just a linear transform of the hidden target state <span class="math inline">h_t</span>
-<hr>
-</section>
-</section>
-<section id="local-attention" class="level2">
-<h2 class="anchored" data-anchor-id="local-attention">§3.2 Local Attention</h2>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/dcwr-page-004.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="page 4"><img src="img/dcwr-page-004.png" class="img-fluid figure-img" alt="page 4"></a></p>
-<figcaption>page 4</figcaption>
-</figure>
-</div>
-<p>in §3.2 they consider a local attention mechanism. This is a resource saving modification of global attention using the simple concept of applying the mechanism within a fixed sized window. &gt; We propose a local attentional mechanism that chooses to focus only on a small subset of the source positions per target word. This model takes inspiration from the tradeoff between the soft and hard attentional models proposed by Xu et al.&nbsp;(2015) to tackle the image caption generation task. &gt; Our local attention mechanism selectively focuses on a small window of context and is differentiable. … In concrete details, the model first generates an aligned position <span class="math inline">p_t</span> for each target word at time <span class="math inline">t</span>. The context vector <span class="math inline">c_t</span> is then derived as a weighted average over the set of source hidden states within the window <span class="math inline">[p_t−D, p_t+D]</span>; Where <span class="math inline">D</span> is empirically selected. The <em>big idea</em> here is to use a fixed window size for this step to conserve resources when translating paragraphs or documents - a laudable notion for times where LSTM gobbled up resources in proportion to the sequence length… They also talk about <em>monotonic alignment</em> where <span class="math inline">p_t=t</span> and <em>predictive alignment</em></p>
-<p><span class="math display">
-p_t=S\cdot sigmoid(v_p^Ttanh(W_ph_t))
-</span></p>
-<p><span class="math display">
-a_t(s)=align(h_t,\bar{h}_s)e^{(-\frac{(s-p_t)^2}{s\sigma^2})}
-</span></p>
-<p>with align() as defined above and <span class="math display">\sigma=\frac{D}{2}
-</span></p>
-<hr>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/dcwr-page-005.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="page 5"><img src="img/dcwr-page-005.png" class="img-fluid figure-img" alt="page 5"></a></p>
-<figcaption>page 5</figcaption>
-</figure>
-</div>
-The rest of the paper has details about the experiment and is of less interest
-<hr>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/dcwr-page-006.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="page 6"><img src="img/dcwr-page-006.png" class="img-fluid figure-img" alt="page 6"></a></p>
-<figcaption>page 6</figcaption>
-</figure>
-</div>
-<hr>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/dcwr-page-007.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="page 7"><img src="img/dcwr-page-007.png" class="img-fluid figure-img" alt="page 7"></a></p>
-<figcaption>page 7</figcaption>
-</figure>
-</div>
-<hr>
-<p><img src="img/dcwr-page-008.png" class="img-fluid" alt="page 8"> In §5.4 In alignment quality</p>
-<hr>
-<p><img src="img/dcwr-page-009.png" class="img-fluid" alt="page 9"> some sample translations</p>
-<hr>
-<p><img src="img/dcwr-page-010.png" class="img-fluid" alt="page 10"> the references</p>
-<hr>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="img/dcwr-page-011.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="page 11"><img src="img/dcwr-page-011.png" class="img-fluid figure-img" alt="page 11"></a></p>
-<figcaption>page 11</figcaption>
-</figure>
-</div>
-This is appendix A which shows the visualization of alignment weights.
-<hr>
+<section id="the-paper" class="level2">
+<h2 class="anchored" data-anchor-id="the-paper">The Paper</h2>
 
 
-</section>
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2021,
