@@ -1,9 +1,14 @@
 ---
+date: 2021-03-23
 title: 'Calculating the Bilingual Evaluation Understudy (BLEU) score: Ungraded Lab'
+subtitle: "Sequence Models"
+categories: 
+  - NLP 
+  - Coursera 
+  - Lab
+  - Sequence Models
 jupyter: python3
 ---
-
-
 
 In this ungraded lab, we will implement a popular metric for evaluating the quality of machine-translated text: the BLEU score proposed by Kishore Papineni, et al. In their 2002 paper ["BLEU: a Method for Automatic Evaluation of Machine Translation"](https://www.aclweb.org/anthology/P02-1040.pdf), the BLEU score works by comparing "candidate" text to one or more "reference" translations. The result is better the closer the score is to 1. Let's see how to get this value in the following sections.
 
@@ -30,13 +35,19 @@ import matplotlib.pyplot as plt     # import pyplot in order to make some illust
 
 You have seen the formula for calculating the BLEU score in this week's lectures. More formally, we can express the BLEU score as:
 
-$$BLEU = BP\Bigl(\prod_{i=1}^{4}precision_i\Bigr)^{(1/4)}$$
+$$
+BLEU = BP\Bigl(\prod_{i=1}^{4}precision_i\Bigr)^{(1/4)}
+$$
 
 with the Brevity Penalty and precision defined as:
 
-$$BP = min\Bigl(1, e^{(1-({ref}/{cand}))}\Bigr)$$
+$$
+BP = min\Bigl(1, e^{(1-({ref}/{cand}))}\Bigr)
+$$
 
-$$precision_i = \frac {\sum_{snt \in{cand}}\sum_{i\in{snt}}min\Bigl(m^{i}_{cand}, m^{i}_{ref}\Bigr)}{w^{i}_{t}}$$
+$$
+precision_i = \frac {\sum_{snt \in{cand}}\sum_{i\in{snt}}min\Bigl(m^{i}_{cand}, m^{i}_{ref}\Bigr)}{w^{i}_{t}}
+$$
 
 where:
 

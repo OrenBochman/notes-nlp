@@ -1,5 +1,5 @@
 ---
-date: 2020-10-24
+date: 2020-11-20
 title: 'Modified Triplet Loss'
 subtitle: "Sequence Models"
 #description: "we cover Neural networks for deep learning, then build a tweet classifier that places tweets into positive or negative sentiment categories, using a DNN."
@@ -18,15 +18,23 @@ In this notebook you'll see how to calculate the full triplet loss, step by step
 ## Background
 This is the original triplet loss function:
 
-$\mathcal{L_\mathrm{Original}} = \max{(\mathrm{s}(A,N) -\mathrm{s}(A,P) +\alpha, 0)}$
+$$
+\mathcal{L_\mathrm{Original}} = \max{(\mathrm{s}(A,N) -\mathrm{s}(A,P) +\alpha, 0)}
+$$
 
 It can be improved by including the mean negative and the closest negative, to create a new full loss function. The inputs are the Anchor $\mathrm{A}$, Positive $\mathrm{P}$ and Negative $\mathrm{N}$.
 
-$\mathcal{L_\mathrm{1}} = \max{(mean\_neg -\mathrm{s}(A,P)  +\alpha, 0)}$
+$$
+\mathcal{L_\mathrm{1}} = \max{(mean\_neg -\mathrm{s}(A,P)  +\alpha, 0)}
+$$
 
-$\mathcal{L_\mathrm{2}} = \max{(closest\_neg -\mathrm{s}(A,P)  +\alpha, 0)}$
+$$
+\mathcal{L_\mathrm{2}} = \max{(closest\_neg -\mathrm{s}(A,P)  +\alpha, 0)}
+$$
 
-$\mathcal{L_\mathrm{Full}} = \mathcal{L_\mathrm{1}} + \mathcal{L_\mathrm{2}}$
+$$
+\mathcal{L_\mathrm{Full}} = \mathcal{L_\mathrm{1}} + \mathcal{L_\mathrm{2}}
+$$
 
 Let me show you what that means exactly, and how to calculate each step.
 

@@ -1,5 +1,5 @@
 ---
-date: 2021-03-31
+date: 2021-04-01
 title: "Week 2 - Text Summarization"
 subtitle: "NLP with Attention Models"
 description: "This week we unlock the secrets of Neural Text Summarization. We will building a powerful Transformer model to extract crucial information and create concise summaries. Through hands-on exercises using JAX, we will learn techniques like beam search and length normalization to enhance the quality of our summaries. Through hands-on exercises we will train our model on a dataset of articles."
@@ -38,18 +38,32 @@ categories:
 - [X] [Interpret the math behind scaled dot product attention, causal attention, and multi-head attention](#sec-dot-product-attention).
 - [X] [Use articles and their summaries to create input features for training a text summarizer](#sec-transformer-summarizer).
 - [X] [Build the GPT-2 transformer-decoder model](#sec-transformer-decoder).
+
 :::
+
 
 ::: {.callout-tip collapse=false}
-## TL;DR neural network engineering
-<!-- TODO: better summary -->
+## TL;DR - Text Summarization
+
+![Text Summarization in a nutshell](/images/in_a_nutshell.jpg)
+
+- **Attention** is a general solution for the sequence alignment problem.
+- **Dot Product Attention** is the most common form of attention.
+- **Causal Attention** is also called *self attention*.
+- **Multi-headed Attention** replicates the attention mechanism analogously to the multiple filters used in convolutional layers.
+- **Positional Encoding** is added to the input embeddings to provide the model with extra information to explicitly describe the order of the input sequences.
+- **Teacher Forcing** is a technique used in dynamical supervised learning tasks to replace the actual output of a unit by the teacher signal in subsequent computation of the behavior of the network.
+- **T5** is a Text-To-Text Transfer Transformer that can do a number of tasks with a single model.
+- **Transformer Applications** include text summarization, autocomplete, NER, Q&A, translation, chat bots, sentiment analyses, market intelligence, text classification, OCR, and spell checking.
+- **SOTA Transformers** include GPT-4, ElmO, BERT, and T5.
+- **Transformer Decoder** has two parts: a decoder block (with multi-head attention) and a feed forward block.
+- **Transformer Summarizer** uses articles and their summaries to create input features for training a text summarizer.
 
 :::
 
-For the impatient  - We'll start with  NLP engineering insights from this week.
 
 <!-- TODO: add podcast for this week's material -->
-:::
+
 
 <!-- TODO: move this to a blog post
 
@@ -447,7 +461,7 @@ another interesting point made in the preceding talk is that dot product attenti
 In [@DBLP:journals/corr/abs-2103-13076] there is a reversal of the trend from rnn to transformers. Here  the latest results show a an idea of training big transformers and then converting them to RNN to improve performance. (One get an RNN by training a transformer.)
 
 
-## V4: Causal Attention {#sec-causal-attention}
+## Causal Attention {#sec-causal-attention}
 
 - We are interested in three main types of attention. 
 - We'll see a brief overview of causal attention. 
@@ -467,7 +481,7 @@ In terms of use cases there are three types of attention mechanisms:
     - seq2seq
     - machine translation.
 
-### Causal Attention: {#sec-causal-attention}
+### Causal Attention: {#sec-causal-attention-1}
 
   - AKA self attention.
   - attention is all we need.
@@ -603,7 +617,6 @@ the transformer decoder has two parts
 
 ![transformer-decoder-summary](img/c4w2-68-transformer-decoder-summary.png){.column-margin group="slides"}
 
-
 # V7: Transformer Summarizer {#sec-transformer-summarizer}
 
 ![outline](img/c4w2-70-outline.png){.column-margin group="slides"}
@@ -685,7 +698,9 @@ this covered the transformer block
 
 ## Assignment: Transformer Summarizer
 
+<!--
 [Assignment](assignment.qmd)
+-->
 
 This long assignment primarily focused on dot product attention,  multi-head attention and on building the transformer blocks. These were manageable as their theory had been explained in the lectures and their code had already been covered in the labs. It glosses over the parts involving data processing, training, evaluation and the actual summarization task. The summarization is accomplished using maximum likelihood estimate. A beam search might have yielded better results.
 
@@ -693,7 +708,7 @@ The date as described by:
 
 > We use the CNN/Daily Mail dataset (Hermann et al., 2015; Nallapati et al., 2016), which contains online news articles (781 tokens on average) paired with multi-sentence summaries (3.75 sentences or 56 tokens on average). 
 
->  [Get To The Point §4 (Abigail et all 2017) ](https://arxiv.org/pdf/1704.04368.pdf)
+- @see2017get  [Get To The Point §4 (Abigail et all 2017)](https://arxiv.org/pdf/1704.04368.pdf)
 We used the non anatomized version. However the earlier paper used a preprocessed version which replaced the named entities with token like `$entity5`. This is probably ideal in other situations like event processing where each event looks quite different unless one anatomizes them rendering them much more similar and hopefully helping the model generalize better by learning from the partitions induced by the equivalency relation. 
 
 ## Expanding the lab to a project: {#sec-expanding-the-lab-to-a-project}
@@ -739,9 +754,9 @@ use sammy lib with
 
 ### Extra features  {#sec-extra-features}
 
-  - [ ] pages for paper reviews
-  - [ ] pages for research questions
-  - [ ] pages to implement exra code/ experiments.
+- [ ] pages for paper reviews
+- [ ] pages for research questions
+- [ ] pages to implement exra code/ experiments.
 - [ ] visualize the concepts/sentences/paragraphs/sections covered in the summary.
 - [ ] establish a hierarchy of what would go into a longer outline.
 - [ ] develop a f-score metric combining precision and recall for the summary of the abstract.
