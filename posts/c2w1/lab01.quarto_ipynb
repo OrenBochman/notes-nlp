@@ -1,0 +1,230 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "date: 2020-10-16\n",
+        "title: 'Building the vocabulary'\n",
+        "jupyter: python3\n",
+        "categories: \n",
+        "  - NLP \n",
+        "  - Coursera \n",
+        "  - Lab\n",
+        "  - Logistic regression\n",
+        "  - Sentiment analysis task\n",
+        "  - Classification & Vector Spaces\n",
+        "---\n",
+        "\n",
+        "\n",
+        "::: {.column-margin .nolightbox}\n",
+        "![course banner](/images/Course-Logo-2-3.webp)\n",
+        ":::\n",
+        "\n",
+        "Estimated Time: 10 minutes\n",
+        "\n",
+        "# Vocabulary Creation \n",
+        "\n",
+        "Create a tiny vocabulary from a tiny corpus\n",
+        "\n",
+        "It's time to start small !\n",
+        "\n",
+        "### Imports and Data\n"
+      ],
+      "id": "a74a67a0"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# imports\n",
+        "import re # regular expression library; for tokenization of words\n",
+        "from collections import Counter # collections library; counter: dict subclass for counting hashable objects\n",
+        "import matplotlib.pyplot as plt # for data visualization"
+      ],
+      "id": "72a9a69b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# the tiny corpus of text ! \n",
+        "text = 'red pink pink blue blue yellow ORANGE BLUE BLUE PINK' # 🌈\n",
+        "print(text)\n",
+        "print('string length : ',len(text))"
+      ],
+      "id": "fa1fbb29",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Preprocessing\n"
+      ],
+      "id": "bc8cc0ad"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# convert all letters to lower case\n",
+        "text_lowercase = text.lower()\n",
+        "print(text_lowercase)\n",
+        "print('string length : ',len(text_lowercase))"
+      ],
+      "id": "19cd8110",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# some regex to tokenize the string to words and return them in a list\n",
+        "words = re.findall(r'\\w+', text_lowercase)\n",
+        "print(words)\n",
+        "print('count : ',len(words))"
+      ],
+      "id": "b423bfcb",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Create Vocabulary\n",
+        "Option 1 : A set of distinct words from the text\n"
+      ],
+      "id": "13c671c5"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# create vocab\n",
+        "vocab = set(words)\n",
+        "print(vocab)\n",
+        "print('count : ',len(vocab))"
+      ],
+      "id": "63398380",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Add Information with Word Counts\n",
+        "Option 2 : Two alternatives for including the word count as well\n"
+      ],
+      "id": "64762a27"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# create vocab including word count\n",
+        "counts_a = dict()\n",
+        "for w in words:\n",
+        "    counts_a[w] = counts_a.get(w,0)+1\n",
+        "print(counts_a)\n",
+        "print('count : ',len(counts_a))"
+      ],
+      "id": "48e10d9c",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# create vocab including word count using collections.Counter\n",
+        "counts_b = dict()\n",
+        "counts_b = Counter(words)\n",
+        "print(counts_b)\n",
+        "print('count : ',len(counts_b))"
+      ],
+      "id": "542c5408",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# barchart of sorted word counts\n",
+        "d = {'blue': counts_b['blue'], 'pink': counts_b['pink'], 'red': counts_b['red'], 'yellow': counts_b['yellow'], 'orange': counts_b['orange']}\n",
+        "plt.bar(range(len(d)), list(d.values()), align='center', color=d.keys())\n",
+        "_ = plt.xticks(range(len(d)), list(d.keys()))"
+      ],
+      "id": "59dbf70b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Ungraded Exercise\n",
+        "Note that `counts_b`, above, returned by `collections.Counter` is sorted by word count\n",
+        "\n",
+        "Can we modify the tiny corpus of ***text*** so that a new color appears \n",
+        "between ***pink*** and ***red*** in `counts_b` ?\n",
+        "\n",
+        "Do we need to run all the cells again, or just specific ones ? \n"
+      ],
+      "id": "43585a6a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "print('counts_b : ', counts_b)\n",
+        "print('count : ', len(counts_b))"
+      ],
+      "id": "85fa02ad",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Expected Outcome:\n",
+        "\n",
+        "counts_b : Counter({'blue': 4, 'pink': 3, **'your_new_color_here': 2**, red': 1, 'yellow': 1, 'orange': 1})\n",
+        "<br>\n",
+        "count :  6\n",
+        "\n",
+        "### Summary\n",
+        "\n",
+        "This is a tiny example but the methodology scales very well.\n",
+        "<br>\n",
+        "In the assignment we will create a large vocabulary of thousands of words, from a corpus\n",
+        "<br>\n",
+        "of tens of thousands or words! But the mechanics are exactly the same. \n",
+        "<br> \n",
+        "The only extra things to pay attention to should be; run time, memory management and the vocab data structure.\n",
+        "<br> \n",
+        "So the choice of approach used in code blocks `counts_a` vs `counts_b`, above, will be important.\n"
+      ],
+      "id": "689aece5"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/home/oren/.local/share/jupyter/kernels/python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

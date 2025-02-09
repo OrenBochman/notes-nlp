@@ -1,0 +1,2186 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Oren Bochman">
+<meta name="keywords" content="Automatic extracting, Automatic abstracting, Cue words, Comparative evaluation, Content words, Document screening, Key words, Pragmatic words, Parameterization, Research methodology, Sentence location, Sentence selection, Sentence significance, Title words">
+<meta name="description" content="Concepts, slide commentaries and Lecture notes on Automatic text Summarization by Masa Nekic">
+
+<title>Automatic Summarization Task – NLP Specialization</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed slimcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">NLP Specialization</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Automatic Summarization Task</li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Automatic Summarization Task</h1>
+                  <div>
+        <div class="description">
+          Concepts, slide commentaries and Lecture notes on Automatic text Summarization by Masa Nekic
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">NLP</div>
+                <div class="quarto-category">Notes</div>
+                <div class="quarto-category">Literature review</div>
+                <div class="quarto-category">Summarization task</div>
+                <div class="quarto-category">Relevance</div>
+                <div class="quarto-category">Conference talk</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-body">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Oren Bochman </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">Saturday, April 24, 2021</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+
+  <div>
+    <div class="keywords">
+      <div class="block-title">Keywords</div>
+      <p>Automatic extracting, Automatic abstracting, Cue words, Comparative evaluation, Content words, Document screening, Key words, Pragmatic words, Parameterization, Research methodology, Sentence location, Sentence selection, Sentence significance, Title words</p>
+    </div>
+  </div>
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Classification &amp; Vector Spaces</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Logistic Regression</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Frequencies</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w1/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Visualizing tweets</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Probability &amp; Bayes Rule</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Visualizing Naive Bayes</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Vector Space Models &amp; PCA</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Linear algebra with NumPy</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Manipulating word embeddings</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">MT &amp; Document Search via KNN</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vector manipulation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Hash functions and multiplanes</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Probabilistic Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">Autocorrect &amp; Dynamic Programming</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Building the vocabulary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Candidates from String Edits</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">POS tagging &amp; HMMS</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vocabulary with unknowns</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Working with tags and Numpy</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false">
+ <span class="menu-text">Autocomplete &amp; Language Models</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - N-grams Corpus preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Building the language model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w3/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Out of vocabulary words</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false">
+ <span class="menu-text">Word embeddings with neural networks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Data preparation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Intro to CBOW</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c2w4/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Training the CBOW</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true">
+ <span class="menu-text">Sequence Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false">
+ <span class="menu-text">Neural Networks for Sentiment Analysis</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Introduction to Trax</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Classes and Subclasses</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w1/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Data Generators</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false">
+ <span class="menu-text">RNN for Language Modeling</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Hidden State Activation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Calculating Perplexity</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w2/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Vanilla RNNs, GRUs and the scan function</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w2/lab04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L4 - Creating a GRU model using Trax</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="false">
+ <span class="menu-text">LSTMs and Named Entity Recognition</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vanishing Gradients</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false">
+ <span class="menu-text">Siamese Networks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Creating a Siamese Model using Trax</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Modified Triplet Loss</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c3w4/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Evaluate a Siamese Model</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="true">
+ <span class="menu-text">NLP with Attention Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false">
+ <span class="menu-text">Neural Machine Translation</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Stack Semantics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - BLEU Score</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="false">
+ <span class="menu-text">Text Summarization</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-18" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Attention</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - The Transformer Decoder</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" role="navigation" aria-expanded="false">
+ <span class="menu-text">Question Answering</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-19" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - SentencePiece and BPE</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - BERT Loss</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w3/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - T5</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" role="navigation" aria-expanded="false">
+ <span class="menu-text">Chat Bots</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-20" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Reformer LSH</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../posts/c4w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Revnet</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#motivation" id="toc-motivation" class="nav-link active" data-scroll-target="#motivation">Motivation</a></li>
+  <li><a href="#automatic-text-summarization-task" id="toc-automatic-text-summarization-task" class="nav-link" data-scroll-target="#automatic-text-summarization-task">Automatic Text Summarization Task</a></li>
+  <li><a href="#concepts" id="toc-concepts" class="nav-link" data-scroll-target="#concepts">Concepts</a>
+  <ul class="collapse">
+  <li><a href="#ontological-mindmap" id="toc-ontological-mindmap" class="nav-link" data-scroll-target="#ontological-mindmap">Ontological Mindmap</a></li>
+  <li><a href="#extractive-vs.-abstractive" id="toc-extractive-vs.-abstractive" class="nav-link" data-scroll-target="#extractive-vs.-abstractive">Extractive vs.&nbsp;Abstractive</a>
+  <ul class="collapse">
+  <li><a href="#extractive-summaries-illustrated" id="toc-extractive-summaries-illustrated" class="nav-link" data-scroll-target="#extractive-summaries-illustrated">Extractive Summaries Illustrated</a></li>
+  </ul></li>
+  <li><a href="#abstractive-summaries-illustrated" id="toc-abstractive-summaries-illustrated" class="nav-link" data-scroll-target="#abstractive-summaries-illustrated">Abstractive Summaries Illustrated</a></li>
+  </ul></li>
+  <li><a href="#algorithms-methods" id="toc-algorithms-methods" class="nav-link" data-scroll-target="#algorithms-methods">Algorithms &amp; Methods</a>
+  <ul class="collapse">
+  <li><a href="#positional-method" id="toc-positional-method" class="nav-link" data-scroll-target="#positional-method">Positional method</a></li>
+  <li><a href="#luhns-method" id="toc-luhns-method" class="nav-link" data-scroll-target="#luhns-method">Luhn’s method</a></li>
+  <li><a href="#edmundsons-method" id="toc-edmundsons-method" class="nav-link" data-scroll-target="#edmundsons-method">Edmundson’s method</a></li>
+  <li><a href="#frump---fast-reading-understanding-and-memory-program" id="toc-frump---fast-reading-understanding-and-memory-program" class="nav-link" data-scroll-target="#frump---fast-reading-understanding-and-memory-program">FRUMP - Fast Reading Understanding and Memory Program</a></li>
+  <li><a href="#naive-bayes-classification" id="toc-naive-bayes-classification" class="nav-link" data-scroll-target="#naive-bayes-classification">Naive Bayes Classification</a>
+  <ul class="collapse">
+  <li><a href="#performance" id="toc-performance" class="nav-link" data-scroll-target="#performance">Performance:</a></li>
+  </ul></li>
+  <li><a href="#maximum-entropy-classification" id="toc-maximum-entropy-classification" class="nav-link" data-scroll-target="#maximum-entropy-classification">Maximum Entropy Classification</a></li>
+  <li><a href="#mmr" id="toc-mmr" class="nav-link" data-scroll-target="#mmr">MMR</a></li>
+  <li><a href="#mead" id="toc-mead" class="nav-link" data-scroll-target="#mead">Mead</a></li>
+  <li><a href="#lexrank" id="toc-lexrank" class="nav-link" data-scroll-target="#lexrank">LexRank</a></li>
+  </ul></li>
+  <li><a href="#evaluation" id="toc-evaluation" class="nav-link" data-scroll-target="#evaluation">Evaluation</a>
+  <ul class="collapse">
+  <li><a href="#what-makes-a-good-summary" id="toc-what-makes-a-good-summary" class="nav-link" data-scroll-target="#what-makes-a-good-summary">What makes a good summary?</a></li>
+  <li><a href="#precision-and-recall" id="toc-precision-and-recall" class="nav-link" data-scroll-target="#precision-and-recall">Precision and Recall</a></li>
+  <li><a href="#utility" id="toc-utility" class="nav-link" data-scroll-target="#utility">Utility</a></li>
+  <li><a href="#pyramid-method" id="toc-pyramid-method" class="nav-link" data-scroll-target="#pyramid-method">Pyramid method</a></li>
+  <li><a href="#rouge-n" id="toc-rouge-n" class="nav-link" data-scroll-target="#rouge-n">ROUGE-N</a></li>
+  </ul></li>
+  <li><a href="#tools" id="toc-tools" class="nav-link" data-scroll-target="#tools">Tools</a></li>
+  <li><a href="#data-sets" id="toc-data-sets" class="nav-link" data-scroll-target="#data-sets">Data Sets</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/2021-04-24-summerization/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
+
+
+
+
+
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="notes-formulas.jpg" class="lightbox" data-gallery="slides" title="notes"><img src="notes-formulas.jpg" class="img-fluid figure-img" alt="notes"></a></p>
+<figcaption>notes</figcaption>
+</figure>
+</div></div><p>This is one of my blogposts on NLP.</p>
+<section id="motivation" class="level2">
+<h2 class="anchored" data-anchor-id="motivation">Motivation</h2>
+<p>The material provided in the fast.ai course did not go into depth on the summarization. This is perhaps due to also covering Q&amp;A which is rather similar. I had some ideas when working on the assignment building an abstractive summerier based on GMT2. many ideas came from my background in information retrieval. I had noticed that the issues like coverage and repetition were anathema to summarization from its inception.</p>
+<p>When I looked for more information I found the following video which together with a review paper can provide a good intro to this subject. I also found links to the papers mentioned and extracted some of their abstracts.</p>
+<p>I have to admit that looking at all the algorithms critically I found some new ideas for tackling problems, beyond what I had come up with on my own.</p>
+</section>
+<section id="automatic-text-summarization-task" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="automatic-text-summarization-task">Automatic Text Summarization Task</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+TL;DR The summarization Task
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="../../images/in_a_nutshell.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Summarization in a nutshell"><img src="../../images/in_a_nutshell.jpg" class="img-fluid figure-img" alt="Summarization in a nutshell"></a></p>
+<figcaption>Summarization in a nutshell</figcaption>
+</figure>
+</div>
+<p>This is a review of the Automatic Text Summarization Task by Masa Nekic. The talk provides a starter ontology, a review of algorithms, some evaluation methods, and some tools.</p>
+</div>
+</div>
+
+<div class="no-row-height column-margin column-container"><div id="vid-01" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
+<figure class="quarto-float quarto-float-vid figure">
+<div aria-describedby="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/_d0OXm0dRZ4" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Video&nbsp;1: Masa Nekic’s NDC Conferences talk on the Automatic Text Summarization Task
+</figcaption>
+</figure>
+</div></div><p>Notes from the following lecture by <a href="https://www.crunchbase.com/person/masa-nekic">Masa Nekic</a> given at <a href="https://ndcoslo.com/">NDC Conferences</a>.</p>
+<p>The talk provides:</p>
+<ul>
+<li>a starter ontology.</li>
+<li>a review of algorithms.</li>
+<li>some evaluation methods</li>
+<li>some tools.</li>
+</ul>
+<hr>
+</section>
+<section id="concepts" class="level1 page-columns page-full">
+<h1>Concepts</h1>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="s1-mindmap.png" class="lightbox" data-gallery="slides" title="mindmap"><img src="s1-mindmap.png" class="img-fluid figure-img" alt="mindmap"></a></p>
+<figcaption>mindmap</figcaption>
+</figure>
+</div></div><section id="ontological-mindmap" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="ontological-mindmap">Ontological Mindmap</h2>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">mindmap
+  Root((Summarization&lt;br&gt;Task))
+    id1[Input Based]
+        id11(Single document) 
+        id12(Multi document)
+    id2[Contextal]
+        id21[Generic]
+        id22(Domain Specific)
+        id23(Query)
+           id231{{from IR}}
+    id3[Output Based]
+        id31(Extractive)
+          id311{{Picks sentences from the text}}
+        id32(Abstractive)
+          id321{{Generates from scratch}}
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>Note: the Query based approach intersects with the NLP QA task.</p>
+<hr>
+<p class="page-columns page-full"><a href="s2-extractive-abstractive.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="s2-extractive-abstractive.png" class="img-fluid"></div></a></p>
+</section>
+<section id="extractive-vs.-abstractive" class="level2">
+<h2 class="anchored" data-anchor-id="extractive-vs.-abstractive">Extractive vs.&nbsp;Abstractive</h2>
+<p>The “Summarizing before exams” meme demonstrates the extractive approach. The “abridged classics” meme demonstrates the abstractive approach.</p>
+<hr>
+<section id="extractive-summaries-illustrated" class="level3">
+<h3 class="anchored" data-anchor-id="extractive-summaries-illustrated">Extractive Summaries Illustrated</h3>
+<p>Extractive algorithms locate and rank the content of a document.</p>
+<blockquote class="blockquote">
+<p><mark>Game of Thrones is an American fantasy drama television series created by David Benioff and D. B. Weiss for HBO. It is an adaptation of A Song of Ice and Fire, George R. R. Martin’s series of fantasy novels</mark>, the first of which is A Game of Thrones. The show was both produced and filmed in Belfast and elsewhere in the United Kingdom. Filming locations also included Canada, Croatia, Iceland, Malta, Morocco, and Spain. <mark>The series premiered on HBO in the United States on April 17, 2011, and concluded on May 19, 2019, with 73 episodes broadcast over eight seasons.</mark></p>
+<p><mark>Set on the fictional continents of Westeros and Essos, Game of Thrones has several plots and a large ensemble cast and follows several story arcs</mark>. One arc is about the Iron Throne of the Seven Kingdoms and follows a web of alliances and conflicts among the noble dynasties either vying to claim the throne or fighting for independence from it. Another focuses on the last descendant of the realm’s deposed ruling dynasty, who has been exiled and is plotting a return to the throne, while another story arc follows the Night’s Watch, a brotherhood defending the realm against the fierce peoples and legendary creatures of the North.</p>
+</blockquote>
+<p>The Extractive Summary:</p>
+<blockquote class="blockquote">
+<p>Game of Thrones is an American fantasy drama television series created by David Benioff and D. B. Weiss for HBO. It is an adaptation of A Song of Ice and Fire, George R. R. Martin’s series of fantasy novels</p>
+<p>Set on the fictional continents of Westeros and Essos, Game of Thrones has several plots and a large ensemble cast and follows several story arcs</p>
+</blockquote>
+<p>Extractive Summaries draw text verbatim from the source.</p>
+<ol type="1">
+<li>This was the more common approach in NLP</li>
+<li>it is closely related to IR and Q&amp;A task.</li>
+<li>Their main challenges of this approach are:
+<ul>
+<li>a <em>lack balance,</em> when some parts over represented while others under represented.</li>
+<li>a <em>lack of cohesion,</em> as extracted text retains dangling pronouns etc.</li>
+</ul></li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="abstractive-summaries-illustrated" class="level2">
+<h2 class="anchored" data-anchor-id="abstractive-summaries-illustrated">Abstractive Summaries Illustrated</h2>
+<p>Abstractive algorithms add generation of the extracted content.</p>
+<blockquote class="blockquote">
+<p>Game of Thrones is an American fantasy drama television series created by David Benioff and D. B. Weiss for HBO. It is an adaptation of A Song of Ice and fire, George R. R. Martin’s series of fantasy novels, the first of which is A Game of Thrones. The show was both produced and filmed in Belfast and elsewhere in the United Kingdom. Filming locations also included Canada, Croatia, Iceland, Malta, Morocco, and Spain, The series premiered on HBO in the United States on April 17, 2011, and concluded on May 19, 2019, with 73 episodes broadcast over eight seasons.</p>
+<p>Set on the fictional continents of Westeros and Essos, Game of Thrones has several plots and a large ensemble cast and follows several story arcs. One arc is about the Iron Throne of the Seven Kingdoms and follows a web of alliances and conflicts among the noble dynasties either vying to claim the throne or fighting for independence from it. Another focuses on the last descendant of the realm’s deposed ruling dynasty, who has been exiled and is plotting a return to the throne, while another story arc follows the Night’s Watch, a brotherhood defending the realm against the fierce peoples and legendary creatures of the North.</p>
+</blockquote>
+<p>Summary (Abstractive):</p>
+<blockquote class="blockquote">
+<p>Game of Thrones is a TV show based on book series A Song of Ice and Fire, written by G. R. R. Martin. All eight seasons were filmed in many beautiful countries across <strong>three different continents</strong>. Game of Thrones has a very complex story with several plots and story arcs — from conflicts between Westeros nobility to claim the Iron Throne and rule over Seven Kingdoms to fight between brotherhood called Night’s watch and enemies from the North.</p>
+</blockquote>
+<ol type="1">
+<li><strong>Abstractive</strong> Summaries are not constrained to using text drawn the source. They can draw on <code>common-sense</code> and <code>domain knowledge</code> external to the document.</li>
+<li>This is the more challenging approach in NLP</li>
+<li>Their main issues are:
+<ul>
+<li>good coverage.</li>
+<li>avoiding repetition.</li>
+<li>can provide better <em>compression</em>.</li>
+</ul></li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="algorithms-methods" class="level1 page-columns page-full">
+<h1>Algorithms &amp; Methods</h1>
+<section id="positional-method" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="positional-method">Positional method</h2>
+<ul>
+<li>Introduced in <span class="citation" data-cites="Baxendale1958Machine">(<a href="#ref-Baxendale1958Machine" role="doc-biblioref">Baxendale 1958</a>)</span></li>
+<li>200 paragraphs</li>
+<li>First and last sentence of a paragraph are topic sentences (85% vs 7%)</li>
+</ul>
+<p>e.g.</p>
+<blockquote class="blockquote">
+<p><mark>Game of Thrones is an American fantasy drama television series created by David Benioff and D. B. Weiss for HBO</mark>. It is an adaptation of A Song of Ice and Fire, George R. R. Martinis series of fantasy novels, the first of which is A Game of Thrones. The show was both produced and filmed in Belfast and elsewhere in the United Kingdom. Filming locations also included Canada, Croatia, Iceland, Malta, Morocco, and Spain. <mark>The series premiered on HBO in the United States on April 17, 2011, and concluded on May 19, 2019, with 73 episodes broadcast over eight seasons</mark>.</p>
+</blockquote>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+My insights:
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If we want to build a summerier, <mark>first and last sentences may be useful features</mark>. Note that in academic writing the penultimate sentence may often the most important.</p>
+<p>So a simple extractive method might pick one of the sentences from each paragraph. It could have a prior that like the first last sentence of a paragraph. But it would need more features to break ties.</p>
+</div>
+</div>
+<hr>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="s8-luhn-method-1958.png" class="lightbox" data-gallery="slides" title="s8-luhn-method-1958"><img src="s8-luhn-method-1958.png" class="img-fluid figure-img" alt="s8-luhn-method-1958"></a></p>
+<figcaption>s8-luhn-method-1958</figcaption>
+</figure>
+</div></div></section>
+<section id="luhns-method" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="luhns-method">Luhn’s method</h2>
+<ul>
+<li>Introduced in <span class="citation" data-cites="luhn-58">(<a href="#ref-luhn-58" role="doc-biblioref">Luhn 1958</a>)</span></li>
+<li>Frequency of content terms</li>
+<li>Data pre-processing
+<ul>
+<li>Stop words removal</li>
+<li>Stemming (cats cat)</li>
+</ul></li>
+</ul>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="s9-luhn-method-formula.png" class="lightbox" data-gallery="slides" title="s9-luhn-method-formula"><img src="s9-luhn-method-formula.png" class="img-fluid figure-img" alt="s9-luhn-method-formula"></a></p>
+<figcaption>s9-luhn-method-formula</figcaption>
+</figure>
+</div></div><p>Select sentences with highest concentrations of salient content terms</p>
+<p><span class="math display"> Score = \frac{\text{Salient Words}^2}{  \text{Terms in chunk} }</span></p>
+<hr>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="s10-edmundson-method.png" class="lightbox" data-gallery="slides" title="s10-edmundson-method"><img src="s10-edmundson-method.png" class="img-fluid figure-img" alt="s10-edmundson-method"></a></p>
+<figcaption>s10-edmundson-method</figcaption>
+</figure>
+</div></div></section>
+<section id="edmundsons-method" class="level2">
+<h2 class="anchored" data-anchor-id="edmundsons-method">Edmundson’s method</h2>
+<p>Introduced in <span class="citation" data-cites="edmundson-1969">(<a href="#ref-edmundson-1969" role="doc-biblioref">Edmundson 1969</a>)</span></p>
+<ul>
+<li>Position (P)</li>
+<li>Word frequency (F)</li>
+<li>Cue words (C)
+<ul>
+<li><strong>Bonus words</strong> — pointing to the important sentence</li>
+<li><strong>Stigma words</strong> — negative effect on the sentence importance</li>
+<li><strong>Null words</strong> — neutral or irrelevant to the importance of the sentence</li>
+</ul></li>
+<li>Document structure (S)</li>
+</ul>
+<p>Linear combination of these 4 features:</p>
+<p><span class="math display">
+score = \alpha_1 P + \alpha_2 F + \alpha_3 C + \alpha_4 S \qquad
+</span></p>
+<blockquote class="blockquote">
+<p>This paper describes new methods of automatically extracting documents for screening purposes, i.e.&nbsp;the computer selection of sentences having the greatest potential for conveying to the reader the substance of the document. While previous work has focused on one component of sentence significance, namely, the presence of high-frequency content words (key words), the methods described here also treat three additional components: pragmatic words (cue words); title and heading words; and structural indicators (sentence location). The research has resulted in an operating system and a research methodology. The extracting system is parameterized to control and vary the influence of the above four components. The research methodology includes procedures for the compilation of the required dictionaries, the setting of the control parameters, and the comparative evaluation of the automatic extracts with manually produced extracts. The results indicate that the three newly proposed components dominate the frequency component in the production of better extracts. – <span class="citation" data-cites="edmundson-1969">(<a href="#ref-edmundson-1969" role="doc-biblioref">Edmundson 1969</a>)</span></p>
+</blockquote>
+<p>Edmundson points out some issues:</p>
+<ol type="1">
+<li>If an extracted sentence is an anaphora, it may not be useful as the reader will be less likely to undestandit wiout its antecedent.</li>
+</ol>
+<blockquote class="blockquote">
+<p>In the composition of maximally coherent and meaningful target extracts, it was noticed that requirements of antecedents, deletions of text due to preediting, minimization of redundancy, and restrictions on the length parameter</p>
+</blockquote>
+<ol start="2" type="1">
+<li><p>So ranking of sentences is of secondary importance to preprocessing and extraction. Also picking the length of the summary can have a big impact on the quality of the summary.</p></li>
+<li><p>They used a dictionary for the Corpus and a Document dictionary called a glossary. Cues words were drawn from a a Corpus level dictionary of words indicating relevance.</p></li>
+</ol>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+My insights:
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><p>While generative summaries have many advantages over extractive ones they may hallucinate for example if the model has not been trained on the vocabulary of the text.</p></li>
+<li><p>It is thus best to ensure that the generation is well grounded in the text.</p></li>
+<li><p>On the other hand, extractive summaries have their short comings too.</p></li>
+<li><p>We may want to add a sentence level feature to classify sentences as anaphoric or not. Since the dependency may be on a sentence of sentences extaction may fail.</p>
+<ul>
+<li>Edmundson point out that these anaphoric sentences are often marked by certain words or phrases. We might do better identifying anaophoric sentences by looking at the dependency tree of the sentence.</li>
+<li>We can consider co-reference resolution as a pre-processing step.</li>
+</ul></li>
+<li><p>Cue words are also an intersting feature but a vector space model may yeild a better indication of the importance of a sentence. It seems though that the paper did collect information to estimate td/idf scores for each word.</p></li>
+</ul>
+</div>
+</div>
+<hr>
+</section>
+<section id="frump---fast-reading-understanding-and-memory-program" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="frump---fast-reading-understanding-and-memory-program">FRUMP - Fast Reading Understanding and Memory Program</h2>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="s12-FRUMP-demo.png" class="lightbox" data-gallery="slides" title="s12-FRUMP-demo"><img src="s12-FRUMP-demo.png" class="img-fluid figure-img" alt="s12-FRUMP-demo"></a></p>
+<figcaption>s12-FRUMP-demo</figcaption>
+</figure>
+</div></div><ul>
+<li>Introduced in <span class="citation" data-cites="DeJong1979PredictionAS">(<a href="#ref-DeJong1979PredictionAS" role="doc-biblioref">DeJong 1979</a>)</span></li>
+<li>knowledge-based summarization system.</li>
+<li>Template filling approach based on UPI news stories.</li>
+<li>First abstractive method.</li>
+<li>50 sketchy scripts
+<ul>
+<li>Contain important events that are expected to occur in a specific situation</li>
+<li>Summarizer looks for instances of salient events, filling in as many as possible.</li>
+</ul></li>
+<li>Issues - 50 scripts were not enough.</li>
+</ul>
+<blockquote class="blockquote">
+<p>This paper describes a new approach to natural language processing which results in a very robust and efficient system. The approach taken is to integrate the parser with the rest of the system. This enables the parser to benefit from predictions that the rest of the system makes in the course of its processing. These predictions can be invaluable as guides to the parser in such difficult problem areas as resolving referents and selecting meanings of ambiguous words. A program, called FRUMP for Fast Reading Understanding and Memory Program, employs this approach to parsing. FRUMP skims articles rather than reading them for detail. The program works on the relatively unconstrained domain of news articles. It routinely understands stories it has never before seen. The program’s success is largely due to its radically different approach to parsing.</p>
+</blockquote>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+My insights:
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This approach has two interesting ideas.</p>
+<ul>
+<li>KR using templates or frames.</li>
+<li>KR using scripts is even more powerful method.</li>
+</ul>
+<ol type="1">
+<li>A modern take on this might involve using a classifier to identify sentences as
+<ul>
+<li>Facts
+<ul>
+<li>general knowledge (simple)</li>
+<li>domain knowledge (complex or technical)</li>
+</ul></li>
+<li>Opinions
+<ul>
+<li>general knowledge (similar to many documents)</li>
+<li>domain expert. (similar to a few)</li>
+</ul></li>
+<li>Events (narrative structure)</li>
+<li>Deductive (logic, inference, statistical, syllogism)</li>
+<li>Others</li>
+</ul></li>
+<li>Using a generative approach would allow a deep model to generate its own KR features and templates. An adversarial approach might split this into two nets one to generate and another to test.</li>
+<li>Analyzing existing summaries and clustering them might allow one to begin summarize using a preferred template rather than starting from scratch. Clustering, deleting and generalizing from existing summaries may be a means for improving abstractive work.</li>
+<li>Putting a focus on the added value of
+<ul>
+<li>out of document facts and vocabulary</li>
+<li>how humans/abstractive summaries differ from extractive ones.</li>
+</ul></li>
+</ol>
+</div>
+</div>
+<hr>
+</section>
+<section id="naive-bayes-classification" class="level2">
+<h2 class="anchored" data-anchor-id="naive-bayes-classification">Naive Bayes Classification</h2>
+<ul>
+<li>Introduced in <span class="citation" data-cites="Kupiec1995ATD">(<a href="#ref-Kupiec1995ATD" role="doc-biblioref">Kupiec, Pedersen, and Chen 1995</a>)</span></li>
+<li>First trainable method</li>
+<li>Training set: original documents and manually created extracts</li>
+<li>Used <strong>Naive Bayes</strong> classifier:</li>
+</ul>
+<p><span class="math display"> P (s \in S \vert F_1 ... F_k) = \frac{P (F_1 ... F_k \vert s \in S ) P(s \in S )} {P (F_1 ... F_k)}  </span></p>
+<ul>
+<li>By assuming statistical independence of the features it reduces to:</li>
+</ul>
+<p><span class="math display">  P (s \in S \vert F_1 ... F_k)  = \frac{ \displaystyle \prod_{j \in J} P (F_j \vert s \in S ) P(s \in S )} { \displaystyle \prod_{j \in J} P (F_i)} </span></p>
+<section id="performance" class="level3">
+<h3 class="anchored" data-anchor-id="performance">Performance:</h3>
+<ul>
+<li>For 25% extracts - 84% precision</li>
+<li>For smaller summaries - 74% improvement over <em>lead summaries</em></li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="maximum-entropy-classification" class="level2">
+<h2 class="anchored" data-anchor-id="maximum-entropy-classification">Maximum Entropy Classification</h2>
+<ul>
+<li>Introduced in <span class="citation" data-cites="Osborne2002UsingME">(<a href="#ref-Osborne2002UsingME" role="doc-biblioref">Osborne 2002</a>)</span><br>
+</li>
+<li>Maximum entropy models are performing better than Naive Bayes approach</li>
+</ul>
+<hr>
+</section>
+<section id="mmr" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="mmr">MMR</h2>
+<ul>
+<li>Introduced in <span class="citation" data-cites="Carbonell1998TheUO">(<a href="#ref-Carbonell1998TheUO" role="doc-biblioref">Carbonell and Goldstein-Stewart 1998</a>)</span></li>
+<li>Maximal Marginal Relevance</li>
+<li>Query based summaries.</li>
+</ul>
+<p><span class="math display">
+\text{MMR} = \arg \max[\lambda Sim_1(s_i,Q)-(1-\lambda) \max Sim_2(s_i, s_j)]
+</span></p>
+<p>Where:</p>
+<ul>
+<li><span class="math inline">Q</span> - user query</li>
+<li><span class="math inline">R</span> - ranked list of sentences</li>
+<li><span class="math inline">S</span> - already retrieved sentences</li>
+<li><span class="math inline">Sim</span> - similarity metrics</li>
+<li><span class="math inline">\lambda</span> - hyper-parameter controlling importance of query or other sentence.</li>
+</ul>
+<blockquote class="blockquote">
+<p>This paper presents a method for combining <em>query-relevance</em> with <em>information-novelty</em> in the context of text retrieval and summarization. <strong>The Maximal Marginal Relevance</strong> (MMR) criterion strives to reduce redundancy while maintaining query relevance in re-ranking retrieved documents and in selecting appropriate passages for text summarization. Preliminary results indicate some benefits for MMR diversity ranking in document retrieval and in single document summarization… the clearest advantage is demonstrated in constructing non-redundant multi-document summaries, where MMR results are clearly superior to non-MMR passage selection. <span class="math inline">-</span> The Use of MMR (abstract)</p>
+</blockquote>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+My insights
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>MMR seems to have a binomial formulation.</li>
+<li>By avoiding to pin down the metric it is possible to use embedding similarity with this formulation.</li>
+<li>MMR offers a formal metric for measuring added value (utility) For Sentences in a summary.</li>
+<li>It can work with or without a query.</li>
+<li>It could be adapted as a regularization term in a summarizer loss function.</li>
+<li>It could be used on a summary to weigh each sentence’s utility.</li>
+<li>If one were able to generate multiple candidates for a factum MMR could be used to easily rank them.</li>
+</ul>
+</div>
+</div>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="s16-Mead-Centroid.png" class="lightbox" data-gallery="slides" title="s16-Mead-Centroid"><img src="s16-Mead-Centroid.png" class="img-fluid figure-img" alt="s16-Mead-Centroid"></a></p>
+<figcaption>s16-Mead-Centroid</figcaption>
+</figure>
+</div></div></section>
+<section id="mead" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="mead">Mead</h2>
+<ul>
+<li>Introduced in <span class="citation" data-cites="Radev2000CentroidbasedSO">(<a href="#ref-Radev2000CentroidbasedSO" role="doc-biblioref">Radev, Jing, and Budzikowska 2000</a>)</span></li>
+<li>Centroid-based method</li>
+<li>Single and multi document</li>
+</ul>
+<blockquote class="blockquote">
+<p>We present a multi-document summarizer, called MEAD, which generates summaries using cluster centroids produced by a topic detection and tracking system. We also describe two new techniques, based on sentence utility and subsumption, which we have applied to the evaluation of both single and multiple document summaries. Finally, we describe two user studies that test our models of multi-document summarization. <span class="math inline">-</span> Centroid-based summarization of multiple documents (abstract)</p>
+</blockquote>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+My insights:
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Clustering has its benefits:</p>
+<ul>
+<li>Each centroid corresponds a candidate topic.</li>
+<li>Cluster size establishes a natural hierarchy for ranking topics.</li>
+<li>Cluster centrality provides the a hierarchy for ranking sentence within topics.</li>
+<li>The centroids may be used in a generative context, to bootstrap attention to each topic !?</li>
+<li>A query similarity can used with the centroids to rank in response to a query (for Q&amp;A)</li>
+</ul>
+</div>
+</div>
+<hr>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="s17-lexrank.png" class="lightbox" data-gallery="slides" title="Lexrank"><img src="s17-lexrank.png" class="img-fluid figure-img" alt="Lexrank"></a></p>
+<figcaption>Lexrank</figcaption>
+</figure>
+</div></div></section>
+<section id="lexrank" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="lexrank">LexRank</h2>
+<ul>
+<li>Introduced in <span class="citation" data-cites="Erkan2004LexRankGL">(<a href="#ref-Erkan2004LexRankGL" role="doc-biblioref">Erkan and Radev 2004</a>)</span> <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>(https://www.cs.cmu.edu/afs/cs/project/jair/pub/volume22/erkan04a-html/erkan04a.html)</li>
+<li>Graph based method.</li>
+<li>Lexical centrality.</li>
+</ul>
+<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;page</p></div></div><hr>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="s18-lexrank-rank.png" class="lightbox" data-gallery="slides" title="lexrank rank"><img src="s18-lexrank-rank.png" class="img-fluid figure-img" alt="lexrank rank"></a></p>
+<figcaption>lexrank rank</figcaption>
+</figure>
+</div></div><blockquote class="blockquote">
+<p>We introduce a stochastic graph-based method for computing relative importance of textual units for Natural Language Processing. We test the technique on the problem of Text Summarization (TS). Extractive TS relies on the concept of sentence salience to identify the most important sentences in a document or set of documents. Salience is typically defined in terms of the presence of particular important words or in terms of similarity to a centroid pseudo-sentence. We consider a new approach, LexRank, for computing sentence importance based on the concept of eigenvector centrality in a graph representation of sentences. In this model, a connectivity matrix based on intra-sentence cosine similarity is used as the adjacency matrix of the graph representation of sentences. Our system, based on LexRank ranked in first place in more than one task in the recent DUC 2004 evaluation. In this paper we present a detailed analysis of our approach and apply it to a larger data set including data from earlier DUC evaluations. We discuss several methods to compute centrality using the similarity graph. The results show that degree-based methods (including LexRank) outperform both centroid-based methods and other systems participating in DUC in most of the cases. Furthermore, the LexRank with threshold method outperforms the other degree-based techniques including continuous LexRank. We also show that our approach is quite insensitive to the noise in the data that may result from an imperfect topical clustering of documents.</p>
+</blockquote>
+<hr>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="s19-lexrank-graph.png" class="lightbox" data-gallery="slides" title="lexrank graph"><img src="s19-lexrank-graph.png" class="img-fluid figure-img" alt="lexrank graph"></a></p>
+<figcaption>lexrank graph</figcaption>
+</figure>
+</div></div><p>Idea:</p>
+<p>similar to page rank where pages vote for each other:</p>
+<ul>
+<li>Create an adjacency matrix using cosine similarity.</li>
+<li>Representing sentences as nodes in the graph</li>
+<li>Connecting nodes based on inter-sentence cosine similarity matrix</li>
+<li>uses <a href="https://en.wikipedia.org/wiki/Eigenvector_centrality">eigenvector centrality</a> from this matrix.</li>
+<li>the sentence with the highest rank would be linked to many other important sentences. Are they very similar or not ?</li>
+<li>a threshold is used to determine how many connected components should are used.</li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+My insights
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Algorithmically lexrank is a more sophisticated way of clustering like the MEAD algorithm. According to the paper, lexrank performed better.</li>
+<li>Graph algorithms are computationally expensive for large graphs. This could mean that the approach would not scale.</li>
+<li>To build the matrix they used a cosine similarity - but on using words. Replacing words with their embeddings should yield even better results with lower costs.</li>
+<li>There are a number of centrality measures on graphs. A high eigenvector score means that a node is connected to many nodes who themselves have high scores. The paper looked at Degree, LexRank with threshold, and continuous LexRank. This is clearly a place where one may be able to do better.</li>
+<li>TfiDf is another way to rank concepts.</li>
+<li>a problem is that the underlying assumptions for creating the graphical models are difficult to justify. Building a graph from web pages using links seems natural while constructing a graph using similarity between sentences perhaps in different documents seems contrived. Sentences may capture several concepts and arguments may span several sentences. Similar sentences may have very different meaning and different sentences may have the same meaning.</li>
+</ol>
+</div>
+</div>
+<hr>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="s19-seq2seq.png" class="lightbox" data-gallery="slides" title="seq2seq"><img src="s19-seq2seq.png" class="img-fluid figure-img" alt="seq2seq"></a></p>
+<figcaption>seq2seq</figcaption>
+</figure>
+</div></div><hr>
+</section>
+</section>
+<section id="evaluation" class="level1 page-columns page-full">
+<h1>Evaluation</h1>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="s22-information-content.png" class="lightbox" data-gallery="slides" title="Information Content"><img src="s22-information-content.png" class="img-fluid figure-img" alt="Information Content"></a></p>
+<figcaption>Information Content</figcaption>
+</figure>
+</div></div><section id="what-makes-a-good-summary" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="what-makes-a-good-summary">What makes a good summary?</h2>
+<ul>
+<li>Goals:
+<ul>
+<li>Optimize topic coverage</li>
+<li>Optimize readability</li>
+</ul></li>
+<li>Evaluation criteria:
+<ul>
+<li>Salience</li>
+<li>Length</li>
+<li>Structure and coherence</li>
+<li>Balance</li>
+<li>Grammar</li>
+<li>Non-redundancy</li>
+</ul></li>
+<li>Types of evaluation methods
+<ul>
+<li>Extrinsic techniques
+<ul>
+<li>Task based</li>
+<li>Can a person make the same decision with summary as with the entire document?</li>
+</ul></li>
+<li>Intrinsic techniques
+<ul>
+<li>Comparing summaries against gold standards</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="s24-precision-recall.png" class="lightbox" data-gallery="slides" title="Precision &amp; Recall"><img src="s24-precision-recall.png" class="img-fluid figure-img" alt="Precision &amp; Recall"></a></p>
+<figcaption>Precision &amp; Recall</figcaption>
+</figure>
+</div></div></section>
+<section id="precision-and-recall" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="precision-and-recall">Precision and Recall</h2>
+<p>starting with a contingency matrix we can get to:</p>
+<p><span class="math display">
+Precision =\frac{True_+}{ False_+ + True_+} \qquad
+</span> {eq-precision}</p>
+<p><span class="math display">
+Recall = \frac{True_+}{True_+ + False_-} \qquad
+</span> {eq-recall}</p>
+<p>these can also be combined into an f-score is a harmonic mean of precision and recall.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+My insights
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Precision and Recall make more sense for IR settings, i.e.&nbsp;when we have a query.</p>
+</div>
+</div>
+<hr>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="s24-utiliity.png" class="lightbox" data-gallery="slides" title="s24-utility"><img src="s24-utiliity.png" class="img-fluid figure-img" alt="s24-utility"></a></p>
+<figcaption>s24-utility</figcaption>
+</figure>
+</div></div></section>
+<section id="utility" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="utility">Utility</h2>
+<ul>
+<li>Utility is interesting from economic or game theoretic perspective. It indicates an option of applying RL</li>
+<li>Utility is usually translated as a <strong>loss function</strong> in ML!</li>
+</ul>
+<hr>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="s25-pyramid.png" class="lightbox" data-gallery="slides" title="s25-pyramid"><img src="s25-pyramid.png" class="img-fluid figure-img" alt="s25-pyramid"></a></p>
+<figcaption>s25-pyramid</figcaption>
+</figure>
+</div></div></section>
+<section id="pyramid-method" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="pyramid-method">Pyramid method</h2>
+<ul>
+<li>Based on semantic content units</li>
+<li>Used for multi-document summarization</li>
+</ul>
+<hr>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="s25-rougue.png" class="lightbox" data-gallery="slides" title="s25-rougue"><img src="s25-rougue.png" class="img-fluid figure-img" alt="s25-rougue"></a></p>
+<figcaption>s25-rougue</figcaption>
+</figure>
+</div></div></section>
+<section id="rouge-n" class="level2">
+<h2 class="anchored" data-anchor-id="rouge-n">ROUGE-N</h2>
+<ul>
+<li>Based on Bleu (used for MT)</li>
+<li>R stands for Recall (Recall-Oriented Understudy for Gisting Evaluation)</li>
+<li>ROUGE-N metric compares an automatic summary with a set of reference summaries using the n-gram overlap between the documents</li>
+</ul>
+<p><span id="eq-rouge"><span class="math display">
+ROUGE_N - = \frac{\sum_{s\in S_H} \sum_{g_n \in S}C_m(g_n)}
+                      {\sum_{s\in S_H} \sum_{g_n \in S}C(g_n) } \qquad
+\tag{1}</span></span></p>
+<ul>
+<li><span class="math inline">S_H</span> is a set of manual summaries</li>
+<li><span class="math inline">S</span> is an individual manual summary</li>
+<li><span class="math inline">g_n</span> is a N-gram</li>
+<li><span class="math inline">C(g_n)</span> is number of occurrences of gn in reference summaries</li>
+<li><span class="math inline">C_m(g_n)</span> is number of co-occurrences of g_n in both reference and automatic summary</li>
+</ul>
+</section>
+</section>
+<section id="tools" class="level1">
+<h1>Tools</h1>
+<ul>
+<li>the <a href="https://github.com/miso-belica/sumy">sumy</a> python library</li>
+<li><a href="https://www.nltk.org/book/ch01.html">nltk summeriser</a></li>
+<li><a href="https://spacy.io/universe/project/spacy-pytextrank/">spacy summeriser</a></li>
+</ul>
+</section>
+<section id="data-sets" class="level1">
+<h1>Data Sets</h1>
+<ul>
+<li><a href="https://catalog.ldc.upenn.edu/LDC2012T21">GIGAWORD dataset</a></li>
+<li><a href="https://github.com/abisee/cnn-dailymail">CNN Daily</a></li>
+<li><a href="http://kavita-ganesan.com/opinosis-opinion-dataset/#.XIgkSihKg2w">Opinions dataset</a></li>
+</ul>
+
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-Baxendale1958Machine" class="csl-entry" role="listitem">
+Baxendale, P. B. 1958. <span>“Machine-Made Index for Technical Literature—an Experiment.”</span> <em>IBM Journal of Research and Development</em> 2 (4): 354–61. <a href="https://doi.org/10.1147/rd.24.0354">https://doi.org/10.1147/rd.24.0354</a>.
+</div>
+<div id="ref-Carbonell1998TheUO" class="csl-entry" role="listitem">
+Carbonell, Jaime G., and Jade Goldstein-Stewart. 1998. <span>“The Use of MMR, Diversity-Based Reranking for Reordering Documents and Producing Summaries.”</span> In <em>Annual International ACM SIGIR Conference on Research and Development in Information Retrieval</em>. <a href="https://www.cs.cmu.edu/~jgc/publication/The_Use_MMR_Diversity_Based_LTMIR_1998.pdf">https://www.cs.cmu.edu/~jgc/publication/The_Use_MMR_Diversity_Based_LTMIR_1998.pdf</a>.
+</div>
+<div id="ref-DeJong1979PredictionAS" class="csl-entry" role="listitem">
+DeJong, Gerald. 1979. <span>“Prediction and Substantiation: A New Approach to Natural Language Processing.”</span> <em>Cogn. Sci.</em> 3: 251–73. <a href="https://api.semanticscholar.org/CorpusID:28841837">https://api.semanticscholar.org/CorpusID:28841837</a>.
+</div>
+<div id="ref-edmundson-1969" class="csl-entry" role="listitem">
+Edmundson, H. P. 1969. <span>“New Methods in Automatic Extracting.”</span> <em>Journal of theACM</em> 16 (2): 264–85. <a href="https://courses.ischool.berkeley.edu/i256/f06/papers/edmonson69.pdf">https://courses.ischool.berkeley.edu/i256/f06/papers/edmonson69.pdf</a>.
+</div>
+<div id="ref-Erkan2004LexRankGL" class="csl-entry" role="listitem">
+Erkan, Günes, and Dragomir R. Radev. 2004. <span>“LexRank: Graph-Based Lexical Centrality as Salience in Text Summarization.”</span> <em>ArXiv</em> abs/1109.2128. <a href="https://api.semanticscholar.org/CorpusID:506350">https://api.semanticscholar.org/CorpusID:506350</a>.
+</div>
+<div id="ref-Kupiec1995ATD" class="csl-entry" role="listitem">
+Kupiec, Julian, Jan O. Pedersen, and Francine R. Chen. 1995. <span>“A Trainable Document Summarizer.”</span> In <em>Annual International ACM SIGIR Conference on Research and Development in Information Retrieval</em>. <a href="https://courses.ischool.berkeley.edu/i256/f06/papers/kupiec95.pdf">https://courses.ischool.berkeley.edu/i256/f06/papers/kupiec95.pdf</a>.
+</div>
+<div id="ref-luhn-58" class="csl-entry" role="listitem">
+Luhn, H. P. 1958. <span>“The Automatic Creation of Literature Abstracts.”</span> <em>IBM Journal of Research and Development</em> 2 (2): 159–65. <a href="https://doi.org/10.1147/rd.22.0159">https://doi.org/10.1147/rd.22.0159</a>.
+</div>
+<div id="ref-Osborne2002UsingME" class="csl-entry" role="listitem">
+Osborne, Miles. 2002. <span>“Using Maximum Entropy for Sentence Extraction.”</span> In <em>Annual Meeting of the Association for Computational Linguistics</em>. <a href="https://aclanthology.org/W02-0401.pdf">https://aclanthology.org/W02-0401.pdf</a>.
+</div>
+<div id="ref-Radev2000CentroidbasedSO" class="csl-entry" role="listitem">
+Radev, Dragomir R., Hongyan Jing, and Malgorzata Budzikowska. 2000. <span>“Centroid-Based Summarization of Multiple Documents: Sentence Extraction, Utility-Based Evaluation, and User Studies.”</span> <em>ArXiv</em> cs.CL/0005020. <a href="https://arxiv.org/pdf/cs/0005020.pdf">https://arxiv.org/pdf/cs/0005020.pdf</a>.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2021,
+  author = {Bochman, Oren},
+  title = {Automatic {Summarization} {Task}},
+  date = {2021-04-24},
+  url = {https://orenbochman.github.io/notes-nlp/posts/2021-04-24-summerization/},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2021" class="csl-entry quarto-appendix-citeas" role="listitem">
+Bochman, Oren. 2021. <span>“Automatic Summarization Task.”</span> April
+24, 2021. <a href="https://orenbochman.github.io/notes-nlp/posts/2021-04-24-summerization/">https://orenbochman.github.io/notes-nlp/posts/2021-04-24-summerization/</a>.
+</div></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("^(?:http:|https:)\/\/www\.quarto\.org\/custom");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+          // default icon
+          link.classList.add("external");
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© Copyright 2023-2025, Oren Bochman</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/posts/2021-04-24-summerization/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This page is built with 💛 and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"fade","descPosition":"right","loop":true,"openEffect":"fade","selector":".lightbox","skin":"my-css-class"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
