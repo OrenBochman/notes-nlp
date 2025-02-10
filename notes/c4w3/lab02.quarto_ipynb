@@ -1,0 +1,299 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "date: 2021-04-12\n",
+        "title: 'Assignment 3 Ungraded Sections - Part 1: BERT Loss Model'\n",
+        "subtitle: \"NLP with Attention Models\"\n",
+        "categories: \n",
+        "  - NLP \n",
+        "  - Coursera \n",
+        "  - Lab\n",
+        "  - NLP with Attention Models\n",
+        "jupyter: python3\n",
+        "execute: \n",
+        "    error: true\n",
+        "draft: false\n",
+        "---\n",
+        "\n",
+        "\n",
+        "![course banner](/images/Course-Logo-4-1.webp){.column-margin .nolightbox}\n",
+        "\n",
+        "Welcome to the part 1 of testing the models for this week's assignment. We will perform decoding using the BERT Loss model. In this notebook we'll use an input, mask (hide) random word(s) in it and see how well we get the \"Target\" answer(s). \n",
+        "\n",
+        "## Colab\n",
+        "\n",
+        "Since this ungraded lab takes a lot of time to run on coursera, as an alternative we have a colab prepared for you.\n",
+        "\n",
+        "[BERT Loss Model Colab](https://drive.google.com/file/d/1EHAbMnW6u-GqYWh5r3Z8uLbz4KNpKOAv/view?usp=sharing)\n",
+        "\n",
+        "- If you run into a page that looks similar to the one below, with the option `Open with`, this would mean you need to download the `Colaboratory` app. You can do so by `Open with -> Connect more apps -> in the search bar write \"Colaboratory\" -> install`\n",
+        "\n",
+        "![](img/colab_help_1.png)\n",
+        "\n",
+        "- After installation it should look like this. Click on `Open with Google Colaboratory`\n",
+        "\n",
+        "![](img/colab_help_2.png)\n",
+        "\n",
+        "\n",
+        "## Outline\n",
+        "\n",
+        "- [Overview](#0)\n",
+        "- [Part 1: Getting ready](#1)\n",
+        "- [Part 2: BERT Loss](#2)\n",
+        "    - [2.1 Decoding](#2.1)\n",
+        "\n",
+        "### Overview {#0}\n",
+        "\n",
+        "In this notebook you will:\n",
+        "\n",
+        "- Implement the Bidirectional Encoder Representation from Transformer (BERT) loss. \n",
+        "- Use a pretrained version of the model you created in the assignment for inference.\n",
+        "\n",
+        "\n",
+        "\n",
+        "## Part 1: Getting ready {#1}\n",
+        "\n",
+        "Run the code cells below to import the necessary libraries and to define some functions which will be useful for decoding. The code and the functions are the same as the ones you previsouly ran on the graded assignment.\n"
+      ],
+      "id": "c1709591"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import pickle\n",
+        "import string\n",
+        "import ast\n",
+        "import numpy as np\n",
+        "import trax \n",
+        "from trax.supervised import decoding\n",
+        "import textwrap \n",
+        "\n",
+        "wrapper = textwrap.TextWrapper(width=70)"
+      ],
+      "id": "eef6eb57",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "example_jsons = list(map(ast.literal_eval, open('data.txt')))\n",
+        "\n",
+        "natural_language_texts = [example_json['text'] for example_json in example_jsons]\n",
+        "\n",
+        "PAD, EOS, UNK = 0, 1, 2\n",
+        "\n",
+        "def detokenize(np_array):\n",
+        "    return trax.data.detokenize(\n",
+        "        np_array,\n",
+        "        vocab_type='sentencepiece',\n",
+        "        vocab_file='sentencepiece.model',\n",
+        "        vocab_dir='.')\n",
+        "\n",
+        "\n",
+        "def tokenize(s):\n",
+        "    return next(trax.data.tokenize(\n",
+        "        iter([s]),\n",
+        "        vocab_type='sentencepiece',\n",
+        "        vocab_file='sentencepiece.model',\n",
+        "        vocab_dir='.'))\n",
+        " \n",
+        "    \n",
+        "vocab_size = trax.data.vocab_size(\n",
+        "    vocab_type='sentencepiece',\n",
+        "    vocab_file='sentencepiece.model',\n",
+        "    vocab_dir='.')\n",
+        "\n",
+        "\n",
+        "def get_sentinels(vocab_size, display=False):\n",
+        "    sentinels = {}\n",
+        "    for i, char in enumerate(reversed(string.ascii_letters), 1):\n",
+        "        decoded_text = detokenize([vocab_size - i]) \n",
+        "        # Sentinels, ex: <Z> - <a>\n",
+        "        sentinels[decoded_text] = f'<{char}>'    \n",
+        "        if display:\n",
+        "            print(f'The sentinel is <{char}> and the decoded token is:', decoded_text)\n",
+        "    return sentinels\n",
+        "\n",
+        "\n",
+        "sentinels = get_sentinels(vocab_size, display=False)    \n",
+        "\n",
+        "\n",
+        "def pretty_decode(encoded_str_list, sentinels=sentinels):\n",
+        "    # If already a string, just do the replacements.\n",
+        "    if isinstance(encoded_str_list, (str, bytes)):\n",
+        "        for token, char in sentinels.items():\n",
+        "            encoded_str_list = encoded_str_list.replace(token, char)\n",
+        "        return encoded_str_list\n",
+        "  \n",
+        "    # We need to decode and then prettyfy it.\n",
+        "    return pretty_decode(detokenize(encoded_str_list))\n",
+        "\n",
+        "\n",
+        "inputs_targets_pairs = []\n",
+        "\n",
+        "# here you are reading already computed input/target pairs from a file\n",
+        "with open ('inputs_targets_pairs_file.txt', 'rb') as fp:\n",
+        "    inputs_targets_pairs = pickle.load(fp)  \n",
+        "\n",
+        "\n",
+        "def display_input_target_pairs(inputs_targets_pairs):\n",
+        "    for i, inp_tgt_pair in enumerate(inputs_targets_pairs, 1):\n",
+        "        inps, tgts = inp_tgt_pair\n",
+        "        inps, tgts = pretty_decode(inps), pretty_decode(tgts)\n",
+        "        print(f'[{i}]\\n'\n",
+        "              f'inputs:\\n{wrapper.fill(text=inps)}\\n\\n'\n",
+        "              f'targets:\\n{wrapper.fill(text=tgts)}\\n\\n\\n\\n')\n",
+        "    \n",
+        "display_input_target_pairs(inputs_targets_pairs)    "
+      ],
+      "id": "de335145",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "<a name='2'></a>\n",
+        "\n",
+        "## Part 2: BERT Loss\n",
+        "\n",
+        "Now that you created the encoder, we will not make you train it. Training it could easily cost you a few days depending on which GPUs/TPUs you are using. Very few people train the full transformer from scratch. Instead, what the majority of people do, they load in a pretrained model, and they fine tune it on a specific task. That is exactly what you are about to do. Let's start by initializing and then loading in the model. \n",
+        "\n",
+        "Initialize the model from the saved checkpoint.\n"
+      ],
+      "id": "1db8ef17"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Initializing the model\n",
+        "model = trax.models.Transformer(\n",
+        "    d_ff = 4096,\n",
+        "    d_model = 1024,\n",
+        "    max_len = 2048,\n",
+        "    n_heads = 16,\n",
+        "    dropout = 0.1,\n",
+        "    input_vocab_size = 32000,\n",
+        "    n_encoder_layers = 24,\n",
+        "    n_decoder_layers = 24,\n",
+        "    mode='predict')"
+      ],
+      "id": "7ba155dc",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Now load in the model\n",
+        "# this takes about 1 minute\n",
+        "shape11 = trax.shapes.ShapeDtype((1, 1), dtype=np.int32)  # Needed in predict mode.\n",
+        "model.init_from_file('model.pkl.gz',\n",
+        "                     weights_only=True, input_signature=(shape11, shape11))"
+      ],
+      "id": "2c424ee6",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "<a name='2.1'></a>\n",
+        "\n",
+        "### 2.1 Decoding\n",
+        "\n",
+        "Now you will use one of the `inputs_targets_pairs` for input and as target. Next you will use the `pretty_decode` to output the input and target. The code to perform all of this has been provided below.\n"
+      ],
+      "id": "a647b427"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 139
+        },
+        "colab_type": "code"
+      },
+      "source": [
+        "# using the 3rd example\n",
+        "c4_input = inputs_targets_pairs[2][0]\n",
+        "c4_target = inputs_targets_pairs[2][1]\n",
+        "\n",
+        "print('pretty_decoded input: \\n\\n', pretty_decode(c4_input))\n",
+        "print('\\npretty_decoded target: \\n\\n', pretty_decode(c4_target))\n",
+        "print('\\nc4_input:\\n\\n', c4_input)\n",
+        "print('\\nc4_target:\\n\\n', c4_target)\n",
+        "print(len(c4_target))\n",
+        "print(len(pretty_decode(c4_target)))"
+      ],
+      "id": "21c119dc",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Run the cell below to decode.\n",
+        "\n",
+        "### Note: This will take some time to run\n"
+      ],
+      "id": "8e3f53b6"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 477
+        },
+        "colab_type": "code",
+        "scrolled": true
+      },
+      "source": [
+        "# Temperature is a parameter for sampling.\n",
+        "#   # * 0.0: same as argmax, always pick the most probable token\n",
+        "#   # * 1.0: sampling from the distribution (can sometimes say random things)\n",
+        "#   # * values inbetween can trade off diversity and quality, try it out!\n",
+        "output = decoding.autoregressive_sample(model, inputs=np.array(c4_input)[None, :],\n",
+        "                                        temperature=0.0, max_length=5) # originally max_length = 50\n",
+        "print(wrapper.fill(pretty_decode(output[0])))"
+      ],
+      "id": "11bef2b1",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "At this point the RAM is almost full, this happens because the model and the decoding is memory heavy. You can run decoding just once. Running it the second time with another example might give you an answer that makes no sense, or repetitive words. If that happens restart the runtime (see how to at the start of the notebook) and run all the cells again.\n",
+        "\n",
+        "You should also be aware that the quality of the decoding is not very good because max_length was downsized from 50 to 5 so that this runs faster within this environment. The colab version uses the original max_length so check that one for the actual decoding.\n"
+      ],
+      "id": "59a431ef"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/home/oren/.local/share/jupyter/kernels/python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
