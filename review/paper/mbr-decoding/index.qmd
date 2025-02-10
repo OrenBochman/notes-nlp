@@ -1,0 +1,110 @@
+---
+date: 2021-05-10
+title: "Generating Diverse and High-Quality Texts by Minimum Bayes Risk Decoding"
+subtitle: Review
+categories: 
+    - NLP     
+    - Paper
+    - Review
+    - MBR
+    - Minimum Bayes Risk
+    - Text Generation
+    - Decoding Algorithms
+    - Encoder-Decoder Models
+    - Language Models
+    - Machine Translation
+    - Image Captioning
+    - Question Generation
+    - Common Sense Reasoning
+    - Text Summarization
+keywords: 
+    - Decoding Algorithms
+---
+
+![Litrature review](/images/literature-review-open-book.jpg){.column-margin}
+
+## Abstract
+
+> One of the most important challenges in text generation systems is to produce outputs that are not only correct but also diverse.
+> Recently, Minimum Bayes-Risk (MBR) decoding has gained prominence for generating sentences of the highest quality among the decoding algorithms.
+> However, existing algorithms proposed to generate diverse outputs are predominantly based on beam search or random sampling, thus their output quality is capped by these underlying decoding algorithms.
+> In this paper, we investigate an alternative approach – we develop diversity-promoting decoding algorithms by enforcing diversity objectives to MBR decoding.
+> We propose two variants of MBR
+>
+> (i) Diverse MBR (DMBR) that adds a diversity penalty to the decoding objective and
+>
+> (ii) k-medoids MBR (KMBR) that reformulates the decoding task as a clustering problem.
+>
+> We evaluate DMBR and KMBR on a variety of directed text generation tasks using encoder-decoder models and a language model with prompting.
+> The experimental results show that the proposed method achieves a better trade-off than the diverse beam search and sampling algorithms overall -- [@jinnai-etal-2024-generating]
+
+-   [github code repo](https://github.com/CyberAgentAILab/diverse-mbr/)
+
+## Outline
+
+-   Introduction
+    -   ~~Describes the importance of generating diverse and high-quality texts in various natural language processing tasks~~.
+    -   Highlights the limitations of existing approaches for **diverse text generation**, which are typically based on **beam search** or **random sampling**.
+    -   Presents the paper's focus on developing diversity-promoting algorithms using Minimum Bayes Risk (MBR) decoding.
+    -   Notes the advantages of MBR decoding over traditional methods like beam search and random sampling.
+    -   Introduces:
+        -   **Diverse MBR (DMBR)** and
+        -   **k-medoids MBR (KMBR)**.
+-   Background
+    -   Defines the sequence-to-sequence generation task and the goal of decoding in finding the hypothesis that aligns with human preference.
+    -   Discusses the concept of set decoding, where the aim is to generate a set of sentences that maximizes both human preference and diversity.
+    -   Reviews existing diversity-aware decoding algorithms, including random sampling techniques and diverse beam search.
+    -   Explains the principle of Minimum Bayes Risk (MBR) decoding, focusing on its expected utility maximization approach and contrasting it with MAP decoding.
+-   Minimum Bayes Risk Decoding with Diversity
+    -   Introduces the set decoding problem with diversity objective using MBR decoding.
+    -   Presents a naive approach for generating k sentences using MBR and notes its tendency to produce similar sentences.
+    -   Proposes Diverse MBR (DMBR) decoding as a solution by adding a diversity penalty to the objective function.
+    -   Explains the formulation of DMBR, including the quality objective and diversity objective, and discusses the use of pairwise similarity as a diversity metric.
+    -   Highlights the computational complexity of DMBR and the deployment of a greedy heuristic algorithm for approximation.
+    -   Proposes k-medoids MBR (KMBR) as an alternative method for diversity promotion in MBR decoding.
+    -   Explains how KMBR leverages the k-medoids clustering algorithm to select a set of diverse and high-quality hypotheses.
+    -   Notes the computational challenges of KMBR and the use of the Partition Around Medoids (PAM) algorithm for approximate computation.
+-   Experiments
+    -   Describes the experimental setup, including the tasks (machine translation, image captioning, question generation, common sense reasoning, text summarization), datasets, evaluation metrics, and the choice of BERTScore as the utility function for MBR.
+    -   Mentions the use of Huggingface's Transformers library and other tools for the experiments.
+    -   Summarizes the key results, highlighting that DMBR and KMBR generally achieve better trade-offs between quality and diversity than diverse beam search and sampling algorithms across the tasks.
+-   Machine Translation
+    -   Explains the use of the WMT'19 dataset for machine translation experiments, focusing on German-English and Russian-English translation tasks.
+    -   Discusses the experimental settings, including the number of outputs, comparison baselines (sampling algorithms, diverse beam search), sample size for MBR, and diversity penalty parameters.
+    -   Presents the key findings, emphasizing DMBR's achievement of higher diversity, flexibility in the quality-diversity trade-off, and higher Oracle scores compared to baselines.
+-   Image Captioning using BLIP-2
+    -   Describes the use of the MS COCO dataset and the BLIP-2 model for evaluating performance on image captioning.
+    -   Briefly notes the experimental settings, including the output size, baselines, and diversity penalty parameters.
+    -   Highlights DMBR's effectiveness in achieving lower P-BLEU, higher distinct-2, and better semantic diversity as measured by P-SentBERT.
+-   Question Generation using Language Model
+    -   Presents the evaluation of decoding algorithms for question generation using the SQuADv2 dataset and a language model (Zephyr-7B β) with prompting.
+    -   Mentions the experimental settings, including the number of outputs, baselines, sample size for MBR, and diversity penalty parameters.
+    -   Discusses the findings, noting that DMBR demonstrates advantages in distinct-2 and P-SentBERT but underperforms slightly in P-BLEU compared to DBS.
+-   Generative Common Sense Reasoning using Language Model
+    -   Explains the use of the CommonGen task and the Zephyr-7B β language model for evaluating common sense reasoning abilities.
+    -   Notes the use of prompting and the experimental settings, including the number of outputs, baselines, sample size, and diversity penalty.
+    -   Briefly mentions DMBR's performance, achieving better distinct-2 but slightly worse P-BLEU compared to DBS, and discusses the low coverage of input concepts in the generations.
+-   Text Summarization
+    -   Describes the evaluation of text summarization using the XSum dataset and a BART model pre-trained on XSum.
+    -   Mentions the experimental settings, including the output size, baselines, sample size for MBR, and diversity penalty parameters.
+    -   Briefly presents the results, emphasizing DMBR's better diversity compared to DBS, as measured by P-BLEU and distinct-n.
+-   Conclusions
+    -   Summarizes the research, highlighting the development and evaluation of DMBR and KMBR for generating diverse and high-quality texts.
+    -   Reiterates the better quality-diversity trade-off achieved by these methods compared to diverse beam search, and notes the higher Oracle scores attained by DMBR and KMBR over vanilla MBR.
+    -   Discusses potential future research directions, including applying the methods to open-ended text generation, conducting human evaluation of diversity, and reducing the inference time of DMBR and KMBR.
+-   Limitations
+    -   Discusses the limitations of the research, including the focus on directed text generation tasks.
+    -   Notes the reliance on automatic evaluation metrics and the need for human evaluation.
+    -   Highlights the slower inference time of DMBR and KMBR compared to DBS, suggesting further research on computational efficiency.
+    -   Mentions the use of a simple greedy algorithm for DMBR and the potential for more sophisticated approximation algorithms.
+-   Appendices
+    -   Appendix A: Provides a proof of submodularity.
+    -   Appendix B: Evaluates the coverage of input concepts for CommonGen, noting the low coverage in the experiments.
+    -   Appendix C: Shows examples of generations from various decoding algorithms across different tasks.
+    -   Appendix D: Evaluates the oversampling strategy as a baseline, comparing its performance to DMBR.
+    -   Appendix E: Presents additional figures and tables summarizing the experimental results.
+    -   Appendix F: Lists the pre-trained models and codes used in the experiments.
+
+## The Paper
+
+![paper](./paper.pdf){.col-page width="800px" height="1000px" group="slides"}

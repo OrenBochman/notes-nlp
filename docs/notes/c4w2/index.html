@@ -1,0 +1,2624 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Oren Bochman">
+<meta name="description" content="This week we unlock the secrets of Neural Text Summarization. We will building a powerful Transformer model to extract crucial information and create concise summaries. Through hands-on exercises using JAX, we will learn techniques like beam search and length normalization to enhance the quality of our summaries. Through hands-on exercises we will train our model on a dataset of articles.">
+
+<title>Week 2 - Text Summarization – NLP Specialization</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed slimcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">NLP Specialization</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">NLP with Attention Models</li><li class="breadcrumb-item"><a href="../../notes/c4w2/index.html">Text Summarization</a></li><li class="breadcrumb-item"><a href="../../notes/c4w2/index.html">Notes</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">NLP with Attention Models</li><li class="breadcrumb-item"><a href="../../notes/c4w2/index.html">Text Summarization</a></li><li class="breadcrumb-item"><a href="../../notes/c4w2/index.html">Notes</a></li></ol></nav>
+      <h1 class="title">Week 2 - Text Summarization</h1>
+            <p class="subtitle lead">NLP with Attention Models</p>
+                  <div>
+        <div class="description">
+          This week we unlock the secrets of Neural Text Summarization. We will building a powerful Transformer model to extract crucial information and create concise summaries. Through hands-on exercises using JAX, we will learn techniques like beam search and length normalization to enhance the quality of our summaries. Through hands-on exercises we will train our model on a dataset of articles.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">NLP with Attention Models</div>
+                <div class="quarto-category">Neural Machine Translation</div>
+                <div class="quarto-category">Coursera</div>
+                <div class="quarto-category">Notes</div>
+                <div class="quarto-category">Deep Learning Algorithms</div>
+                <div class="quarto-category">Transformer</div>
+                <div class="quarto-category">Teacher forcing</div>
+                <div class="quarto-category">Positional encoding</div>
+                <div class="quarto-category">GPT2</div>
+                <div class="quarto-category">Transformer decoder</div>
+                <div class="quarto-category">Attention</div>
+                <div class="quarto-category">Dot product attention</div>
+                <div class="quarto-category">Self attention</div>
+                <div class="quarto-category">Causal attention</div>
+                <div class="quarto-category">Multi-head attention</div>
+                <div class="quarto-category">Summarization task</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-body">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Oren Bochman </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">Thursday, April 1, 2021</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Classification &amp; Vector Spaces</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Logistic Regression</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Frequencies</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Visualizing tweets</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Probability &amp; Bayes Rule</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Visualizing Naive Bayes</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Vector Space Models &amp; PCA</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Linear algebra with NumPy</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Manipulating word embeddings</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">MT &amp; Document Search via KNN</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vector manipulation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Hash functions and multiplanes</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Probabilistic Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">Autocorrect &amp; Dynamic Programming</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Building the vocabulary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Candidates from String Edits</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">POS tagging &amp; HMMS</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vocabulary with unknowns</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Working with tags and Numpy</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false">
+ <span class="menu-text">Autocomplete &amp; Language Models</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - N-grams Corpus preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Building the language model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Out of vocabulary words</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false">
+ <span class="menu-text">Word embeddings with neural networks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Data preparation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Intro to CBOW</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Training the CBOW</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true">
+ <span class="menu-text">Sequence Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false">
+ <span class="menu-text">Neural Networks for Sentiment Analysis</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Introduction to Trax</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Classes and Subclasses</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Data Generators</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false">
+ <span class="menu-text">RNN for Language Modeling</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Hidden State Activation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Calculating Perplexity</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Vanilla RNNs, GRUs and the scan function</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L4 - Creating a GRU model using Trax</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="false">
+ <span class="menu-text">LSTMs and Named Entity Recognition</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vanishing Gradients</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false">
+ <span class="menu-text">Siamese Networks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Creating a Siamese Model using Trax</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Modified Triplet Loss</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Evaluate a Siamese Model</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="true">
+ <span class="menu-text">NLP with Attention Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false">
+ <span class="menu-text">Neural Machine Translation</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Stack Semantics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - BLEU Score</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="true">
+ <span class="menu-text">Text Summarization</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-18" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w2/index.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Attention</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - The Transformer Decoder</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" role="navigation" aria-expanded="false">
+ <span class="menu-text">Question Answering</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-19" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - SentencePiece and BPE</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - BERT Loss</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - T5</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" role="navigation" aria-expanded="false">
+ <span class="menu-text">Chat Bots</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-20" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Reformer LSH</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Revnet</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#sec-transformers-vs-rnns" id="toc-sec-transformers-vs-rnns" class="nav-link active" data-scroll-target="#sec-transformers-vs-rnns">Transformers vs RNNs</a>
+  <ul class="collapse">
+  <li><a href="#sec-information-loss" id="toc-sec-information-loss" class="nav-link" data-scroll-target="#sec-information-loss">Information loss</a></li>
+  <li><a href="#sec-vanishing-gradient-problem" id="toc-sec-vanishing-gradient-problem" class="nav-link" data-scroll-target="#sec-vanishing-gradient-problem">Vanishing Gradient Problem</a></li>
+  </ul></li>
+  <li><a href="#sec-transformer-applications" id="toc-sec-transformer-applications" class="nav-link" data-scroll-target="#sec-transformer-applications">Transformer Applications</a>
+  <ul class="collapse">
+  <li><a href="#sec-applications-of-transformers" id="toc-sec-applications-of-transformers" class="nav-link" data-scroll-target="#sec-applications-of-transformers">Applications of Transformers</a></li>
+  <li><a href="#sec-transformers-time-line" id="toc-sec-transformers-time-line" class="nav-link" data-scroll-target="#sec-transformers-time-line">SOTA Transformers</a></li>
+  </ul></li>
+  <li><a href="#sec-t5" id="toc-sec-t5" class="nav-link" data-scroll-target="#sec-t5">T5 - Text-To-Text Transfer Transformer</a>
+  <ul class="collapse">
+  <li><a href="#sec-t5-classification-tasks" id="toc-sec-t5-classification-tasks" class="nav-link" data-scroll-target="#sec-t5-classification-tasks">T5 Classification tasks</a></li>
+  <li><a href="#sec-t5-regression-tasks" id="toc-sec-t5-regression-tasks" class="nav-link" data-scroll-target="#sec-t5-regression-tasks">T5 regression tasks</a></li>
+  </ul></li>
+  <li><a href="#sec-dot-product-attention" id="toc-sec-dot-product-attention" class="nav-link" data-scroll-target="#sec-dot-product-attention">Dot-Product Attention</a>
+  <ul class="collapse">
+  <li><a href="#sec-query-key-value" id="toc-sec-query-key-value" class="nav-link" data-scroll-target="#sec-query-key-value">Query, Key &amp; Value</a></li>
+  </ul></li>
+  <li><a href="#sec-causal-attention" id="toc-sec-causal-attention" class="nav-link" data-scroll-target="#sec-causal-attention">Causal Attention</a>
+  <ul class="collapse">
+  <li><a href="#sec-scaled-dot-product-attention" id="toc-sec-scaled-dot-product-attention" class="nav-link" data-scroll-target="#sec-scaled-dot-product-attention">Scaled dot product attention:</a></li>
+  <li><a href="#sec-causal-attention-1" id="toc-sec-causal-attention-1" class="nav-link" data-scroll-target="#sec-causal-attention-1">Causal Attention:</a></li>
+  <li><a href="#sec-bi-directional-self-attention" id="toc-sec-bi-directional-self-attention" class="nav-link" data-scroll-target="#sec-bi-directional-self-attention">Bi-directional self attention:</a></li>
+  </ul></li>
+  <li><a href="#sec-multi-head-attention" id="toc-sec-multi-head-attention" class="nav-link" data-scroll-target="#sec-multi-head-attention">V5: Multi-head Attention</a></li>
+  <li><a href="#sec-transformer-decoder" id="toc-sec-transformer-decoder" class="nav-link" data-scroll-target="#sec-transformer-decoder">V6: Transformer Decoder</a></li>
+  <li><a href="#sec-transformer-summarizer" id="toc-sec-transformer-summarizer" class="nav-link" data-scroll-target="#sec-transformer-summarizer">V7: Transformer Summarizer</a>
+  <ul class="collapse">
+  <li><a href="#sec-cross-entropy-loss" id="toc-sec-cross-entropy-loss" class="nav-link" data-scroll-target="#sec-cross-entropy-loss">Cross entropy loss</a></li>
+  <li><a href="#sec-lab1-attention" id="toc-sec-lab1-attention" class="nav-link" data-scroll-target="#sec-lab1-attention">Lab1 : Attention</a></li>
+  <li><a href="#lab2-the-transformer-decoder" id="toc-lab2-the-transformer-decoder" class="nav-link" data-scroll-target="#lab2-the-transformer-decoder">Lab2 : The Transformer Decoder</a></li>
+  <li><a href="#assignment-transformer-summarizer" id="toc-assignment-transformer-summarizer" class="nav-link" data-scroll-target="#assignment-transformer-summarizer">Assignment: Transformer Summarizer</a></li>
+  <li><a href="#sec-expanding-the-lab-to-a-project" id="toc-sec-expanding-the-lab-to-a-project" class="nav-link" data-scroll-target="#sec-expanding-the-lab-to-a-project">Expanding the lab to a project:</a>
+  <ul class="collapse">
+  <li><a href="#sec-more-data" id="toc-sec-more-data" class="nav-link" data-scroll-target="#sec-more-data">more data</a></li>
+  <li><a href="#sec-more-algorithms" id="toc-sec-more-algorithms" class="nav-link" data-scroll-target="#sec-more-algorithms">More algorithms</a></li>
+  <li><a href="#sec-evaluation" id="toc-sec-evaluation" class="nav-link" data-scroll-target="#sec-evaluation">Evaluation</a></li>
+  <li><a href="#sec-extra-features" id="toc-sec-extra-features" class="nav-link" data-scroll-target="#sec-extra-features">Extra features</a></li>
+  </ul></li>
+  <li><a href="#sec-open-question" id="toc-sec-open-question" class="nav-link" data-scroll-target="#sec-open-question">Open question</a>
+  <ul class="collapse">
+  <li><a href="#sec-questions" id="toc-sec-questions" class="nav-link" data-scroll-target="#sec-questions">Questions</a></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  <li><a href="#papers" id="toc-papers" class="nav-link" data-scroll-target="#papers">Papers</a>
+  <ul class="collapse">
+  <li><a href="#transformers" id="toc-transformers" class="nav-link" data-scroll-target="#transformers">Transformers</a></li>
+  <li><a href="#summarization" id="toc-summarization" class="nav-link" data-scroll-target="#summarization">Summarization</a></li>
+  </ul></li>
+  <li><a href="#articles" id="toc-articles" class="nav-link" data-scroll-target="#articles">Articles</a></li>
+  <li><a href="#links" id="toc-links" class="nav-link" data-scroll-target="#links">Links</a></li>
+  <li><a href="#references-1" id="toc-references-1" class="nav-link" data-scroll-target="#references-1">References</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/c4w2/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
+
+
+
+
+
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../images/Course-Logo-4-1.webp" class="nolightbox img-fluid figure-img"></p>
+<figcaption>deeplearning.ai</figcaption>
+</figure>
+</div></div><ul>
+<li>I been interested in summarization task for many years.</li>
+<li>I immersed myself in this material so I could real understand it.</li>
+<li>I treated the assignments like small work or research project thinking how they could be made better and more rigorous.</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Learning objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<!-- TODO: add links to repective sections -->
+<ul class="task-list">
+<li><label><input type="checkbox" checked=""><a href="#sec-transformers-vs-rnns">Describe the three basic types of attention</a>.</label></li>
+<li><label><input type="checkbox" checked=""><a href="#sec-transformers-vs-rnns">Name the two types of layers in a Transformer</a>.</label></li>
+<li><label><input type="checkbox" checked=""><a href="#sec-query-key-value">Define three main matrices in attention</a>.</label></li>
+<li><label><input type="checkbox" checked=""><a href="#sec-dot-product-attention">Interpret the math behind scaled dot product attention, causal attention, and multi-head attention</a>.</label></li>
+<li><label><input type="checkbox" checked=""><a href="#sec-transformer-summarizer">Use articles and their summaries to create input features for training a text summarizer</a>.</label></li>
+<li><label><input type="checkbox" checked=""><a href="#sec-transformer-decoder">Build the GPT-2 transformer-decoder model</a>.</label></li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+TL;DR - Text Summarization
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="../../images/in_a_nutshell.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Text Summarization in a nutshell"><img src="../../images/in_a_nutshell.jpg" class="img-fluid figure-img" alt="Text Summarization in a nutshell"></a></p>
+<figcaption>Text Summarization in a nutshell</figcaption>
+</figure>
+</div>
+<ul>
+<li><strong>Attention</strong> is a general solution for the sequence alignment problem.</li>
+<li><strong>Dot Product Attention</strong> is the most common form of attention.</li>
+<li><strong>Causal Attention</strong> is also called <em>self attention</em>.</li>
+<li><strong>Multi-headed Attention</strong> replicates the attention mechanism analogously to the multiple filters used in convolutional layers.</li>
+<li><strong>Positional Encoding</strong> is added to the input embeddings to provide the model with extra information to explicitly describe the order of the input sequences.</li>
+<li><strong>Teacher Forcing</strong> is a technique used in dynamical supervised learning tasks to replace the actual output of a unit by the teacher signal in subsequent computation of the behavior of the network.</li>
+<li><strong>T5</strong> is a Text-To-Text Transfer Transformer that can do a number of tasks with a single model.</li>
+<li><strong>Transformer Applications</strong> include text summarization, autocomplete, NER, Q&amp;A, translation, chat bots, sentiment analyses, market intelligence, text classification, OCR, and spell checking.</li>
+<li><strong>SOTA Transformers</strong> include GPT-4, ElmO, BERT, and T5.</li>
+<li><strong>Transformer Decoder</strong> has two parts: a decoder block (with multi-head attention) and a feed forward block.</li>
+<li><strong>Transformer Summarizer</strong> uses articles and their summaries to create input features for training a text summarizer.</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- TODO: add podcast for this week's material -->
+<!-- TODO: move this to a blog post
+
+### What is attention ?
+
+The latest version of {{ site.product_name }} is now available.
+- Attention is a general solution for the sequence alignment problem.
+- Attention doesn't reorder the input sequence.
+- It provides a linear transformation which filters the relevant parts of the source for predicting the each item in the target.
+
+$$
+attention(h_t,\bar{h}_s)= softmax(h_t^T\bar{h}_s)
+$$
+
+### What is dot-product attention ?
+
+- Dot Product attention is the most common form of attention.
+- In the engineering sense it is suited for a encoder-decoder architecture 
+- It is the best fit for tasks where the source sequence is fully available at the start and the tasks is mapping or transformation the source sequence to an output sequence like 
+- It is used for alignment and machine translation or translation.
+
+$$
+attention_{(\cdot)}(Q,V,K) = softmax(\frac{QK^T}{\sqrt{n}})V
+$$  
+
+::: {#e434c8be .cell execution_count=1}
+``` {.python .cell-code}
+def DotProductAttention(query,key,value,mask,scale=True):
+    """Dot product self-attention.
+    Args:
+        scale (bool): if to scale 
+    Returns:
+        numpy.ndarray: attention array (L_q by L_k)
+    """
+    # Save query embedding dimension
+    depth = query.shape[-1] if scale else 1
+    # Calculate scaled query key dot product 
+    dots = np.matmul(query, np.swapaxes(key, -1, -2)) / np.sqrt(depth) 
+    # Apply the mask
+    if mask is not None:
+        dots = np.where(mask, dots, np.full_like(dots, -1e9)) 
+    logsumexp = scipy.special.logsumexp(dots, axis=-1, keepdims=True)
+    dots = np.exp(dots - logsumexp)
+    attention = np.matmul(dots, value)
+    return attention
+```
+:::
+
+
+### What is causal attention ?
+
+- Causal attention is also called *self attention*.
+- It is used to generate a sequence based on previous tokens.
+- It requires a mask $M$ to enforce ignoring 'future' values during training.
+
+$$ 
+attention_{self}(Q,V,K) = softmax(\frac{QK^T}{\sqrt{n}}+M)V
+$$
+
+where:
+
+- $n$ is the embedding dimension.
+
+```python
+def SelfAttention(query,key,value,scale=True):
+    """Self attention.
+    Args:
+        scale (bool): if to scale 
+    Returns:
+        numpy.ndarray: Self-attention array (L_q by L_k)
+    """
+    # Save query embedding dimension
+    depth = query.shape[-1] if scale else 1
+    # Calculate scaled query key dot product 
+    dots = np.matmul(query, np.swapaxes(key, -1, -2)) / np.sqrt(depth) 
+    logsumexp = scipy.special.logsumexp(dots, axis=-1, keepdims=True)
+    dots = np.exp(dots - logsumexp)
+    attention = np.matmul(dots, value)
+    return attention
+```
+
+### What is multi-headed attention?
+
+Multi-headed attention replicates the attention mechanism analogously to the multiple filters used in convolutional layers.
+  
+$$
+attention_{mh}(Q,V,K) = softmax(\frac{QK^T}{\sqrt{n}})V
+$$
+
+The different attention heads are given different subspaces of the embeddings to work with. This causes them to specialize on different areas. More so if the embedding is also structured to store different data in subspaces say by concatenating different embeddings for morphology, semantics etc in those sub spaces.
+
+After input is processed by the heads their output is concatenated and processed by a big feed forward layer which uses most of the parameters in the model. 
+
+### What is positional encoding
+
+Unlike the RNN which process information sequentially transforms need to provide the model with extra information to explicitly describe the order if the input sequences. 
+
+We might think this is added as an index but positional embedding is added as a low dimensional wave which can be added to an high dimensional embedding. (or concatenated)
+this is achieved using a special purpose layer.
+
+```python
+import trax
+import trax.layers as tl
+
+# Embedding inputs and positional encoder
+positional_encoder = [ 
+    # Add embedding layer of dimension (vocab_size, d_model)
+    tl.Embedding(vocab_size, d_model),
+    # Use dropout with rate and mode specified
+    tl.Dropout(rate=dropout,mode=mode),
+    # Add positional encoding layer with maximum input length and mode specified
+    tl.PositionalEncoding(max_len=max_len)
+]
+```
+### What is teacher forcing ?
+
+> An interesting technique that is frequently used in dynamical supervised learning tasks is to replace the actual output y(t) of a unit by the teacher signal d(t) in subsequent computation of the behavior of the network, whenever such a value exists. We call this technique teacher forcing.
+>— [A Learning Algorithm for Continually Running Fully Recurrent Neural Networks, 1989](http://ieeexplore.ieee.org/document/6795228/).
+
+## Additional coding notes:
+
+Here are some notable code snippets. 
+
+### How to reshape a test tensor so it has a (size 0) batch dimension at the front?
+
+This is needed when inspecting single test inputs instead of working with a batch. The model is expecting to process batches of inputs like it saw during training - we therefore need to add a dimension at the start.
+
+```python
+padded_with_batch = fastnp.expand_dims(fastnp.array(padded),axis=0)
+
+# get log probabilities from the last token output
+log_probs = output[0,-1,:] 
+```
+
+### How to make TRAX take in string date as a stream ?
+
+```python
+inputs =  next(trax.data.tokenize(iter([input_str]),
+                vocab_dir='vocab_dir/',
+                vocab_file='summarize32k.subword.subwords'))
+```
+
+### How to transpose batched tensors ?
+
+```python
+  # batch_size, seqlen, n_heads, d_head -> batch_size, n_heads, seqlen, d_head
+  x = jnp.transpose(x, (0, 2, 1, 3))
+```
+
+### How to de-structure tensors for use with multihead attention ?
+
+```python
+  # batch_size, seqlen, n_heads*d_head -> batch_size, seqlen, n_heads, d_head
+  x = jnp.reshape(x,(batch_size, seqlen, n_heads, d_head))
+  # batch_size, seqlen, n_heads, d_head -> batch_size, n_heads, seqlen, d_head
+  x = jnp.transpose(x, (0, 2, 1, 3))
+  # batch_size, n_heads, seqlen, d_head -> batch_size*n_heads, seqlen, d_head
+  x = jnp.reshape(x,( batch_size*n_heads, seqlen, d_head))
+```
+
+<pre>
+input tensor shape: (3, 2, 6)
+[[[1 0 0 1 0 0]
+  [0 1 0 0 1 0]]
+ [[1 0 0 1 0 0]
+  [0 1 0 0 1 0]]
+ [[1 0 0 1 0 0]
+  [0 1 0 0 1 0]]]
+output tensor shape: (6, 2, 3)
+[[[1 0 0]
+  [0 1 0]]
+ [[1 0 0]
+  [0 1 0]]
+ [[1 0 0]
+  [0 1 0]]
+ [[1 0 0]
+  [0 1 0]]
+ [[1 0 0]
+  [0 1 0]]
+ [[1 0 0]
+  [0 1 0]]]
+</pre>
+
+-->
+<section id="sec-transformers-vs-rnns" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-transformers-vs-rnns">Transformers vs RNNs</h2>
+<p>RNNs were a big breakthrough and became the state of the art (SOTA) for machine translation (MT).</p>
+<p>This illustrates a typical RNN that is used to translate the English sentence “How are you?” to its German equivalent, “Wie sind Sie?”.</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-04-rnn-non-parallel.png" class="lightbox" data-gallery="slides" title="rnn-non-parallel"><img src="img/c4w2-04-rnn-non-parallel.png" class="img-fluid figure-img" alt="rnn-non-parallel"></a></p>
+<figcaption>rnn-non-parallel</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-10-lstm.png" class="lightbox" data-gallery="slides" title="lstm"><img src="img/c4w2-10-lstm.png" class="img-fluid figure-img" alt="lstm"></a></p>
+<figcaption>lstm</figcaption>
+</figure>
+</div></div>
+<p>The LSTM which goes a long way to solving the vanishing gradient problems requires three times the memory and cpu steps a the vanilla RNN.</p>
+<p>However, as time went by and models got longer and deeper the biggest challenge with improving RNNs, became their use of sequential computation.</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-11-seq2seq-steps.png" class="lightbox" data-gallery="slides" title="seq2seq-steps"><img src="img/c4w2-11-seq2seq-steps.png" class="img-fluid figure-img" alt="seq2seq-steps"></a></p>
+<figcaption>seq2seq-steps</figcaption>
+</figure>
+</div></div><p>Which entailed that to process the word “you”, the RNN it has to first go through “are” and then “you”. Two other issues with RNNs are the:</p>
+<section id="sec-information-loss" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="sec-information-loss">Information loss</h3>
+<p>It becomes harder to keep track of whether the subject is singular or plural as we move further away from the subject.</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-12-transformer.png" class="lightbox" data-gallery="slides" title="Transformer"><img src="img/c4w2-12-transformer.png" class="img-fluid figure-img" alt="Transformer"></a></p>
+<figcaption>Transformer</figcaption>
+</figure>
+</div></div><p>transformer architecture:</p>
+<p>in the encoder side - lookup layer - the source sequence is converted from one hot encoding to a distributed representation using an embedding. - this is converted to K V matrices in the decoder side</p>
+</section>
+<section id="sec-vanishing-gradient-problem" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="sec-vanishing-gradient-problem">Vanishing Gradient Problem</h3>
+<p>When gradients we back-propagate, the gradients can become really small and as a result.</p>
+<p>With small gradient the model will learn very little.</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-14-positonal-encoding.png" class="lightbox" data-gallery="slides" title="positional-encoding"><img src="img/c4w2-14-positonal-encoding.png" class="img-fluid figure-img" alt="positional-encoding"></a></p>
+<figcaption>positional-encoding</figcaption>
+</figure>
+</div></div><p>Transformers which are based on attention and don’t require any sequential computation per layer, only a single step is needed.</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-13-summary.png" class="lightbox" data-gallery="slides" title="summary"><img src="img/c4w2-13-summary.png" class="img-fluid figure-img" alt="summary"></a></p>
+<figcaption>summary</figcaption>
+</figure>
+</div></div><p>Additionally, the gradient steps that need to be taken from the last output to the first input in a transformer is just one. For RNNs, the number of steps increases with longer sequences. Finally, transformers don’t suffer from vanishing gradients problems that are related to the length of the sequences.</p>
+</section>
+</section>
+<section id="sec-transformer-applications" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-transformer-applications">Transformer Applications</h2>
+<div class="page-columns page-full"><p> Transformers have essentially replaced RNN,LSTM and GRUs in sequence processing.</p><div class="no-row-height column-margin column-container"><img src="img/c4w2-15-application.png" class="img-fluid" data-group="slides" alt="application"></div></div>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-16-application-NLP.png" class="lightbox" data-gallery="slides" title="application-NLP"><img src="img/c4w2-16-application-NLP.png" class="img-fluid figure-img" alt="application-NLP"></a></p>
+<figcaption>application-NLP</figcaption>
+</figure>
+</div></div><section id="sec-applications-of-transformers" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="sec-applications-of-transformers">Applications of Transformers</h3>
+<ul>
+<li>Text summarization</li>
+<li>Autocomplete</li>
+<li>NER</li>
+<li>Q&amp;A</li>
+<li>Translation</li>
+<li>Chat Bots</li>
+<li>Sentiment Analyses</li>
+<li>Market Intelligence</li>
+<li>Text Classification</li>
+<li>OCR</li>
+<li>Spell Checking</li>
+</ul>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-17-sota.png" class="lightbox" data-gallery="slides" title="sota"><img src="img/c4w2-17-sota.png" class="img-fluid figure-img" alt="sota"></a></p>
+<figcaption>sota</figcaption>
+</figure>
+</div></div></section>
+<section id="sec-transformers-time-line" class="level3">
+<h3 class="anchored" data-anchor-id="sec-transformers-time-line">SOTA Transformers</h3>
+<p>Transformers Time Line:</p>
+<ul>
+<li>GPT-4:</li>
+<li>ElmO</li>
+<li>BERT</li>
+<li>T5</li>
+</ul>
+</section>
+</section>
+<section id="sec-t5" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-t5">T5 - Text-To-Text Transfer Transformer</h2>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-18-t5.gif" class="lightbox" data-gallery="slides" title="t5"><img src="img/c4w2-18-t5.gif" class="img-fluid figure-img" alt="t5"></a></p>
+<figcaption>t5</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-18-t5.png" class="lightbox" data-gallery="slides" title="t5"><img src="img/c4w2-18-t5.png" class="img-fluid figure-img" alt="t5"></a></p>
+<figcaption>t5</figcaption>
+</figure>
+</div></div>
+<p><span class="citation" data-cites="DBLP:journals/corr/abs-1910-10683">(<a href="#ref-DBLP:journals/corr/abs-1910-10683" role="doc-biblioref">Raffel et al. 2019</a>)</span> introduced T5 which can do a number of tasks with a single model. While the earlier transformer models were able to score high in many different tasks without specific training. T5 is setup to handle different inputs and respond with output that is relevant to the requested task.</p>
+<section id="sec-t5-classification-tasks" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="sec-t5-classification-tasks">T5 Classification tasks</h3>
+<p>These tasks are selected using the initial string: - Translate English into German - Cola sentence - Question</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-19-text-to-text-transformer.png" class="lightbox" data-gallery="slides" title="text-to-text-transformer"><img src="img/c4w2-19-text-to-text-transformer.png" class="img-fluid figure-img" alt="text-to-text-transformer"></a></p>
+<figcaption>text-to-text-transformer</figcaption>
+</figure>
+</div></div></section>
+<section id="sec-t5-regression-tasks" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="sec-t5-regression-tasks">T5 regression tasks</h3>
+<ul>
+<li>Stbs Sentence1 … Stbs Sentence2 …</li>
+<li>Summarize:</li>
+</ul>
+<p><a href="https://t5-trivia.glitch.me/">play trivia against T5 here</a></p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-21-quiz.png" class="lightbox" data-gallery="slides" title="transformers quiz"><img src="img/c4w2-21-quiz.png" class="img-fluid figure-img" alt="transformers quiz"></a></p>
+<figcaption>transformers quiz</figcaption>
+</figure>
+</div></div><div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>I found this one a little confusing</p>
+</div>
+</div>
+<p>We are told that the transformers can do in one operation what RNN needed to do in many steps. Also when querying transformers it does one task at a time. It seem that this question is about the ability of multiple heads to do several tasks at once could not do this is not well understood.</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-20-summary-of-transformers.png" class="lightbox" data-gallery="slides" title="summary of transformers"><img src="img/c4w2-20-summary-of-transformers.png" class="img-fluid figure-img" alt="summary of transformers"></a></p>
+<figcaption>summary of transformers</figcaption>
+</figure>
+</div></div></section>
+</section>
+<section id="sec-dot-product-attention" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-dot-product-attention">Dot-Product Attention</h2>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-22-outline-of-dot-product-attention.png" class="lightbox" data-gallery="slides" title="outline-of-dot-product-attention"><img src="img/c4w2-22-outline-of-dot-product-attention.png" class="img-fluid figure-img" alt="outline-of-dot-product-attention"></a></p>
+<figcaption>outline-of-dot-product-attention</figcaption>
+</figure>
+</div></div><p>Dot product attention was introduced in 2015 by <em>Minh-Thang Luong, Hieu Pham, Christopher D. Manning</em> in <a href="https://arxiv.org/pdf/1508.04025v5.pdf">Effective Approaches to Attention-based Neural Machine Translation</a> which is available at <a href="https://paperswithcode.com/paper/effective-approaches-to-attention-based">papers with code</a>.</p>
+<p>Look at <a href="2021-03-21-review-of-effective-approaches-to-attention-based-neural-machine-translation">Review of Effective Approaches to Attention-based NMT</a></p>
+<p>Dot product attention is the main operation in transformers. It is the dot product between the embedding of source and target sequences. The embedding used is a cross language embedding in which distance between equivalent across languages are minimized. This facilitates finding the cosine similarity using the dot product between words.</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-23-intro-to-attention.png" class="lightbox" data-gallery="slides" title="intro-to-attention"><img src="img/c4w2-23-intro-to-attention.png" class="img-fluid figure-img" alt="intro-to-attention"></a></p>
+<figcaption>intro-to-attention</figcaption>
+</figure>
+</div></div><p>Let’s try to understand <em>dot product attention</em> intuitively by walking over its operations at the word level. The actual algorithm uses linear algebra to perform many operations at once which is fast but more abstract and therefore difficult to understand.</p>
+<ol type="1">
+<li>Using a pre-trained <strong>cross-language</strong> embedding encode:
+<ul>
+<li>each German word vector <span class="math inline">q_i</span> is placed as a column vector to form the query matrix <span class="math inline">Q</span>,</li>
+<li>each English word once as <span class="math inline">k_i</span> and once as <span class="math inline">v_i</span>, column vectors in the key <span class="math inline">K</span> and value <span class="math inline">V</span> matrices. This is more of a preprocessing step.</li>
+</ul></li>
+<li>For each German word we want to derive a continuous filter function on the English sequence to pick the most relevant words for translation. We build this filter for word <span class="math inline">q_i</span> by taking its dot product <span class="math inline">q_i \cdot k_i</span> with every word vector from the english sequence these products are called the the attention weights.</li>
+<li>next we convert the rudimentary filter to a probabilistic one by applying a <span class="math inline">softmax()</span> which is just a differentiable function that converts the <em>attention weights</em> to <em>probabilities</em> by keeping them at the same relative sizes while ensuring they add to one.</li>
+<li>now that we have a <span class="math inline">q</span>-filter we want to apply it. This is done by taking the weighed sum of the english words using the attention weights.</li>
+</ol>
+<p><span class="math display">
+\hat q_i = \sum_{i} softmax(q_i \cdot k_i) \times v_i =  \sum w_a(q_i) * v_i
+</span></p>
+<section id="sec-query-key-value" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="sec-query-key-value">Query, Key &amp; Value</h3>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-24-queries-keys-values.png" class="lightbox" data-gallery="slides" title="queries-keys-values"><img src="img/c4w2-24-queries-keys-values.png" class="img-fluid figure-img" alt="queries-keys-values"></a></p>
+<figcaption>queries-keys-values</figcaption>
+</figure>
+</div></div><p>I find it fascinating that the authors of Attention is all decided to motivate their work on a attention using the language of information retrieval. This makes understanding the concepts a little easier and has also lead to more recent work on LSTM to use this same language. In both case though the authors are interested in the ability of the neural network to use the wghiets that it has learned to process a long sequence of test and put together a coherent output based on distant and often sparse parts of the input. In a named entity recognition task the network has a fairly simple task to do - it needs to classify a few token based a few cues from the immediate context. But for the text summarization task the network has to understand the text and pick up the most salient bit while discarding the rest.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Query, Key &amp; Value
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Attention uses three matrices which are formed as shown in the figure The <strong>Query</strong> <span class="math inline">Q</span>, <strong>Key</strong> <span class="math inline">K</span> and <strong>Value</strong> <span class="math inline">V</span> are formed from the source and target (if there is no target then just from the source). Each word is converted into an embedding column vector and these are placed into the matracies as their columns.</p>
+<p>In <a href="#vid-01-Attentional" class="quarto-xref">Video&nbsp;1</a> Dr.&nbsp;Łukasz Kaiser talks about attention and here he is talking about solving the problem of retrieving information from a long sequence. At around 16 minutes in he call Q a query vector and K and V a memory, of all the words we have seen, which we want to access.</p>
+<ul>
+<li>The <em><strong>Q</strong>uery</em> is the matrix formed from the column word vector for the German words.</li>
+<li>The <em><strong>K</strong>ey</em> is the matrix formed from the column word vector for the English words.</li>
+<li>The <em><strong>V</strong>alue</em> is the matrix formed from the column word vector for the English words.</li>
+</ul>
+<p>K and V are the same</p>
+</div>
+</div>
+<p>Once these are called keys since we use them to are we doing a similarity lookup. And the second time they are called value because we use them in the activation when we apply the weights to them. The input and output sequences are mapped to an embedding layer to become the <span class="math inline">Q</span>, <span class="math inline">K</span> and <span class="math inline">V</span> matrices.</p>
+
+<div class="no-row-height column-margin column-container"><div id="vid-01-Attentional" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-vid figure">
+<div aria-describedby="vid-01-Attentional-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/rBCqOTEfxvg" title="Masterclass on Attention is all you need" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-01-Attentional-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Video&nbsp;1: Lukasz Kaiser’s Masterclass on Attention is all you need
+</figcaption>
+</figure>
+</div></div><p>Given an input, we transform it into a new representation or a column vector. Depending on the task we are working on, we will end up getting queries, keys, and values. Each column corresponds to a word in the figure above. Hence, when we compute the following:</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-26-dot-product-attention-math.png" class="lightbox" data-gallery="slides" title="attention-formula"><img src="img/c4w2-26-dot-product-attention-math.png" class="img-fluid figure-img" alt="attention-formula"></a></p>
+<figcaption>attention-formula</figcaption>
+</figure>
+</div></div><ol type="1">
+<li>multiply <span class="math inline">Q</span> by <span class="math inline">V</span>.</li>
+<li>apply the <span class="math inline">softmax()</span> to transform to a probability.</li>
+<li>multiply the softmax by <span class="math inline">V</span></li>
+</ol>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-26-attention-math.png" class="lightbox" data-gallery="slides" title="attention-math"><img src="img/c4w2-26-attention-math.png" class="img-fluid figure-img" alt="attention-math"></a></p>
+<figcaption>attention-math</figcaption>
+</figure>
+</div></div><p>This is restating the above in a very confusing way. I looked at it many times before I figured out that the square brackets are the dimensions and that we have the following two formulas indicated schematically above:</p>
+<p><span class="math display">
+Z = W_A V
+</span></p>
+<p>where:</p>
+<ul>
+<li>Z has size of is a ‘Q length’ <span class="math inline">\times</span> ‘Embedding size’ matrix</li>
+<li>or for coders <span class="math inline">[len(Q),D]</span> dimensional array</li>
+</ul>
+<p><span class="math display">
+W_A = softmax(QK^T)
+</span></p>
+<p>This concept implies that similar vectors are likely to have a higher score when we dot them with one another. We transform that score into a probability by using a softmax function. We can then multiply the output by</p>
+<p>We can think of the <strong>keys</strong> and the <strong>values</strong> as being the same. Note that both <span class="math inline">K</span>,<span class="math inline">V</span> are of dimension <span class="math inline">L_k, D</span>. Each query <span class="math inline">q_i</span> picks the most similar key <span class="math inline">k_j</span>.</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-27-attention-formula.png" class="lightbox" data-gallery="slides" title="attention-formula"><img src="img/c4w2-27-attention-formula.png" class="img-fluid figure-img" alt="attention-formula"></a></p>
+<figcaption>attention-formula</figcaption>
+</figure>
+</div></div><p>Queries are the German words and the keys are the English words. Once we have the attention weights, we can just multiply it by <span class="math inline">V</span> to get a weighted combination of the input.</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-28-attention-quizz.png" class="lightbox" data-gallery="slides" title="attention-quiz"><img src="img/c4w2-28-attention-quizz.png" class="img-fluid figure-img" alt="attention-quiz"></a></p>
+<figcaption>attention-quiz</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-29-summary-for-dot-product-attention.png" class="lightbox" data-gallery="slides" title="summary-for-dot-product-attention"><img src="img/c4w2-29-summary-for-dot-product-attention.png" class="img-fluid figure-img" alt="summary-for-dot-product-attention"></a></p>
+<figcaption>summary-for-dot-product-attention</figcaption>
+</figure>
+</div></div>
+<p>another interesting point made in the preceding talk is that dot product attention has <span class="math inline">O(n^2 *d)</span> complexity but typically <span class="math inline">d &gt;&gt; n</span> since <span class="math inline">d ~ 1000</span> while for <span class="math inline">n ~ 70</span>. So transformers should perform better then an RNN whose complexity is <span class="math inline">O(n*d^2)</span>. And this is before the advantages of using an efficient transformer like reformer.</p>
+<p>In <span class="citation" data-cites="DBLP:journals/corr/abs-2103-13076">(<a href="#ref-DBLP:journals/corr/abs-2103-13076" role="doc-biblioref">Kasai et al. 2021</a>)</span> there is a reversal of the trend from rnn to transformers. Here the latest results show a an idea of training big transformers and then converting them to RNN to improve performance. (One get an RNN by training a transformer.)</p>
+</section>
+</section>
+<section id="sec-causal-attention" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-causal-attention">Causal Attention</h2>
+<ul>
+<li>We are interested in three main types of attention.</li>
+<li>We’ll see a brief overview of causal attention.</li>
+<li>We’ll discover some mathematical foundations behind the causal attention.</li>
+</ul>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-30-three-ways-of-attention.png" class="lightbox" data-gallery="slides" title="three forms of attention"><img src="img/c4w2-30-three-ways-of-attention.png" class="img-fluid figure-img" alt="three forms of attention"></a></p>
+<figcaption>three forms of attention</figcaption>
+</figure>
+</div></div><p>In terms of use cases there are three types of attention mechanisms:</p>
+<section id="sec-scaled-dot-product-attention" class="level3">
+<h3 class="anchored" data-anchor-id="sec-scaled-dot-product-attention">Scaled dot product attention:</h3>
+<ul>
+<li>AKA Encoder-Decoder attention.</li>
+<li>one sentence in the decoder look at to another one in the encoder.</li>
+<li>use cases:
+<ul>
+<li>seq2seq</li>
+<li>machine translation.</li>
+</ul></li>
+</ul>
+</section>
+<section id="sec-causal-attention-1" class="level3">
+<h3 class="anchored" data-anchor-id="sec-causal-attention-1">Causal Attention:</h3>
+<ul>
+<li>AKA self attention.</li>
+<li>attention is all we need.</li>
+<li>In the same sentence words attend to previous words.</li>
+<li>Future words have not been generated yet.</li>
+<li>use cases:
+<ul>
+<li>generation</li>
+<li>text generation</li>
+<li>summarization.</li>
+</ul></li>
+</ul>
+</section>
+<section id="sec-bi-directional-self-attention" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="sec-bi-directional-self-attention">Bi-directional self attention:</h3>
+<ul>
+<li>In one sentence words look both at previous and future words.</li>
+<li>use cases:
+<ul>
+<li>machine comprehension.</li>
+<li>question answering</li>
+</ul></li>
+</ul>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-31-causal-attention.png" class="lightbox" data-gallery="slides" title="causal attention"><img src="img/c4w2-31-causal-attention.png" class="img-fluid figure-img" alt="causal attention"></a></p>
+<figcaption>causal attention</figcaption>
+</figure>
+</div></div><p>In causal attention, <strong>queries</strong> and <strong>keys</strong> come from the same sentence. That is why it is often referred to as <strong>self-attention</strong>. In general, causal attention allows words to attend to other words that are related in various ways.</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-32-causal-attention-mask.png" class="lightbox" data-gallery="slides" title="causal attention mask"><img src="img/c4w2-32-causal-attention-mask.png" class="img-fluid figure-img" alt="causal attention mask"></a></p>
+<figcaption>causal attention mask</figcaption>
+</figure>
+</div></div><p>At a high-level We have K Q V matrices. corresponding However, token should not attend to words in the future since these were not generated yet. Therefore the future token’s data is masked by adding a big negative number.</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-33-causal-attention-math-.png" class="lightbox" data-gallery="slides" title="causal-attention-math-"><img src="img/c4w2-33-causal-attention-math-.png" class="img-fluid figure-img" alt="causal-attention-math-"></a></p>
+<figcaption>causal-attention-math-</figcaption>
+</figure>
+</div></div><p>Mathematically, it looks like this:</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-34-causal-attention-quiz.png" class="lightbox" data-gallery="slides" title="causal-attention-quiz"><img src="img/c4w2-34-causal-attention-quiz.png" class="img-fluid figure-img" alt="causal-attention-quiz"></a></p>
+<figcaption>causal-attention-quiz</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-35-summary-for-causal-attention.png" class="lightbox" data-gallery="slides" title="summary-for-causal-attention"><img src="img/c4w2-35-summary-for-causal-attention.png" class="img-fluid figure-img" alt="summary-for-causal-attention"></a></p>
+<figcaption>summary-for-causal-attention</figcaption>
+</figure>
+</div></div>
+</section>
+</section>
+<section id="sec-multi-head-attention" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-multi-head-attention">V5: Multi-head Attention</h2>
+<div class="page-columns page-full"><p> Let’s summarize the intuition behind <strong>multi-head attention</strong> and <strong>scaled dot product attention</strong>.</p><div class="no-row-height column-margin column-container"><img src="img/c4w2-40-outline-of-mutihead-attention.png" class="img-fluid" data-group="slides" alt="outline-of-muti-head-attention"></div></div>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-41-muti-head-attention.png" class="lightbox" data-gallery="slides" title="muti-head-attention"><img src="img/c4w2-41-muti-head-attention.png" class="img-fluid figure-img" alt="muti-head-attention"></a></p>
+<figcaption>muti-head-attention</figcaption>
+</figure>
+</div></div><p>Q. What are multiple attention heads?</p>
+<ul>
+<li>Multiple attention heads are simply replicas of the attention mechanism. In this they are analogous to the multiple filters used in a convolutional neural networks (CNN).</li>
+<li>During training they specialize by learning different relationships between words.</li>
+<li>During inference the operate parallel and independently of each other.</li>
+</ul>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-42-overview-of-muti-head-attention.png" class="lightbox" data-gallery="slides" title="overview of muti-head attention"><img src="img/c4w2-42-overview-of-muti-head-attention.png" class="img-fluid figure-img" alt="overview of muti-head attention"></a></p>
+<figcaption>overview of muti-head attention</figcaption>
+</figure>
+</div></div><p>This is perhaps the most important slide - but it fails to show the critical part of the algorithm.</p>
+<p>Let’s suppose we have <span class="math inline">k</span> attention heads. We see at the lowest level the <span class="math inline">K</span>, <span class="math inline">Q</span> and <span class="math inline">V</span> being passed into passing through k linear layers. How is this accomplished and more important why. What is actually happening here is the opposite of concatenation. Instead of processing a query embedding from a space of <span class="math inline">d</span>-dimensions we first split the embedding into <span class="math inline">k</span> vectors of length <span class="math inline">D/k</span>. We have now k vectors from a k <span class="math inline">D/k</span>-dimensional subspace. We now perform a dot product attention on each of these subspaces.</p>
+<!-- place here a better image of the splitting mechanism ! -->
+<p>Each of these dot product attention is operating on a difference subspace. It sees different subsets of the data and therefore specializes. How do these heads specializes is anybody’s guess - unless we have a special embedding which has been processed using PCA or some other algorithm to ensure that each subspace corresponds to some interpretable subset of features.</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-43-muti-head-attention-scaled-dot-product.png" class="lightbox" data-gallery="slides" title="muti-head attention scaled dot-product"><img src="img/c4w2-43-muti-head-attention-scaled-dot-product.png" class="img-fluid figure-img" alt="muti-head attention scaled dot-product"></a></p>
+<figcaption>muti-head attention scaled dot-product</figcaption>
+</figure>
+</div></div><p>For example if we used a 1024 dimension embedding which concatenates 4 representations.</p>
+<ol type="1">
+<li>[0:256] is an embedding trained on a <em>phonological</em> task</li>
+<li>[256:512] is an embedding trained on a <em>morphological</em> task</li>
+<li>[513:768] is an embedding trained on a <em>syntactical</em> task</li>
+<li>[769:1024] is an embedding trained on a <em>semantic</em> task</li>
+</ol>
+<p>We could devise a number of subspace sampling schemes to give the k different attention heads different areas of specializations.</p>
+<ol type="1">
+<li>sample from a single sub-space</li>
+<li>4 heads sample from one subspace and 4 heads sample from 3 different sub-spaces</li>
+<li>5 heads sampling from 2 subspaces different sub-spaces and 3 from 1</li>
+<li>5 heads sampling from 2 subspaces different sub-spaces and 3 from three</li>
+</ol>
+<p>Each would specialize on a domain or on a interface between two domain or on all data but one domain. Language is rather redundant so they may be able to reconstruct most of the missing data - but at least they would specialize in a linguistically meaningful way.</p>
+<p>Given a word, we take its embedding then we multiply it by the <span class="math inline">Q</span>, <span class="math inline">K</span>, <span class="math inline">V</span> matrix to get the corresponding queries, keys and values. When we use multi-head attention, a head can learn different relationships between words from another head.</p>
+<p>Here’s one way to look at it:</p>
+<ul>
+<li>First, imagine that we have an embedding for a word. We multiply that embedding with <span class="math inline">Q</span> to get <span class="math inline">q_1</span>, <span class="math inline">K</span> to get <span class="math inline">k_1</span>, and V to get <span class="math inline">v_1</span></li>
+</ul>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-44-muti-head-attention-concatenation.png" class="lightbox" data-gallery="slides" title="muti-head-attention-concatenation"><img src="img/c4w2-44-muti-head-attention-concatenation.png" class="img-fluid figure-img" alt="muti-head-attention-concatenation"></a></p>
+<figcaption>muti-head-attention-concatenation</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-46-muti-head-attention-math.png" class="lightbox" data-gallery="slides" title="muti-head-attention-math"><img src="img/c4w2-46-muti-head-attention-math.png" class="img-fluid figure-img" alt="muti-head-attention-math"></a></p>
+<figcaption>muti-head-attention-math</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-47-muti-head-attention-fotmula.png" class="lightbox" data-gallery="slides" title="muti-head-attention-fotmula"><img src="img/c4w2-47-muti-head-attention-fotmula.png" class="img-fluid figure-img" alt="muti-head-attention-fotmula"></a></p>
+<figcaption>muti-head-attention-fotmula</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-48-muti-head-attention-quiz.png" class="lightbox" data-gallery="slides" title="muti-head-attention-quiz"><img src="img/c4w2-48-muti-head-attention-quiz.png" class="img-fluid figure-img" alt="muti-head-attention-quiz"></a></p>
+<figcaption>muti-head-attention-quiz</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-50-muti-head-attention-math.png" class="lightbox" data-gallery="slides" title="muti-head-attention-math"><img src="img/c4w2-50-muti-head-attention-math.png" class="img-fluid figure-img" alt="muti-head-attention-math"></a></p>
+<figcaption>muti-head-attention-math</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-51-muti-head-attention-math.png" class="lightbox" data-gallery="slides" title="muti-head-attention-math"><img src="img/c4w2-51-muti-head-attention-math.png" class="img-fluid figure-img" alt="muti-head-attention-math"></a></p>
+<figcaption>muti-head-attention-math</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-52-muti-head-attention-math.png" class="lightbox" data-gallery="slides" title="muti-head-attention-math"><img src="img/c4w2-52-muti-head-attention-math.png" class="img-fluid figure-img" alt="muti-head-attention-math"></a></p>
+<figcaption>muti-head-attention-math</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-53-muti-head-attention-math.png" class="lightbox" data-gallery="slides" title="muti-head-attention-math"><img src="img/c4w2-53-muti-head-attention-math.png" class="img-fluid figure-img" alt="muti-head-attention-math"></a></p>
+<figcaption>muti-head-attention-math</figcaption>
+</figure>
+</div></div>
+
+
+
+
+
+
+<ul>
+<li>Next, we feed it to the linear layer, once we go through the linear layer for each word, we need to calculate a score. After that, we end up having an embedding for each word. But we still need to get the score for how much of each word we are going to use. For example, this will tell we how similar two words are <span class="math inline">q_1</span> and <span class="math inline">k_1</span>or even <span class="math inline">q_1</span> and <span class="math inline">k_2</span> by doing a simple <span class="math inline">q_1 \dot k_1</span>. We can take the softmax of those scores (the paper mentions that we have to divide by <span class="math inline">\sqrt(d)</span> to get a probability and then we multiply that by the value. That gives we the new representation of the word.) If we have many heads, we can concatenate them and then multiply again by a matrix that is of dimension (dim of each head by num heads - dim of each head) to get one final vector corresponding to each word.</li>
+</ul>
+<p>Here is step by step guide, first we get the <span class="math inline">Q</span>, <span class="math inline">K</span>, <span class="math inline">V</span> matrices: Note that the computation above was done for one head. If we have several heads, concretely nn, then we will have <span class="math inline">Z_1, Z_2, \ldots, Z_n</span>. In which case, we can just concatenate them and multiply by a <span class="math inline">W_O</span> matrix as follows:</p>
+<p>Hence, the more heads we have, the more <span class="math inline">Z</span>s we will end up concatenating and as a result, that will change the inner dimension of <span class="math inline">W_O</span>, which will then project the combined embeddings into one final embedding.</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-49-summary-muti-head-attention.png" class="lightbox" data-gallery="slides" title="summary-muti-head-attention"><img src="img/c4w2-49-summary-muti-head-attention.png" class="img-fluid figure-img" alt="summary-muti-head-attention"></a></p>
+<figcaption>summary-muti-head-attention</figcaption>
+</figure>
+</div></div></section>
+<section id="sec-transformer-decoder" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-transformer-decoder">V6: Transformer Decoder</h2>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-60-outline.png" class="lightbox" data-gallery="slides" title="outline"><img src="img/c4w2-60-outline.png" class="img-fluid figure-img" alt="outline"></a></p>
+<figcaption>outline</figcaption>
+</figure>
+</div></div><p>There is a learning objective here!</p>
+<p>the transformer decoder has two parts</p>
+<ul>
+<li>a decoder block (with multi-head attention) - think feature acquisition.</li>
+<li>a feed forward block - think non-parametric regression on the features.</li>
+</ul>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-62-transformer-decoder-overview.png" class="lightbox" data-gallery="slides" title="transformer-decoder-overview"><img src="img/c4w2-62-transformer-decoder-overview.png" class="img-fluid figure-img" alt="transformer-decoder-overview"></a></p>
+<figcaption>transformer-decoder-overview</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-63-transformer-decoder-explaination.png" class="lightbox" data-gallery="slides" title="transformer-decoder-explaination"><img src="img/c4w2-63-transformer-decoder-explaination.png" class="img-fluid figure-img" alt="transformer-decoder-explaination"></a></p>
+<figcaption>transformer-decoder-explaination</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-64-transformer-decoder-ff.png" class="lightbox" data-gallery="slides" title="transformer-decoder-ff"><img src="img/c4w2-64-transformer-decoder-ff.png" class="img-fluid figure-img" alt="transformer-decoder-ff"></a></p>
+<figcaption>transformer-decoder-ff</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-65-transformer-decoder-explaination.png" class="lightbox" data-gallery="slides" title="transformer-decoder-explaination"><img src="img/c4w2-65-transformer-decoder-explaination.png" class="img-fluid figure-img" alt="transformer-decoder-explaination"></a></p>
+<figcaption>transformer-decoder-explaination</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-68-transformer-decoder-summary.png" class="lightbox" data-gallery="slides" title="transformer-decoder-summary"><img src="img/c4w2-68-transformer-decoder-summary.png" class="img-fluid figure-img" alt="transformer-decoder-summary"></a></p>
+<figcaption>transformer-decoder-summary</figcaption>
+</figure>
+</div></div>
+
+
+
+</section>
+<section id="sec-transformer-summarizer" class="level1 page-columns page-full">
+<h1>V7: Transformer Summarizer</h1>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-70-outline.png" class="lightbox" data-gallery="slides" title="outline"><img src="img/c4w2-70-outline.png" class="img-fluid figure-img" alt="outline"></a></p>
+<figcaption>outline</figcaption>
+</figure>
+</div></div><p>In this video we move on from attention and transformer blocks to the actual nlp task of text summarization. I noticed that the assignment put most of the focus on the coding of attention and the transformer block. Once it worked I started to really wonder what was going on under the hood and realized that while the notebooks it said we were building this from scratch, the reality was that <code>trax</code> framework was hiding lots of the implementation details from us</p>
+<div class="page-columns page-full"><p> we are told there is an input and an output but the two are combined into one long sequence.</p><div class="no-row-height column-margin column-container"><img src="img/c4w2-71-transformer-for-summarization.png" class="img-fluid" data-group="slides" alt="transformer-for-summarization"></div></div>
+<div class="page-columns page-full"><p> So to account for concatenating the output to the output we have a mask.</p><div class="no-row-height column-margin column-container"><img src="img/c4w2-72-loss-weights.png" class="img-fluid" data-group="slides" alt="loss-weights"></div></div>
+<p>However we might want to give the input some weights so that we can incorporate it into the language model. also I don’t think I saw anywhere how we feed this loss weighs into the loss function. Loss weights were created as a masks by the following code:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>  mask <span class="op">=</span> [<span class="dv">0</span>] <span class="op">*</span> (<span class="bu">len</span>(<span class="bu">list</span>(article)) <span class="op">+</span> <span class="dv">2</span>) <span class="op">+</span> [<span class="dv">1</span>] <span class="op">*</span> (<span class="bu">len</span>(<span class="bu">list</span>(summary)) <span class="op">+</span> <span class="dv">1</span>) </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the +2 Accounting for EOS and SEP</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># and +1 Accounting for the final EOS </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-73-cost-function.png" class="lightbox" data-gallery="slides" title="cost-function"><img src="img/c4w2-73-cost-function.png" class="img-fluid figure-img" alt="cost-function"></a></p>
+<figcaption>cost-function</figcaption>
+</figure>
+</div></div><section id="sec-cross-entropy-loss" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-cross-entropy-loss">Cross entropy loss</h2>
+<p>Cross-entropy loss, or log loss, measures the performance of a classification model whose output is a probability value between 0 and 1. Cross-entropy loss increases as the predicted probability diverges from the actual label.</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-74-inference.png" class="lightbox" data-gallery="slides" title="inference"><img src="img/c4w2-74-inference.png" class="img-fluid figure-img" alt="inference"></a></p>
+<figcaption>inference</figcaption>
+</figure>
+</div></div><p>After training GPT2 on summarization data we just treat it like a word model and mine it for summaries. We do this by supply it with an input and predicting the output token by token. A more sophisticated method might be to use a beam search.</p>
+<p>An even more sophisticated method might be to use an information metric to reject sentences and back track or better yet to do negative sampling from the prediction distribution (i.e.&nbsp;erase some prediction’s probabilities and renormalize)</p>
+<p>One could do even better by providing hints, especially if we also head some kind of extractive model with a high-level of certainty about the most important sentence and their most significant concepts.</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-76-quiz.png" class="lightbox" data-gallery="slides" title="quiz"><img src="img/c4w2-76-quiz.png" class="img-fluid figure-img" alt="quiz"></a></p>
+<figcaption>quiz</figcaption>
+</figure>
+</div></div><p>We want the model to be penalized if it makes the wrong prediction. In this case it it does not predict the next word in the summary.</p>
+<p>This may not be ideal for a number of reasons:</p>
+<ol type="1">
+<li>the <strong>Big world view</strong> <em>“we are interested in a summary not the next word”</em> what if the model is generating a semantically equivalent summary, in such a case it should not be penalized at all.</li>
+</ol>
+<p>In a previous assignment we used a <strong>siamese network</strong> to check if two queries were equivalent. I think that allowing the network would be beneficial. (A loss that examines a generated sequence and compares it to the output.) But I don’t really know how to back-propagate the outcome for all the words. Well not exactly</p>
+<p>As we are using <strong>teacher forcing</strong> we can take a position that we ignore all the mistakes the model made and give it a good output sequence and ask it for the next word. This then allows us to back prop the last word’s loss all by itself.</p>
+<p>If we do this for each word in the output in sequence we should be able to reuse most of the calculations.</p>
+<p>There are cases we have multiple summaries:</p>
+<ul>
+<li>For a wikipedia article we often have all version from inception to the current day. This can provide multiple summaries and text along with an a golden version (the current summary). Oh and we may have a better summary in other languages but that is a different story.</li>
+<li>For IMDB movie plots we often have a long synopsis and multiple shorter summaries. Also we may also have the book or screen play.</li>
+</ul>
+<p>I mention these two cases since <a href="https://towardsdatascience.com/how-to-improve-your-network-performance-by-using-curriculum-learning-3471705efab4">Curriculum Learning</a> may be able to assist us in training</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w2-75-summary.png" class="lightbox" data-gallery="slides" title="summary"><img src="img/c4w2-75-summary.png" class="img-fluid figure-img" alt="summary"></a></p>
+<figcaption>summary</figcaption>
+</figure>
+</div></div><p>I think these is much missing from this lesson about summerization. However there are a number of good source in papers as well as some lectures on YouTube.</p>
+<p>I have quickly summarized one and should link to it from <a href="">here</a> once it is published.</p>
+</section>
+<section id="sec-lab1-attention" class="level2">
+<h2 class="anchored" data-anchor-id="sec-lab1-attention">Lab1 : Attention</h2>
+<p>This was a numpy based realization of dot product and multi-head attention. Some of the main assignment required porting this to Jax.</p>
+<p><a href="../../notes/c4w2/lab01.html">Attention lab</a></p>
+</section>
+<section id="lab2-the-transformer-decoder" class="level2">
+<h2 class="anchored" data-anchor-id="lab2-the-transformer-decoder">Lab2 : The Transformer Decoder</h2>
+<p>this covered the transformer block</p>
+<p><a href="../../notes/c4w2/lab02.html">Transformer block lab</a></p>
+</section>
+<section id="assignment-transformer-summarizer" class="level2">
+<h2 class="anchored" data-anchor-id="assignment-transformer-summarizer">Assignment: Transformer Summarizer</h2>
+<!--
+[Assignment](assignment.qmd)
+-->
+<p>This long assignment primarily focused on dot product attention, multi-head attention and on building the transformer blocks. These were manageable as their theory had been explained in the lectures and their code had already been covered in the labs. It glosses over the parts involving data processing, training, evaluation and the actual summarization task. The summarization is accomplished using maximum likelihood estimate. A beam search might have yielded better results.</p>
+<p>The date as described by:</p>
+<blockquote class="blockquote">
+<p>We use the CNN/Daily Mail dataset (Hermann et al., 2015; Nallapati et al., 2016), which contains online news articles (781 tokens on average) paired with multi-sentence summaries (3.75 sentences or 56 tokens on average).</p>
+</blockquote>
+<ul>
+<li><span class="citation" data-cites="see2017get">See, Liu, and Manning (<a href="#ref-see2017get" role="doc-biblioref">2017</a>)</span> <a href="https://arxiv.org/pdf/1704.04368.pdf">Get To The Point §4 (Abigail et all 2017)</a> We used the non anatomized version. However the earlier paper used a preprocessed version which replaced the named entities with token like <code>$entity5</code>. This is probably ideal in other situations like event processing where each event looks quite different unless one anatomizes them rendering them much more similar and hopefully helping the model generalize better by learning from the partitions induced by the equivalency relation.</li>
+</ul>
+</section>
+<section id="sec-expanding-the-lab-to-a-project" class="level2">
+<h2 class="anchored" data-anchor-id="sec-expanding-the-lab-to-a-project">Expanding the lab to a project:</h2>
+<p>This is one of the main areas I’d like to focus on for a project. I have in mind a tool for improving wikipedia article leads. Here is how I’d like to take this project to the next level:</p>
+<section id="sec-more-data" class="level3">
+<h3 class="anchored" data-anchor-id="sec-more-data">more data</h3>
+<p>train it on additional material:</p>
+<ul>
+<li>papers and abstracts.</li>
+<li>wikipedia articles (with good first paragraphs. )</li>
+<li>books and book summaries (could be problematic due to the book’s length)</li>
+<li>movie scripts and outlines from IMDB
+<ul>
+<li>a Storyline</li>
+<li>summary (paragraph)</li>
+<li>a synopsis (longer)</li>
+</ul></li>
+</ul>
+</section>
+<section id="sec-more-algorithms" class="level3">
+<h3 class="anchored" data-anchor-id="sec-more-algorithms">More algorithms</h3>
+<ul>
+<li>Using a reformer to handle longer texts like books.</li>
+<li>Better summarization using:
+<ul>
+<li>a <strong>beam search</strong> to build better summaries.</li>
+<li>a <strong>bayesian search</strong> to avoid repetitions.</li>
+</ul></li>
+<li>use curriculum learning to speed up training with
+<ul>
+<li>easier examples first.</li>
+<li>multiple summaries per text.</li>
+<li>learning on anonymized NE before graduating to non-anonymized texts</li>
+</ul></li>
+<li>use better method for evaluation of summary.
+<ul>
+<li>Perhaps an <code>f-score</code> combining <em>precision</em> or <em>recall</em> on</li>
+<li>Attention Activation summed as a Coverage score for each token.</li>
+</ul></li>
+<li>use of non zero loss-weights layer
+<ul>
+<li>drop to zero as training progresses.</li>
+<li>depend on the actual length of source and output.</li>
+<li>use <a href="https://en.wikipedia.org/wiki/Tf%E2%80%93idf">tf-idf</a> to make holes in the mask surrounding essential concepts.</li>
+</ul></li>
+</ul>
+</section>
+<section id="sec-evaluation" class="level3">
+<h3 class="anchored" data-anchor-id="sec-evaluation">Evaluation</h3>
+<p>use sammy lib with</p>
+<ul>
+<li>rouge-n metric</li>
+<li>the pyramid metric</li>
+</ul>
+</section>
+<section id="sec-extra-features" class="level3">
+<h3 class="anchored" data-anchor-id="sec-extra-features">Extra features</h3>
+<ul class="task-list">
+<li><label><input type="checkbox">pages for paper reviews</label></li>
+<li><label><input type="checkbox">pages for research questions</label></li>
+<li><label><input type="checkbox">pages to implement exra code/ experiments.</label></li>
+<li><label><input type="checkbox">visualize the concepts/sentences/paragraphs/sections covered in the summary.</label></li>
+<li><label><input type="checkbox">establish a hierarchy of what would go into a longer outline.</label></li>
+<li><label><input type="checkbox">develop a f-score metric combining precision and recall for the summary of the abstract.</label></li>
+<li><label><input type="checkbox">in academic writing one sentence per paragraphs should capture the main concept and it is generally the first second or the last. Is such a sentence is available identify it. This would be done by comparing each sentence with the rest of the paragraph.</label></li>
+</ul>
+</section>
+</section>
+<section id="sec-open-question" class="level2">
+<h2 class="anchored" data-anchor-id="sec-open-question">Open question</h2>
+<p>For me the assignment raised a number of questions about what really going on here during training.</p>
+<p>I’ll probably do this assignment again and look for some answers to my many questions. Once I have these I’ll add them in the body of these notes.</p>
+<section id="sec-questions" class="level3">
+<h3 class="anchored" data-anchor-id="sec-questions">Questions</h3>
+<ol type="1">
+<li>Loading and prepocessing the data:
+<ol type="1">
+<li>What is going on after we load the dataset - is there data augmentation?</li>
+<li>What this sub word vocab?</li>
+<li>How to make my own sub word vocab?</li>
+<li>How are out of vocab words being handled?</li>
+<li>Can we query the model about these beside running decode ?</li>
+<li>How are these created - I saw several sizes of vocab.</li>
+</ol></li>
+<li>Training
+<ol type="1">
+<li>Training data seems to be a little mangled - there seems to be missing white space after the first token of the summaries, is there some way to fix this?</li>
+<li>In not sure but why do we use teacher forcing during training?</li>
+</ol>
+<ul>
+<li>It should speed training up, but the setup is unclear.</li>
+</ul></li>
+<li>Evaluation
+<ol type="1">
+<li>Why are we not looking at a summarization metic like pyramid, rouge5 or good old precision and recall.</li>
+</ol></li>
+<li>Inference
+<ol type="1">
+<li>How can we tell the model thinks its done?</li>
+</ol>
+<ul>
+<li>when it output and <eof> token</eof></li>
+</ul>
+<ol type="1">
+<li>How to generate one sentence for each paragraph/section</li>
+</ol>
+<ul>
+<li>Chop up the input and summarise each section.</li>
+<li>Create an new dataset that bases it summaries on the last and first sentences of each paragraph. If that’s too long summarize again for each section.</li>
+<li>Introduce a timed mask that hides [0:t*len/T] where T is total number of tokens being generated.</li>
+<li>make the mask a Bayesian search mechanism that hides concepts in the output.</li>
+</ul>
+<ol type="1">
+<li>How to use multiple summaries like in IMDB?</li>
+</ol>
+<ul>
+<li>score using the pyramid scheme or rogue.</li>
+</ul>
+<ol type="1">
+<li>How to make the model avoid repeating /rephrasing themselves?</li>
+</ol>
+<ul>
+<li>use a metric on new information. for example Maximal marginal relevance. <span class="math inline">MMR = \argmax [\lambda Sim_1(s_i,Q)- (1 - \lambda) \max Sim_2(s_i,s_j)]</span> where <span class="math inline">Q</span> is the query and <span class="math inline">s</span> are output sentences and try to bake this into the regularization.</li>
+<li>a coverage vector seems to be a recommend method.</li>
+</ul></li>
+<li>Visualization</li>
+</ol>
+<ul>
+<li>Is there a easy way to see the activation for each word in the output?</li>
+<li>Is there a easy way to see which concepts are significant (not too common and not too rare)</li>
+<li>Is there a easy way to see which concepts are salient - aligned to near by concepts.</li>
+</ul>
+</section>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+</section>
+<section id="papers" class="level2">
+<h2 class="anchored" data-anchor-id="papers">Papers</h2>
+<section id="transformers" class="level3">
+<h3 class="anchored" data-anchor-id="transformers">Transformers</h3>
+<ol type="1">
+<li><a href="https://arxiv.org/abs/1910.10683">Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer</a> (Raffel et al, 2019)<br>
+</li>
+<li><a href="https://arxiv.org/abs/2001.04451">Reformer: The Efficient Transformer</a> (Kitaev et al, 2020)</li>
+<li><a href="https://arxiv.org/abs/1706.03762">Attention Is All We Need</a> (Vaswani et al, 2017)</li>
+<li><a href="https://arxiv.org/pdf/1802.05365.pdf">Deep contextualized word representations</a> (Peters et al, 2018)</li>
+<li><a href="https://arxiv.org/abs/1810.04805">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a> (Devlin et al, 2018)</li>
+<li><a href="https://arxiv.org/abs/2103.13076" title="(Kasai et all 2021)">Finetuning Pretrained Transformers into RNNs</a> (Kasai et all 2021)</li>
+</ol>
+</section>
+<section id="summarization" class="level3">
+<h3 class="anchored" data-anchor-id="summarization">Summarization</h3>
+<ol type="1">
+<li><a href="http://www.csie.ntnu.edu.tw/~g96470318/A_trainable_document_summarizer_.pdf">A trainable document summarizer. (Kupiec et al., 1995)</a> extractive</li>
+<li><a href="">Constructing literature abstracts by computer: techniques and prospects. (Paice, 1990)</a> extractive</li>
+<li><a href="https://hal.archives-ouvertes.fr/hal-00782442/document">Automatic text summarization: Past, present and future (Saggion and Poibeau, 2013)</a> extractive</li>
+<li><a href="https://www.aclweb.org/anthology/N16-1012.pdf">Abstractive sentence summarization with attentive recurrent neural networks. (Chopra et al., 2016)</a> abstractive summarization</li>
+<li><a href="https://arxiv.org/pdf/1603.08148.pdf">Pointing the unknown words. (Nallapati et al., 2016)</a> abstractive summarization</li>
+<li><a href="https://arxiv.org/pdf/1509.00685.pdf">A neural attention model for abstractive sentence summarization. (Rush et al.,2015;)</a> abstractive summarization</li>
+<li><a href="https://arxiv.org/pdf/1509.00685.pdf">Efficient summarization with read-again and copy mechanism(Zeng et al., 2016)</a> abstractive summarization</li>
+<li><a href="https://arxiv.org/pdf/1704.04368.pdf">Get To The Point: Summarization with Pointer-Generator Networks (Abigail et all 2017)</a> Hybrid summarization. Note: <strong>Christopher D. Manning</strong></li>
+<li><a href="https://arxiv.org/pdf/2004.08795v1.pdf">Extractive Summarization as Text Matching (Zhong et all 2020)</a></li>
+</ol>
+</section>
+</section>
+<section id="articles" class="level2">
+<h2 class="anchored" data-anchor-id="articles">Articles</h2>
+<ol type="1">
+<li><a href="http://jalammar.github.io/illustrated-transformer/">The Illustrated Transformer</a> (Alammar, 2018)</li>
+<li><a href="http://jalammar.github.io/illustrated-gpt2/">The Illustrated GPT-2</a> (Alammar, 2019)</li>
+<li><a href="http://jalammar.github.io/how-gpt3-works-visualizations-animations/">How GPT3 Works - Visualizations and Animations</a> (Alammar, 2020)</li>
+<li><a href="https://lilianweng.github.io/lil-log/2018/06/24/attention-attention.html" title="Lilian Weng, 2018">Attention? Attention!</a> (Lilian Weng, 2018)</li>
+<li><a href="https://lilianweng.github.io/lil-log/2020/04/07/the-transformer-family.html" title="(Lilian Weng, 2020)">The Transformer Family</a> (Lilian Weng, 2020)</li>
+<li><a href="https://machinelearningmastery.com/teacher-forcing-for-recurrent-neural-networks/">Teacher forcing for RNNs</a></li>
+</ol>
+</section>
+<section id="links" class="level2">
+<h2 class="anchored" data-anchor-id="links">Links</h2>
+<ul>
+<li><a href="https://github.com/google/jax">Jax</a></li>
+<li><a href="https://trax-ml.readthedocs.io/en/latest/index.html">Trax</a></li>
+<li><a href="https://gitter.im/trax-ml/community">Trax community</a> on Gitter</li>
+<li><a href="https://github.com/abisee/cnn-dailymail">CNN daily mail dataset</a></li>
+</ul>
+<!-- 
+# all images
+format all image names like
+/assets/week2/c4w2-04-name.png
+run search and replace:
+^(assets/week2/c4w2-..-)([^.]+)(\.png)
+![$2](img//$1$2$3){.column-margin group="slides"}
+ to get them as images get all the names
+-->
+</section>
+<section id="references-1" class="level2">
+
+
+
+
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-DBLP:journals/corr/abs-2103-13076" class="csl-entry" role="listitem">
+Kasai, Jungo, Hao Peng, Yizhe Zhang, Dani Yogatama, Gabriel Ilharco, Nikolaos Pappas, Yi Mao, Weizhu Chen, and Noah A. Smith. 2021. <span>“Finetuning Pretrained Transformers into RNNs.”</span> <em>CoRR</em> abs/2103.13076. <a href="https://arxiv.org/abs/2103.13076">https://arxiv.org/abs/2103.13076</a>.
+</div>
+<div id="ref-DBLP:journals/corr/abs-1910-10683" class="csl-entry" role="listitem">
+Raffel, Colin, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Michael Matena, Yanqi Zhou, Wei Li, and Peter J. Liu. 2019. <span>“Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer.”</span> <em>CoRR</em> abs/1910.10683. <a href="http://arxiv.org/abs/1910.10683">http://arxiv.org/abs/1910.10683</a>.
+</div>
+<div id="ref-see2017get" class="csl-entry" role="listitem">
+See, Abigail, Peter J Liu, and Christopher D Manning. 2017. <span>“Get to the Point: Summarization with Pointer-Generator Networks.”</span> <em>arXiv Preprint arXiv:1704.04368</em>.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2021,
+  author = {Bochman, Oren},
+  title = {Week 2 - {Text} {Summarization}},
+  date = {2021-04-01},
+  url = {https://orenbochman.github.io/notes-nlp/notes/c4w2/},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2021" class="csl-entry quarto-appendix-citeas" role="listitem">
+Bochman, Oren. 2021. <span>“Week 2 - Text Summarization.”</span> April
+1, 2021. <a href="https://orenbochman.github.io/notes-nlp/notes/c4w2/">https://orenbochman.github.io/notes-nlp/notes/c4w2/</a>.
+</div></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("^(?:http:|https:)\/\/www\.quarto\.org\/custom");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+          // default icon
+          link.classList.add("external");
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© Copyright 2023-2025, Oren Bochman</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/c4w2/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This page is built with 💛 and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"fade","descPosition":"right","loop":true,"openEffect":"fade","selector":".lightbox","skin":"my-css-class"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

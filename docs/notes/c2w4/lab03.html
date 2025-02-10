@@ -1,0 +1,2116 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Oren Bochman">
+
+<title>Word Embeddings: Training the CBOW model – NLP Specialization</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed slimcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">NLP Specialization</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Probabilistic Models</li><li class="breadcrumb-item"><a href="../../notes/c2w4/index.html">Word embeddings with neural networks</a></li><li class="breadcrumb-item"><a href="../../notes/c2w4/lab03.html">L3 - Training the CBOW</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Probabilistic Models</li><li class="breadcrumb-item"><a href="../../notes/c2w4/index.html">Word embeddings with neural networks</a></li><li class="breadcrumb-item"><a href="../../notes/c2w4/lab03.html">L3 - Training the CBOW</a></li></ol></nav>
+      <h1 class="title">Word Embeddings: Training the CBOW model</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">NLP</div>
+                <div class="quarto-category">Coursera</div>
+                <div class="quarto-category">Lab</div>
+                <div class="quarto-category">Probabilistic Models</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-body">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Oren Bochman </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">Monday, November 2, 2020</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Classification &amp; Vector Spaces</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Logistic Regression</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Frequencies</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Visualizing tweets</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Probability &amp; Bayes Rule</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Visualizing Naive Bayes</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Vector Space Models &amp; PCA</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Linear algebra with NumPy</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Manipulating word embeddings</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">MT &amp; Document Search via KNN</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vector manipulation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Hash functions and multiplanes</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Probabilistic Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">Autocorrect &amp; Dynamic Programming</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Building the vocabulary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Candidates from String Edits</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">POS tagging &amp; HMMS</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vocabulary with unknowns</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Working with tags and Numpy</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false">
+ <span class="menu-text">Autocomplete &amp; Language Models</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - N-grams Corpus preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Building the language model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Out of vocabulary words</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="true">
+ <span class="menu-text">Word embeddings with neural networks</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Data preparation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Intro to CBOW</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/lab03.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">L3 - Training the CBOW</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true">
+ <span class="menu-text">Sequence Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false">
+ <span class="menu-text">Neural Networks for Sentiment Analysis</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Introduction to Trax</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Classes and Subclasses</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Data Generators</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false">
+ <span class="menu-text">RNN for Language Modeling</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Hidden State Activation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Calculating Perplexity</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Vanilla RNNs, GRUs and the scan function</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L4 - Creating a GRU model using Trax</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="false">
+ <span class="menu-text">LSTMs and Named Entity Recognition</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vanishing Gradients</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false">
+ <span class="menu-text">Siamese Networks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Creating a Siamese Model using Trax</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Modified Triplet Loss</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Evaluate a Siamese Model</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="true">
+ <span class="menu-text">NLP with Attention Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false">
+ <span class="menu-text">Neural Machine Translation</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Stack Semantics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - BLEU Score</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="false">
+ <span class="menu-text">Text Summarization</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-18" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Attention</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - The Transformer Decoder</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" role="navigation" aria-expanded="false">
+ <span class="menu-text">Question Answering</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-19" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - SentencePiece and BPE</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - BERT Loss</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - T5</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" role="navigation" aria-expanded="false">
+ <span class="menu-text">Chat Bots</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-20" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Reformer LSH</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Revnet</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#forward-propagation" id="toc-forward-propagation" class="nav-link active" data-scroll-target="#forward-propagation">Forward propagation</a>
+  <ul class="collapse">
+  <li><a href="#initialization-of-the-weights-and-biases" id="toc-initialization-of-the-weights-and-biases" class="nav-link" data-scroll-target="#initialization-of-the-weights-and-biases">Initialization of the weights and biases</a></li>
+  <li><a href="#training-example" id="toc-training-example" class="nav-link" data-scroll-target="#training-example">Training example</a></li>
+  <li><a href="#values-of-the-hidden-layer" id="toc-values-of-the-hidden-layer" class="nav-link" data-scroll-target="#values-of-the-hidden-layer">Values of the hidden layer</a></li>
+  <li><a href="#values-of-the-output-layer" id="toc-values-of-the-output-layer" class="nav-link" data-scroll-target="#values-of-the-output-layer">Values of the output layer</a></li>
+  </ul></li>
+  <li><a href="#cross-entropy-loss" id="toc-cross-entropy-loss" class="nav-link" data-scroll-target="#cross-entropy-loss">Cross-entropy loss</a></li>
+  <li><a href="#backpropagation" id="toc-backpropagation" class="nav-link" data-scroll-target="#backpropagation">Backpropagation</a></li>
+  <li><a href="#gradient-descent" id="toc-gradient-descent" class="nav-link" data-scroll-target="#gradient-descent">Gradient descent</a>
+  <ul class="collapse">
+  <li><a href="#how-this-practice-relates-to-and-differs-from-the-upcoming-graded-assignment" id="toc-how-this-practice-relates-to-and-differs-from-the-upcoming-graded-assignment" class="nav-link" data-scroll-target="#how-this-practice-relates-to-and-differs-from-the-upcoming-graded-assignment">How this practice relates to and differs from the upcoming graded assignment</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/c2w4/lab03.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
+
+
+
+
+
+
+<div class="no-row-height column-margin column-container"><div class="nolightbox">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="../../images/Course-Logo-2-3.webp" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="course banner"><img src="../../images/Course-Logo-2-3.webp" class="img-fluid figure-img" alt="course banner"></a></p>
+<figcaption>course banner</figcaption>
+</figure>
+</div>
+</div></div><p>In previous lecture notebooks we saw</p>
+<ol type="1">
+<li>how to prepare data before feeding it to a continuous bag-of-words model,</li>
+<li>the model itself, its architecture and activation functions.</li>
+</ol>
+<p>This notebook will walk we through:</p>
+<ul>
+<li>Forward propagation.</li>
+<li>Cross-entropy loss.</li>
+<li>Backpropagation.</li>
+<li>Gradient descent.</li>
+</ul>
+<p>Which are concepts necessary to understand how the training of the model works.</p>
+<p>Let’s dive into it!</p>
+<div id="0936f0ad" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> utils2 <span class="im">import</span> get_dict</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="forward-propagation" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="forward-propagation">Forward propagation</h2>
+<p>Let’s dive into the neural network itself, which is shown below with all the dimensions and formulas you’ll need.</p>
+
+<div class="no-row-height column-margin column-container"><div id="fig-02" class="quarto-float quarto-figure quarto-figure-center anchored" style="width:839;height:349;">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="img/cbow_model_dimensions_single_input.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;1: "><img src="img/cbow_model_dimensions_single_input.png" id="fig-02" class="img-fluid figure-img" style="width:839;height:349;"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1
+</figcaption>
+</figure>
+</div></div><p>Set <span class="math inline">N</span> equal to 3. Remember that <span class="math inline">N</span> is a hyperparameter of the CBOW model that represents the size of the word embedding vectors, as well as the size of the hidden layer.</p>
+<p>Also set <span class="math inline">V</span> equal to 5, which is the size of the vocabulary we have used so far.</p>
+<div id="bf253a02" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the size of the word embedding vectors and save it in the variable 'N'</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Define V. Remember this was the size of the vocabulary in the previous lecture notebooks</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>V <span class="op">=</span> <span class="dv">5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="initialization-of-the-weights-and-biases" class="level3">
+<h3 class="anchored" data-anchor-id="initialization-of-the-weights-and-biases">Initialization of the weights and biases</h3>
+<p>Before we start training the neural network, we need to initialize the weight matrices and bias vectors with random values.</p>
+<p>In the assignment we will implement a function to do this yourself using <code>numpy.random.rand</code>. In this notebook, we’ve pre-populated these matrices and vectors for you.</p>
+<div id="16ec59a9" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define first matrix of weights</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>W1 <span class="op">=</span> np.array([[ <span class="fl">0.41687358</span>,  <span class="fl">0.08854191</span>, <span class="op">-</span><span class="fl">0.23495225</span>,  <span class="fl">0.28320538</span>,  <span class="fl">0.41800106</span>],</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>               [ <span class="fl">0.32735501</span>,  <span class="fl">0.22795148</span>, <span class="op">-</span><span class="fl">0.23951958</span>,  <span class="fl">0.4117634</span> , <span class="op">-</span><span class="fl">0.23924344</span>],</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>               [ <span class="fl">0.26637602</span>, <span class="op">-</span><span class="fl">0.23846886</span>, <span class="op">-</span><span class="fl">0.37770863</span>, <span class="op">-</span><span class="fl">0.11399446</span>,  <span class="fl">0.34008124</span>]])</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Define second matrix of weights</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>W2 <span class="op">=</span> np.array([[<span class="op">-</span><span class="fl">0.22182064</span>, <span class="op">-</span><span class="fl">0.43008631</span>,  <span class="fl">0.13310965</span>],</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>               [ <span class="fl">0.08476603</span>,  <span class="fl">0.08123194</span>,  <span class="fl">0.1772054</span> ],</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>               [ <span class="fl">0.1871551</span> , <span class="op">-</span><span class="fl">0.06107263</span>, <span class="op">-</span><span class="fl">0.1790735</span> ],</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>               [ <span class="fl">0.07055222</span>, <span class="op">-</span><span class="fl">0.02015138</span>,  <span class="fl">0.36107434</span>],</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>               [ <span class="fl">0.33480474</span>, <span class="op">-</span><span class="fl">0.39423389</span>, <span class="op">-</span><span class="fl">0.43959196</span>]])</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Define first vector of biases</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>b1 <span class="op">=</span> np.array([[ <span class="fl">0.09688219</span>],</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>               [ <span class="fl">0.29239497</span>],</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>               [<span class="op">-</span><span class="fl">0.27364426</span>]])</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Define second vector of biases</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>b2 <span class="op">=</span> np.array([[ <span class="fl">0.0352008</span> ],</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>               [<span class="op">-</span><span class="fl">0.36393384</span>],</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>               [<span class="op">-</span><span class="fl">0.12775555</span>],</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>               [<span class="op">-</span><span class="fl">0.34802326</span>],</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>               [<span class="op">-</span><span class="fl">0.07017815</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Check that the dimensions of these matrices match those shown in the figure above.</strong></p>
+<div id="246f93e6" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'V (vocabulary size): </span><span class="sc">{</span>V<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'N (embedding size / size of the hidden layer): </span><span class="sc">{</span>N<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'size of W1: </span><span class="sc">{</span>W1<span class="sc">.</span>shape<span class="sc">}</span><span class="ss"> (NxV)'</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'size of b1: </span><span class="sc">{</span>b1<span class="sc">.</span>shape<span class="sc">}</span><span class="ss"> (Nx1)'</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'size of W2: </span><span class="sc">{</span>W2<span class="sc">.</span>shape<span class="sc">}</span><span class="ss"> (VxN)'</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'size of b2: </span><span class="sc">{</span>b2<span class="sc">.</span>shape<span class="sc">}</span><span class="ss"> (Vx1)'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>V (vocabulary size): 5
+N (embedding size / size of the hidden layer): 3
+size of W1: (3, 5) (NxV)
+size of b1: (3, 1) (Nx1)
+size of W2: (5, 3) (VxN)
+size of b2: (5, 1) (Vx1)</code></pre>
+</div>
+</div>
+<p>Before moving forward, we will need some functions and variables defined in previous notebooks. They can be found next. Be sure we understand everything that is going on in the next cell, if not consider doing a refresh of the first lecture notebook.</p>
+<div id="dcf8e704" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the tokenized version of the corpus</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>words <span class="op">=</span> [<span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'happy'</span>, <span class="st">'because'</span>, <span class="st">'i'</span>, <span class="st">'am'</span>, <span class="st">'learning'</span>]</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Get 'word2Ind' and 'Ind2word' dictionaries for the tokenized corpus</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>word2Ind, Ind2word <span class="op">=</span> get_dict(words)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the 'get_windows' function as seen in a previous notebook</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_windows(words, C):</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    i <span class="op">=</span> C</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> i <span class="op">&lt;</span> <span class="bu">len</span>(words) <span class="op">-</span> C:</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        center_word <span class="op">=</span> words[i]</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        context_words <span class="op">=</span> words[(i <span class="op">-</span> C):i] <span class="op">+</span> words[(i<span class="op">+</span><span class="dv">1</span>):(i<span class="op">+</span>C<span class="op">+</span><span class="dv">1</span>)]</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">yield</span> context_words, center_word</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        i <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the 'word_to_one_hot_vector' function as seen in a previous notebook</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> word_to_one_hot_vector(word, word2Ind, V):</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    one_hot_vector <span class="op">=</span> np.zeros(V)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    one_hot_vector[word2Ind[word]] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> one_hot_vector</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the 'context_words_to_vector' function as seen in a previous notebook</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> context_words_to_vector(context_words, word2Ind, V):</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    context_words_vectors <span class="op">=</span> [word_to_one_hot_vector(w, word2Ind, V) <span class="cf">for</span> w <span class="kw">in</span> context_words]</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    context_words_vectors <span class="op">=</span> np.mean(context_words_vectors, axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> context_words_vectors</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the generator function 'get_training_example' as seen in a previous notebook</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_training_example(words, C, word2Ind, V):</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> context_words, center_word <span class="kw">in</span> get_windows(words, C):</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">yield</span> context_words_to_vector(context_words, word2Ind, V), word_to_one_hot_vector(center_word, word2Ind, V)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="training-example" class="level3">
+<h3 class="anchored" data-anchor-id="training-example">Training example</h3>
+<p>Run the next cells to get the first training example, made of the vector representing the context words “i am because i”, and the target which is the one-hot vector representing the center word “happy”.</p>
+<blockquote class="blockquote">
+<p>We don’t need to worry about the Python syntax, but there are some explanations below if we want to know what’s happening behind the scenes.</p>
+</blockquote>
+<div id="e95fecb8" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Save generator object in the 'training_examples' variable with the desired arguments</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>training_examples <span class="op">=</span> get_training_example(words, <span class="dv">2</span>, word2Ind, V)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p><code>get_training_examples</code>, which uses the <code>yield</code> keyword, is known as a generator. When run, it builds an iterator, which is a special type of object that… we can iterate on (using a <code>for</code> loop for instance), to retrieve the successive values that the function generates.</p>
+<p>In this case <code>get_training_examples</code> <code>yield</code>s training examples, and iterating on <code>training_examples</code> will return the successive training examples.</p>
+</blockquote>
+<div id="0cd19c58" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get first values from generator</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>x_array, y_array <span class="op">=</span> <span class="bu">next</span>(training_examples)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p><code>next</code> is another special keyword, which gets the next available value from an iterator. Here, you’ll get the very first value, which is the first training example. If we run this cell again, you’ll get the next value, and so on until the iterator runs out of values to return.</p>
+<p>In this notebook <code>next</code> is used because we will only be performing one iteration of training. In this week’s assignment with the full training over several iterations you’ll use regular <code>for</code> loops with the iterator that supplies the training examples.</p>
+</blockquote>
+<p>The vector representing the context words, which will be fed into the neural network, is:</p>
+<div id="58e4ea99" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print context words vector</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>x_array</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>array([0.25, 0.25, 0.  , 0.5 , 0.  ])</code></pre>
+</div>
+</div>
+<p>The one-hot vector representing the center word to be predicted is:</p>
+<div id="0c785b09" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print one hot vector of center word</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>y_array</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>array([0., 0., 1., 0., 0.])</code></pre>
+</div>
+</div>
+<p>Now convert these vectors into matrices (or 2D arrays) to be able to perform matrix multiplication on the right types of objects, as explained in a previous notebook.</p>
+<div id="0102e2a0" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy vector</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> x_array.copy()</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Reshape it</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>x.shape <span class="op">=</span> (V, <span class="dv">1</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print it</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'x:</span><span class="ch">\n</span><span class="sc">{</span>x<span class="sc">}</span><span class="ch">\n</span><span class="ss">'</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy vector</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> y_array.copy()</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Reshape it</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>y.shape <span class="op">=</span> (V, <span class="dv">1</span>)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Print it</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'y:</span><span class="ch">\n</span><span class="sc">{</span>y<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>x:
+[[0.25]
+ [0.25]
+ [0.  ]
+ [0.5 ]
+ [0.  ]]
+
+y:
+[[0.]
+ [0.]
+ [1.]
+ [0.]
+ [0.]]</code></pre>
+</div>
+</div>
+<p>Now we will need the activation functions seen before. Again, if this feel unfamiliar consider checking the previous lecture notebook.</p>
+<div id="7e1817cc" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the 'relu' function as seen in the previous lecture notebook</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> relu(z):</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> z.copy()</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    result[result <span class="op">&lt;</span> <span class="dv">0</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the 'softmax' function as seen in the previous lecture notebook</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> softmax(z):</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    e_z <span class="op">=</span> np.exp(z)</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    sum_e_z <span class="op">=</span> np.<span class="bu">sum</span>(e_z)</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> e_z <span class="op">/</span> sum_e_z</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="values-of-the-hidden-layer" class="level3">
+<h3 class="anchored" data-anchor-id="values-of-the-hidden-layer">Values of the hidden layer</h3>
+<p>Now that we have initialized all the variables that we need for forward propagation, we can calculate the values of the hidden layer using the following formulas:</p>
+<p><span class="math display">
+\begin{align}
+\mathbf{z_1} = \mathbf{W_1}\mathbf{x} + \mathbf{b_1}  \tag{1} \\
+\mathbf{h} = \mathrm{ReLU}(\mathbf{z_1})  \tag{2} \\
+\end{align}
+</span></p>
+<p>First, we can calculate the value of <span class="math inline">\mathbf{z_1}</span>.</p>
+<div id="e75aae01" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute z1 (values of first hidden layer before applying the ReLU function)</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>z1 <span class="op">=</span> np.dot(W1, x) <span class="op">+</span> b1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>&nbsp;<code>np.dot</code> is numpy’s function for matrix multiplication.</p>
+</blockquote>
+<p>As expected we get an <span class="math inline">N</span> by 1 matrix, or column vector with <span class="math inline">N</span> elements, where <span class="math inline">N</span> is equal to the embedding size, which is 3 in this example.</p>
+<div id="bd100f7f" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print z1</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>z1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<pre><code>array([[ 0.36483875],
+       [ 0.63710329],
+       [-0.3236647 ]])</code></pre>
+</div>
+</div>
+<p>We can now take the ReLU of <span class="math inline">\mathbf{z_1}</span> to get <span class="math inline">\mathbf{h}</span>, the vector with the values of the hidden layer.</p>
+<div id="bae7cd9c" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute h (z1 after applying ReLU function)</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>h <span class="op">=</span> relu(z1)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Print h</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>h</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<pre><code>array([[0.36483875],
+       [0.63710329],
+       [0.        ]])</code></pre>
+</div>
+</div>
+<p>Applying ReLU means that the negative element of <span class="math inline">\mathbf{z_1}</span> has been replaced with a zero.</p>
+</section>
+<section id="values-of-the-output-layer" class="level3">
+<h3 class="anchored" data-anchor-id="values-of-the-output-layer">Values of the output layer</h3>
+<p>Here are the formulas we need to calculate the values of the output layer, represented by the vector <span class="math inline">\mathbf{\hat y}</span>:</p>
+<p><span class="math display">
+\begin{align}
+\mathbf{z_2} &amp;= \mathbf{W_2}\mathbf{h} + \mathbf{b_2}   \tag{3} \\
+\mathbf{\hat y} &amp;= \mathrm{softmax}(\mathbf{z_2})   \tag{4} \\
+\end{align}
+</span></p>
+<p><strong>First, calculate <span class="math inline">\mathbf{z_2}</span>.</strong></p>
+<div id="ea583524" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute z2 (values of the output layer before applying the softmax function)</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>z2 <span class="op">=</span> np.dot(W2, h) <span class="op">+</span> b2</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Print z2</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>z2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="15">
+<pre><code>array([[-0.31973737],
+       [-0.28125477],
+       [-0.09838369],
+       [-0.33512159],
+       [-0.19919612]])</code></pre>
+</div>
+</div>
+<p>Expected output:</p>
+<pre><code>array([[-0.31973737],
+       [-0.28125477],
+       [-0.09838369],
+       [-0.33512159],
+       [-0.19919612]])</code></pre>
+<p>This is a <span class="math inline">V</span> by 1 matrix, where <span class="math inline">V</span> is the size of the vocabulary, which is 5 in this example.</p>
+<p><strong>Now calculate the value of <span class="math inline">\mathbf{\hat y}</span>.</strong></p>
+<div id="1b7f0a45" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute y_hat (z2 after applying softmax function)</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>y_hat <span class="op">=</span> softmax(z2)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Print y_hat</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>y_hat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
+<pre><code>array([[0.18519074],
+       [0.19245626],
+       [0.23107446],
+       [0.18236353],
+       [0.20891502]])</code></pre>
+</div>
+</div>
+<p>Expected output:</p>
+<pre><code>array([[0.18519074],
+       [0.19245626],
+       [0.23107446],
+       [0.18236353],
+       [0.20891502]])</code></pre>
+<p>As you’ve performed the calculations with random matrices and vectors (apart from the input vector), the output of the neural network is essentially random at this point. The learning process will adjust the weights and biases to match the actual targets better.</p>
+<p><strong>That being said, what word did the neural network predict?</strong></p>
+<details>
+<summary>
+<font size="3" color="darkgreen"><b>Solution</b></font>
+</summary>
+<p>
+The neural network predicted the word “happy”: the largest element of <span class="math inline">\mathbf{\hat y}</span> is the third one, and the third word of the vocabulary is “happy”.
+</p>
+<p>
+Here’s how we could implement this in Python:
+</p>
+<p>
+<code>print(Ind2word[np.argmax(y_hat)])</code>
+</p>
+</details>
+<p>Well done, you’ve completed the forward propagation phase!</p>
+</section>
+</section>
+<section id="cross-entropy-loss" class="level2">
+<h2 class="anchored" data-anchor-id="cross-entropy-loss">Cross-entropy loss</h2>
+<p>Now that we have the network’s prediction, we can calculate the cross-entropy loss to determine how accurate the prediction was compared to the actual target.</p>
+<blockquote class="blockquote">
+<p>Remember that we are working on a single training example, not on a batch of examples, which is why we are using <em>loss</em> and not <em>cost</em>, which is the generalized form of loss.</p>
+</blockquote>
+<p>First let’s recall what the prediction was.</p>
+<div id="c6225e2e" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print prediction</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>y_hat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<pre><code>array([[0.18519074],
+       [0.19245626],
+       [0.23107446],
+       [0.18236353],
+       [0.20891502]])</code></pre>
+</div>
+</div>
+<p>And the actual target value is:</p>
+<div id="4b5a1cfd" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print target value</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="18">
+<pre><code>array([[0.],
+       [0.],
+       [1.],
+       [0.],
+       [0.]])</code></pre>
+</div>
+</div>
+<p>The formula for cross-entropy loss is:</p>
+<p><span class="math display"> J=-\sum\limits_{k=1}^{V}y_k\log{\hat{y}_k} \tag{6}</span></p>
+<p><strong>Try implementing the cross-entropy loss function so we get more familiar working with numpy</strong></p>
+<p>Here are a some hints if you’re stuck.</p>
+<div id="4f5be5f5" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cross_entropy_loss(y_predicted, y_actual):</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Fill the loss variable with your code</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">=</span> np.<span class="bu">sum</span>(<span class="op">-</span>np.log(y_predicted)<span class="op">*</span>y_actual)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> loss</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<details>
+<summary>
+<font size="3" color="darkgreen"><b>Hint 1</b></font>
+</summary>
+<pre><code>&lt;p&gt;To multiply two numpy matrices (such as &lt;code&gt;y&lt;/code&gt; and &lt;code&gt;y_hat&lt;/code&gt;) element-wise, we can simply use the &lt;code&gt;*&lt;/code&gt; operator.&lt;/p&gt;</code></pre>
+</details>
+<details>
+<summary>
+<font size="3" color="darkgreen"><b>Hint 2</b></font>
+</summary>
+<p>
+Once we have a vector equal to the element-wise multiplication of <code>y</code> and <code>y_hat</code>, we can use <code>np.sum</code> to calculate the sum of the elements of this vector.
+</p>
+</details>
+<details>
+<summary>
+<font size="3" color="darkgreen"><b>Solution</b></font>
+</summary>
+<p>
+<code>loss = np.sum(-np.log(y_hat)*y)</code>
+</p>
+</details>
+<p>Don’t forget to run the cell containing the <code>cross_entropy_loss</code> function once it is solved.</p>
+<p><strong>Now use this function to calculate the loss with the actual values of <span class="math inline">\mathbf{y}</span> and <span class="math inline">\mathbf{\hat y}</span>.</strong></p>
+<div id="0c3941f8" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Print value of cross entropy loss for prediction and target value</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>cross_entropy_loss(y_hat, y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="20">
+<pre><code>np.float64(1.4650152923611108)</code></pre>
+</div>
+</div>
+<p>Expected output:</p>
+<pre><code>1.4650152923611106</code></pre>
+<p>This value is neither good nor bad, which is expected as the neural network hasn’t learned anything yet.</p>
+<p>The actual learning will start during the next phase: backpropagation.</p>
+</section>
+<section id="backpropagation" class="level2">
+<h2 class="anchored" data-anchor-id="backpropagation">Backpropagation</h2>
+<p>The formulas that we will implement for backpropagation are the following.</p>
+<p><span class="math display">
+\begin{align}
+\frac{\partial J}{\partial \mathbf{W_1}} &amp;= \rm{ReLU}\left ( \mathbf{W_2^\top} (\mathbf{\hat{y}} - \mathbf{y})\right )\mathbf{x}^\top \tag{7}\\
+\frac{\partial J}{\partial \mathbf{W_2}} &amp;= (\mathbf{\hat{y}} - \mathbf{y})\mathbf{h^\top} \tag{8}\\
+\frac{\partial J}{\partial \mathbf{b_1}} &amp;= \rm{ReLU}\left ( \mathbf{W_2^\top} (\mathbf{\hat{y}} - \mathbf{y})\right ) \tag{9}\\
+\frac{\partial J}{\partial \mathbf{b_2}} &amp;= \mathbf{\hat{y}} - \mathbf{y} \tag{10}
+\end{align}
+</span></p>
+<blockquote class="blockquote">
+<p>Note: these formulas are slightly simplified compared to the ones in the lecture as you’re working on a single training example, whereas the lecture provided the formulas for a batch of examples. In the assignment you’ll be implementing the latter.</p>
+</blockquote>
+<p>Let’s start with an easy one.</p>
+<p><strong>Calculate the partial derivative of the loss function with respect to <span class="math inline">\mathbf{b_2}</span>, and store the result in <code>grad_b2</code>.</strong></p>
+<p><span class="math display">
+\frac{\partial J}{\partial \mathbf{b_2}} = \mathbf{\hat{y}} - \mathbf{y} \tag{10}
+</span></p>
+<div id="5840129c" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute vector with partial derivatives of loss function with respect to b2</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>grad_b2 <span class="op">=</span> y_hat <span class="op">-</span> y</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Print this vector</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>grad_b2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="21">
+<pre><code>array([[ 0.18519074],
+       [ 0.19245626],
+       [-0.76892554],
+       [ 0.18236353],
+       [ 0.20891502]])</code></pre>
+</div>
+</div>
+<p>Expected output:</p>
+<pre><code>array([[ 0.18519074],
+       [ 0.19245626],
+       [-0.76892554],
+       [ 0.18236353],
+       [ 0.20891502]])</code></pre>
+<p><strong>Next, calculate the partial derivative of the loss function with respect to <span class="math inline">\mathbf{W_2}</span>, and store the result in <code>grad_W2</code>.</strong></p>
+<p><span class="math display">
+\frac{\partial J}{\partial \mathbf{W_2}} = (\mathbf{\hat{y}} - \mathbf{y})\mathbf{h^\top} \tag{8}
+</span></p>
+<blockquote class="blockquote">
+<p>Hint: use <code>.T</code> to get a transposed matrix, e.g.&nbsp;<code>h.T</code> returns <span class="math inline">\mathbf{h^\top}</span>.</p>
+</blockquote>
+<div id="9bcd9b62" class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute matrix with partial derivatives of loss function with respect to W2</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>grad_W2 <span class="op">=</span> np.dot(y_hat <span class="op">-</span> y, h.T)</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Print matrix</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>grad_W2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="22">
+<pre><code>array([[ 0.06756476,  0.11798563,  0.        ],
+       [ 0.0702155 ,  0.12261452,  0.        ],
+       [-0.28053384, -0.48988499,  0.        ],
+       [ 0.06653328,  0.1161844 ,  0.        ],
+       [ 0.07622029,  0.13310045,  0.        ]])</code></pre>
+</div>
+</div>
+<p>Expected output:</p>
+<pre><code>array([[ 0.06756476,  0.11798563,  0.        ],
+       [ 0.0702155 ,  0.12261452,  0.        ],
+       [-0.28053384, -0.48988499,  0.        ],
+       [ 0.06653328,  0.1161844 ,  0.        ],
+       [ 0.07622029,  0.13310045,  0.        ]])</code></pre>
+<p><strong>Now calculate the partial derivative with respect to <span class="math inline">\mathbf{b_1}</span> and store the result in <code>grad_b1</code>.</strong></p>
+<p><span class="math display">\frac{\partial J}{\partial \mathbf{b_1}} = \rm{ReLU}\left ( \mathbf{W_2^\top} (\mathbf{\hat{y}} - \mathbf{y})\right ) \tag{9}</span></p>
+<div id="783f875d" class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute vector with partial derivatives of loss function with respect to b1</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>grad_b1 <span class="op">=</span> relu(np.dot(W2.T, y_hat <span class="op">-</span> y))</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Print vector</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>grad_b1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="23">
+<pre><code>array([[0.        ],
+       [0.        ],
+       [0.17045858]])</code></pre>
+</div>
+</div>
+<p>Expected output:</p>
+<pre><code>array([[0.        ],
+       [0.        ],
+       [0.17045858]])</code></pre>
+<p><strong>Finally, calculate the partial derivative of the loss with respect to <span class="math inline">\mathbf{W_1}</span>, and store it in <code>grad_W1</code>.</strong></p>
+<p><span class="math display">
+\frac{\partial J}{\partial \mathbf{W_1}} = \rm{ReLU}\left ( \mathbf{W_2^\top} (\mathbf{\hat{y}} - \mathbf{y})\right )\mathbf{x}^\top \tag{7}
+</span></p>
+<div id="0f27e511" class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute matrix with partial derivatives of loss function with respect to W1</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>grad_W1 <span class="op">=</span> np.dot(relu(np.dot(W2.T, y_hat <span class="op">-</span> y)), x.T)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Print matrix</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>grad_W1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="24">
+<pre><code>array([[0.        , 0.        , 0.        , 0.        , 0.        ],
+       [0.        , 0.        , 0.        , 0.        , 0.        ],
+       [0.04261464, 0.04261464, 0.        , 0.08522929, 0.        ]])</code></pre>
+</div>
+</div>
+<p>Expected output:</p>
+<pre><code>array([[0.        , 0.        , 0.        , 0.        , 0.        ],
+       [0.        , 0.        , 0.        , 0.        , 0.        ],
+       [0.04261464, 0.04261464, 0.        , 0.08522929, 0.        ]])</code></pre>
+<p>Before moving on to gradient descent, double-check that all the matrices have the expected dimensions.</p>
+<div id="e4a09b1e" class="cell" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'V (vocabulary size): </span><span class="sc">{</span>V<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'N (embedding size / size of the hidden layer): </span><span class="sc">{</span>N<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'size of grad_W1: </span><span class="sc">{</span>grad_W1<span class="sc">.</span>shape<span class="sc">}</span><span class="ss"> (NxV)'</span>)</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'size of grad_b1: </span><span class="sc">{</span>grad_b1<span class="sc">.</span>shape<span class="sc">}</span><span class="ss"> (Nx1)'</span>)</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'size of grad_W2: </span><span class="sc">{</span>grad_W2<span class="sc">.</span>shape<span class="sc">}</span><span class="ss"> (VxN)'</span>)</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'size of grad_b2: </span><span class="sc">{</span>grad_b2<span class="sc">.</span>shape<span class="sc">}</span><span class="ss"> (Vx1)'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>V (vocabulary size): 5
+N (embedding size / size of the hidden layer): 3
+size of grad_W1: (3, 5) (NxV)
+size of grad_b1: (3, 1) (Nx1)
+size of grad_W2: (5, 3) (VxN)
+size of grad_b2: (5, 1) (Vx1)</code></pre>
+</div>
+</div>
+</section>
+<section id="gradient-descent" class="level2">
+<h2 class="anchored" data-anchor-id="gradient-descent">Gradient descent</h2>
+<p>During the gradient descent phase, we will update the weights and biases by subtracting <span class="math inline">\alpha</span> times the gradient from the original matrices and vectors, using the following formulas.</p>
+<p><span class="math display">
+\begin{align}
+\mathbf{W_1} &amp;:= \mathbf{W_1} - \alpha \frac{\partial J}{\partial \mathbf{W_1}} \tag{11}\\
+\mathbf{W_2} &amp;:= \mathbf{W_2} - \alpha \frac{\partial J}{\partial \mathbf{W_2}} \tag{12}\\
+\mathbf{b_1} &amp;:= \mathbf{b_1} - \alpha \frac{\partial J}{\partial \mathbf{b_1}} \tag{13}\\
+\mathbf{b_2} &amp;:= \mathbf{b_2} - \alpha \frac{\partial J}{\partial \mathbf{b_2}} \tag{14}\\
+\end{align}
+</span></p>
+<p>First, let set a value for <span class="math inline">\alpha</span>.</p>
+<div id="34e825b2" class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define alpha</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.03</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The updated weight matrix <span class="math inline">\mathbf{W_1}</span> will be:</p>
+<div id="1820b7ff" class="cell" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute updated W1</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>W1_new <span class="op">=</span> W1 <span class="op">-</span> alpha <span class="op">*</span> grad_W1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s compare the previous and new values of <span class="math inline">\mathbf{W_1}</span>:</p>
+<div id="96cf4421" class="cell" data-execution_count="28">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'old value of W1:'</span>)</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(W1)</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>()</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'new value of W1:'</span>)</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(W1_new)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>old value of W1:
+[[ 0.41687358  0.08854191 -0.23495225  0.28320538  0.41800106]
+ [ 0.32735501  0.22795148 -0.23951958  0.4117634  -0.23924344]
+ [ 0.26637602 -0.23846886 -0.37770863 -0.11399446  0.34008124]]
+
+new value of W1:
+[[ 0.41687358  0.08854191 -0.23495225  0.28320538  0.41800106]
+ [ 0.32735501  0.22795148 -0.23951958  0.4117634  -0.23924344]
+ [ 0.26509758 -0.2397473  -0.37770863 -0.11655134  0.34008124]]</code></pre>
+</div>
+</div>
+<p>The difference is very subtle (hint: take a closer look at the last row), which is why it takes a fair amount of iterations to train the neural network until it reaches optimal weights and biases starting from random values.</p>
+<p><strong>Now calculate the new values of <span class="math inline">\mathbf{W_2}</span> (to be stored in <code>W2_new</code>), <span class="math inline">\mathbf{b_1}</span> (in <code>b1_new</code>), and <span class="math inline">\mathbf{b_2}</span> (in <code>b2_new</code>).</strong></p>
+<p><span class="math display">\begin{align}
+\mathbf{W_2} &amp;:= \mathbf{W_2} - \alpha \frac{\partial J}{\partial \mathbf{W_2}} \tag{12}\\
+\mathbf{b_1} &amp;:= \mathbf{b_1} - \alpha \frac{\partial J}{\partial \mathbf{b_1}} \tag{13}\\
+\mathbf{b_2} &amp;:= \mathbf{b_2} - \alpha \frac{\partial J}{\partial \mathbf{b_2}} \tag{14}\\
+\end{align}</span></p>
+<div id="807955fa" class="cell" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute updated W2</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>W2_new <span class="op">=</span> W2 <span class="op">-</span> alpha <span class="op">*</span> grad_W2</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute updated b1</span></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>b1_new <span class="op">=</span> b1 <span class="op">-</span> alpha <span class="op">*</span> grad_b1</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute updated b2</span></span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>b2_new <span class="op">=</span> b2 <span class="op">-</span> alpha <span class="op">*</span> grad_b2</span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'W2_new'</span>)</span>
+<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(W2_new)</span>
+<span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>()</span>
+<span id="cb54-14"><a href="#cb54-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'b1_new'</span>)</span>
+<span id="cb54-15"><a href="#cb54-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(b1_new)</span>
+<span id="cb54-16"><a href="#cb54-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>()</span>
+<span id="cb54-17"><a href="#cb54-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'b2_new'</span>)</span>
+<span id="cb54-18"><a href="#cb54-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(b2_new)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>W2_new
+[[-0.22384758 -0.43362588  0.13310965]
+ [ 0.08265956  0.0775535   0.1772054 ]
+ [ 0.19557112 -0.04637608 -0.1790735 ]
+ [ 0.06855622 -0.02363691  0.36107434]
+ [ 0.33251813 -0.3982269  -0.43959196]]
+
+b1_new
+[[ 0.09688219]
+ [ 0.29239497]
+ [-0.27875802]]
+
+b2_new
+[[ 0.02964508]
+ [-0.36970753]
+ [-0.10468778]
+ [-0.35349417]
+ [-0.0764456 ]]</code></pre>
+</div>
+</div>
+<p>Expected output:</p>
+<pre><code>W2_new
+[[-0.22384758 -0.43362588  0.13310965]
+ [ 0.08265956  0.0775535   0.1772054 ]
+ [ 0.19557112 -0.04637608 -0.1790735 ]
+ [ 0.06855622 -0.02363691  0.36107434]
+ [ 0.33251813 -0.3982269  -0.43959196]]
+
+b1_new
+[[ 0.09688219]
+ [ 0.29239497]
+ [-0.27875802]]
+
+b2_new
+[[ 0.02964508]
+ [-0.36970753]
+ [-0.10468778]
+ [-0.35349417]
+ [-0.0764456 ]]</code></pre>
+<p>Congratulations, we have completed one iteration of training using one training example!</p>
+<p>You’ll need many more iterations to fully train the neural network, and we can optimize the learning process by training on batches of examples, as described in the lecture. We will get to do this during this week’s assignment.</p>
+<section id="how-this-practice-relates-to-and-differs-from-the-upcoming-graded-assignment" class="level3">
+<h3 class="anchored" data-anchor-id="how-this-practice-relates-to-and-differs-from-the-upcoming-graded-assignment">How this practice relates to and differs from the upcoming graded assignment</h3>
+<ul>
+<li>In the assignment, for each iteration of training we will use batches of examples instead of a single example. The formulas for forward propagation and backpropagation will be modified accordingly, and we will use cross-entropy cost instead of cross-entropy loss.</li>
+<li>We will also complete several iterations of training, until we reach an acceptably low cross-entropy cost, at which point we can extract good word embeddings from the weight matrices.</li>
+</ul>
+
+
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2020,
+  author = {Bochman, Oren},
+  title = {Word {Embeddings:} {Training} the {CBOW} Model},
+  date = {2020-11-02},
+  url = {https://orenbochman.github.io/notes-nlp/notes/c2w4/lab03.html},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2020" class="csl-entry quarto-appendix-citeas" role="listitem">
+Bochman, Oren. 2020. <span>“Word Embeddings: Training the CBOW
+Model.”</span> November 2, 2020. <a href="https://orenbochman.github.io/notes-nlp/notes/c2w4/lab03.html">https://orenbochman.github.io/notes-nlp/notes/c2w4/lab03.html</a>.
+</div></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("^(?:http:|https:)\/\/www\.quarto\.org\/custom");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+          // default icon
+          link.classList.add("external");
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© Copyright 2023-2025, Oren Bochman</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/c2w4/lab03.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This page is built with 💛 and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"fade","descPosition":"right","loop":true,"openEffect":"fade","selector":".lightbox","skin":"my-css-class"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

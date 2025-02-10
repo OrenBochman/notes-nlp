@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Oren Bochman">
+<meta name="keywords" content="seq2seq models, Dot product attention, Deep Learning Algorithms, Machine Translation, Neural Machine Translation, Translation evaluation metrics, Encoder-Decoder architecture, Minimum Bayes Risk (MBR)">
+<meta name="description" content="This week we dive deep into the Neural Machine Translation. We’ll learn about the encoder-decoder architecture, explore attention mechanisms that enable the model to focus on different parts of the input sequence during translation. In the hands-on exercises, we’ll implement an attention model for English to German translation, train it on a dataset of sentence pairs, and evaluate its performance.">
+
+<title>Neural Machine Translation – NLP Specialization</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed slimcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">NLP Specialization</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">NLP with Attention Models</li><li class="breadcrumb-item"><a href="../../notes/c4w1/index.html">Neural Machine Translation</a></li><li class="breadcrumb-item"><a href="../../notes/c4w1/index.html">Notes</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">NLP with Attention Models</li><li class="breadcrumb-item"><a href="../../notes/c4w1/index.html">Neural Machine Translation</a></li><li class="breadcrumb-item"><a href="../../notes/c4w1/index.html">Notes</a></li></ol></nav>
+      <h1 class="title">Neural Machine Translation</h1>
+            <p class="subtitle lead">NLP with Attention Models</p>
+                  <div>
+        <div class="description">
+          This week we dive deep into the Neural Machine Translation. We’ll learn about the encoder-decoder architecture, explore attention mechanisms that enable the model to focus on different parts of the input sequence during translation. In the hands-on exercises, we’ll implement an attention model for English to German translation, train it on a dataset of sentence pairs, and evaluate its performance.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Attention</div>
+                <div class="quarto-category">Beam search</div>
+                <div class="quarto-category">BLEU</div>
+                <div class="quarto-category">ROUGE</div>
+                <div class="quarto-category">Coursera</div>
+                <div class="quarto-category">NLP with Attention Models</div>
+                <div class="quarto-category">Notes</div>
+                <div class="quarto-category">Machine translation task</div>
+                <div class="quarto-category">MBR</div>
+                <div class="quarto-category">NLP</div>
+                <div class="quarto-category">Positional encoding</div>
+                <div class="quarto-category">Seq2Seq</div>
+                <div class="quarto-category">Transformer</div>
+                <div class="quarto-category">Teacher forcing</div>
+                <div class="quarto-category">Translation task</div>
+                <div class="quarto-category">Word alignment</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-body">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Oren Bochman </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">Saturday, March 20, 2021</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+
+  <div>
+    <div class="keywords">
+      <div class="block-title">Keywords</div>
+      <p>seq2seq models, Dot product attention, Deep Learning Algorithms, Machine Translation, Neural Machine Translation, Translation evaluation metrics, Encoder-Decoder architecture, Minimum Bayes Risk (MBR)</p>
+    </div>
+  </div>
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Classification &amp; Vector Spaces</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Logistic Regression</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Frequencies</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Visualizing tweets</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Probability &amp; Bayes Rule</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Visualizing Naive Bayes</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Vector Space Models &amp; PCA</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Linear algebra with NumPy</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Manipulating word embeddings</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">MT &amp; Document Search via KNN</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vector manipulation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Hash functions and multiplanes</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Probabilistic Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">Autocorrect &amp; Dynamic Programming</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Building the vocabulary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Candidates from String Edits</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">POS tagging &amp; HMMS</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vocabulary with unknowns</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Working with tags and Numpy</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false">
+ <span class="menu-text">Autocomplete &amp; Language Models</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - N-grams Corpus preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Building the language model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Out of vocabulary words</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false">
+ <span class="menu-text">Word embeddings with neural networks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Data preparation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Intro to CBOW</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Training the CBOW</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true">
+ <span class="menu-text">Sequence Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false">
+ <span class="menu-text">Neural Networks for Sentiment Analysis</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Introduction to Trax</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Classes and Subclasses</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Data Generators</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false">
+ <span class="menu-text">RNN for Language Modeling</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Hidden State Activation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Calculating Perplexity</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Vanilla RNNs, GRUs and the scan function</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L4 - Creating a GRU model using Trax</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="false">
+ <span class="menu-text">LSTMs and Named Entity Recognition</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vanishing Gradients</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false">
+ <span class="menu-text">Siamese Networks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Creating a Siamese Model using Trax</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Modified Triplet Loss</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Evaluate a Siamese Model</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="true">
+ <span class="menu-text">NLP with Attention Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="true">
+ <span class="menu-text">Neural Machine Translation</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w1/index.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Stack Semantics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - BLEU Score</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="false">
+ <span class="menu-text">Text Summarization</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-18" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Attention</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - The Transformer Decoder</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" role="navigation" aria-expanded="false">
+ <span class="menu-text">Question Answering</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-19" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - SentencePiece and BPE</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - BERT Loss</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - T5</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" role="navigation" aria-expanded="false">
+ <span class="menu-text">Chat Bots</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-20" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Reformer LSH</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Revnet</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#sec-sec-video1-intro" id="toc-sec-sec-video1-intro" class="nav-link active" data-scroll-target="#sec-sec-video1-intro">Intro</a></li>
+  <li><a href="#sec-sec-video2-seq2seq" id="toc-sec-sec-video2-seq2seq" class="nav-link" data-scroll-target="#sec-sec-video2-seq2seq">Seq2Seq</a>
+  <ul class="collapse">
+  <li><a href="#sec-sec-outline" id="toc-sec-sec-outline" class="nav-link" data-scroll-target="#sec-sec-outline">Outline:</a></li>
+  </ul></li>
+  <li><a href="#sec-sec-seq2seq-model" id="toc-sec-sec-seq2seq-model" class="nav-link" data-scroll-target="#sec-sec-seq2seq-model">Seq2Seq model</a></li>
+  <li><a href="#sec-sec-video3-alignment" id="toc-sec-sec-video3-alignment" class="nav-link" data-scroll-target="#sec-sec-video3-alignment">3: Alignment</a></li>
+  <li><a href="#sec-w1v4-attention" id="toc-sec-w1v4-attention" class="nav-link" data-scroll-target="#sec-w1v4-attention">Attention</a></li>
+  <li><a href="#sec-evaluation-metrics" id="toc-sec-evaluation-metrics" class="nav-link" data-scroll-target="#sec-evaluation-metrics">Evaluation metrics for Machine Translation</a>
+  <ul class="collapse">
+  <li><a href="#sec-sec-bleu" id="toc-sec-sec-bleu" class="nav-link" data-scroll-target="#sec-sec-bleu">BLEU</a></li>
+  </ul></li>
+  <li><a href="#sec-rouge" id="toc-sec-rouge" class="nav-link" data-scroll-target="#sec-rouge">ROUGE</a></li>
+  <li><a href="#sec-decoding" id="toc-sec-decoding" class="nav-link" data-scroll-target="#sec-decoding">Decoding</a>
+  <ul class="collapse">
+  <li><a href="#sec-random-sampling" id="toc-sec-random-sampling" class="nav-link" data-scroll-target="#sec-random-sampling">Random sampling</a></li>
+  <li><a href="#sec-beam-search" id="toc-sec-beam-search" class="nav-link" data-scroll-target="#sec-beam-search">Beam Search</a></li>
+  <li><a href="#sec-minimum-bayes-risk" id="toc-sec-minimum-bayes-risk" class="nav-link" data-scroll-target="#sec-minimum-bayes-risk">Minimum Bayes Risk</a></li>
+  <li><a href="#sec-summary" id="toc-sec-summary" class="nav-link" data-scroll-target="#sec-summary">Summary</a>
+  <ul class="collapse">
+  <li><a href="#sec-references" id="toc-sec-references" class="nav-link" data-scroll-target="#sec-references">References</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/c4w1/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
+
+
+
+
+
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../images/Course-Logo-4-1.webp" class="nolightbox img-fluid figure-img"></p>
+<figcaption>course banner</figcaption>
+</figure>
+</div><div id="sup-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides" style="@page {size: 16in 9in;  margin: 0;}">
+<figure class="quarto-float quarto-float-sup figure">
+<div aria-describedby="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="slides.pdf" class="lightbox" data-gallery="slides" title="This week’s slides"><embed src="slides.pdf" style="@page {size: 16in 9in;  margin: 0;}" width="420" height="340"></a></p>
+<figcaption>This week’s slides</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-sup quarto-uncaptioned" id="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Supplementary Figure&nbsp;1
+</figcaption>
+</figure>
+</div></div>
+<p>My notes for Week 1 of the <a href="https://www.coursera.org/learn/attention-models-in-nlp/home/info">Natural Language Processing with Attention Labels</a> Course in the Natural Language Processing Specialization Offered by <a href="DeepLearning.AI">DeepLearning.AI</a> on <a href="https://www.coursera.org/">Coursera</a></p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul class="task-list">
+<li><label><input type="checkbox" checked=""><a href="#sec-sec-how-to-align-sequences">Explain how an Encoder/Decoder model works</a></label></li>
+<li><label><input type="checkbox" checked=""><a href="#sec-sec-how-to-align-sequences">Apply word alignment for machine translation</a></label></li>
+<li><label><input type="checkbox" checked=""><a href="#sec-sec-how-to-align-sequences">Train a Neural Machine Translation model with Attention</a></label></li>
+<li><label><input type="checkbox" checked=""><a href="#sec-sec-how-to-align-sequences">Develop intuition for how teacher forcing helps a translation model check its predictions</a></label></li>
+<li><label><input type="checkbox" checked=""><a href="#sec-sec-how-to-align-sequences">Use BLEU &amp; ROUGE score to evaluate NMT text quality</a></label></li>
+<li><label><input type="checkbox" checked=""><a href="#sec-sec-how-to-align-sequences">Describe several decoding methods including MBR and Beam search</a></label></li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+TL;DR NMT <span class="emoji" data-emoji="chart_with_upwards_trend">📈</span>
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<!-- https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md#smileys--emotion -->
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="../../images/in_a_nutshell.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="NMT in a nutshell"><img src="../../images/in_a_nutshell.jpg" class="img-fluid figure-img" alt="NMT in a nutshell"></a></p>
+<figcaption>NMT in a nutshell</figcaption>
+</figure>
+</div>
+<ul>
+<li><strong>Seq2Seq</strong> models are used for Neural Machine Translation (NMT) tasks.</li>
+<li><strong>Attention</strong> mechanisms help the model focus on different parts of the input sequence during translation.</li>
+<li><strong>BLEU</strong> and <strong>ROUGE</strong> are evaluation metrics for NMT.</li>
+<li><strong>Decoding</strong> methods like <strong>Beam Search</strong> and <strong>Minimum Bayes Risk</strong> help generate translations.</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- move to blogpost
+
+## TLDR: Neural Network engineering {#sec-sec-tldr-neural-network-engineering-2}
+
+### How to learn to **align** two sequences? {#sec-sec-how-to-align-sequences-2}
+
+Using an `tl.attention` layer. While it doesn't reorder the input, attention works by assigning to each item of the input a subset of the input.
+
+### How to utilize arbitrary functions on a TRAX Neural Net? {#sec-sec-TRAX-arbitrary-functions}
+
+Using a [functional layers](https://TRAX-ml.readthedocs.io/en/latest/notebooks/layers_intro.html?highlight=fn#With-the-Fn-layer-creating-function.)
+
+``` python
+    def Addition(): # this is a closure
+    
+        layer_name = "Addition"  # the name 
+        # Custom function for the custom layer
+        def func(x, y):
+            return x + y
+    
+        return tl.Fn(layer_name, func) # returning an tl.Fn object with name and function
+```
+
+### How to duplicate or delete input in TRAX neural networks? {#sec-sec-TRAX-duplicate-delete-input}
+
+Simple serial architectures map input to output. When a more complex setup is needed like in the deep imagenets by google this is done using a `tl.Select` combinator. This is actually something I've seen in some papers on image processing papers before residual architectures became more popular - which is also covered in the next item.
+
+``` python
+tl.Select([0,1,0,1])
+```
+
+which pops items 0,1 from the stack and pushes them in twice. This replicating the inputs on the stack.
+
+Now lets suppose a layer gets 3 tensors + the output of anther layer. Which means there will be 4 tensors on the stack. To ignore say the second item we use select. But we also want to consume a layer's output so we can indicate this using the second parameter which tell the select it has three in coming tensors.
+
+``` python
+tl.Select([0,2],n_in=3)
+```
+
+### How to make a residual connections in a TRAX Neural Nets? {#sec-sec-TRAX-residual-connections}
+
+Use the `tl.Residual` combinator.
+
+``` python
+tl.Residual( tl.The_Layer_To_Bypass() )
+```
+
+### How to sample sequence states with noise AKA **Temperature Based Sampling** ? {#sec-sec-temperature-based-sampling}
+
+Use `tl.logsoftmax_sample()` to create **Temperature Based Sampling** or **Greedy Decoding** based on the `temperature` parameter.
+
+Setting temperature to 0 will return the maximal likelihood estimate - this is called **Greedy Decoding**. Larger values will add noise to the distribution allowing sampling of items with lower probabilities. the implementation is like this:
+
+``` python
+def logsoftmax_sample(log_probs, temperature=1.0):  
+"""Returns a sample from a log-softmax output, with temperature.
+Args:
+    log_probs: Logarithms of probabilities (often coming from LogSofmax)
+    temperature: For scaling before sampling (1.0 = default, 0.0 = pick argmax)
+"""
+
+# This is equivalent to sampling from a softmax with temperature.
+u = np.random.uniform(low=1e-6, high=1.0 - 1e-6, size=log_probs.shape)
+g = -np.log(-np.log(u))
+return np.argmax(log_probs + g * temperature, axis=-1)
+```
+
+## Additional coding notes: {#sec-sec-additional-coding-notes}
+
+### How to reshape a test Tensor so it has a (size 0) batch dimension at the front? {#sec-sec-numpy-reshape-tensor}
+
+This is needed when inspecting single test inputs instead of working with a batch. The model is expecting to process batches of inputs like it saw during training - we therefore need to add a dimension at the start.
+
+``` python
+padded_with_batch = fastnp.expand_dims(fastnp.array(padded),axis=0)
+
+# get log probabilities from the last token output
+log_probs = output[0,-1,:] 
+```
+
+### How to use calculate Jacquard Similarity {#sec-sec-calculate-jacquard-similarity}
+
+which is the intersection over union?
+
+``` python
+def jaccard_similarity(candidate, reference):
+    """Returns the Jacquard similarity between two token lists
+    Args:
+        candidate (list of int): tokenized version of the candidate translation
+        reference (list of int): tokenized version of the reference translation
+    Returns:
+        float: overlap between the two token lists
+    """
+    
+    # convert the lists to a set to get the unique tokens
+    can_unigram_set, ref_unigram_set = set(candidate), set(reference)  
+    
+    # get the set of tokens common to both candidate and reference
+    joint_elems = can_unigram_set.intersection(ref_unigram_set)
+    
+    # get the set of all tokens found in either candidate or reference
+    all_elems = can_unigram_set.union(ref_unigram_set)
+    
+    # divide the number of joint elements by the number of all elements
+    overlap = len(joint_elems) / len(all_elems)
+    
+    return overlap
+```
+
+-->
+<section id="sec-sec-video1-intro" class="level2">
+<h2 class="anchored" data-anchor-id="sec-sec-video1-intro">Intro</h2>
+<p>This course covers most modern practical NLP methods. We’ll use a powerful technique called <strong>attention</strong> to build several different models. Some of the things we build using the attention mechanism, include a powerful language translation model, an algorithm capable of summarizing texts, a model that can actually answer questions about the piece of text, and a chat bot that we can actually have a conversation with.</p>
+<p>We also take another look at sentiment analysis.</p>
+<p>When it comes to modern deep learning, there’s a sort of new normal, which is to say, most people aren’t actually building and training models from scratch. Instead, it’s more common to download a pre-trained model and then tweak it and find units for your specific use case. In this course, we show we how to build the models from scratch, but we also provide we custom pre-trained models that we created just for you. By training them continuously for weeks on the most powerful TPU clusters that are currently only available to researchers as Google.</p>
+</section>
+<section id="sec-sec-video2-seq2seq" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-sec-video2-seq2seq">Seq2Seq</h2>
+<section id="sec-sec-outline" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="sec-sec-outline">Outline:</h3>
+<ul>
+<li>Introduction to Neural Machine Translation</li>
+<li>Seq2Seq model and its shortcomings</li>
+<li>Solution for the information bottleneck</li>
+</ul>
+<p>The sequential nature of models we learned in the previous course (RNNs, LSTMs, GRUs) does not allow for speed ups within training examples, which becomes critical at longer sequence lengths, as memory constraints limit batching across examples. (because we can run different batches or examples in parallel or even different directions)</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w1_screenshot_01.png" class="lightbox" data-gallery="slides" title="screenshot_of_outline_slide"><img src="img/c4w1_screenshot_01.png" class="img-fluid figure-img" alt="screenshot_of_outline_slide"></a></p>
+<figcaption>screenshot_of_outline_slide</figcaption>
+</figure>
+</div></div><p>In other words, if we rely on sequences and we need to know the beginning of a text before being able to compute something about the ending of it, then we can not use parallel computing. We would have to wait until the initial computations are complete. This isn’t good, because if your text is too long, then</p>
+<ol type="1">
+<li>It’ll take a long time for we to process it and</li>
+<li>There is the information loss mentioned earlier in the text as we approach the end.</li>
+</ol>
+</section>
+</section>
+<section id="sec-sec-seq2seq-model" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-sec-seq2seq-model">Seq2Seq model</h2>
+<ul>
+<li>Introduced by Google in 2014</li>
+<li>Maps variable-length sequences to fixed-length memory</li>
+<li>LSTMs and GRUs are typically used to overcome the vanishing gradient problem</li>
+</ul>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w1_screenshot_03.png" class="lightbox" data-gallery="slides" title="encoder decoder architecture"><img src="img/c4w1_screenshot_03.png" class="img-fluid figure-img" alt="encoder decoder architecture"></a></p>
+<figcaption>encoder decoder architecture</figcaption>
+</figure>
+</div></div><p>Therefore, attention mechanisms have become critical for sequence modeling in various tasks, allowing modeling of dependencies without caring too much about their distance in the input or output sequences.</p>
+<p>in this encoder decoder architecture the yellow block in the middle is the final hidden state produced by the encoder. It’s essentials a compressed representation of the sequence in this case the English sentence. The problem with RNN is they tend to have a bias for representing more recent data.</p>
+<p>One approach to overcome this issue is to provide the decoder with the attention layer.</p>
+</section>
+<section id="sec-sec-video3-alignment" class="level2">
+<h2 class="anchored" data-anchor-id="sec-sec-video3-alignment">3: Alignment</h2>
+<p>Alignment is an old problem and there are a number of papers on learning to align and translate which helped put attention mechanism into focus.</p>
+<ul>
+<li><a href="https://arxiv.org/pdf/1409.0473">NEURAL MACHINE TRANSLATION BY JOINTLY LEARNING TO ALIGN AND TRANSLATE</a> 2016</li>
+<li><a href="https://arxiv.org/abs/1909.02074">Jointly Learning to Align and Translate with Transformer Models</a> 2019</li>
+</ul>
+<p>berliner = citizen of berlin</p>
+<p>berliner = jelly doughnut</p>
+<p>Not all words translate precisely to another word. Adding an attention layers allows the model to give different words more importance when translating another word. This is a good task for an attention layer</p>
+<p>Developing intuition about alignment:</p>
+<p>also check out this page <a href="http://phdopen.mimuw.edu.pl/index.php?page=l18w5">Deep Learning: The Good, the Bad and the Ugly</a> in a 2017 talk, Lukasz Kaiser referred to [K,V] as a memory. We want to manage information better in our model. We keep the information in a memory consisting of keys and values. (It needs to be differentiable so we can use it with back propagation)</p>
+<p>Then we put in the query a sequence and in the keys another sequence (depending on the task they may be the same say for summarization or different for alignment or translation) By combining Q K using a Softmax we get a vector of probabilities each position in the memory is relevant. weight matrix to apply to the values in the memory.</p>
+<ul>
+<li>get all of the available hidden states ready for the encoder and do the same for the first hidden states of the decoder. (In the example, there are two encoder hidden states, shown by blue dots, and one decoder hidden states.)</li>
+<li>Next, score each of the encoder hidden states by getting its dot product between each encoder state and decoder hidden states.</li>
+</ul>
+<p>A higher score means that the hidden state has greater influence on the output.</p>
+<p>Then we run the scores through a Softmax, squashing them between 0 and 1, and giving the attention distribution.</p>
+<ul>
+<li>Take each encoder hidden state, and multiply it by its Softmax score, which is a number between 0 and 1, this results in the alignments vector.</li>
+<li>Add up everything in the alignments vector to arrive at what’s called the context vector.</li>
+</ul>
+</section>
+<section id="sec-w1v4-attention" class="level2">
+<h2 class="anchored" data-anchor-id="sec-w1v4-attention">Attention</h2>
+<p>The attention mechanism uses encoded representations of both the input or the encoder hidden states and the outputs or the decoder hidden states. The keys and values are pairs. Both of dimension NN, where NN is the input sequence length and comes from the encoder hidden states. Keys and values have their own respective matrices, but the matrices have the same shape and are often the same. While the queries come from the decoder hidden states. One way we can think of it is as follows. Imagine that we are translating English into German. We can represent the word embeddings in the English language as keys and values. The queries will then be the German equivalent. We can then calculate the dot product between the query and the key. Note that similar vectors have higher dot products and non-similar vectors will have lower dot products. The intuition here is that we want to identify the corresponding words in the queries that are similar to the keys. This would allow your model to “look” or focus on the right place when translating each word.</p>
+<p>We then run a Softmax:</p>
+<p><span id="eq-softmax-formula-1"><span class="math display">
+softmax(QK^T )  
+\tag{1}</span></span></p>
+<p>That gives a distribution of numbers between 0 and 1.</p>
+<p>We then would multiply the output by V. Remember V in this example was the same as our keys, corresponding to the English word embeddings. Hence the equation becomes</p>
+<p><span class="math display">
+softmax(QK^T )V  
+</span> {#sec-softmax-formula-2}</p>
+<p>In the matrix, the lighter square shows where the model is actually looking when making the translation of that word. This mapping isn’t necessarily be one to one. The lighting just tells we to what extent is each word contributing to the input that’s fed into the decoder. As we can see several words can contribute to translating another word, depending on the weights (output) of the softmax that we use to create the new input. a picture of attention in translation with English to German An important thing to keep in mind is that the model should be flexible enough to connect each English word with its relevant German word, even if they don’t appear in the same position in their respective sentences. In other words, it should be flexible enough to handle differences in grammar and word ordering in different languages.</p>
+<p>In a situation like the one just mentioned, where the grammar of foreign language requires a difference word order than the other, the attention is so flexible enough to find the connection. The first four tokens, the agreements on the, are pretty straightforward, but then the grammatical structure between French and English changes. Now instead of looking at the corresponding fifth token to translate the French word zone, the attention knows to look further down at the eighth token, which corresponds to the English word area, glorious and necessary. It’s pretty amazing, was a little matrix multiplication can do.</p>
+<p>So attention is a layer of calculations that let your model focus on the most important parts of the sequence for each step. Queries, values, and keys are representations of the encoder and decoder hidden states. And they’re used to retrieve information inside the attention layer by calculating the similarity between the decoder queries and the encoder key- value pairs.</p>
+</section>
+<section id="sec-evaluation-metrics" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-evaluation-metrics">Evaluation metrics for Machine Translation</h2>
+<section id="sec-sec-bleu" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="sec-sec-bleu">BLEU</h3>
+<ul>
+<li>The authors of <span class="citation" data-cites="papineni2002bleu">(<a href="#ref-papineni2002bleu" role="doc-biblioref">Papineni et al. 2002</a>)</span> introduced the BLEU score.</li>
+<li>The closer the BLEU score is to 1, the better a model preforms.</li>
+<li>The closer to 0, the worse it does.</li>
+</ul>
+<p>To get the BLEU score, the candidates and the references are usually based on an average of unigrams, bigrams, trigrams or even four-gram precision. For example using uni-grams:</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w1_screenshot_10.png" class="lightbox" data-gallery="slides" title="screenshot_of_outline_slide"><img src="img/c4w1_screenshot_10.png" class="img-fluid figure-img" alt="screenshot_of_outline_slide"></a></p>
+<figcaption>screenshot_of_outline_slide</figcaption>
+</figure>
+</div></div><p>We would sum over the unique n-gram counts in the candidate and divide by the total number of words in the candidate. The same concept could apply to unigrams, bigrams, etc. One issue with the BLEU score is that it doesn’t take into account semantics, so it doesn’t take into account the order of the n-grams in the sentence.</p>
+<p><span id="eq-bleu-formula"><span class="math display">
+BLEU = BP\Bigl(\prod_{i=1}^{4}\text{precision}_i\Bigr)^{(1/4)}
+\tag{2}</span></span></p>
+<p>with the Brevity Penalty and precision defined as:</p>
+<p><span id="eq-brevity-penalty-formula"><span class="math display">
+BP = min\Bigl(1, e^{(1-({ref}/{cand}))}\Bigr)
+\tag{3}</span></span></p>
+<p><span id="eq-precision-formula"><span class="math display">
+\text{Precision}_i = \frac {\sum_{snt \in{cand}}\sum_{i\in{snt}}min\Bigl(m^{i}_{cand}, m^{i}_{ref}\Bigr)}{w^{i}_{t}}
+\tag{4}</span></span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">m^{i}_{cand}</span>, is the count of i-gram in candidate matching the reference translation.</li>
+<li><span class="math inline">m^{i}_{ref}</span>, is the count of i-gram in the reference translation.</li>
+<li><span class="math inline">w^{i}_{t}</span>, is the total number of i-grams in candidate translation.</li>
+</ul>
+</section>
+</section>
+<section id="sec-rouge" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-rouge">ROUGE</h2>
+<div class="page-columns page-full"><p><span class="citation" data-cites="lin-2004-rouge">(<a href="#ref-lin-2004-rouge" role="doc-biblioref">Lin 2004</a>)</span> introduced a similar method for evaluation called the ROUGE score which calculates precision and recall for machine texts by counting the n-gram overlap between the machine texts and a reference text. Here is an example that calculates recall: </p><div class="no-row-height column-margin column-container"><img src="img/c4w1_screenshot_11.png" class="img-fluid" data-group="slides" alt="recall in ROUGE"></div></div>
+<p><span id="eq-rouge-recall-formula"><span class="math display">
+Rouge_{recall} = \sum  \frac{(\{\text{prediction n-grams}\} \cap \{ \text{test n-grams}\})}{\vert{ \text{test n-grams}}\vert }
+\tag{5}</span></span></p>
+<p>Rouge also allows we to compute precision as follows:</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w1_screenshot_12.png" class="lightbox" data-gallery="slides" title="precision in ROUGE"><img src="img/c4w1_screenshot_12.png" class="img-fluid figure-img" alt="precision in ROUGE"></a></p>
+<figcaption>precision in ROUGE</figcaption>
+</figure>
+</div></div><p><span id="eq-rouge-precision-formula"><span class="math display"> \text{ROUGE}_{\text{precision}} = \sum \frac{(\{\text{prediction n-grams}\} \cap \{ \text{test ngrams}\})}{\vert\{ \text{vocab}\}\vert}
+\tag{6}</span></span></p>
+<p>The ROUGE-N refers to the overlap of N-grams between the actual system and the reference summaries. The <a href="https://en.wikipedia.org/wiki/F-score">F-score</a> metric combines Recall and precision into one metric.</p>
+<p><span id="eq-fscore-formula"><span class="math display">
+F_{score}= 2 \times \frac{(\text{precision} \times \text{recall})}{(\text{precision} + \text{recall})}
+\tag{7}</span></span></p>
+</section>
+<section id="sec-decoding" class="level1 page-columns page-full">
+<h1>Decoding</h1>
+<section id="sec-random-sampling" class="level2">
+<h2 class="anchored" data-anchor-id="sec-random-sampling">Random sampling</h2>
+<p>Random sampling for decoding involves drawing a word from the softmax distribution. To explore the latent space it is possible to introduce a temperature variable which controls the randomness of the sample.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> logsoftmax_sample(log_probs, temperature<span class="op">=</span><span class="fl">1.0</span>):  </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">"""Returns a sample from a log-softmax output, with temperature.</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">  Args:</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">    log_probs: Logarithms of probabilities (often coming from LogSofmax)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">    temperature: For scaling before sampling (1.0 = default, 0.0 = pick argmax)</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">  """</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># This is equivalent to sampling from a softmax with temperature.</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  u <span class="op">=</span> np.random.uniform(low<span class="op">=</span><span class="fl">1e-6</span>, high<span class="op">=</span><span class="fl">1.0</span> <span class="op">-</span> <span class="fl">1e-6</span>, size<span class="op">=</span>log_probs.shape)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  g <span class="op">=</span> <span class="op">-</span>np.log(<span class="op">-</span>np.log(u))</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> np.argmax(log_probs <span class="op">+</span> g <span class="op">*</span> temperature, axis<span class="op">=-</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="sec-beam-search" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="sec-beam-search">Beam Search</h2>
+<p>The <a href="https://en.wikipedia.org/wiki/Beam_search">beam search</a> algorithm is a limited (best-first search). The parameter for the beam width limits the choices considered at each step.</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/c4w1_screenshot_15.png" class="lightbox" data-gallery="slides" title="Beam Search"><img src="img/c4w1_screenshot_15.png" class="img-fluid figure-img" alt="Beam Search"></a></p>
+<figcaption>Beam Search</figcaption>
+</figure>
+</div></div></section>
+<section id="sec-minimum-bayes-risk" class="level2">
+<h2 class="anchored" data-anchor-id="sec-minimum-bayes-risk">Minimum Bayes Risk</h2>
+<p>MBR (Minimum Bayes Risk) Compares many samples against one another. To implement MBR:</p>
+<ul>
+<li>Generate several random samples.</li>
+<li>Compare each sample against all the others and assign a similarity score using ROUGE.</li>
+<li>Select the sample with the highest similarity: <strong>the golden one</strong>.</li>
+</ul>
+</section>
+<section id="sec-summary" class="level2">
+<h2 class="anchored" data-anchor-id="sec-summary">Summary</h2>
+<ul>
+<li>Maximal Probability is a baseline - but not a particularly good one when the data is noisy.</li>
+<li>Random sampling with temperature is better.</li>
+<li>Beam search uses conditional probabilities and the parameter.</li>
+<li>MBR takes several samples and compares them against each other to find the golden one.</li>
+</ul>
+<p>note: although not mentioned in the next week’s notes Beam Search is useful for improving the summarization task. We can extract a golden summary from a number of samples using MBR. ROUGE-N is the preferred metric for evaluating summarization</p>
+<section id="sec-references" class="level3">
+<h3 class="anchored" data-anchor-id="sec-references">References</h3>
+<ul>
+<li>-​ <span class="citation" data-cites="DBLP:journals/corr/abs-1802-05365">(<a href="#ref-DBLP:journals/corr/abs-1802-05365" role="doc-biblioref">Peters et al. 2018</a>)</span></li>
+<li><span class="citation" data-cites="Alammar2024Jan">(<a href="#ref-Alammar2024Jan" role="doc-biblioref">Alammar 2024</a>)</span></li>
+</ul>
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-Alammar2024Jan" class="csl-entry" role="listitem">
+Alammar, Jay. 2024. <span>“<span>The Illustrated Transformer</span>.”</span> <a href="https://jalammar.github.io/illustrated-transformer">https://jalammar.github.io/illustrated-transformer</a>.
+</div>
+<div id="ref-lin-2004-rouge" class="csl-entry" role="listitem">
+Lin, Chin-Yew. 2004. <span>“<span>ROUGE</span>: A Package for Automatic Evaluation of Summaries.”</span> In <em>Text Summarization Branches Out</em>, 74–81. Barcelona, Spain: Association for Computational Linguistics. <a href="https://aclanthology.org/W04-1013">https://aclanthology.org/W04-1013</a>.
+</div>
+<div id="ref-papineni2002bleu" class="csl-entry" role="listitem">
+Papineni, Kishore, Salim Roukos, Todd Ward, and Wei-Jing Zhu. 2002. <span>“Bleu: A Method for Automatic Evaluation of Machine Translation.”</span> In <em>Proceedings of the 40th Annual Meeting of the Association for Computational Linguistics</em>, 311–18. <a href="https://www.aclweb.org/anthology/P02-1040.pdf">https://www.aclweb.org/anthology/P02-1040.pdf</a>.
+</div>
+<div id="ref-DBLP:journals/corr/abs-1802-05365" class="csl-entry" role="listitem">
+Peters, Matthew E., Mark Neumann, Mohit Iyyer, Matt Gardner, Christopher Clark, Kenton Lee, and Luke Zettlemoyer. 2018. <span>“Deep Contextualized Word Representations.”</span> <em>CoRR</em> abs/1802.05365. <a href="http://arxiv.org/abs/1802.05365">http://arxiv.org/abs/1802.05365</a>.
+</div>
+</div>
+
+
+</section>
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2021,
+  author = {Bochman, Oren},
+  title = {Neural {Machine} {Translation}},
+  date = {2021-03-20},
+  url = {https://orenbochman.github.io/notes-nlp/notes/c4w1/},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2021" class="csl-entry quarto-appendix-citeas" role="listitem">
+Bochman, Oren. 2021. <span>“Neural Machine Translation.”</span> March
+20, 2021. <a href="https://orenbochman.github.io/notes-nlp/notes/c4w1/">https://orenbochman.github.io/notes-nlp/notes/c4w1/</a>.
+</div></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("^(?:http:|https:)\/\/www\.quarto\.org\/custom");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+          // default icon
+          link.classList.add("external");
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© Copyright 2023-2025, Oren Bochman</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/c4w1/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This page is built with 💛 and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"fade","descPosition":"right","loop":true,"openEffect":"fade","selector":".lightbox","skin":"my-css-class"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

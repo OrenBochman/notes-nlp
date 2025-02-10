@@ -1,0 +1,1814 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Oren Bochman">
+<meta name="description" content="we cover Neural networks for deep learning, then build a tweet classifier that places tweets into positive or negative sentiment categories, using a DNN.">
+
+<title>LSTMs and Named Entity Recognition – NLP Specialization</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed slimcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">NLP Specialization</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Sequence Models</li><li class="breadcrumb-item"><a href="../../notes/c3w3/index.html">LSTMs and Named Entity Recognition</a></li><li class="breadcrumb-item"><a href="../../notes/c3w3/index.html">Notes</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Sequence Models</li><li class="breadcrumb-item"><a href="../../notes/c3w3/index.html">LSTMs and Named Entity Recognition</a></li><li class="breadcrumb-item"><a href="../../notes/c3w3/index.html">Notes</a></li></ol></nav>
+      <h1 class="title">LSTMs and Named Entity Recognition</h1>
+            <p class="subtitle lead">Sequence Models</p>
+                  <div>
+        <div class="description">
+          we cover Neural networks for deep learning, then build a tweet classifier that places tweets into positive or negative sentiment categories, using a DNN.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">NLP</div>
+                <div class="quarto-category">Coursera</div>
+                <div class="quarto-category">Notes</div>
+                <div class="quarto-category">Sequence Models</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-body">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Oren Bochman </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">Monday, November 16, 2020</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Classification &amp; Vector Spaces</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Logistic Regression</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Frequencies</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Visualizing tweets</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Probability &amp; Bayes Rule</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Visualizing Naive Bayes</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Vector Space Models &amp; PCA</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Linear algebra with NumPy</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Manipulating word embeddings</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">MT &amp; Document Search via KNN</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vector manipulation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Hash functions and multiplanes</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Probabilistic Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">Autocorrect &amp; Dynamic Programming</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Building the vocabulary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Candidates from String Edits</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">POS tagging &amp; HMMS</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vocabulary with unknowns</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Working with tags and Numpy</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false">
+ <span class="menu-text">Autocomplete &amp; Language Models</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - N-grams Corpus preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Building the language model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Out of vocabulary words</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false">
+ <span class="menu-text">Word embeddings with neural networks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Data preparation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Intro to CBOW</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Training the CBOW</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true">
+ <span class="menu-text">Sequence Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false">
+ <span class="menu-text">Neural Networks for Sentiment Analysis</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Introduction to Trax</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Classes and Subclasses</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Data Generators</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false">
+ <span class="menu-text">RNN for Language Modeling</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Hidden State Activation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Calculating Perplexity</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Vanilla RNNs, GRUs and the scan function</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L4 - Creating a GRU model using Trax</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="true">
+ <span class="menu-text">LSTMs and Named Entity Recognition</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w3/index.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vanishing Gradients</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false">
+ <span class="menu-text">Siamese Networks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Creating a Siamese Model using Trax</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Modified Triplet Loss</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Evaluate a Siamese Model</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="true">
+ <span class="menu-text">NLP with Attention Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false">
+ <span class="menu-text">Neural Machine Translation</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Stack Semantics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - BLEU Score</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="false">
+ <span class="menu-text">Text Summarization</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-18" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Attention</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - The Transformer Decoder</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" role="navigation" aria-expanded="false">
+ <span class="menu-text">Question Answering</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-19" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - SentencePiece and BPE</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - BERT Loss</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - T5</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" role="navigation" aria-expanded="false">
+ <span class="menu-text">Chat Bots</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-20" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Reformer LSH</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Revnet</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#rnns-and-vanishing-gradients" id="toc-rnns-and-vanishing-gradients" class="nav-link active" data-scroll-target="#rnns-and-vanishing-gradients">RNNs and Vanishing Gradients</a></li>
+  <li><a href="#optional-intro-to-optimization-in-deep-learning-gradient-descent" id="toc-optional-intro-to-optimization-in-deep-learning-gradient-descent" class="nav-link" data-scroll-target="#optional-intro-to-optimization-in-deep-learning-gradient-descent">(Optional) Intro to optimization in deep learning: Gradient Descent</a></li>
+  <li><a href="#lab-lecture-notebook-vanishing-gradients" id="toc-lab-lecture-notebook-vanishing-gradients" class="nav-link" data-scroll-target="#lab-lecture-notebook-vanishing-gradients">Lab: Lecture Notebook: Vanishing Gradients</a></li>
+  <li><a href="#introduction-to-lstms" id="toc-introduction-to-lstms" class="nav-link" data-scroll-target="#introduction-to-lstms">Introduction to LSTMs</a></li>
+  <li><a href="#optional-understanding-lstms" id="toc-optional-understanding-lstms" class="nav-link" data-scroll-target="#optional-understanding-lstms">(Optional) Understanding LSTMs</a></li>
+  <li><a href="#lstm-architecture" id="toc-lstm-architecture" class="nav-link" data-scroll-target="#lstm-architecture">LSTM Architecture</a></li>
+  <li><a href="#introduction-to-named-entity-recognition" id="toc-introduction-to-named-entity-recognition" class="nav-link" data-scroll-target="#introduction-to-named-entity-recognition">Introduction to Named Entity Recognition</a></li>
+  <li><a href="#lstm-equations-optional" id="toc-lstm-equations-optional" class="nav-link" data-scroll-target="#lstm-equations-optional">LSTM equations (Optional)</a></li>
+  <li><a href="#training-ners-data-processing" id="toc-training-ners-data-processing" class="nav-link" data-scroll-target="#training-ners-data-processing">Training NERs: Data Processing</a></li>
+  <li><a href="#long-short-term-memory-deep-learning-specialization-c5" id="toc-long-short-term-memory-deep-learning-specialization-c5" class="nav-link" data-scroll-target="#long-short-term-memory-deep-learning-specialization-c5">Long Short-Term Memory (Deep Learning Specialization C5)</a></li>
+  <li><a href="#computing-accuracy" id="toc-computing-accuracy" class="nav-link" data-scroll-target="#computing-accuracy">Computing Accuracy</a></li>
+  <li><a href="#reflections-on-this-unit" id="toc-reflections-on-this-unit" class="nav-link" data-scroll-target="#reflections-on-this-unit">Reflections on this unit</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">Resources:</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/c3w3/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
+
+
+
+
+
+
+<div class="no-row-height column-margin column-container"><div id="fig-00" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="../../images/Course-Logo-3-3.webp" class="lightbox" data-gallery="slides" title="course banner"><img src="../../images/Course-Logo-3-3.webp" class="img-fluid figure-img"></a></p>
+<figcaption>course banner</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-00-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1
+</figcaption>
+</figure>
+</div><div id="fig-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="slides.pdf" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: "><embed src="slides.pdf" class="img-fluid"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2
+</figcaption>
+</figure>
+</div></div>
+<p>My notes for Week 3 of the <a href="https://www.coursera.org/learn/sequence-models-in-nlp/home/welcome">Natural Language Processing with Sequence Models</a> Course in the Natural Language Processing Specialization Offered by <a href="DeepLearning.AI">DeepLearning.AI</a> on <a href="https://www.coursera.org/">Coursera</a></p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Vanishing gradients</li>
+<li>Named entity recognition</li>
+<li>LSTMs</li>
+<li>Feature extraction</li>
+<li>Part-of-speech tagging</li>
+<li>Data generators</li>
+</ul>
+</div>
+</div>
+<section id="rnns-and-vanishing-gradients" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="rnns-and-vanishing-gradients">RNNs and Vanishing Gradients</h2>
+<p>Advantages of RNNs RNNs allow us to capture dependancies within a short range and they take up less RAM than other n-gram models.</p>
+<p>Disadvantages of RNNs RNNs struggle with longer term dependencies and are very prone to vanishing or exploding gradients.</p>
+<p class="page-columns page-full"><a href="img/slide01.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide01.png" class="img-fluid"></div></a></p>
+<p>Note that as we are back-propagating through time, we end up getting the following:</p>
+<p class="page-columns page-full"><a href="img/slide02.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide02.png" class="img-fluid"></div></a></p>
+<p>Note that the sigmoid and tanh functions are bounded by 0 and 1 and -1 and 1 respectively. This eventually leads us to a problem. If we have many numbers that are less than |1|, then as we go through many layers, and we take the product of those numbers, we eventually end up getting a gradient that is very close to 0. This introduces the problem of vanishing gradients.</p>
+<p>Solutions to Vanishing Gradient Problems</p>
+</section>
+<section id="optional-intro-to-optimization-in-deep-learning-gradient-descent" class="level2">
+<h2 class="anchored" data-anchor-id="optional-intro-to-optimization-in-deep-learning-gradient-descent">(Optional) Intro to optimization in deep learning: Gradient Descent</h2>
+<p>Check out this blog from Paperspace.io if you’re interested in understanding in more depth some of the challenges in gradient descent.</p>
+<!-- TODO: citation needed -->
+<ul>
+<li><a href="https://arxiv.org/abs/1712.09913">Visual Loss Landscapes For Neural Nets</a> (Paper)</li>
+</ul>
+</section>
+<section id="lab-lecture-notebook-vanishing-gradients" class="level2">
+<h2 class="anchored" data-anchor-id="lab-lecture-notebook-vanishing-gradients">Lab: Lecture Notebook: Vanishing Gradients</h2>
+<p><a href="../../notes/c3w3/lab01.html">Vanishing Gradients</a></p>
+</section>
+<section id="introduction-to-lstms" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="introduction-to-lstms">Introduction to LSTMs</h2>
+<p>The LSTM allows your model to remember and forget certain inputs. It consists of a cell state and a hidden state with three gates. The gates allow the gradients to flow unchanged. We can think of the three gates as follows:</p>
+<p><strong>Input gate</strong>: tells we how much information to input at any time point.</p>
+<p><strong>Forget gate</strong>: tells we how much information to forget at any time point.</p>
+<p><strong>Output gate</strong>: tells we how much information to pass over at any time point.</p>
+<p>There are many applications we can use LSTMs for, such as:</p>
+<p class="page-columns page-full"><a href="img/slide03.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide03.png" class="img-fluid"></div></a></p>
+</section>
+<section id="optional-understanding-lstms" class="level2">
+<h2 class="anchored" data-anchor-id="optional-understanding-lstms">(Optional) Understanding LSTMs</h2>
+<p>Here’s a classic post on LSTMs with intuitive explanations and diagrams, to complement this week’s material.</p>
+<!-- TODO: citation needed -->
+<p><a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">Understanding LSTM Networks</a></p>
+</section>
+<section id="lstm-architecture" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="lstm-architecture">LSTM Architecture</h2>
+<p>The LSTM architecture could get complicated and don’t worry about it if we do not understand it. I personally prefer looking at the equation, but I will try to give we a visualization for now and later this week we will take a look at the equations.</p>
+<p class="page-columns page-full"><a href="img/slide04.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide04.png" class="img-fluid"></div></a></p>
+<p>Note that there is the cell state and the hidden state, and then there is the output state. The forget gate is the first activation in the drawing above. It makes use of the previous hidden state <span class="math inline">h^{&lt;t_0&gt;}</span> and the input <span class="math inline">x^{&lt;t_0&gt;}</span>. The input gate makes use of the next two activations, the <em>sigmoid</em> and the <em>tanh</em>. Finally the output gate makes use of the last activation and the tanh right above it. This is just an overview of the architecture, we will dive into the details once we introduce the equations.</p>
+</section>
+<section id="introduction-to-named-entity-recognition" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="introduction-to-named-entity-recognition">Introduction to Named Entity Recognition</h2>
+<p>Named Entity Recognition (NER) locates and extracts predefined entities from text. It allows we to find places, organizations, names, time and dates. Here is an example of the model we will be building:</p>
+<p class="page-columns page-full"><a href="img/slide05.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide05.png" class="img-fluid"></div></a></p>
+<p>NER systems are being used in search efficiency, recommendation engines, customer service, automatic trading, and many more.</p>
+</section>
+<section id="lstm-equations-optional" class="level2">
+<h2 class="anchored" data-anchor-id="lstm-equations-optional">LSTM equations (Optional)</h2>
+<p>These are the LSTM equations related to the gates I had previously spoken about:</p>
+<p><span id="eq-lstm-forget"><span class="math display">
+f = \sigma(W_f[h_{t-1}; x_t] + b_f) \qquad \text{Forget}
+\tag{1}</span></span></p>
+<p><span id="eq-lstm-input"><span class="math display">
+i = \sigma(W_i[h_{t-1}; x_t] + b_i) \qquad \text{Input}
+\tag{2}</span></span></p>
+<p><span id="eq-lstm-gate"><span class="math display">
+g = \tanh(W_g[h_{t-1}; x_t] + b_g) \qquad \text{Gate}
+\tag{3}</span></span></p>
+<p><span id="eq-lstm-cell"><span class="math display">
+c_t = f \odot c_{t-1} + i \odot g \qquad \text{Cell State}
+\tag{4}</span></span></p>
+<p><span id="eq-lstm-output"><span class="math display">
+o = \sigma(W_o[h_{t-1}; x_t] + b_o) \qquad \text{Output}
+\tag{5}</span></span></p>
+<p>We can think of:</p>
+<ul>
+<li>The <strong>forget gate</strong> as a gate that tells we how much information to forget,</li>
+<li>The <strong>input gate</strong>, tells we how much information to pick up.</li>
+<li>The <strong>gate gate</strong> as the gate containing information. This is multiplied by the <strong>input gate</strong> (which tells we how much of that information to keep).</li>
+</ul>
+</section>
+<section id="training-ners-data-processing" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="training-ners-data-processing">Training NERs: Data Processing</h2>
+<p>Processing data is one of the most important tasks when training AI algorithms. For NER, we have to:</p>
+<ul>
+<li><p>Convert words and entity classes into arrays:</p></li>
+<li><p>Pad with tokens: Set sequence length to a certain number and use the <pad> token to fill empty spaces</pad></p></li>
+<li><p>Create a data generator:</p></li>
+</ul>
+<p>Once we have that, we can assign each class a number, and each word a number.</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide06.png" class="lightbox" data-gallery="slides" title="Data Processing"><img src="img/slide06.png" class="img-fluid figure-img" alt="Data Processing"></a></p>
+<figcaption>Data Processing</figcaption>
+</figure>
+</div></div><p>Training an NER system:</p>
+<ol type="1">
+<li>Create a tensor for each input and its corresponding number</li>
+<li>Put them in a batch ==&gt; 64, 128, 256, 512 …</li>
+<li>Feed it into an LSTM unit</li>
+<li>Run the output through a dense layer</li>
+<li>Predict using a log softmax over K classes</li>
+</ol>
+<p>Here is an example of the architecture:</p>
+<p class="page-columns page-full"><a href="img/slide07.png" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/slide07.png" class="img-fluid"></div></a></p>
+<p>Note that this is just one example of an NER system. Different architectures are possible.</p>
+</section>
+<section id="long-short-term-memory-deep-learning-specialization-c5" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="long-short-term-memory-deep-learning-specialization-c5">Long Short-Term Memory (Deep Learning Specialization C5)</h2>
+<p>Note: this section is based on a transcript of the <a href="https://www.coursera.org/learn/nlp-sequence-models/lecture/KXoay/long-short-term-memory-lstm">video</a> from the Deep Learning Specialization.</p>
+<p class="page-columns page-full"><a href="img/meme01.jpg" class="lightbox page-columns page-full" data-gallery="slides"><div class="no-row-height column-margin column-container"><img src="img/meme01.jpg" class="img-fluid"></div></a></p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+LSTM from GRU or LSTM from RNNs
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In this video Andrew Ng explains the Long Short-Term Memory (LSTM) as if it was developed from the GRU rather than RNNs. Sure the GRU has one less equation but its just about as complicated as the LSTM … The people who came up with it had 20 years to understand LSTM before they figured these out. We on the other hand have covered neither RNNs not GRUs and have none of that intuition they provide.</p>
+<p>LSTM also have a number of variations, such as the peephole connection, the carousal connection, and the coupled forget and input gates. <span class="emoji" data-emoji="scream">😱</span></p>
+<p>In the other course on Deep Learning, Ng builds things up using a number of videos starting with notation. RNNs, different types of RNNs, and then the LSTM. The vanishing gradient problem with RNN and then the GRUs.</p>
+<p>I find the notation used very annoying but at least it is explained in the other course and seems to be motivated by time series. In Rnns we process the data in two dimensions. One is for the sequence index used in the super script. The other is for applying multiple layers which we don’t seem to consider.</p>
+<p>Rnns learn weights more weights as the sequence grows and though not clear these weights are shared across the RNN units.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Notation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><p><span class="math inline">X^{(i)&lt;t&gt;}</span> is the input at time <span class="math inline">t</span> for the <span class="math inline">i</span>th example.</p></li>
+<li><p><span class="math inline">y^{(i)&lt;t&gt;}</span> is the output at time <span class="math inline">t</span> for the <span class="math inline">i</span>th example.</p></li>
+<li><p><span class="math inline">T_x^{(i)}</span> is the length of the input sequence for the <span class="math inline">i</span>th example.</p></li>
+<li><p><span class="math inline">T_y^{(i)}</span> is the length of the output sequence for the <span class="math inline">i</span>th example.</p></li>
+<li><p>is $T_x^(i) = <span class="math inline">T_y^(i)</span> not necessarily. (e.g.&nbsp;translation can be longer or shorter, while NER can be one to one.). They will be different for different examples.</p></li>
+<li><p>is <span class="math inline">T_x^(i) = T_x^(j)</span> unlikely as the length of the input sequence will vary from example to example.</p></li>
+</ul>
+</div>
+</div>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide08.png" class="lightbox" data-gallery="slides" title="GRU v.s. LSTM"><img src="img/slide08.png" class="img-fluid figure-img" alt="GRU v.s. LSTM"></a></p>
+<figcaption>GRU v.s. LSTM</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide09.png" class="lightbox" data-gallery="slides" title="LSTM equations"><img src="img/slide09.png" class="img-fluid figure-img" alt="LSTM equations"></a></p>
+<figcaption>LSTM equations</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide10.png" class="lightbox" data-gallery="slides" title="LSTM Schematic"><img src="img/slide10.png" class="img-fluid figure-img" alt="LSTM Schematic"></a></p>
+<figcaption>LSTM Schematic</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="img/slide11.png" class="lightbox" data-gallery="slides" title="LSTM Rollout"><img src="img/slide11.png" class="img-fluid figure-img" alt="LSTM Rollout"></a></p>
+<figcaption>LSTM Rollout</figcaption>
+</figure>
+</div></div>
+
+
+<p>Now that we understand my caveat let’s try to understand by filling the gaps as we go along with what what Ng says and shows!</p>
+<ol type="1">
+<li><p><mark>If we understand the math we are good to go</mark>. Code is just a translation of the math into a programming language. Once we understand the math there are deeper levels of understanding that we can get to but we can’t get there without understanding the math. There are three challenges to understanding the math!</p>
+<ol type="1">
+<li><p>Both the LSTM and GRU are RNNs so they translate sequences to sequences in the general case let’s imagine we are translating english to german. We start with some input x_0 and we output some out put y_0. For the next word we want to use the previous word to help us translate the next word. <mark>This is done by concatenating the current word to the previous (hidden) state</mark>. The first take away</p></li>
+<li><p>RNN have an internal nonlinearity a <span class="math inline">tanh</span> but no gating mechanism. The non-linearity is applied to the hidden state concatenated to the input. The hidden state is thus the long term memory of the RNN. For NER we only need a short context to decide but for translation we need to be aware longer context, perhaps a few sentences back. [RNNS, GRUs and LSTMs also have the non-linearity at their core]. That’s the second take away about the math of LSTMS</p></li>
+<li><p>The vanishing and exploding gradients are not the only issues in RNNs there is also a problem of accessing data from many time steps back. By accessing I mean backpropagating the gradients backwards enough time steps. In the LSTM there are not only pathways that let the state pass on unchanged they also allow the gradients to flow back unchanged similar to ResNets. <mark>So the two path from Hidden state to hidden state and from Internal State to internal state are what allows the LSTM to handle long term gradient gradients better than RNNS. This is particularly true for most cases where there is a ‘short circuit’ allowing these state to persist. And has a stabilizing effect.</mark> That is the third take away from the math of LSTMs.</p></li>
+<li><p>The update, forget, output gates is where the weight and biases are used, thus <mark>this is where the learning is taking place and this is happening in an element-wise manner.</mark> This is the fourth take away from the math of LSTMs.</p></li>
+<li><p>These three gates also control how much of the new data is incorporated into the internal state <span class="math inline">c^{&lt;t&gt;}</span> and the hidden state. <mark>This is referred to as the gating mechanism.</mark> And different variants of LSTM and GRUS make subtle changes to the gating. This is the fifth take away from the math of LSTMs.</p></li>
+<li><p>Information flow in the LST is captured by the dependency between the equations is as follows:</p>
+<ul>
+<li><span class="math inline">f_t, i_t, g_t, o_t</span> the gate uses see the old stat and the new input.</li>
+<li><span class="math inline">c_t</span> the internal state sees <span class="math inline">f_t</span>, <span class="math inline">i_t</span>, and <span class="math inline">g_t</span> and the old state <span class="math inline">c_t</span></li>
+<li><span class="math inline">h_t</span> sees <span class="math inline">o_t</span> and <span class="math inline">c_t</span> which depend on the previous hidden state <span class="math inline">h_{t-1}</span> and the new input <span class="math inline">x_t</span>. To sum up <mark>the gates only depend on the input an the previous hidden state. The internal state depends on the gates and the previous internal state. The next hidden state depends on the internal state and the output gate.</mark>. This is the sixth take away from the math of LSTMs.</li>
+</ul></li>
+</ol></li>
+</ol>
+<p><span id="eq-lstm-colored"><span class="math display">
+\begin{aligned}
+\textcolor{red}{f_t} &amp;= \textcolor{purple}{\sigma}(\textcolor{blue}{W_f}[h_{t-1}; x_t] + \textcolor{blue}{b_f}) \\
+\textcolor{red}{i_t} &amp;= \textcolor{purple}{\sigma}(\textcolor{blue}{W_i}[h_{t-1}; x_t] + \textcolor{blue}{b_i}) \\
+\textcolor{red}{g_t} &amp;= \textcolor{purple}{\tanh}(\textcolor{blue}{W_g}[h_{t-1}; x_t] + \textcolor{blue}{b_g})  \\
+\textcolor{red}{o_t} &amp;= \textcolor{purple}{\sigma}(\textcolor{blue}{W_o}[h_{t-1}; x_t] + \textcolor{blue}{b_o}) \\
+\textcolor{green}{c_t} &amp;= \textcolor{red}{f_t} \textcolor{orange}{\odot} \textcolor{green}{c_{t-1}} + \textcolor{red}{i_t} \textcolor{orange}{\odot} \textcolor{red}{g_t}     \\
+h_t &amp;= \textcolor{red}{o_t} \textcolor{orange}{\odot} \textcolor{purple}{\tanh}(\textcolor{green}{c_t})
+\end{aligned}
+\tag{6}</span></span></p>
+<p>key:</p>
+<ul>
+<li>red for gates</li>
+<li>blue for weights</li>
+<li>orange for element-wise operations</li>
+<li>green for the internal state</li>
+<li>purple for the non-linearity <!-- TODO: highlight this stuff in the math --></li>
+</ul>
+<p>Next level of understanding is to consider the action of the gating machanism and the relation between internal state and hidden state.</p>
+<!-- TODO: try to work through the logic of the gating mechanism -->
+<!-- TODO: does the hidden state change in size as we go through the sequence? -->
+<p>The key things from this unit are that the GRU does not use a forget gate, but uses <span class="math inline">1-\Gamma_u</span> to decide how much of the previous memory cell to keep. In the LSTM, the forget gate instead.</p>
+<p>There are two aspects to understanding these RNNS.</p>
+<p>The equations look like simultaneous equations, in reality they are they have a more complex structure as</p>
+<p>The schematic are emphesise a two other aspects of the LSTM, information flow and gating mechanisms.</p>
+<ul>
+<li>how the equations are wired up to control the information flow and - the idea that we have a gating mechanism that combines the long term memory a in the Hidden state and the uses the memory cell, rather than the hidden state.</li>
+</ul>
+<p>We learned about the <strong>GRU</strong>, or gated recurrent units, and how that can allow we to learn very long range connections in a sequence. The other type of unit that allows we to do this very well is the <strong>LSTM</strong> or the long short term memory units, and this is even more powerful than the GRU. Let’s take a look.</p>
+<p>Here are the equations from the previous video for the GRU. And for the GRU, we had <span class="math inline">a^{&lt;t&gt;} = c^{&lt;t&gt;}</span>, and two gates, the optic gate and the relevance gate, <span class="math inline">\tilde{c}^{&lt;t&gt;}</span>, which is a candidate for replacing the memory cell, and then we use the update gate, <span class="math inline">\Gamma_u</span>, to decide whether or not to update <span class="math inline">c^{&lt;t&gt;}</span> using <span class="math inline">\tilde{c}^{&lt;t&gt;}</span>.</p>
+<p>The LSTM is an even slightly more powerful and more general version of the GRU, and is due to <a href="https://en.wikipedia.org/wiki/Sepp_Hochreiter">Sepp Hochreiter</a> and <a href="https://en.wikipedia.org/wiki/J%C3%BCrgen_Schmidhuber">Jurgen Schmidhuber</a><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>, c.f. <span class="citation" data-cites="Hochreiter1997LSTM">Hochreiter and Schmidhuber (<a href="#ref-Hochreiter1997LSTM" role="doc-biblioref">1997</a>)</span>. And this was a really seminal paper, a huge impact on sequence modelling.</p>
+<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;with many interesting talks online</p></div></div><p>I think this paper is one of the more difficult to read. It goes quite along into theory of vanishing gradients. And so, I think more people have learned about the details of LSTM through maybe other places than from this particular paper even though I think this paper has had a wonderful impact on the Deep Learning community.</p>
+<p>But these are the equations that govern the LSTM. So, we continue to the memory cell, <span class="math inline">c</span>, and the candidate value for updating it, <span class="math inline">\tilde{c}^{&lt;t&gt;}</span>, will be this, and so on. Notice that for the LSTM, we will no longer have the case that <span class="math inline">a^{&lt;t&gt;} =c^{&lt;t&gt;}</span>. So, this is what we use. And so, this is just like the equation on the left except that with now, more specially use <span class="math inline">a^{&lt;t&gt;}</span> there or <span class="math inline">a^{&lt;t-1&gt;}</span> instead of <span class="math inline">c^{&lt;t-1&gt;}</span>. And we’re not using this gamma or this relevance gate. Although we could have a variation of the LSTM where we put that back in, but with the more common version of the LSTM, doesn’t bother with that. And then we will have an update gate, same as before. So, W updates and we’re going to use <span class="math inline">a^{&lt;t-1&gt;}</span> here, <span class="math inline">x^{&lt;t&gt;} + b_u</span>. And one new property of the LSTM is, instead of having one update gate control, both of these terms, we’re going to have two separate terms. So instead of gamma_u and one minus gamma_u, we’re going have <span class="math inline">\Gamma_u</span> here. And forget gate, which we’re going to call <span class="math inline">\Gamma_f</span>. So, this gate, <span class="math inline">\Gamma_f</span>, is going to be sigmoid of pretty much what you’d expect, <span class="math inline">x^{&lt;t&gt;}+ b_f</span>. And then, we’re going to have a new output gate which is <span class="math inline">\sigma(W_o)+ b_o</span>. And then, the update value to the memory so will be <span class="math inline">c^{&lt;t&gt;}=\Gamma_u</span>. <mark>And this asterisk denotes element-wise multiplication. This is a vector-vector element-wise multiplication</mark>, plus, and instead of one minus gamma u, we’re going to have a separate forget gate, <span class="math inline">\Gamma_f * c^{&lt;t-1&gt;}</span>. So this gives the memory cell the option of keeping the old value <span class="math inline">c^{t-1}</span> and then just adding to it, this new value, <span class="math inline">\tilde{c}^{&lt;t&gt;}</span>. So, use a separate update and forget gates. So, this stands for update, forget, and output gate.</p>
+<p>And then finally, instead of <span class="math display">
+a^{&lt;t&gt;} = c^{&lt;t&gt;} \quad \text{(GRU)} \qquad a^{&lt;t&gt;} = \Gamma_0 * \tanh( c^{&lt;t&gt;}) \quad \text{(LSTM)}
+</span>.</p>
+<p>So, these are the equations that govern the LSTM and we can tell it has three gates instead of two. So, it’s a bit more complicated and it places the gates into slightly different places. So, here again are the equations governing the behavior of the LSTM.</p>
+<p>Once again, it’s traditional to explain these things using pictures. So let me draw one here. And if these pictures are too complicated, don’t worry about it. I personally find the equations easier to understand than the picture. But I’ll just show the picture here for the intuitions it conveys. The bigger picture here was very much inspired by a <a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">blog post</a> due to <a href="https://80000hours.org/podcast/episodes/chris-olah-unconventional-career-path/">Chris Ola</a>, titled <strong>Understanding LSTM Network</strong>, and the diagram drawing here is quite similar to one that he drew in his blog post. But the key thing is to take away from this picture are maybe that we use <span class="math inline">a^{&lt;t-1&gt;}</span> and <span class="math inline">x^{&lt;t&gt;}</span> to compute all the gate values. In this picture, we have <span class="math inline">a^{&lt;t-1&gt;}</span>, <span class="math inline">x^{&lt;t&gt;}</span> coming together to compute the forget gate, to compute the update gates, and to compute output gate. And they also go through a tanh to compute <span class="math inline">\tilde{c}^{&lt;t&gt;}</span>. And then these values are combined in these complicated ways with element-wise multiplies and so on, to get <span class="math inline">c^{&lt;t&gt;}</span> from the previous <span class="math inline">c^{&lt;t-1&gt;}</span>. Now, one element of this is interesting as we have a bunch of these in parallel. So, that’s one of them and we connect them. We then connect these temporally. So it does the input <span class="math inline">x^{&lt;1&gt;}</span> then <span class="math inline">x^{&lt;2&gt;}</span>, <span class="math inline">x^{&lt;3&gt;}</span>. So, we can take these units and just hold them up as follows, where the output a at the previous timestep is the input a at the next timestep, the c.&nbsp;I’ve simplified to diagrams a little bit in the bottom. And one cool thing about this you’ll notice is that there’s this line at the top that shows how, so long as we set the forget and the update gate appropriately, it is relatively easy for the LSTM to have some value c_0 and have that be passed all the way to the right to have your, maybe, <span class="math inline">c^{&lt;3&gt;}=c^{&lt;0&gt;}</span>. And this is why the LSTM, as well as the GRU, is very good at memorizing certain values even for a long time, for certain real values stored in the memory cell even for many, many timesteps.</p>
+<p>So, that’s it for the LSTM.</p>
+<p>As we can imagine, there are also a few variations on this that people use. Perhaps, the most common one is that instead of just having the gate values be dependent only on <span class="math inline">a_{t-1}</span>, <span class="math inline">x^{&lt;t&gt;}</span>, sometimes, people also sneak in there the values <span class="math inline">c_{t-1}</span> as well. This is called a <strong>peephole connection</strong>, introduced in <span class="citation" data-cites="Gers2000PeepHole">Gers and Schmidhuber (<a href="#ref-Gers2000PeepHole" role="doc-biblioref">2000</a>)</span> Not a great name maybe but you’ll see, peephole connection. What that means is that the gate values may depend not just on <span class="math inline">a^{&lt;t-1&gt;}</span> and on <span class="math inline">x^{&lt;t&gt;}</span>, but also on the previous memory cell value, and the peephole connection can go into all three of these gates’ computations. So that’s one common variation we see of LSTMs. One technical detail is that these are, say, 100-dimensional vectors. So if we have a 100-dimensional hidden memory cell unit, and so is this. And the, say, fifth element of <span class="math inline">c^{t-1}</span> affects only the fifth element of the corresponding gates, so that relationship is one-to-one, where not every element of the 100-dimensional <span class="math inline">c^{&lt;t-1&gt;}</span> can affect all elements of the case. But instead, the first element of <span class="math inline">c^{&lt;t-1&gt;}</span> affects the first element of the case, second element affects the second element, and so on. But if we ever read the paper and see someone talk about the peephole connection, that’s when they mean that <span class="math inline">c^{&lt;t-1&gt;}</span> is used to affect the gate value as well. So, that’s it for the LSTM.</p>
+<p><mark>When should we use a GRU? And when should we use an LSTM?</mark></p>
+<p>There isn’t widespread consensus in this. And even though I presented GRUs first, in the history of deep learning, LSTMs actually came much earlier, and then GRUs were relatively recent invention that were maybe derived as Pavia’s simplification of the more complicated LSTM model. Researchers have tried both of these models on many different problems, and on different problems, different algorithms will win out. So, there isn’t a universally-superior algorithm which is why I want to show we both of them. But I feel like when I am using these, <mark>the advantage of the GRU is that it’s a simpler model and so it is actually easier to build a much bigger network, it only has two gates, so computationally, it runs a bit faster. So, it scales the building somewhat bigger models</mark> but the LSTM is more powerful and more effective since it has three gates instead of two. If we want to pick one to use, I think LSTM has been the historically more proven choice. So, if we had to pick one, I think most people today will still use the LSTM as the default first thing to try. Although, I think in the last few years, GRUs had been gaining a lot of momentum and I feel like more and more teams are also using GRUs because they’re a bit simpler but often work just as well. It might be easier to scale them to even bigger problems. So, that’s it for LSTMs. Well, either GRUs or LSTMs, you’ll be able to build neural network that can capture much longer range dependencies.</p>
+<p>The correct version of the final equation in the output gate is here:</p>
+<p>https://www.coursera.org/learn/nlp-sequence-models/supplement/xdv6z/long-short-term-memory-lstm-correction</p>
+</section>
+<section id="computing-accuracy" class="level2">
+<h2 class="anchored" data-anchor-id="computing-accuracy">Computing Accuracy</h2>
+<p>To compare the accuracy, just follow the following steps:</p>
+<ul>
+<li>Pass test set through the model</li>
+<li>Get arg max across the prediction array</li>
+<li>Mask padded tokens</li>
+<li>Compare with the true labels.</li>
+</ul>
+</section>
+<section id="reflections-on-this-unit" class="level2">
+<h2 class="anchored" data-anchor-id="reflections-on-this-unit">Reflections on this unit</h2>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Main Research Questions
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>What is the vanishing and exploding gradient problem in RNNs?</li>
+<li>How can we measure the ability of RNN to access data from many time steps back?</li>
+<li>What is the nature of the hidden state in RNNs?</li>
+</ol>
+<ul>
+<li>short term memory</li>
+</ul>
+<ol type="1">
+<li>What is the nature of the internal state in RNNs?</li>
+</ol>
+<ul>
+<li>long term memory</li>
+</ul>
+<ol type="1">
+<li>How are gradients updated in the LSTMs?</li>
+<li>what is the constant error carousel in LSTMs?</li>
+<li>how does it solve the vanishing gradient problem?</li>
+<li>How does gating work in LSTMs?</li>
+<li>Are the gates binary?</li>
+<li>what is the idea behind a peekhole LSTM <!-- TODO: review the paper --></li>
+<li>what is the idea of the bLSTM <!-- TODO: review the paper --></li>
+<li>Are all LSTMs stacked, cam we have a single layer LSTM?</li>
+</ol>
+</div>
+</div>
+</section>
+<section id="resources" class="level2">
+<h2 class="anchored" data-anchor-id="resources">Resources:</h2>
+<ul>
+<li><p><span class="citation" data-cites="Chadha2020DistilledNotesCourseraDLSpec">(<a href="#ref-Chadha2020DistilledNotesCourseraDLSpec" role="doc-biblioref">Chadha 2020</a>)</span> <a href="https://aman.ai/coursera-nlp/logistic-regression/">Aman Chadha’s Notes</a></p></li>
+<li><p><a href="https://github.com/ibrahimjelliti/Deeplearning.ai-Natural-Language-Processing-Specialization/tree/master/1%20-%20Natural%20Language%20Processing%20with%20Classification%20and%20Vector%20Spaces#testing-logistic-regression">Ibrahim Jelliti’s Notes</a></p></li>
+<li><p><a href="https://www.digitalocean.com/community/tutorials/intro-to-optimization-in-deep-learning-gradient-descent">Intro to optimization in deep learning: Gradient Descent</a> (Tutorial) Ayoosh Kathuria</p></li>
+<li><p><a href="https://arxiv.org/abs/1712.09913">Visual Loss Landscapes For Neural Nets</a> (Paper)</p></li>
+<li><p><a href="https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10">Article on Learning Rate Schedules</a> by Hafidz Zulkifli.</p></li>
+<li><p><a href="https://arxiv.org/abs/1704.00109">Stochastic Weight Averaging</a> (Paper)</p></li>
+<li><p><a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">Understanding LSTM Networks</a></p></li>
+<li><p><a href="http://karpathy.github.io/2015/05/21/rnn-effectiveness/">The Unreasonable Effectiveness of Recurrent Neural Networks</a> by Andrej Karpathy</p></li>
+<li><p><a href="https://medium.datadriveninvestor.com/how-do-lstm-networks-solve-the-problem-of-vanishing-gradients-a6784971a577"></a></p></li>
+</ul>
+
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-Chadha2020DistilledNotesCourseraDLSpec" class="csl-entry" role="listitem">
+Chadha, Aman. 2020. <span>“Distilled Notes for the Natural Language Processing Specialization on Coursera (Offered by Deeplearning.ai).”</span> <a href="https://www.aman.ai" class="uri">https://www.aman.ai</a>. <a href="https://www.aman.ai">www.aman.ai</a>.
+</div>
+<div id="ref-Gers2000PeepHole" class="csl-entry" role="listitem">
+Gers, Felix Alexander, and Jürgen Schmidhuber. 2000. <span>“Recurrent Nets That Time and Count.”</span> <em>Proceedings of the IEEE-INNS-ENNS International Joint Conference on Neural Networks. IJCNN 2000. Neural Computing: New Challenges and Perspectives for the New Millennium</em> 3: 189–194 vol.3. <a href="https://api.semanticscholar.org/CorpusID:36867983">https://api.semanticscholar.org/CorpusID:36867983</a>.
+</div>
+<div id="ref-Hochreiter1997LSTM" class="csl-entry" role="listitem">
+Hochreiter, Sepp, and Jürgen Schmidhuber. 1997. <span>“Long Short-Term Memory.”</span> <em>Neural Computation</em> 9 (8): 1735–80. <a href="https://doi.org/10.1162/neco.1997.9.8.1735">https://doi.org/10.1162/neco.1997.9.8.1735</a>.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2020,
+  author = {Bochman, Oren},
+  title = {LSTMs and {Named} {Entity} {Recognition}},
+  date = {2020-11-16},
+  url = {https://orenbochman.github.io/notes-nlp/notes/c3w3/},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2020" class="csl-entry quarto-appendix-citeas" role="listitem">
+Bochman, Oren. 2020. <span>“LSTMs and Named Entity Recognition.”</span>
+November 16, 2020. <a href="https://orenbochman.github.io/notes-nlp/notes/c3w3/">https://orenbochman.github.io/notes-nlp/notes/c3w3/</a>.
+</div></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("^(?:http:|https:)\/\/www\.quarto\.org\/custom");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+          // default icon
+          link.classList.add("external");
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© Copyright 2023-2025, Oren Bochman</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/c3w3/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This page is built with 💛 and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"fade","descPosition":"right","loop":true,"openEffect":"fade","selector":".lightbox","skin":"my-css-class"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
