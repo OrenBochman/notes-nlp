@@ -9,7 +9,7 @@
 <meta name="author" content="Oren Bochman">
 <meta name="keywords" content="Exponential Gating, Memory Mixing, Covariance Update Rule">
 
-<title>index – NLP Specialization</title>
+<title>xLSTM: Extended Long Short-Term Memory – NLP Specialization</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -63,6 +63,9 @@ div.csl-indent {
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -203,7 +206,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">xLSTM: Extended Long Short-Term Memory</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -213,8 +216,18 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      
-                      </div>
+      <h1 class="title">xLSTM: Extended Long Short-Term Memory</h1>
+            <p class="subtitle lead">Review</p>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Paper</div>
+                <div class="quarto-category">Review</div>
+                <div class="quarto-category">NLP</div>
+                <div class="quarto-category">LSTM</div>
+                <div class="quarto-category">Seq2Seqs</div>
+                <div class="quarto-category">RNN</div>
+                <div class="quarto-category">Podcast</div>
+              </div>
+                  </div>
   </div>
     
   
@@ -834,15 +847,27 @@ window.Quarto = {
 
 <div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="cover.jpg" class="img-fluid figure-img" data-group="slides"></p>
+<p><a href="cover.jpg" class="lightbox" data-gallery="slides" title="Literature Review"><img src="cover.jpg" class="img-fluid figure-img" alt="Literature Review"></a></p>
 <figcaption>Literature Review</figcaption>
 </figure>
-</div><div id="vid-02" class="">
+</div><div id="vid-02" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-vid figure">
+<div aria-describedby="vid-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/0aWGTNS03PU?t=3" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-<p>Review by AI Bites</p>
-</div><div id="vid-01" class="">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Video&nbsp;1: Review by AI Bites
+</figcaption>
+</figure>
+</div><div id="vid-01" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-vid figure">
+<div aria-describedby="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/0OaEv1a5jUM" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-<p>Review by Yannic Kilcher</p>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Video&nbsp;2: Review by Yannic Kilcher
+</figcaption>
+</figure>
 </div></div>
 
 <blockquote class="blockquote">
@@ -870,7 +895,7 @@ TL;DR – Scaling LSTMs to Billions of Parameters with <strong>xLSTM</strong>
 <div class="callout-body-container callout-body">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="../../../images/in_a_nutshell.jpg" class="img-fluid figure-img"></p>
+<p><a href="../../../images/in_a_nutshell.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="LSTMs in a nutshell"><img src="../../../images/in_a_nutshell.jpg" class="img-fluid figure-img" alt="LSTMs in a nutshell"></a></p>
 <figcaption>LSTMs in a nutshell</figcaption>
 </figure>
 </div>
@@ -906,7 +931,7 @@ Motivation
 </audio>
 <p>Although this paper is recent there are a number of other people who cover it.</p>
 <ul>
-<li>In <span class="citation" data-cites="vid-01">(<a href="#ref-vid-01" role="doc-biblioref"><strong>vid-01?</strong></a>)</span> Yannic Kilcher covers the paper in his youtube channel. He does a great job of explaining the paper in a way that is easy to understand. Kilcher is all too human, he makes many mistakes, stresses opinions over facts. If we don’t mind all that he is a great resource for understanding the paper. I find he rubs me the wrong way but at least I find this motivating to do better in my own reviews!</li>
+<li>In <a href="#vid-01" class="quarto-xref">Video&nbsp;2</a> Yannic Kilcher covers the paper in his youtube channel. He does a great job of explaining the paper in a way that is easy to understand. Kilcher is all too human, he makes many mistakes, stresses opinions over facts. If we don’t mind all that he is a great resource for understanding the paper. I find he rubs me the wrong way but at least I find this motivating to do better in my own reviews!</li>
 </ul>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -947,13 +972,20 @@ What can we expect from xLSTM?
 <p>The xLSTM paper by <span class="citation" data-cites="beck2024xlstm">(<a href="#ref-beck2024xlstm" role="doc-biblioref">Beck et al. 2024</a>)</span> is a great example of the tetrad in action. The authors take the LSTM, a technology that has stood the test of time, and enhance it with exponential gating and novel memory structures. They address the limitations of traditional LSTMs and push the technology to new limits, creating a new architecture that can compete with state-of-the-art Transformers and State Space Models. Recent work by <span class="citation" data-cites="chen2024computationallimitsstatespacemodels">(<a href="#ref-chen2024computationallimitsstatespacemodels" role="doc-biblioref">Chen et al. 2024</a>)</span> suggest that Transformers and The State Space Models are actually limited in their own ways.</p>
 </div>
 </div>
-<div class="no-row-height column-margin column-container"><div id="sup-01" class="callout-margin-content">
+<div class="no-row-height column-margin column-container"><div id="sup-01" class="quarto-float quarto-figure quarto-figure-center anchored callout-margin-content">
+<figure class="quarto-float quarto-float-sup figure">
+<div aria-describedby="sup-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="MediaTetrad.svg" class="img-fluid figure-img"></p>
+<p><a href="MediaTetrad.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Tetrad"><img src="MediaTetrad.svg" class="img-fluid figure-img"></a></p>
 <figcaption>Tetrad</figcaption>
 </figure>
 </div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-sup quarto-uncaptioned" id="sup-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Supplementary Figure&nbsp;1
+</figcaption>
+</figure>
 </div></div></section>
 </section>
 <section id="abstract" class="level2 page-columns page-full">
@@ -974,7 +1006,7 @@ What can we expect from xLSTM?
 <div aria-describedby="fig-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="fig01.png" class="img-fluid figure-img"></p>
+<p><a href="fig01.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="architecture"><img src="fig01.png" class="img-fluid figure-img"></a></p>
 <figcaption>architecture</figcaption>
 </figure>
 </div>
@@ -992,7 +1024,7 @@ Figure&nbsp;1: The extended LSTM (xLSTM) family. From left to right:<br>
 <div aria-describedby="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="fig02.png" class="img-fluid figure-img"></p>
+<p><a href="fig02.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="blocks"><img src="fig02.png" class="img-fluid figure-img"></a></p>
 <figcaption>blocks</figcaption>
 </figure>
 </div>
@@ -1007,7 +1039,7 @@ Figure&nbsp;2: LSTM limitations.<br>
 <div aria-describedby="fig-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="fig03.png" class="img-fluid figure-img"></p>
+<p><a href="fig03.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="blocks"><img src="fig03.png" class="img-fluid figure-img"></a></p>
 <figcaption>blocks</figcaption>
 </figure>
 </div>
@@ -1023,7 +1055,7 @@ Right: A residual mLSTM block with pre up-projection (like State Space models): 
 <div aria-describedby="fig-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="fig04.png" class="img-fluid figure-img"></p>
+<p><a href="fig04.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="blocks"><img src="fig04.png" class="img-fluid figure-img"></a></p>
 <figcaption>blocks</figcaption>
 </figure>
 </div>
@@ -1039,7 +1071,7 @@ Right: A residual mLSTM block with pre up-projection (like State Space models): 
 <div aria-describedby="fig-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="fig05.png" class="img-fluid figure-img"></p>
+<p><a href="fig05.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="blocks"><img src="fig05.png" class="img-fluid figure-img"></a></p>
 <figcaption>blocks</figcaption>
 </figure>
 </div>
@@ -1278,9 +1310,15 @@ Right: A residual mLSTM block with pre up-projection (like State Space models): 
 <section id="my-thoughts" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="my-thoughts">My Thoughts</h2>
 
-<div class="no-row-height column-margin column-container"><div id="vid-sigmoid" class="">
+<div class="no-row-height column-margin column-container"><div id="vid-sigmoid" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-vid figure">
+<div aria-describedby="vid-sigmoid-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/TPqr8t919YM" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-<p>Review of the sigmoid function</p>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-sigmoid-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Video&nbsp;3: Review of the sigmoid function
+</figcaption>
+</figure>
 </div></div><div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1313,24 +1351,36 @@ Research questions
 </div>
 </div>
 
-<div class="no-row-height column-margin column-container"><div id="sup-02" class="">
-<p><img src="sigmoid-limits.png" class="img-fluid"></p>
-<p>limits of the sigmoid function</p>
-</div><div id="sup-03" class="">
+<div class="no-row-height column-margin column-container"><div id="sup-02" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-sup figure">
+<div aria-describedby="sup-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="sigmoid-limits.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Supplementary Figure&nbsp;2: limits of the sigmoid function"><img src="sigmoid-limits.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-sup" id="sup-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Supplementary Figure&nbsp;2: limits of the sigmoid function
+</figcaption>
+</figure>
+</div><div id="sup-03" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-sup figure">
+<div aria-describedby="sup-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="sigmoid-values.png" class="img-fluid figure-img"></p>
+<p><a href="sigmoid-values.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="bias"><img src="sigmoid-values.png" class="img-fluid figure-img"></a></p>
 <figcaption>bias</figcaption>
 </figure>
 </div>
-<p>The inductive bias of the sigmoid decision function.</p>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-sup" id="sup-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Supplementary Figure&nbsp;3: The inductive bias of the sigmoid decision function.
+</figcaption>
+</figure>
 </div></div>
 <section id="binary-nature-of-non-exponential-gating-mechanisms" class="level3">
 <h3 class="anchored" data-anchor-id="binary-nature-of-non-exponential-gating-mechanisms">Binary nature of non exponential Gating Mechanisms</h3>
 <p>If we try to understand why are the gating mechanisms in the original LSTM is described here as binary?</p>
-<p>It helps to the properties of the sigmoid functions that are explained in <span class="citation" data-cites="vid-sigmoid">(<a href="#ref-vid-sigmoid" role="doc-biblioref"><strong>vid-sigmoid?</strong></a>)</span>.</p>
+<p>It helps to the properties of the sigmoid functions that are explained in <a href="#vid-sigmoid" class="quarto-xref">Video&nbsp;3</a>.</p>
 <ol type="1">
-<li><p><span class="citation" data-cites="sup-01">(<a href="#ref-sup-01" role="doc-biblioref"><strong>sup-01?</strong></a>)</span> shows that The sigmoid function has a domain of <span class="math inline">\mathbb{R}</span> and a range of <span class="math inline">(0,1)</span>. This means that the sigmoid function can only output values between 0 and 1.</p></li>
+<li><p><a href="#sup-01" class="quarto-xref">Supplementary Figure&nbsp;1</a> shows that The sigmoid function has a domain of <span class="math inline">\mathbb{R}</span> and a range of <span class="math inline">(0,1)</span>. This means that the sigmoid function can only output values between 0 and 1.</p></li>
 <li><p>It has a very sharp gradient around 0 if the bias is set to 0. This means that the sigmoid function acts as a binary function around 0.</p></li>
 <li><p>The Sigmoid function tends to saturate. Now sigmoid function around 0 isn’t quite quite binary but outside of (-6,+6) it becomes saturated and acts very much as a binary function.</p></li>
 <li><p>If we use it as a loss function or a decision function, the sigmoid function is used with a threshold of 0.5. This means that if the output of the sigmoid function is greater than 0.5, the decision is 1, and if it is less than 0.5, the decision is 0. That is how the sigmoid function can become binary.</p></li>
@@ -1347,7 +1397,7 @@ I see that that sigmoid functions can fall off the manifold of the data and this
 <h2 class="anchored" data-anchor-id="the-paper">The Paper</h2>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><embed src="./paper.pdf" class="col-page" data-group="slides" width="800" height="1000"></p>
+<p><a href="./paper.pdf" class="lightbox" data-gallery="slides" title="paper"><embed src="./paper.pdf" class="col-page" width="800" height="1000"></a></p>
 <figcaption>paper</figcaption>
 </figure>
 </div>
@@ -1376,12 +1426,14 @@ McLuhan, Marshall. 1988. <em>Understanding Media : The Extensions of Man</em>. N
 </div>
 </div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2025,
   author = {Bochman, Oren},
+  title = {xLSTM: {Extended} {Long} {Short-Term} {Memory}},
   date = {2025-02-03},
   url = {https://orenbochman.github.io/notes-nlp/reviews/paper/2025-02-03-xLSTM/},
   langid = {en}
 }
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2025" class="csl-entry quarto-appendix-citeas" role="listitem">
-Bochman, Oren. 2025. February 3, 2025. <a href="https://orenbochman.github.io/notes-nlp/reviews/paper/2025-02-03-xLSTM/">https://orenbochman.github.io/notes-nlp/reviews/paper/2025-02-03-xLSTM/</a>.
+Bochman, Oren. 2025. <span>“xLSTM: Extended Long Short-Term
+Memory.”</span> February 3, 2025. <a href="https://orenbochman.github.io/notes-nlp/reviews/paper/2025-02-03-xLSTM/">https://orenbochman.github.io/notes-nlp/reviews/paper/2025-02-03-xLSTM/</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -1965,6 +2017,38 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"fade","descPosition":"right","loop":true,"openEffect":"fade","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 
