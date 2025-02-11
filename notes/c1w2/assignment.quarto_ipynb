@@ -48,7 +48,7 @@
         "Load the cell below to import some packages.\n",
         "We  may want to browse the documentation of unfamiliar libraries and functions.\n"
       ],
-      "id": "92060849"
+      "id": "01c7eabd"
     },
     {
       "cell_type": "code",
@@ -64,7 +64,7 @@
         "from nltk.tokenize import TweetTokenizer\n",
         "from os import getcwd"
       ],
-      "id": "b71aaaea",
+      "id": "5496219a",
       "execution_count": null,
       "outputs": []
     },
@@ -80,7 +80,7 @@
         "nltk.download('twitter_samples')\n",
         "```\n"
       ],
-      "id": "37f85de2"
+      "id": "82fa2305"
     },
     {
       "cell_type": "code",
@@ -90,7 +90,7 @@
         "filePath = f\"{getcwd()}/../tmp2/\"\n",
         "nltk.data.path.append(filePath)"
       ],
-      "id": "fda18454",
+      "id": "9301f2fe",
       "execution_count": null,
       "outputs": []
     },
@@ -115,7 +115,7 @@
         "train_y = np.append(np.ones(len(train_pos)), np.zeros(len(train_neg)))\n",
         "test_y = np.append(np.ones(len(test_pos)), np.zeros(len(test_neg)))"
       ],
-      "id": "d07e3fce",
+      "id": "23d919cd",
       "execution_count": null,
       "outputs": []
     },
@@ -133,7 +133,7 @@
         "\n",
         "We have given we the function `process_tweet()` that does this for you.\n"
       ],
-      "id": "7049c7ac"
+      "id": "523de373"
     },
     {
       "cell_type": "code",
@@ -144,7 +144,7 @@
         "# print cleaned tweet\n",
         "print(process_tweet(custom_tweet))"
       ],
-      "id": "fa902bb1",
+      "id": "a3360943",
       "execution_count": null,
       "outputs": []
     },
@@ -189,7 +189,7 @@
         "</p>\n",
         "</details>\n"
       ],
-      "id": "d88d6c40"
+      "id": "a63d07ed"
     },
     {
       "cell_type": "code",
@@ -223,7 +223,7 @@
         "\n",
         "    return result"
       ],
-      "id": "f7652610",
+      "id": "57b1355e",
       "execution_count": null,
       "outputs": []
     },
@@ -239,7 +239,7 @@
         "ys = [1, 0, 0, 0, 0]\n",
         "count_tweets(result, tweets, ys)"
       ],
-      "id": "90f99b6c",
+      "id": "69e13813",
       "execution_count": null,
       "outputs": []
     },
@@ -305,7 +305,7 @@
         "\n",
         "We will use this dictionary in several parts of this assignment.\n"
       ],
-      "id": "8bb33664"
+      "id": "a84c6719"
     },
     {
       "cell_type": "code",
@@ -315,7 +315,7 @@
         "\n",
         "freqs = count_tweets({}, train_x, train_y)"
       ],
-      "id": "6d034cb5",
+      "id": "7476761d",
       "execution_count": null,
       "outputs": []
     },
@@ -353,7 +353,7 @@
         "\n",
         "- We can then compute the loglikelihood: $log \\left( \\frac{P(W_{pos})}{P(W_{neg})} \\right)\\tag{6}$.\n"
       ],
-      "id": "e9f8f4e1"
+      "id": "cebe316f"
     },
     {
       "cell_type": "code",
@@ -423,7 +423,7 @@
         "\n",
         "    return logprior, loglikelihood"
       ],
-      "id": "5e0cb745",
+      "id": "68dd556d",
       "execution_count": null,
       "outputs": []
     },
@@ -437,7 +437,7 @@
         "print(logprior)\n",
         "print(len(loglikelihood))"
       ],
-      "id": "cce10b70",
+      "id": "823ea9bb",
       "execution_count": null,
       "outputs": []
     },
@@ -470,7 +470,7 @@
         "\n",
         "The value of 0.0 means that when we add the logprior to the log likelihood, we're just adding zero to the log likelihood.  However, please remember to include the logprior, because whenever the data is not perfectly balanced, the logprior will be a non-zero value.\n"
       ],
-      "id": "71f83d2d"
+      "id": "3ecbe83d"
     },
     {
       "cell_type": "code",
@@ -508,7 +508,7 @@
         "\n",
         "    return p"
       ],
-      "id": "8c418de5",
+      "id": "6b86c4d3",
       "execution_count": null,
       "outputs": []
     },
@@ -524,7 +524,7 @@
         "p = naive_bayes_predict(my_tweet, logprior, loglikelihood)\n",
         "print('The expected output is', p)"
       ],
-      "id": "5288b366",
+      "id": "799782fd",
       "execution_count": null,
       "outputs": []
     },
@@ -543,7 +543,7 @@
         "* It returns the accuracy of your model.\n",
         "* First, use `naive_bayes_predict` function to make predictions for each tweet in text_x.\n"
       ],
-      "id": "fdd6dd65"
+      "id": "d8fc13e8"
     },
     {
       "cell_type": "code",
@@ -586,7 +586,7 @@
         "\n",
         "    return accuracy"
       ],
-      "id": "6b8bc2a5",
+      "id": "1c64c98c",
       "execution_count": null,
       "outputs": []
     },
@@ -597,7 +597,7 @@
         "print(\"Naive Bayes accuracy = %0.4f\" %\n",
         "      (test_naive_bayes(test_x, test_y, logprior, loglikelihood)))"
       ],
-      "id": "03fffbda",
+      "id": "94f6171c",
       "execution_count": null,
       "outputs": []
     },
@@ -609,7 +609,7 @@
         "\n",
         "0.9940\n"
       ],
-      "id": "a189778b"
+      "id": "e89f00d9"
     },
     {
       "cell_type": "code",
@@ -625,7 +625,7 @@
         "#     print(f'{tweet} -> {p:.2f} ({p_category})')\n",
         "    print(f'{tweet} -> {p:.2f}')"
       ],
-      "id": "8c5d4c74",
+      "id": "0acb657e",
       "execution_count": null,
       "outputs": []
     },
@@ -642,7 +642,7 @@
         "- great great great -> 6.41\n",
         "- great great great great -> 8.55\n"
       ],
-      "id": "3e74875a"
+      "id": "9e98cd0c"
     },
     {
       "cell_type": "code",
@@ -652,7 +652,7 @@
         "my_tweet = 'we are bad :('\n",
         "naive_bayes_predict(my_tweet, logprior, loglikelihood)"
       ],
-      "id": "738c488f",
+      "id": "d9d04181",
       "execution_count": null,
       "outputs": []
     },
@@ -735,7 +735,7 @@
         "  </tr>\n",
         "</table>\n"
       ],
-      "id": "902485fd"
+      "id": "e26843cd"
     },
     {
       "cell_type": "code",
@@ -764,7 +764,7 @@
         "    ### END CODE HERE ###\n",
         "    return pos_neg_ratio"
       ],
-      "id": "76c56a57",
+      "id": "14838497",
       "execution_count": null,
       "outputs": []
     },
@@ -774,7 +774,7 @@
       "source": [
         "get_ratio(freqs, 'happi')"
       ],
-      "id": "b20b32e1",
+      "id": "81064290",
       "execution_count": null,
       "outputs": []
     },
@@ -795,7 +795,7 @@
         "}\n",
         "```\n"
       ],
-      "id": "52f185c6"
+      "id": "8f6bc512"
     },
     {
       "cell_type": "code",
@@ -841,7 +841,7 @@
         "    ### END CODE HERE ###\n",
         "    return word_list"
       ],
-      "id": "b00ff2f7",
+      "id": "13507984",
       "execution_count": null,
       "outputs": []
     },
@@ -852,7 +852,7 @@
         "# Test your function: find negative words at or below a threshold\n",
         "get_words_by_threshold(freqs, label=0, threshold=0.05)"
       ],
-      "id": "c3760fb2",
+      "id": "b8240042",
       "execution_count": null,
       "outputs": []
     },
@@ -863,7 +863,7 @@
         "# Test your function; find positive words at or above a threshold\n",
         "get_words_by_threshold(freqs, label=1, threshold=10)"
       ],
-      "id": "082952b6",
+      "id": "c829dcf9",
       "execution_count": null,
       "outputs": []
     },
@@ -877,7 +877,7 @@
         "\n",
         "In this part we will see some tweets that your model missclassified. Why do we think the misclassifications happened? Were there any assumptions made by the naive bayes model?\n"
       ],
-      "id": "3fdbefd8"
+      "id": "09c800f9"
     },
     {
       "cell_type": "code",
@@ -891,7 +891,7 @@
         "        print('%d\\t%0.2f\\t%s' % (y, np.sign(y_hat) > 0, ' '.join(\n",
         "            process_tweet(x)).encode('ascii', 'ignore')))"
       ],
-      "id": "ac594ccd",
+      "id": "472e4f67",
       "execution_count": null,
       "outputs": []
     },
@@ -903,7 +903,7 @@
         "\n",
         "In this part we can predict the sentiment of your own tweet.\n"
       ],
-      "id": "33ba6f1a"
+      "id": "f5a895ba"
     },
     {
       "cell_type": "code",
@@ -915,7 +915,7 @@
         "p = naive_bayes_predict(my_tweet, logprior, loglikelihood)\n",
         "print(p)"
       ],
-      "id": "3ec22536",
+      "id": "459f4fcf",
       "execution_count": null,
       "outputs": []
     },
@@ -925,7 +925,7 @@
       "source": [
         "Congratulations on completing this assignment. See we next week!\n"
       ],
-      "id": "d29bd2be"
+      "id": "1bd56f44"
     }
   ],
   "metadata": {

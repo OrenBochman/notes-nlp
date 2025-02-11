@@ -61,7 +61,7 @@
         "\n",
         "Run the code cells below to import the necessary libraries and to define some functions which will be useful for decoding. The code and the functions are the same as the ones you previsouly ran on the graded assignment.\n"
       ],
-      "id": "0c1a69d7"
+      "id": "317a933b"
     },
     {
       "cell_type": "code",
@@ -76,7 +76,7 @@
         "\n",
         "wrapper = textwrap.TextWrapper(width=70)"
       ],
-      "id": "9d3dc958",
+      "id": "a89095c1",
       "execution_count": null,
       "outputs": []
     },
@@ -133,7 +133,7 @@
         "    # We need to decode and then prettyfy it.\n",
         "    return pretty_decode(detokenize(encoded_str_list))"
       ],
-      "id": "cef8e4bf",
+      "id": "45b1a569",
       "execution_count": null,
       "outputs": []
     },
@@ -159,7 +159,7 @@
         "\n",
         "The squad pre-processing function takes in the dataset and processes it using the sentencePiece vocabulary you have seen above. It generates the features from the vocab and encodes the string features. It takes on question, context, and answer, and returns \"question: Q context: C\" as input and \"A\" as target.\n"
       ],
-      "id": "974a5b1a"
+      "id": "eb5de2b4"
     },
     {
       "cell_type": "code",
@@ -172,7 +172,7 @@
         "def squad_preprocess_fn(dataset, mode='train'):\n",
         "    return t5.data.preprocessors.squad(dataset)"
       ],
-      "id": "89df0ae7",
+      "id": "2d7921b7",
       "execution_count": null,
       "outputs": []
     },
@@ -192,7 +192,7 @@
         "train_generator = train_generator_fn()\n",
         "next(train_generator)"
       ],
-      "id": "aa599653",
+      "id": "105c0558",
       "execution_count": null,
       "outputs": []
     },
@@ -211,7 +211,7 @@
         "print()\n",
         "print('target:', out.decode('utf8'))"
       ],
-      "id": "624f1bcb",
+      "id": "8e50b057",
       "execution_count": null,
       "outputs": []
     },
@@ -223,7 +223,7 @@
         "\n",
         "You will now use an existing model that we trained for you. You will initialize, then load in your model, and then try with your own input. \n"
       ],
-      "id": "79023f2c"
+      "id": "1d4b76e5"
     },
     {
       "cell_type": "code",
@@ -241,7 +241,7 @@
         "    n_decoder_layers = 24,\n",
         "    mode='predict')  # Change to 'eval' for slow decoding."
       ],
-      "id": "dd014312",
+      "id": "94bce66e",
       "execution_count": null,
       "outputs": []
     },
@@ -255,7 +255,7 @@
         "model.init_from_file('model_squad.pkl.gz',\n",
         "                     weights_only=True, input_signature=(shape11, shape11))"
       ],
-      "id": "2e1510bc",
+      "id": "cf6ee07a",
       "execution_count": null,
       "outputs": []
     },
@@ -273,7 +273,7 @@
         "# an extensive example\n",
         "inputs = 'question: What are some of the colours of a rose? context: A rose is a woody perennial flowering plant of the genus Rosa, in the family Rosaceae, or the flower it bears.There are over three hundred species and tens of thousands of cultivars. They form a group of plants that can be erect shrubs, climbing, or trailing, with stems that are often armed with sharp prickles. Flowers vary in size and shape and are usually large and showy, in colours ranging from white through yellows and reds. Most species are native to Asia, with smaller numbers native to Europe, North America, and northwestern Africa. Species, cultivars and hybrids are all widely grown for their beauty and often are fragrant.'"
       ],
-      "id": "85a5afce",
+      "id": "149ae919",
       "execution_count": null,
       "outputs": []
     },
@@ -285,7 +285,7 @@
         "print(tokenize(inputs))\n",
         "test_inputs = tokenize(inputs) "
       ],
-      "id": "0e17800e",
+      "id": "6ff0b226",
       "execution_count": null,
       "outputs": []
     },
@@ -297,7 +297,7 @@
         "\n",
         "### Note: This will take some time to run\n"
       ],
-      "id": "6a6b2050"
+      "id": "024c3609"
     },
     {
       "cell_type": "code",
@@ -314,7 +314,7 @@
         "                                        temperature=0.0, max_length=5) # originally max_length=10\n",
         "print(wrapper.fill(pretty_decode(output[0])))"
       ],
-      "id": "046b84b3",
+      "id": "c695d217",
       "execution_count": null,
       "outputs": []
     },
@@ -324,7 +324,7 @@
       "source": [
         "You should also be aware that the quality of the decoding is not very good because max_length was downsized from 10 to 5 so that this runs faster within this environment. The colab version uses the original max_length so check that one for the actual decoding.\n"
       ],
-      "id": "3151c625"
+      "id": "2ced6d90"
     }
   ],
   "metadata": {

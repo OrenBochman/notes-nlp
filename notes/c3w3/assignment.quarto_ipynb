@@ -76,7 +76,7 @@
         "\n",
         "Everything else that is labeled with an `O` is not considered to be a named entity. In this assignment, you will train a named entity recognition system that could be trained in a few seconds (on a GPU) and will get around 75% accuracy. Then, you will load in the exact version of your model, which was trained for a longer period of time. You could then evaluate the trained version of your model to get 96% accuracy! Finally, you will be able to test your named entity recognition system with your own sentence.\n"
       ],
-      "id": "bc6a7a70"
+      "id": "d80c3b06"
     },
     {
       "cell_type": "code",
@@ -104,7 +104,7 @@
         "# set random seeds to make this notebook easier to replicate\n",
         "trax.supervised.trainer_lib.init_random_number_generators(33)"
       ],
-      "id": "01e1d7b5",
+      "id": "73c9ca16",
       "execution_count": null,
       "outputs": []
     },
@@ -127,7 +127,7 @@
         "* nat: natural phenomenon\n",
         "* O: filler word\n"
       ],
-      "id": "c7288db4"
+      "id": "03cba72f"
     },
     {
       "cell_type": "code",
@@ -149,7 +149,7 @@
         "print('ORIGINAL DATA:\\n', data.head(5))\n",
         "del(data, train_sents, train_labels)"
       ],
-      "id": "fe9493f9",
+      "id": "20fb6553",
       "execution_count": null,
       "outputs": []
     },
@@ -163,7 +163,7 @@
         "\n",
         "In this part, we will import the preprocessed data and explore it.\n"
       ],
-      "id": "5db5f02e"
+      "id": "64218cd1"
     },
     {
       "cell_type": "code",
@@ -178,7 +178,7 @@
         "v_sentences, v_labels, v_size = get_params(vocab, tag_map, 'data/large/val/sentences.txt', 'data/large/val/labels.txt')\n",
         "test_sentences, test_labels, test_size = get_params(vocab, tag_map, 'data/large/test/sentences.txt', 'data/large/test/labels.txt')"
       ],
-      "id": "ab61089f",
+      "id": "8204b100",
       "execution_count": null,
       "outputs": []
     },
@@ -190,7 +190,7 @@
         "\n",
         "When training an LSTM using batches, all your input sentences must be the same size. To accomplish this, you set the length of your sentences to a certain number and add the generic `<PAD>` token to fill all the empty spaces. \n"
       ],
-      "id": "3f41d4dc"
+      "id": "8c1737fb"
     },
     {
       "cell_type": "code",
@@ -208,7 +208,7 @@
         "# Pad token\n",
         "print('padded token:', vocab['<PAD>'])"
       ],
-      "id": "e4a77839",
+      "id": "0b59751e",
       "execution_count": null,
       "outputs": []
     },
@@ -220,7 +220,7 @@
         "* I: Token is inside an entity.\n",
         "* B: Token begins an entity.\n"
       ],
-      "id": "63888285"
+      "id": "0e96ce0d"
     },
     {
       "cell_type": "code",
@@ -235,7 +235,7 @@
       "source": [
         "print(tag_map)"
       ],
-      "id": "b295c89f",
+      "id": "f60f3837",
       "execution_count": null,
       "outputs": []
     },
@@ -274,7 +274,7 @@
         "\n",
         "then your tags would change to show first \"Sharon\" as B-per, and \"Floyd\" as I-per, where I- indicates an inner token in a multi-token sequence.\n"
       ],
-      "id": "5106fabe"
+      "id": "3658edac"
     },
     {
       "cell_type": "code",
@@ -298,7 +298,7 @@
         "print('An example of the first sentence is', t_sentences[0])\n",
         "print('An example of its corresponding label is', t_labels[0])"
       ],
-      "id": "17ee9bed",
+      "id": "9cb4aa57",
       "execution_count": null,
       "outputs": []
     },
@@ -346,7 +346,7 @@
         "\n",
         "3. The third also relates to wrapping. Because `batch_size` and the length of the input lists are not aligned, gathering a batch_size group of inputs may involve wrapping back to the beginning of the input loop. In our approach, it is just enough to reset the `index` to 0. We can re-shuffle the list of indexes to produce different batches each time.\n"
       ],
-      "id": "8612003c"
+      "id": "bd24f39d"
     },
     {
       "cell_type": "code",
@@ -445,7 +445,7 @@
         "        if verbose: print(\"index=\", index)\n",
         "        yield((X,Y))"
       ],
-      "id": "10d8df13",
+      "id": "9cb3513b",
       "execution_count": null,
       "outputs": []
     },
@@ -469,7 +469,7 @@
         "print(Y1.shape, X1.shape, Y2.shape, X2.shape)\n",
         "print(X1[0][:], \"\\n\", Y1[0][:])"
       ],
-      "id": "10ab327a",
+      "id": "0af94efd",
       "execution_count": null,
       "outputs": []
     },
@@ -559,7 +559,7 @@
         "\n",
         "- [tl.LogSoftmax](https://trax-ml.readthedocs.io/en/latest/trax.layers.html#trax.layers.core.LogSoftmax)    \n"
       ],
-      "id": "5dc69c04"
+      "id": "64bc2812"
     },
     {
       "cell_type": "code",
@@ -589,7 +589,7 @@
         "      ### END CODE HERE ###\n",
         "    return model"
       ],
-      "id": "fc1382d6",
+      "id": "189a3509",
       "execution_count": null,
       "outputs": []
     },
@@ -609,7 +609,7 @@
         "# display your model\n",
         "print(model)"
       ],
-      "id": "37976418",
+      "id": "fa83f2a7",
       "execution_count": null,
       "outputs": []
     },
@@ -635,7 +635,7 @@
         "\n",
         "Before you start, you need to create the data generators for training and validation data. It is important that you mask padding in the loss weights of your data, which can be done using the `id_to_mask` argument of `trax.supervised.inputs.add_loss_weights`.\n"
       ],
-      "id": "56698291"
+      "id": "26bf42df"
     },
     {
       "cell_type": "code",
@@ -661,7 +661,7 @@
         "    data_generator(batch_size, v_sentences, v_labels, vocab['<PAD>'], True),\n",
         "    id_to_mask=vocab['<PAD>'])"
       ],
-      "id": "bb12ab46",
+      "id": "aaa1f243",
       "execution_count": null,
       "outputs": []
     },
@@ -695,7 +695,7 @@
         "\n",
         "You'll be using a [cross entropy loss](https://trax-ml.readthedocs.io/en/latest/trax.layers.html#trax.layers.metrics.CrossEntropyLoss), with an [Adam optimizer](https://trax-ml.readthedocs.io/en/latest/trax.optimizers.html#trax.optimizers.adam.Adam). Please read the [trax](https://trax-ml.readthedocs.io/en/latest/trax.html) documentation to get a full understanding. The [trax GitHub](https://github.com/google/trax) also contains some useful information and a link to a colab notebook.\n"
       ],
-      "id": "3efbde83"
+      "id": "c68e1191"
     },
     {
       "cell_type": "code",
@@ -742,7 +742,7 @@
         "    ### END CODE HERE ###\n",
         "    return training_loop"
       ],
-      "id": "521b114f",
+      "id": "3fd43de5",
       "execution_count": null,
       "outputs": []
     },
@@ -752,7 +752,7 @@
       "source": [
         "On your local machine, you can run this training for 1000 train_steps and get your own model. This training takes about 5 to 10 minutes to run.\n"
       ],
-      "id": "fbfa9de0"
+      "id": "45c8a2e3"
     },
     {
       "cell_type": "code",
@@ -770,7 +770,7 @@
         "# Train the model\n",
         "training_loop = train_model(NER(), train_generator, eval_generator, train_steps)"
       ],
-      "id": "9bf42299",
+      "id": "39a89a0c",
       "execution_count": null,
       "outputs": []
     },
@@ -794,7 +794,7 @@
         "\n",
         "We have trained the model longer, and we give you such a trained model. In that way, we ensure you can continue with the rest of the assignment even if you had some troubles up to here, and also we are sure that everybody will get the same outputs for the last example. However, you are free to try your model, as well. \n"
       ],
-      "id": "484ccc01"
+      "id": "903c90c9"
     },
     {
       "cell_type": "code",
@@ -811,7 +811,7 @@
         "# Load the pretrained model\n",
         "model.init_from_file('model.pkl.gz', weights_only=True)"
       ],
-      "id": "05199ba1",
+      "id": "39fb2aa9",
       "execution_count": null,
       "outputs": []
     },
@@ -844,7 +844,7 @@
         "* *Step 4*: Compute the accuracy metric by comparing your outputs against your test labels. Take the sum of that and divide by the total number of **unpadded** tokens. Use your mask value to mask the padded tokens. Return the accuracy. \n",
         "</details>\n"
       ],
-      "id": "9b267f82"
+      "id": "38400fdf"
     },
     {
       "cell_type": "code",
@@ -861,7 +861,7 @@
         "a = np.array([1, 2, 3, 4])\n",
         "a == 2"
       ],
-      "id": "7f973b3a",
+      "id": "93596414",
       "execution_count": null,
       "outputs": []
     },
@@ -880,7 +880,7 @@
         "x, y = next(data_generator(len(test_sentences), test_sentences, test_labels, vocab['<PAD>']))\n",
         "print(\"input shapes\", x.shape, y.shape)"
       ],
-      "id": "6ce05b41",
+      "id": "ca6a6cce",
       "execution_count": null,
       "outputs": []
     },
@@ -899,7 +899,7 @@
         "print(type(tmp_pred))\n",
         "print(f\"tmp_pred has shape: {tmp_pred.shape}\")"
       ],
-      "id": "cf103575",
+      "id": "c10e6fd3",
       "execution_count": null,
       "outputs": []
     },
@@ -912,7 +912,7 @@
         "- the number of words in each example (padded to be as long as the longest sentence in the batch)\n",
         "- the number of possible targets (the 17 named entity tags).\n"
       ],
-      "id": "06e3202f"
+      "id": "25e17921"
     },
     {
       "cell_type": "code",
@@ -946,7 +946,7 @@
         "    ### END CODE HERE ###\n",
         "    return accuracy"
       ],
-      "id": "33faf8cb",
+      "id": "d7bb82a2",
       "execution_count": null,
       "outputs": []
     },
@@ -964,7 +964,7 @@
         "accuracy = evaluate_prediction(model(x), y, vocab['<PAD>'])\n",
         "print(\"accuracy: \", accuracy)"
       ],
-      "id": "06f129dd",
+      "id": "5e379241",
       "execution_count": null,
       "outputs": []
     },
@@ -985,7 +985,7 @@
         "\n",
         "Below, you can test it out with your own sentence! \n"
       ],
-      "id": "ba08cc1f"
+      "id": "42e44c25"
     },
     {
       "cell_type": "code",
@@ -1011,7 +1011,7 @@
         "        pred.append(pred_label)\n",
         "    return pred"
       ],
-      "id": "112c7b63",
+      "id": "d8f5d990",
       "execution_count": null,
       "outputs": []
     },
@@ -1038,7 +1038,7 @@
         "    if y != 'O':\n",
         "        print(x,y)"
       ],
-      "id": "01aa347f",
+      "id": "53706519",
       "execution_count": null,
       "outputs": []
     },
@@ -1061,7 +1061,7 @@
         "fall, B-tim\n",
         "```\n"
       ],
-      "id": "8c81d020"
+      "id": "fe887445"
     }
   ],
   "metadata": {

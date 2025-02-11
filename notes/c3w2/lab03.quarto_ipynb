@@ -29,7 +29,7 @@
         "- Be able to define the `scan` function to perform forward propagation for RNNs\n",
         "- Understand how forward propagation is implemented for RNNs.\n"
       ],
-      "id": "a805a9ef"
+      "id": "d62fa613"
     },
     {
       "cell_type": "code",
@@ -39,7 +39,7 @@
         "from numpy import random\n",
         "from time import perf_counter"
       ],
-      "id": "f63b9f14",
+      "id": "05c85c8f",
       "execution_count": null,
       "outputs": []
     },
@@ -49,7 +49,7 @@
       "source": [
         "An implementation of the `sigmoid` function is provided below so you can use it in this notebook.\n"
       ],
-      "id": "63004e91"
+      "id": "3ad56867"
     },
     {
       "cell_type": "code",
@@ -58,7 +58,7 @@
         "def sigmoid(x): # Sigmoid function\n",
         "    return 1.0 / (1.0 + np.exp(-x))"
       ],
-      "id": "b4efa5d7",
+      "id": "d39cbfee",
       "execution_count": null,
       "outputs": []
     },
@@ -75,7 +75,7 @@
         "\n",
         "The weights `w_` and biases `b_` are initialized with dimensions (`h_dim`, `emb + h_dim`) and (`h_dim`, 1). We expect the hidden state `h_t` to be a column vector with size (`h_dim`,1) and the initial hidden state `h_0` is a vector of zeros.\n"
       ],
-      "id": "b651e641"
+      "id": "d011aa98"
     },
     {
       "cell_type": "code",
@@ -96,7 +96,7 @@
         "X = random.standard_normal((T, emb, 1))\n",
         "weights = [w1, w2, w3, b1, b2, b3]"
       ],
-      "id": "597d1424",
+      "id": "890c6e15",
       "execution_count": null,
       "outputs": []
     },
@@ -124,7 +124,7 @@
         "\n",
         "where $[h^{<t-1>},x^{<t>}]$ means that $h^{<t-1>}$ and $x^{<t>}$ are concatenated together. In the next cell we provide the implementation of the forward method for a vanilla RNN. \n"
       ],
-      "id": "a4a92520"
+      "id": "347176a3"
     },
     {
       "cell_type": "code",
@@ -142,7 +142,7 @@
         "\n",
         "    return h_t, h_t"
       ],
-      "id": "0e5e61f7",
+      "id": "3a7b58bb",
       "execution_count": null,
       "outputs": []
     },
@@ -178,7 +178,7 @@
         "\n",
         "In the next cell, please implement the forward method for a GRU cell by computing the update `u` and relevance `r` gates, and the candidate hidden state `c`. \n"
       ],
-      "id": "b36404be"
+      "id": "d80c86eb"
     },
     {
       "cell_type": "code",
@@ -212,7 +212,7 @@
         "    h_t = u* c + (1 - u)* h_t\n",
         "    return h_t, h_t"
       ],
-      "id": "55944c98",
+      "id": "e57c3d25",
       "execution_count": null,
       "outputs": []
     },
@@ -222,7 +222,7 @@
       "source": [
         "Run the following cell to check your implementation.\n"
       ],
-      "id": "78230584"
+      "id": "844ef10e"
     },
     {
       "cell_type": "code",
@@ -230,7 +230,7 @@
       "source": [
         "forward_GRU([X[1],h_0], weights)[0]"
       ],
-      "id": "c292358d",
+      "id": "9217e27b",
       "execution_count": null,
       "outputs": []
     },
@@ -269,7 +269,7 @@
         "\n",
         "`scan` goes through all the elements `x` in `elems`, calls the function `fn` with arguments ([`x`, `h_t`],`weights`), stores the computed hidden state `h_t` and appends the result to a list `ys`. Complete the following cell by calling `fn` with arguments ([`x`, `h_t`],`weights`).\n"
       ],
-      "id": "eef475ab"
+      "id": "1b16ba92"
     },
     {
       "cell_type": "code",
@@ -285,7 +285,7 @@
         "        ys.append(y)\n",
         "    return ys, h_t"
       ],
-      "id": "8dd0f159",
+      "id": "7d428e78",
       "execution_count": null,
       "outputs": []
     },
@@ -297,7 +297,7 @@
         "\n",
         "You have already seen how forward propagation is computed for vanilla RNNs and GRUs. As a quick recap, you need to have a forward method for the recurrent cell and a function like `scan` to go through all the elements from a sequence using a forward method. You saw that GRUs performed more computations than vanilla RNNs, and you can check that they have 3 times more parameters. In the next two cells, we compute forward propagation for a sequence with 256 time steps (`T`) for an RNN and a GRU with the same hidden state `h_t` size (`h_dim`=16).  \n"
       ],
-      "id": "388d04a3"
+      "id": "2e326198"
     },
     {
       "cell_type": "code",
@@ -310,7 +310,7 @@
         "RNN_time=(toc-tic)*1000\n",
         "print (f\"It took {RNN_time:.2f}ms to run the forward method for the vanilla RNN.\")"
       ],
-      "id": "b15f2c5b",
+      "id": "c4d753e2",
       "execution_count": null,
       "outputs": []
     },
@@ -325,7 +325,7 @@
         "GRU_time=(toc-tic)*1000\n",
         "print (f\"It took {GRU_time:.2f}ms to run the forward method for the GRU.\")"
       ],
-      "id": "4ee567cc",
+      "id": "7322cd58",
       "execution_count": null,
       "outputs": []
     },
@@ -337,7 +337,7 @@
         "\n",
         "<b>Congratulations!</b> Now you know how the forward method is implemented for vanilla RNNs and GRUs, and you know how the scan function provides an abstraction for forward propagation in RNNs. \n"
       ],
-      "id": "35c3b82f"
+      "id": "674ecc4b"
     }
   ],
   "metadata": {

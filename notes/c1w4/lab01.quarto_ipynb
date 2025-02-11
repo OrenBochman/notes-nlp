@@ -43,7 +43,7 @@
         "\n",
         "In the following cells, we will define a NumPy matrix and a NumPy array. Soon we will explain how this is related to matrix rotation.\n"
       ],
-      "id": "66bd8730"
+      "id": "d20c4062"
     },
     {
       "cell_type": "code",
@@ -53,7 +53,7 @@
         "import matplotlib.pyplot as plt        # Import matplotlib for charts\n",
         "from utils_nb import plot_vectors      # Function to plot vectors (arrows)"
       ],
-      "id": "74984457",
+      "id": "5ad27ea1",
       "execution_count": null,
       "outputs": []
     },
@@ -63,7 +63,7 @@
       "source": [
         "### Example 1\n"
       ],
-      "id": "f3e4fdcd"
+      "id": "80abab0e"
     },
     {
       "cell_type": "code",
@@ -73,7 +73,7 @@
         "R = np.array([[2, 0],\n",
         "              [0, -2]])"
       ],
-      "id": "9508e465",
+      "id": "7f329fbc",
       "execution_count": null,
       "outputs": []
     },
@@ -83,7 +83,7 @@
       "source": [
         "x = np.array([[1, 1]]) # Create a 1 x 2 matrix"
       ],
-      "id": "7e5c45bb",
+      "id": "658031e1",
       "execution_count": null,
       "outputs": []
     },
@@ -95,7 +95,7 @@
         "\n",
         "Remember that our recommended way to get the dot product in Python is np.dot(a, b):\n"
       ],
-      "id": "fdb99613"
+      "id": "6da0ca6b"
     },
     {
       "cell_type": "code",
@@ -104,7 +104,7 @@
         "y = np.dot(x, R) # Apply the dot product between x and R\n",
         "y"
       ],
-      "id": "e942d64f",
+      "id": "9011b5f5",
       "execution_count": null,
       "outputs": []
     },
@@ -116,7 +116,7 @@
         "\n",
         "Now we can plot the vector $\\vec x = [1, 1]$ in a cartesian plane. The cartesian plane will be centered at `[0,0]` and its x and y limits will be between `[-4, +4]`\n"
       ],
-      "id": "45dba074"
+      "id": "82ec4f06"
     },
     {
       "cell_type": "code",
@@ -124,7 +124,7 @@
       "source": [
         "plot_vectors([x], axes=[4, 4], fname='transform_x.svg')"
       ],
-      "id": "8ae08607",
+      "id": "1914c042",
       "execution_count": null,
       "outputs": []
     },
@@ -138,7 +138,7 @@
         "\n",
         "$$y = x \\cdot Ro = [[-2, 2]]$$\n"
       ],
-      "id": "5e32b384"
+      "id": "f547f8c2"
     },
     {
       "cell_type": "code",
@@ -146,7 +146,7 @@
       "source": [
         "plot_vectors([x, y], axes=[4, 4], fname='transformx_and_y.svg')"
       ],
-      "id": "12c8b173",
+      "id": "eef804fb",
       "execution_count": null,
       "outputs": []
     },
@@ -166,7 +166,7 @@
         "\n",
         "The trigonometric functions in Numpy require the angle in radians, not in degrees. In the next cell, we define a rotation matrix that rotates vectors by $45^o$.\n"
       ],
-      "id": "7d154d59"
+      "id": "e4ec23e9"
     },
     {
       "cell_type": "code",
@@ -189,7 +189,7 @@
         "print('\\n y2 norm', np.linalg.norm(y2))\n",
         "print('\\n Rotation matrix norm', np.linalg.norm(Ro))"
       ],
-      "id": "02d0bc54",
+      "id": "d43c6249",
       "execution_count": null,
       "outputs": []
     },
@@ -199,7 +199,7 @@
       "source": [
         "plot_vectors([x2, y2], fname='transform_02.svg')"
       ],
-      "id": "efc51963",
+      "id": "c12c34e2",
       "execution_count": null,
       "outputs": []
     },
@@ -222,7 +222,7 @@
         "\n",
         "$$\\|\\mathrm{A}\\|_{F} \\equiv \\sqrt{\\sum_{i=1}^{m} \\sum_{j=1}^{n}\\left|a_{i j}\\right|^{2}}$$\n"
       ],
-      "id": "b9fe5fb4"
+      "id": "f21c1ab3"
     },
     {
       "cell_type": "code",
@@ -231,7 +231,7 @@
         "A = np.array([[2, 2],\n",
         "              [2, 2]])"
       ],
-      "id": "34633c11",
+      "id": "fd4dffd4",
       "execution_count": null,
       "outputs": []
     },
@@ -241,7 +241,7 @@
       "source": [
         "`np.square()` is a way to square each element of a matrix. It must be equivalent to use the * operator in Numpy arrays.\n"
       ],
-      "id": "7914bd0e"
+      "id": "59eae811"
     },
     {
       "cell_type": "code",
@@ -250,7 +250,7 @@
         "A_squared = np.square(A)\n",
         "A_squared"
       ],
-      "id": "15a8e388",
+      "id": "bc00a1cd",
       "execution_count": null,
       "outputs": []
     },
@@ -260,7 +260,7 @@
       "source": [
         "Now we can sum over the elements of the resulting array, and then get the square root of the sum.\n"
       ],
-      "id": "e412bf39"
+      "id": "77dd9b65"
     },
     {
       "cell_type": "code",
@@ -269,7 +269,7 @@
         "A_Frobenius = np.sqrt(np.sum(A_squared))\n",
         "A_Frobenius"
       ],
-      "id": "6ab1b49a",
+      "id": "bd6a4b21",
       "execution_count": null,
       "outputs": []
     },
@@ -279,7 +279,7 @@
       "source": [
         "That was the extended version of the `np.linalg.norm()` function. We can check that it yields the same result.\n"
       ],
-      "id": "024c4682"
+      "id": "b8f9e54b"
     },
     {
       "cell_type": "code",
@@ -288,7 +288,7 @@
         "print('Frobenius norm of the Rotation matrix')\n",
         "print(np.sqrt(np.sum(Ro * Ro)), '== ', np.linalg.norm(Ro))"
       ],
-      "id": "0d1613d6",
+      "id": "151d54f2",
       "execution_count": null,
       "outputs": []
     },
@@ -298,7 +298,7 @@
       "source": [
         "**Congratulations!! We've covered a few more matrix operations in this lab. This will come in handy in this week's programming assignment!**\n"
       ],
-      "id": "16596d75"
+      "id": "d66efff0"
     }
   ],
   "metadata": {

@@ -83,7 +83,7 @@
         "\n",
         "As you can tell, this model is slightly different than the ones you have already implemented. This is heavily based on attention and does not rely on sequences, which allows for parallel computing. \n"
       ],
-      "id": "903b0f11"
+      "id": "5334b792"
     },
     {
       "cell_type": "code",
@@ -110,7 +110,7 @@
         "# to print the entire np array\n",
         "np.set_printoptions(threshold=sys.maxsize)"
       ],
-      "id": "516e718d",
+      "id": "15e3d834",
       "execution_count": null,
       "outputs": []
     },
@@ -123,7 +123,7 @@
         "\n",
         "Trax makes it easy to work with Tensorflow's datasets:\n"
       ],
-      "id": "671637e9"
+      "id": "d8332d0a"
     },
     {
       "cell_type": "code",
@@ -148,7 +148,7 @@
         "                                keys=('article', 'highlights'),\n",
         "                                train=False)"
       ],
-      "id": "73f7eb74",
+      "id": "83c2435a",
       "execution_count": null,
       "outputs": []
     },
@@ -171,7 +171,7 @@
         "- <span style='color:blue'> tokenize: </span> converts a text sentence to its corresponding token list (i.e. list of indices). Also converts words to subwords.\n",
         "- <span style='color:blue'> detokenize: </span> converts a token list to its corresponding sentence (i.e. string).\n"
       ],
-      "id": "28da2385"
+      "id": "1158748b"
     },
     {
       "cell_type": "code",
@@ -201,7 +201,7 @@
         "    \n",
         "    return wrapper.fill(s)"
       ],
-      "id": "1eafd137",
+      "id": "5e5f256d",
       "execution_count": null,
       "outputs": []
     },
@@ -219,7 +219,7 @@
         "a language model, we concatenate inputs with targets putting a separator\n",
         "in between. We also need to create a mask -- with 0s at inputs and 1s at targets -- so that the model is not penalized for mis-predicting the article and only focuses on the summary. See the preprocess function below for how this is done.\n"
       ],
-      "id": "36f72879"
+      "id": "627de0e4"
     },
     {
       "cell_type": "code",
@@ -258,7 +258,7 @@
         "\n",
         "assert sum((train_input - train_target)**2) == 0  # They are the same in Language Model (LM)."
       ],
-      "id": "2a437ad6",
+      "id": "78cd8e28",
       "execution_count": null,
       "outputs": []
     },
@@ -275,7 +275,7 @@
         "# prints mask, 0s on article, 1s on summary\n",
         "print(f'Single example mask:\\n\\n {train_mask}')"
       ],
-      "id": "c7347dd5",
+      "id": "6e1fc9da",
       "execution_count": null,
       "outputs": []
     },
@@ -292,7 +292,7 @@
         "# prints: [Example][<EOS>][<pad>][Example Summary][<EOS>]\n",
         "print(f'Single example:\\n\\n {detokenize(train_input)}')"
       ],
-      "id": "f1750ff2",
+      "id": "95cdb1db",
       "execution_count": null,
       "outputs": []
     },
@@ -306,7 +306,7 @@
         "\n",
         "As in the previous week, we use bucketing to create batches of data.\n"
       ],
-      "id": "8a5d2650"
+      "id": "25b16466"
     },
     {
       "cell_type": "code",
@@ -331,7 +331,7 @@
         "eval_batch_stream = trax.data.BucketByLength(\n",
         "    boundaries, batch_sizes)(eval_stream)"
       ],
-      "id": "f9b9be4d",
+      "id": "d00e1053",
       "execution_count": null,
       "outputs": []
     },
@@ -349,7 +349,7 @@
         "# Shape of the input_batch\n",
         "input_batch.shape"
       ],
-      "id": "46fddd7d",
+      "id": "c9f4b5c6",
       "execution_count": null,
       "outputs": []
     },
@@ -366,7 +366,7 @@
         "# print corresponding integer values\n",
         "print(input_batch[0])"
       ],
-      "id": "c56227e1",
+      "id": "9f164ca7",
       "execution_count": null,
       "outputs": []
     },
@@ -382,7 +382,7 @@
         " - The second 1 represents the `<EOS>` tag for the summary.\n",
         " - All the trailing 0s represent `<pad>` tags which are appended to maintain consistent length (If you don't see them then it would mean it is already of max length)\n"
       ],
-      "id": "a19de7d9"
+      "id": "72871c7c"
     },
     {
       "cell_type": "code",
@@ -397,7 +397,7 @@
         "# print the article and its summary\n",
         "print('Article:\\n\\n', detokenize(input_batch[0]))"
       ],
-      "id": "adbac5aa",
+      "id": "c72f2420",
       "execution_count": null,
       "outputs": []
     },
@@ -431,7 +431,7 @@
         "   - `create_tensor`  creates a `jax numpy array` from a list of lists.\n",
         "   - `display_tensor` prints out the shape and the actual tensor.\n"
       ],
-      "id": "c5dcd743"
+      "id": "07661b0f"
     },
     {
       "cell_type": "code",
@@ -447,7 +447,7 @@
         "    print(f'{name} shape: {t.shape}\\n')\n",
         "    print(f'{t}\\n')"
       ],
-      "id": "26005839",
+      "id": "566cb063",
       "execution_count": null,
       "outputs": []
     },
@@ -469,7 +469,7 @@
         "\n",
         "Notice that the masking is done using very negative values that will yield a similar effect to using $-\\infty $. \n"
       ],
-      "id": "d31e4d58"
+      "id": "3a57b047"
     },
     {
       "cell_type": "code",
@@ -490,7 +490,7 @@
         "m = create_tensor([[0, 0], [-1e9, 0]])\n",
         "display_tensor(m, 'mask')"
       ],
-      "id": "2fe9781d",
+      "id": "72442700",
       "execution_count": null,
       "outputs": []
     },
@@ -522,7 +522,7 @@
         "\n",
         "```\n"
       ],
-      "id": "b87140b9"
+      "id": "ed6407e9"
     },
     {
       "cell_type": "code",
@@ -537,7 +537,7 @@
         "q_dot_k = q @ k.T / jnp.sqrt(3)\n",
         "display_tensor(q_dot_k, 'query dot key')"
       ],
-      "id": "1d6abdc0",
+      "id": "244aeb60",
       "execution_count": null,
       "outputs": []
     },
@@ -553,7 +553,7 @@
         " [1.1547005  2.8867514 ]]\n",
         "```\n"
       ],
-      "id": "0f65097d"
+      "id": "7b015678"
     },
     {
       "cell_type": "code",
@@ -562,7 +562,7 @@
         "masked = q_dot_k + m\n",
         "display_tensor(masked, 'masked query dot key')"
       ],
-      "id": "58e6aff1",
+      "id": "504e0d22",
       "execution_count": null,
       "outputs": []
     },
@@ -578,7 +578,7 @@
         " [-1.0000000e+09  2.8867514e+00]]\n",
         "```\n"
       ],
-      "id": "eccdf113"
+      "id": "cb85e019"
     },
     {
       "cell_type": "code",
@@ -586,7 +586,7 @@
       "source": [
         "display_tensor(masked @ v, 'masked query dot key dot value')"
       ],
-      "id": "ce40abfa",
+      "id": "bb2f53f2",
       "execution_count": null,
       "outputs": []
     },
@@ -604,7 +604,7 @@
         "\n",
         "In order to use the previous dummy tensors to test some of the graded functions, a batch dimension should be added to them so they mimic the shape of real-life examples. The mask is also replaced by a version of it that resembles the one that is used by trax:\n"
       ],
-      "id": "c8055504"
+      "id": "def80ee1"
     },
     {
       "cell_type": "code",
@@ -619,7 +619,7 @@
         "m_bool = create_tensor([[True, True], [False, True]])\n",
         "display_tensor(m_bool, 'boolean mask')"
       ],
-      "id": "c1ad85cb",
+      "id": "e0cf2a9f",
       "execution_count": null,
       "outputs": []
     },
@@ -674,7 +674,7 @@
         "\n",
         "This is the self-attention block for the transformer decoder. Good luck!  \n"
       ],
-      "id": "94aae4c2"
+      "id": "75d57806"
     },
     {
       "cell_type": "code",
@@ -728,7 +728,7 @@
         "    \n",
         "    return attention"
       ],
-      "id": "e4811cef",
+      "id": "0fc64222",
       "execution_count": null,
       "outputs": []
     },
@@ -744,7 +744,7 @@
       "source": [
         "DotProductAttention(q_with_batch, k_with_batch, v_with_batch, m_bool)"
       ],
-      "id": "8e94e7c8",
+      "id": "df30d511",
       "execution_count": null,
       "outputs": []
     },
@@ -780,7 +780,7 @@
         "\n",
         "Next there are some toy tensors which may serve to give you an idea of the data shapes and opperations involved in Causal Attention. They are also useful to test out your functions! \n"
       ],
-      "id": "5b8dd3ab"
+      "id": "a63f18de"
     },
     {
       "cell_type": "code",
@@ -804,7 +804,7 @@
         "tensor3dc3b = create_tensor([jnp.concatenate([q, q], axis = -1), jnp.concatenate([q, q], axis = -1), jnp.concatenate([q, q], axis = -1)])\n",
         "display_tensor(tensor3dc3b, 'three batches of concatenated heads of query matrices (3d tensor)')"
       ],
-      "id": "347d67a9",
+      "id": "3f8c5bcd",
       "execution_count": null,
       "outputs": []
     },
@@ -822,7 +822,7 @@
         "\n",
         "**For the closures you only have to fill the inner function.**\n"
       ],
-      "id": "a43e3bfc"
+      "id": "655ab879"
     },
     {
       "cell_type": "code",
@@ -870,7 +870,7 @@
         "    \n",
         "    return compute_attention_heads"
       ],
-      "id": "2b4d118f",
+      "id": "00f67b0d",
       "execution_count": null,
       "outputs": []
     },
@@ -882,7 +882,7 @@
         "result_cah = compute_attention_heads_closure(2,3)(tensor3dc3b)\n",
         "display_tensor(result_cah, \"output tensor\")"
       ],
-      "id": "a95fa574",
+      "id": "34a92db0",
       "execution_count": null,
       "outputs": []
     },
@@ -926,7 +926,7 @@
         "\n",
         "<span style='color:blue'> dot_product_self_attention </span>: Creates a mask matrix with `False` values above the diagonal and `True` values below and calls DotProductAttention which implements dot product self attention.\n"
       ],
-      "id": "19ff718f"
+      "id": "05bdbe44"
     },
     {
       "cell_type": "code",
@@ -959,7 +959,7 @@
         "    \n",
         "    return DotProductAttention(q, k, v, mask)"
       ],
-      "id": "d97348a4",
+      "id": "0961bc9c",
       "execution_count": null,
       "outputs": []
     },
@@ -969,7 +969,7 @@
       "source": [
         "dot_product_self_attention(q_with_batch, k_with_batch, v_with_batch)"
       ],
-      "id": "739a0ba9",
+      "id": "9eecc110",
       "execution_count": null,
       "outputs": []
     },
@@ -985,7 +985,7 @@
         "\n",
         "<span style='color:blue'> compute_attention_output </span>: Undoes compute_attention_heads by splitting first (vertical) dimension and stacking in the last (depth) dimension (batch_size, seqlen, n_heads $\\times$ d_head). These operations concatenate (stack/merge) the heads. \n"
       ],
-      "id": "d8989edf"
+      "id": "dc17342b"
     },
     {
       "cell_type": "code",
@@ -1026,7 +1026,7 @@
         "    \n",
         "    return compute_attention_output"
       ],
-      "id": "022b07a2",
+      "id": "bbd0e408",
       "execution_count": null,
       "outputs": []
     },
@@ -1038,7 +1038,7 @@
         "result_cao = compute_attention_output_closure(2,3)(result_cah)\n",
         "display_tensor(result_cao, \"output tensor\")"
       ],
-      "id": "a192bd8c",
+      "id": "9c4de45d",
       "execution_count": null,
       "outputs": []
     },
@@ -1096,7 +1096,7 @@
         "\n",
         "Remember that in order for trax to properly handle the functions you just defined, they need to be added as layers using the [`tl.Fn()`](https://trax-ml.readthedocs.io/en/latest/trax.layers.html#trax.layers.base.Fn) function. \n"
       ],
-      "id": "07063bf8"
+      "id": "85440dee"
     },
     {
       "cell_type": "code",
@@ -1155,7 +1155,7 @@
         "\n",
         "    ### END CODE HERE ###"
       ],
-      "id": "e29b5f9a",
+      "id": "a590959c",
       "execution_count": null,
       "outputs": []
     },
@@ -1166,7 +1166,7 @@
         "# Take a look at the causal attention model\n",
         "print(CausalAttention(d_feature=512, n_heads=8))"
       ],
-      "id": "c0da8fb6",
+      "id": "4a7968b2",
       "execution_count": null,
       "outputs": []
     },
@@ -1215,7 +1215,7 @@
         "### Exercise 03\n",
         "**Instructions:** Implement the transformer decoder block. Good luck!\n"
       ],
-      "id": "b1f44979"
+      "id": "604f423c"
     },
     {
       "cell_type": "code",
@@ -1286,7 +1286,7 @@
         "      ]\n",
         "    ### END CODE HERE ###"
       ],
-      "id": "d3bb0367",
+      "id": "a8cfc4e3",
       "execution_count": null,
       "outputs": []
     },
@@ -1297,7 +1297,7 @@
         "# Take a look at the decoder block\n",
         "print(DecoderBlock(d_model=512, d_ff=2048, n_heads=8, dropout=0.1, mode='train', ff_activation=tl.Relu))"
       ],
-      "id": "94bf1424",
+      "id": "66b0d538",
       "execution_count": null,
       "outputs": []
     },
@@ -1369,7 +1369,7 @@
         "    \n",
         "Go go go!! You can do it :)\n"
       ],
-      "id": "8dd1ec62"
+      "id": "f2288b13"
     },
     {
       "cell_type": "code",
@@ -1445,7 +1445,7 @@
         "\n",
         "    ### END CODE HERE ###"
       ],
-      "id": "716abbbb",
+      "id": "263ed3f7",
       "execution_count": null,
       "outputs": []
     },
@@ -1456,7 +1456,7 @@
         "# Take a look at the Transformer\n",
         "print(TransformerLM(n_layers=1))"
       ],
-      "id": "057c733f",
+      "id": "a8361175",
       "execution_count": null,
       "outputs": []
     },
@@ -1547,7 +1547,7 @@
         "\n",
         "The training loop that this function returns can be runned using the `run()` method by passing in the desired number of steps.\n"
       ],
-      "id": "8e52eca4"
+      "id": "df4cf134"
     },
     {
       "cell_type": "code",
@@ -1601,7 +1601,7 @@
         "    \n",
         "    return loop"
       ],
-      "id": "c0cfe14a",
+      "id": "a60e2a37",
       "execution_count": null,
       "outputs": []
     },
@@ -1613,7 +1613,7 @@
         "\n",
         "Even with this constraint the model with the original default arguments took a very long time to finish. Because of this some parameters are changed when defining the model that is fed into the training loop in the function above.\n"
       ],
-      "id": "864be719"
+      "id": "39ed9f93"
     },
     {
       "cell_type": "code",
@@ -1630,7 +1630,7 @@
         "loop = training_loop(TransformerLM, train_batch_stream, eval_batch_stream)\n",
         "loop.run(10)"
       ],
-      "id": "2d0288f8",
+      "id": "d995e97f",
       "execution_count": null,
       "outputs": []
     },
@@ -1660,7 +1660,7 @@
         "   \n",
         "   **Only the parameters shown for your model were changed. The others stayed the same.**\n"
       ],
-      "id": "45058096"
+      "id": "e2f93afa"
     },
     {
       "cell_type": "code",
@@ -1678,7 +1678,7 @@
         "# Load the pre-trained weights\n",
         "model.init_from_file('model.pkl.gz', weights_only=True)"
       ],
-      "id": "3d37ab6a",
+      "id": "df0ec708",
       "execution_count": null,
       "outputs": []
     },
@@ -1695,7 +1695,7 @@
         "### Exercise 06\n",
         "**Instructions:** Implement the next symbol function that takes in the cur_output_tokens and the trained model to return the index of the next word. \n"
       ],
-      "id": "6bc55b50"
+      "id": "dd1b1505"
     },
     {
       "cell_type": "code",
@@ -1739,7 +1739,7 @@
         "    \n",
         "    return int(np.argmax(log_probs))"
       ],
-      "id": "c0875e4a",
+      "id": "1bde98ef",
       "execution_count": null,
       "outputs": []
     },
@@ -1751,7 +1751,7 @@
         "sentence_test_nxt_symbl = \"I want to fly in the sky.\"\n",
         "detokenize([next_symbol(tokenize(sentence_test_nxt_symbl)+[0], model)])"
       ],
-      "id": "021e51b5",
+      "id": "cb954096",
       "execution_count": null,
       "outputs": []
     },
@@ -1774,7 +1774,7 @@
         "\n",
         "**Instructions**: Implement the greedy_decode algorithm. \n"
       ],
-      "id": "64313be5"
+      "id": "53837939"
     },
     {
       "cell_type": "code",
@@ -1816,7 +1816,7 @@
         "    \n",
         "    return detokenize(generated_output)"
       ],
-      "id": "bbb1378d",
+      "id": "923947c8",
       "execution_count": null,
       "outputs": []
     },
@@ -1835,7 +1835,7 @@
         "print(wrapper.fill(test_sentence), '\\n')\n",
         "print(greedy_decode(test_sentence, model))"
       ],
-      "id": "b9276f8e",
+      "id": "4be6676b",
       "execution_count": null,
       "outputs": []
     },
@@ -1861,7 +1861,7 @@
         ": I just found roses, not tulips.<EOS>\n",
         "```\n"
       ],
-      "id": "b19b3d51"
+      "id": "32179854"
     },
     {
       "cell_type": "code",
@@ -1878,7 +1878,7 @@
         "print(wrapper.fill(article), '\\n')\n",
         "print(greedy_decode(article, model))"
       ],
-      "id": "206564e8",
+      "id": "01afc032",
       "execution_count": null,
       "outputs": []
     },
@@ -1915,7 +1915,7 @@
         "\n",
         "**Keep it up!**\n"
       ],
-      "id": "427843b3"
+      "id": "17a665d2"
     }
   ],
   "metadata": {

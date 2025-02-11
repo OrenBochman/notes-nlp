@@ -795,7 +795,7 @@ div.csl-indent {
 <p>Lexical choice is a computationally complex task, requiring a generation system to consider a potentially large number of mappings between concepts and words. Constraints that aid in determining which word is best come from a wide variety of sources, including syntax, semantics, pragmatics, the lexicon, and the underlying domain. Furthermore, in some situations, different constraints come into play early on, while in others, they apply much later. This makes it difficult to determine a systematic ordering in which to apply constraints. In this paper, we present a general approach to lexical choice that can handle multiple, interacting constraints. We focus on the problem of floating constraints, semantic or pragmatic constraints that float, appearing at a variety of different syntactic ranks, often merged with other semantic constraints. This means that multiple content units can be realized by a single surface element, and conversely, that a single content unit can be realized by a variety of surface elements. Our approach uses the Functional Unification Formalism (FuF) to represent a generation lexicon, allowing for declarative and compositional representation of individual constraints. - <span class="citation" data-cites="mckeown1997floating">(<a href="#ref-mckeown1997floating" role="doc-biblioref"><strong>mckeown1997floating?</strong></a>)</span></p>
 </blockquote>
 </section>
-<section id="outline" class="level2">
+<section id="outline" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="outline">Outline</h2>
 <ul>
 <li>Introduction
@@ -810,7 +810,7 @@ div.csl-indent {
 <li>Discusses the role of lexical choice within a typical language generation architecture.</li>
 <li>Argues for placing the lexical choice module between the content planner and the surface sentence generator.</li>
 <li>Describes the input and output of the lexical choice module, emphasizing the need for language-independent conceptual input.</li>
-<li>Presents the two tasks of lexical choice: syntagmatic decisions (determining thematic structure) and paradigmatic decisions (choosing specific words).</li>
+<li>Presents the two tasks of lexical choice: syntagmatic<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> decisions (determining thematic structure) and paradigmatic<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> decisions (choosing specific words).</li>
 <li>Introduces the FUF/SURGE package as the implementation environment.</li>
 </ul></li>
 <li>Phrase Planning in Lexical Choice
@@ -846,25 +846,25 @@ div.csl-indent {
 <li>Mentions future directions, such as developing domain-independent lexicon modules and methods for organizing large-scale lexica.</li>
 </ul></li>
 </ul>
-</section>
+<div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;of or denoting the relationship between two or more linguistic units used sequentially to make well-formed structures. The combination of ‘that handsome man + ate + some chicken’ forms a syntagmatic relationship. If the word position is changed, it also changes the meaning of the sentence, eg ’Some chicken ate the handsome man</p></div><div id="fn2"><p><sup>2</sup>&nbsp;Paradigmatic relation describes the relationship between words that can be substituted for words with the same word class (eg replacing a noun with another noun)</p></div></div></section>
 <section id="reflection" class="level2">
 <h2 class="anchored" data-anchor-id="reflection">Reflection</h2>
 <ul>
 <li>In unification-based approaches, any word is a candidate unless it is ruled out by a constraint. With an LLM a word is selected based on its probability.</li>
-<li>The idea of constrainst is deeply embedded in Linguistics. The two type that immediately come to mind are:
+<li>The idea of constraints is deeply embedded in Linguistics. The two type that immediately come to mind are:
 <ul>
 <li>Subcategorization constraints which are rules that govern the selection of complements and adjuncts. These are syntactic constraints.</li>
 <li>Selectional constraints which are rules that govern the selection of arguments. These are semantic constraints</li>
 </ul></li>
-<li>Other constrainst that I did not have to deal with as often are pragmatics and these are resolved from the state of the world or common sense knowledge.</li>
+<li>Other constraints that I did not have to deal with as often are pragmatics and these are resolved from the state of the world or common sense knowledge.</li>
 <li>In FUF there are many more constraints and if care isn’t taken, the system can become over constrained and no words will be selected.</li>
 <li>One Neat aspect of the approach though is that FUF language could be merged with a query to generate a text.</li>
-<li>Unfortunately as fat as I recall the FUF had to be specified by hand. The only people who could do this were the people who designed the system. They needed to be expert at linguistics and logic programming. Even I was pretty sharp at the time the linguistics being referred was far too challenging. I learned that in reality every computational linguist worth their salt had their own theory of language and thier own version of grammar and that FUF was just one of many.</li>
+<li>Unfortunately as fat as I recall the FUF had to be specified by hand. The only people who could do this were the people who designed the system. They needed to be expert at linguistics and logic programming. Even I was pretty sharp at the time the linguistics being referred was far too challenging. I learned that in reality every computational linguist worth their salt had their own theory of language and their own version of grammar and that FUF was just one of many.</li>
 <li>It seems that today attention mechanisms within LSTMs or Transformers are capable of learning a pragmatic formalism without a linguist stepping in to specify it.</li>
 </ul>
 <p>Why this is still interesting:</p>
 <p>Imagine we want to build a low resource capable language model.</p>
-<p>We would realy like it to be good with grammar Also we would like it to have a lexicon that is as rich as the person it is interacting with. And we would also like to make available to it the common sense knowledge that it would need to use in the context of current and possibly a profile based on past conversations…. On the other hand we don’t want to require a 70 billion parameter model to do this. So what do we do?</p>
+<p>We would really like it to be good with grammar Also we would like it to have a lexicon that is as rich as the person it is interacting with. And we would also like to make available to it the common sense knowledge that it would need to use in the context of current and possibly a profile based on past conversations…. On the other hand we don’t want to require a 70 billion parameter model to do this. So what do we do?</p>
 <p>Let imagine we start by training on Wikipedia, after all wikipedia’s mission is to become the sum of all human knowledge. By do we realy need all of the information in Wikipedia in out edge model?</p>
 <p>The answer is no but the real question is how can we partition the training information and the wights etc so that we have a powerful model with a basic grammar and lexicon but which can load a knowledge graph, extra lexicons and common sense knowledge as needed.</p>
 <p>So I had this idea from lookin at a <span class="citation" data-cites="ouhalla1999introducing">Ouhalla (<a href="#ref-ouhalla1999introducing" role="doc-biblioref">1999</a>)</span>. It pointed out there were phrase boundries and that if the sentence was transformed in a number of ways t would still make sense if we did this with respect to a phrase but if we used cucnks that were too small or too big the transofrmation would create malformed sentences. The operations of intrerest were movement and deletion.</p>
@@ -888,6 +888,7 @@ div.csl-indent {
 
 
 </section>
+
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-ouhalla1999introducing" class="csl-entry" role="listitem">

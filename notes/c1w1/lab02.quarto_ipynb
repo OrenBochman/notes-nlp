@@ -30,7 +30,7 @@
         "\n",
         "Let's import the required libraries for this lab: \n"
       ],
-      "id": "bfb96607"
+      "id": "c52b564c"
     },
     {
       "cell_type": "code",
@@ -41,7 +41,7 @@
         "import matplotlib.pyplot as plt              # visualization library\n",
         "import numpy as np                           # library for scientific computing and matrix operations"
       ],
-      "id": "acc0bd85",
+      "id": "90f83558",
       "execution_count": null,
       "outputs": []
     },
@@ -53,7 +53,7 @@
         "* `process_tweet()`: Cleans the text, tokenizes it into separate words, removes stopwords, and converts words to stems.\n",
         "* `build_freqs()`: This counts how often a word in the 'corpus' (the entire set of tweets) was associated with a positive label `1` or a negative label `0`. It then builds the `freqs` dictionary, where each key is a `(word,label)` tuple, and the value is the count of its frequency within the corpus of tweets.\n"
       ],
-      "id": "02d78ee7"
+      "id": "e9a1c730"
     },
     {
       "cell_type": "code",
@@ -65,7 +65,7 @@
         "# import our convenience functions\n",
         "from utils import process_tweet, build_freqs"
       ],
-      "id": "375df54e",
+      "id": "f90f0ce9",
       "execution_count": null,
       "outputs": []
     },
@@ -77,7 +77,7 @@
         "\n",
         "As in the previous lab, we will be using the [Twitter dataset from NLTK](http://www.nltk.org/howto/twitter.html#Using-a-Tweet-Corpus).\n"
       ],
-      "id": "5051d410"
+      "id": "781fbd85"
     },
     {
       "cell_type": "code",
@@ -93,7 +93,7 @@
         "# let's see how many tweets we have\n",
         "print(\"Number of tweets: \", len(tweets))"
       ],
-      "id": "bbc4574e",
+      "id": "e4f239be",
       "execution_count": null,
       "outputs": []
     },
@@ -107,7 +107,7 @@
         "* `np.zeros()` - create an array of 0's\n",
         "* `np.append()` - concatenate arrays\n"
       ],
-      "id": "54890b8d"
+      "id": "cd334906"
     },
     {
       "cell_type": "code",
@@ -116,7 +116,7 @@
         "# make a numpy array representing labels of the tweets\n",
         "labels = np.append(np.ones((len(all_positive_tweets))), np.zeros((len(all_negative_tweets))))"
       ],
-      "id": "d026ada8",
+      "id": "d914b8e1",
       "execution_count": null,
       "outputs": []
     },
@@ -132,7 +132,7 @@
         "\n",
         "A dictionary in Python is declared using curly brackets. Look at the next example:\n"
       ],
-      "id": "06680184"
+      "id": "1a34430d"
     },
     {
       "cell_type": "code",
@@ -140,7 +140,7 @@
       "source": [
         "dictionary = {'key1': 1, 'key2': 2}"
       ],
-      "id": "5cdfc614",
+      "id": "a99f5b22",
       "execution_count": null,
       "outputs": []
     },
@@ -154,7 +154,7 @@
         "\n",
         "New entries can be inserted into dictionaries using square brackets. If the dictionary already contains the specified key, its value is overwritten.  \n"
       ],
-      "id": "c25005e8"
+      "id": "3cfda861"
     },
     {
       "cell_type": "code",
@@ -168,7 +168,7 @@
         "\n",
         "print(dictionary)"
       ],
-      "id": "ec2f007d",
+      "id": "9b14d3ba",
       "execution_count": null,
       "outputs": []
     },
@@ -185,7 +185,7 @@
         "\n",
         "Let us see these in action:\n"
       ],
-      "id": "04490a20"
+      "id": "f47f3ceb"
     },
     {
       "cell_type": "code",
@@ -194,7 +194,7 @@
         "# Square bracket lookup when the key exist\n",
         "print(dictionary['key2'])"
       ],
-      "id": "18528ba9",
+      "id": "b5e55dfa",
       "execution_count": null,
       "outputs": []
     },
@@ -204,7 +204,7 @@
       "source": [
         "However, if the key is missing, the operation produce an error\n"
       ],
-      "id": "5a08c21d"
+      "id": "7427971d"
     },
     {
       "cell_type": "code",
@@ -214,7 +214,7 @@
         "# The output of this line is intended to produce a KeyError\n",
         "print(dictionary['key8'])"
       ],
-      "id": "702f22b3",
+      "id": "3a31a6f3",
       "execution_count": null,
       "outputs": []
     },
@@ -224,7 +224,7 @@
       "source": [
         "When using a square bracket lookup, it is common to use an if-else block to check for containment first (with the keyword `in`) before getting the item. On the other hand, we can use the `.get()` method if we want to set a default value when the key is not found. Let's compare these in the cells below:\n"
       ],
-      "id": "556d3c7d"
+      "id": "56c6e715"
     },
     {
       "cell_type": "code",
@@ -239,7 +239,7 @@
         "# Same as what we get with get\n",
         "print(\"item found: \", dictionary.get('key1', -1))"
       ],
-      "id": "f359708b",
+      "id": "5765f7af",
       "execution_count": null,
       "outputs": []
     },
@@ -256,7 +256,7 @@
         "# This prints -1 because the key is not found and we set the default to -1\n",
         "print(dictionary.get('key7', -1))"
       ],
-      "id": "8a25610a",
+      "id": "535f64cf",
       "execution_count": null,
       "outputs": []
     },
@@ -318,7 +318,7 @@
         "\n",
         "Now, it is time to use the dictionary returned by the `build_freqs()` function. First, let us feed our `tweets` and `labels` lists then print a basic report:\n"
       ],
-      "id": "46fdda22"
+      "id": "302adb47"
     },
     {
       "cell_type": "code",
@@ -333,7 +333,7 @@
         "# check length of the dictionary\n",
         "print(f'len(freqs) = {len(freqs)}')"
       ],
-      "id": "6502b019",
+      "id": "e5e8a550",
       "execution_count": null,
       "outputs": []
     },
@@ -343,7 +343,7 @@
       "source": [
         "Now print the frequency of each word depending on its class.\n"
       ],
-      "id": "86cf649d"
+      "id": "6fd760fa"
     },
     {
       "cell_type": "code",
@@ -351,7 +351,7 @@
       "source": [
         "print(freqs)"
       ],
-      "id": "297d8524",
+      "id": "e7f9b86c",
       "execution_count": null,
       "outputs": []
     },
@@ -365,7 +365,7 @@
         "\n",
         "We will select a set of words that we would like to visualize. It is better to store this temporary information in a table that is very easy to use later.\n"
       ],
-      "id": "0b04b6b1"
+      "id": "248f3a56"
     },
     {
       "cell_type": "code",
@@ -400,7 +400,7 @@
         "    \n",
         "data"
       ],
-      "id": "d3811863",
+      "id": "95f4f3a6",
       "execution_count": null,
       "outputs": []
     },
@@ -410,7 +410,7 @@
       "source": [
         "We can then use a scatter plot to inspect this table visually. Instead of plotting the raw counts, we will plot it in the logarithmic scale to take into account the wide discrepancies between the raw counts (e.g. `:)` has 3568 counts in the positive while only 2 in the negative). The red line marks the boundary between positive and negative areas. Words close to the red line can be classified as neutral. \n"
       ],
-      "id": "e3a69578"
+      "id": "e291b362"
     },
     {
       "cell_type": "code",
@@ -438,7 +438,7 @@
         "ax.plot([0, 9], [0, 9], color = 'red') # Plot the red line that divides the 2 areas.\n",
         "plt.show()"
       ],
-      "id": "4149f648",
+      "id": "53aec243",
       "execution_count": null,
       "outputs": []
     },
@@ -456,7 +456,7 @@
         "\n",
         "We've seen how to build a word frequency dictionary and this will come in handy when extracting the features of a list of tweets. Next up, we will be reviewing Logistic Regression. Keep it up!\n"
       ],
-      "id": "e5ce300a"
+      "id": "e7233844"
     }
   ],
   "metadata": {

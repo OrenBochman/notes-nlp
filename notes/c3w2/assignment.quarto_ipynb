@@ -81,7 +81,7 @@
         "- Use the softmax output and identify the word with the highest probability.\n",
         "- The word with the highest probability is the prediction for the next word.\n"
       ],
-      "id": "4b3844e0"
+      "id": "eeceea01"
     },
     {
       "cell_type": "code",
@@ -106,7 +106,7 @@
         "trax.supervised.trainer_lib.init_random_number_generators(32)\n",
         "rnd.seed(32)"
       ],
-      "id": "72875a43",
+      "id": "a3a1d593",
       "execution_count": null,
       "outputs": []
     },
@@ -132,7 +132,7 @@
         "- Create a data generator that takes in the `batch_size` and the `max_length`. \n",
         "    - The `max_length` corresponds to the maximum length of the sentence.\n"
       ],
-      "id": "d663dbf4"
+      "id": "2d13d92d"
     },
     {
       "cell_type": "code",
@@ -154,7 +154,7 @@
         "                # append it to the list\n",
         "                lines.append(pure_line)"
       ],
-      "id": "739211bb",
+      "id": "9c4c2bd0",
       "execution_count": null,
       "outputs": []
     },
@@ -173,7 +173,7 @@
         "print(f\"Sample line at position 0 {lines[0]}\")\n",
         "print(f\"Sample line at position 999 {lines[999]}\")"
       ],
-      "id": "9f07cfa1",
+      "id": "dc3fb887",
       "execution_count": null,
       "outputs": []
     },
@@ -183,7 +183,7 @@
       "source": [
         "Notice that the letters are both uppercase and lowercase.  In order to reduce the complexity of the task, we will convert all characters to lowercase.  This way, the model only needs to predict the likelihood that a letter is 'a' and not decide between uppercase 'A' and lowercase 'a'.\n"
       ],
-      "id": "34481526"
+      "id": "437817ac"
     },
     {
       "cell_type": "code",
@@ -204,7 +204,7 @@
         "print(f\"Sample line at position 0 {lines[0]}\")\n",
         "print(f\"Sample line at position 999 {lines[999]}\")"
       ],
-      "id": "ae20fe36",
+      "id": "dc73794a",
       "execution_count": null,
       "outputs": []
     },
@@ -218,7 +218,7 @@
         "print(f\"Number of lines for training: {len(lines)}\")\n",
         "print(f\"Number of lines for validation: {len(eval_lines)}\")"
       ],
-      "id": "31295ff5",
+      "id": "152775a1",
       "execution_count": null,
       "outputs": []
     },
@@ -234,7 +234,7 @@
         "\n",
         "Given a string representing of one Unicode character, the `ord` function return an integer representing the Unicode code point of that character.\n"
       ],
-      "id": "b7eb5f51"
+      "id": "08c51796"
     },
     {
       "cell_type": "code",
@@ -258,7 +258,7 @@
         "print(f\"ord('2'): {ord('2')}\")\n",
         "print(f\"ord('3'): {ord('3')}\")"
       ],
-      "id": "3f526f9d",
+      "id": "356e853e",
       "execution_count": null,
       "outputs": []
     },
@@ -276,7 +276,7 @@
         "- Include the EOS_int as the last integer of the \n",
         "- For this exercise, you will use the number `1` to represent the end of a sentence.\n"
       ],
-      "id": "f5d0655b"
+      "id": "2ab4749a"
     },
     {
       "cell_type": "code",
@@ -316,7 +316,7 @@
         "\n",
         "    return tensor"
       ],
-      "id": "429085df",
+      "id": "028fbd64",
       "execution_count": null,
       "outputs": []
     },
@@ -333,7 +333,7 @@
         "# Testing your output\n",
         "line_to_tensor('abc xyz')"
       ],
-      "id": "4afa7126",
+      "id": "e223ab5d",
       "execution_count": null,
       "outputs": []
     },
@@ -390,7 +390,7 @@
         "</p>\n",
         "</details>\n"
       ],
-      "id": "ef1669d7"
+      "id": "dfc31cbb"
     },
     {
       "cell_type": "code",
@@ -498,7 +498,7 @@
         "            # reset the current batch to an empty list\n",
         "            cur_batch = []\n"
       ],
-      "id": "3a160f6d",
+      "id": "039613b4",
       "execution_count": null,
       "outputs": []
     },
@@ -531,7 +531,7 @@
         "# view the batch\n",
         "tmp_batch"
       ],
-      "id": "0b43edd6",
+      "id": "76784338",
       "execution_count": null,
       "outputs": []
     },
@@ -566,7 +566,7 @@
         "\n",
         "For small datasets we can use [`itertools.cycle`](https://docs.python.org/3.8/library/itertools.html#itertools.cycle) to achieve this easily.\n"
       ],
-      "id": "e4ea1f3d"
+      "id": "3dd4d929"
     },
     {
       "cell_type": "code",
@@ -580,7 +580,7 @@
         "infinite_data_generator = itertools.cycle(\n",
         "    data_generator(batch_size=2, max_length=10, data_lines=tmp_lines))"
       ],
-      "id": "16019667",
+      "id": "27bd684f",
       "execution_count": null,
       "outputs": []
     },
@@ -590,7 +590,7 @@
       "source": [
         "You can see that we can get more than the 5 lines in tmp_lines using this.\n"
       ],
-      "id": "08b2381b"
+      "id": "e884ade7"
     },
     {
       "cell_type": "code",
@@ -605,7 +605,7 @@
         "ten_lines = [next(infinite_data_generator) for _ in range(10)]\n",
         "print(len(ten_lines))"
       ],
-      "id": "1937c252",
+      "id": "15d7c9c4",
       "execution_count": null,
       "outputs": []
     },
@@ -657,7 +657,7 @@
         "\n",
         "**Instructions:** Implement the `GRULM` class below. You should be using all the methods explained above.\n"
       ],
-      "id": "bf84acac"
+      "id": "9ea31452"
     },
     {
       "cell_type": "code",
@@ -691,7 +691,7 @@
         "    ### END CODE HERE ###\n",
         "    return model"
       ],
-      "id": "12ee3b72",
+      "id": "c620a945",
       "execution_count": null,
       "outputs": []
     },
@@ -709,7 +709,7 @@
         "model = GRULM()\n",
         "print(model)"
       ],
-      "id": "edf710db",
+      "id": "9d77cdd8",
       "execution_count": null,
       "outputs": []
     },
@@ -743,7 +743,7 @@
         "The final piece tying things together is the `trax.supervised.training.Loop` abstraction that is a very simple and flexible way to put everything together and train the model, all the while evaluating it and saving checkpoints.\n",
         "Using `training.Loop` will save you a lot of code compared to always writing the training loop by hand, like you did in courses 1 and 2. More importantly, you are less likely to have a bug in that code that would ruin your training.\n"
       ],
-      "id": "aa0dfed9"
+      "id": "6fd74a84"
     },
     {
       "cell_type": "code",
@@ -755,7 +755,7 @@
         "batch_size = 32\n",
         "max_length = 64"
       ],
-      "id": "d3b1244c",
+      "id": "fa5d5370",
       "execution_count": null,
       "outputs": []
     },
@@ -771,7 +771,7 @@
         "\n",
         "Below is a function and results that indicate how many lines conform to our criteria of maximum length of a sentence in the entire dataset and how many `steps` are required in order to cover the entire dataset which in turn corresponds to an `epoch`.\n"
       ],
-      "id": "8a6cf309"
+      "id": "1924b4b1"
     },
     {
       "cell_type": "code",
@@ -805,7 +805,7 @@
         "steps_per_epoch = int(num_used_lines/batch_size)\n",
         "print('Number of steps to cover one epoch:', steps_per_epoch)"
       ],
-      "id": "ba9f8052",
+      "id": "034db8b4",
       "execution_count": null,
       "outputs": []
     },
@@ -852,7 +852,7 @@
         "\n",
         "**NOTE:** Don't forget to wrap the data generator in `itertools.cycle` to iterate on it for multiple epochs.\n"
       ],
-      "id": "eeb0898b"
+      "id": "04865abc"
     },
     {
       "cell_type": "code",
@@ -913,7 +913,7 @@
         "    # We return this because it contains a handle to the model, which has the weights etc.\n",
         "    return training_loop"
       ],
-      "id": "a0950fb9",
+      "id": "e40a85d4",
       "execution_count": null,
       "outputs": []
     },
@@ -930,7 +930,7 @@
         "# Train the model 1 step and keep the `trax.supervised.training.Loop` object.\n",
         "training_loop = train_model(GRULM(), data_generator)"
       ],
-      "id": "78b84a88",
+      "id": "0eb670d7",
       "execution_count": null,
       "outputs": []
     },
@@ -997,7 +997,7 @@
         "</p>\n",
         "</details>\n"
       ],
-      "id": "ac5c8004"
+      "id": "719a5204"
     },
     {
       "cell_type": "code",
@@ -1029,7 +1029,7 @@
         "    \n",
         "    return -log_ppx"
       ],
-      "id": "4d55e7a1",
+      "id": "7a348929",
       "execution_count": null,
       "outputs": []
     },
@@ -1052,7 +1052,7 @@
         "log_ppx = test_model(preds, batch[1])\n",
         "print('The log perplexity and perplexity of your model are respectively', log_ppx, np.exp(log_ppx))"
       ],
-      "id": "2b9dfbb3",
+      "id": "98377294",
       "execution_count": null,
       "outputs": []
     },
@@ -1076,7 +1076,7 @@
         "\n",
         "The maximum value, which is what we choose as the prediction in the last step of a Recursive Neural Network `RNN` we are using for text generation, in a sample of a random variable following an exponential distribution approaches the Gumbel distribution when the sample increases asymptotically. For that reason, the Gumbel distribution is used to sample from a categorical distribution.\n"
       ],
-      "id": "4741a403"
+      "id": "d91f6f6e"
     },
     {
       "cell_type": "code",
@@ -1113,7 +1113,7 @@
         "\n",
         "print(predict(32, \"\"))"
       ],
-      "id": "7e819e90",
+      "id": "f64c12d9",
       "execution_count": null,
       "outputs": []
     },
@@ -1131,7 +1131,7 @@
         "print(predict(32, \"\"))\n",
         "print(predict(32, \"\"))"
       ],
-      "id": "e8414c00",
+      "id": "6f2de6fb",
       "execution_count": null,
       "outputs": []
     },
@@ -1147,7 +1147,7 @@
         "\n",
         "Using a statistical method like the one you implemented in course 2 will not give you results that are as good. Your model will not be able to encode information seen previously in the data set and as a result, the perplexity will increase. Remember from course 2 that the higher the perplexity, the worse your model is. Furthermore, statistical ngram models take up too much space and memory. As a result, it will be inefficient and too slow. Conversely, with deepnets, you can get a better perplexity. Note, learning about n-gram language models is still important and allows you to better understand deepnets.\n"
       ],
-      "id": "addb81cc"
+      "id": "b3303140"
     }
   ],
   "metadata": {

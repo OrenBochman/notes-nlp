@@ -24,7 +24,7 @@
         "\n",
         "In this week's assignment, we are going to use a pre-trained word embedding for finding word analogies and equivalence. This exercise can be used as an Intrinsic Evaluation for the word embedding performance. In this notebook, we will apply linear algebra operations using NumPy to find analogies between words manually. This will help we to prepare for this week's assignment.\n"
       ],
-      "id": "12e62d66"
+      "id": "ace5c228"
     },
     {
       "cell_type": "code",
@@ -37,7 +37,7 @@
         "word_embeddings = pickle.load( open( \"./data/word_embeddings_subset.p\", \"rb\" ) )\n",
         "len(word_embeddings) # there should be 243 words that will be used in this assignment"
       ],
-      "id": "1fa2ce31",
+      "id": "5751d86f",
       "execution_count": null,
       "outputs": []
     },
@@ -47,7 +47,7 @@
       "source": [
         "Now that the model is loaded, we can take a look at the word representations. First, note that **word_embeddings** is a dictionary. Each word is the key to the entry, and the value is its corresponding vector presentation. Remember that square brackets allow access to any entry if the key exists. \n"
       ],
-      "id": "9d01555c"
+      "id": "4c020b81"
     },
     {
       "cell_type": "code",
@@ -57,7 +57,7 @@
         "print(type(countryVector)) # Print the type of the vector. Note it is a numpy array\n",
         "print(countryVector) # Print the values of the vector.  "
       ],
-      "id": "459b8995",
+      "id": "6660f4b7",
       "execution_count": null,
       "outputs": []
     },
@@ -69,7 +69,7 @@
         "\n",
         "The vectors have a size of 300, while the vocabulary size of Google News is around 3 million words! \n"
       ],
-      "id": "566b1459"
+      "id": "be44f8eb"
     },
     {
       "cell_type": "code",
@@ -79,7 +79,7 @@
         "def vec(w):\n",
         "    return word_embeddings[w]"
       ],
-      "id": "7ddeef6b",
+      "id": "17d36c2b",
       "execution_count": null,
       "outputs": []
     },
@@ -97,7 +97,7 @@
         "\n",
         "In the next cell, we make a beautiful plot for the word embeddings of some words. Even if plotting the dots gives an idea of the words, the arrow representations help to visualize the vector's alignment as well.\n"
       ],
-      "id": "26484491"
+      "id": "8bfe069f"
     },
     {
       "cell_type": "code",
@@ -129,7 +129,7 @@
         "\n",
         "plt.show()"
       ],
-      "id": "23f6261d",
+      "id": "78fd5bfb",
       "execution_count": null,
       "outputs": []
     },
@@ -145,7 +145,7 @@
         "\n",
         "Now plot the words 'sad', 'happy', 'town', and 'village'. In this same chart, display the vector from 'village' to 'town' and the vector from 'sad' to 'happy'. Let us use NumPy for these linear algebra operations.\n"
       ],
-      "id": "636f901b"
+      "id": "8efab18c"
     },
     {
       "cell_type": "code",
@@ -186,7 +186,7 @@
         "\n",
         "plt.show()"
       ],
-      "id": "e6fbb606",
+      "id": "2007b0c9",
       "execution_count": null,
       "outputs": []
     },
@@ -200,7 +200,7 @@
         "\n",
         "To start, get the **norm** of a word in the word embedding.\n"
       ],
-      "id": "d003be5a"
+      "id": "6a8910b5"
     },
     {
       "cell_type": "code",
@@ -209,7 +209,7 @@
         "print(np.linalg.norm(vec('town'))) # Print the norm of the word town\n",
         "print(np.linalg.norm(vec('sad'))) # Print the norm of the word sad"
       ],
-      "id": "fd36b500",
+      "id": "db9cde3a",
       "execution_count": null,
       "outputs": []
     },
@@ -223,7 +223,7 @@
         "\n",
         "One can move from the city of Madrid in the direction of the concept of Capital, and obtain something close to the corresponding country to which Madrid is the Capital.\n"
       ],
-      "id": "3b31a7bf"
+      "id": "ccb0fa1d"
     },
     {
       "cell_type": "code",
@@ -234,7 +234,7 @@
         "\n",
         "print(country[0:5]) # Print the first 5 values of the vector"
       ],
-      "id": "ec1e7e29",
+      "id": "ca2614c5",
       "execution_count": null,
       "outputs": []
     },
@@ -244,7 +244,7 @@
       "source": [
         "We can observe that the vector 'country' that we expected to be the same as the vector for Spain is not exactly it.\n"
       ],
-      "id": "3fb6c7ef"
+      "id": "438ecc91"
     },
     {
       "cell_type": "code",
@@ -253,7 +253,7 @@
         "diff = country - vec('Spain')\n",
         "print(diff[0:10])"
       ],
-      "id": "cdcd6560",
+      "id": "a427e2d6",
       "execution_count": null,
       "outputs": []
     },
@@ -263,7 +263,7 @@
       "source": [
         "So, we have to look for the closest words in the embedding that matches the candidate country. If the word embedding works as expected, the most similar word must be 'Spain'. Let us define a function that helps us to do it. We will store our word embedding as a DataFrame, which facilitate the lookup operations based on the numerical vectors.\n"
       ],
-      "id": "f1ac4ea8"
+      "id": "afa1a3a7"
     },
     {
       "cell_type": "code",
@@ -288,7 +288,7 @@
         "    # Return the row name for this item\n",
         "    return embedding.iloc[i].name"
       ],
-      "id": "ba961ae3",
+      "id": "ac197781",
       "execution_count": null,
       "outputs": []
     },
@@ -299,7 +299,7 @@
         "# Print some rows of the embedding as a Dataframe\n",
         "embedding.head(10)"
       ],
-      "id": "0f00da28",
+      "id": "5d5c9427",
       "execution_count": null,
       "outputs": []
     },
@@ -309,7 +309,7 @@
       "source": [
         "Now let us find the name that corresponds to our numerical country:\n"
       ],
-      "id": "a85ef64c"
+      "id": "279a98e7"
     },
     {
       "cell_type": "code",
@@ -317,7 +317,7 @@
       "source": [
         "find_closest_word(country)"
       ],
-      "id": "f1e946ab",
+      "id": "8914e89c",
       "execution_count": null,
       "outputs": []
     },
@@ -327,7 +327,7 @@
       "source": [
         "## Predicting other Countries\n"
       ],
-      "id": "72a44a4e"
+      "id": "8d0215aa"
     },
     {
       "cell_type": "code",
@@ -335,7 +335,7 @@
       "source": [
         "find_closest_word(vec('Italy') - vec('Rome') + vec('Madrid'))"
       ],
-      "id": "66eaefb4",
+      "id": "a2f2b384",
       "execution_count": null,
       "outputs": []
     },
@@ -346,7 +346,7 @@
         "print(find_closest_word(vec('Berlin') + capital))\n",
         "print(find_closest_word(vec('Beijing') + capital))"
       ],
-      "id": "9022736a",
+      "id": "a2b02af1",
       "execution_count": null,
       "outputs": []
     },
@@ -356,7 +356,7 @@
       "source": [
         "However, it does not always work.\n"
       ],
-      "id": "a688c9df"
+      "id": "e3dd23cc"
     },
     {
       "cell_type": "code",
@@ -364,7 +364,7 @@
       "source": [
         "print(find_closest_word(vec('Lisbon') + capital))"
       ],
-      "id": "27593e92",
+      "id": "c80ba1e5",
       "execution_count": null,
       "outputs": []
     },
@@ -376,7 +376,7 @@
         "\n",
         "A whole sentence can be represented as a vector by summing all the word vectors that conform to the sentence. Let us see. \n"
       ],
-      "id": "79ad51ed"
+      "id": "641062b6"
     },
     {
       "cell_type": "code",
@@ -387,7 +387,7 @@
         "doc2vec = np.sum(vdoc, axis = 0)\n",
         "doc2vec"
       ],
-      "id": "4c7fe972",
+      "id": "a9617a3e",
       "execution_count": null,
       "outputs": []
     },
@@ -397,7 +397,7 @@
       "source": [
         "find_closest_word(doc2vec)"
       ],
-      "id": "d04ff2fc",
+      "id": "e64bdfda",
       "execution_count": null,
       "outputs": []
     },
@@ -407,7 +407,7 @@
       "source": [
         "**Congratulations! We have finished the introduction to word embeddings manipulation!**\n"
       ],
-      "id": "463d95b6"
+      "id": "755d5c12"
     }
   ],
   "metadata": {

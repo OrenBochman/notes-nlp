@@ -92,7 +92,7 @@
         "\n",
         "You will be using the Quora question answer dataset to build a model that could identify similar questions. This is a useful task because you don't want to have several versions of the same question posted. Several times when teaching I end up responding to similar questions on piazza, or on other community forums. This data set has been labeled for you. Run the cell below to import some of the packages you will be using. \n"
       ],
-      "id": "f7bdd48c"
+      "id": "6b657460"
     },
     {
       "cell_type": "code",
@@ -121,7 +121,7 @@
         "#trax.supervised.trainer_lib.init_random_number_generators(34)\n",
         "rnd.seed(seed)"
       ],
-      "id": "c049bd84",
+      "id": "d6d2848c",
       "execution_count": null,
       "outputs": []
     },
@@ -133,7 +133,7 @@
         "\n",
         "You will now load in the data set. We have done some preprocessing for you. If you have taken the deeplearning specialization, this is a slightly different training method than the one you have seen there. If you have not, then don't worry about it, we will explain everything. \n"
       ],
-      "id": "07cae52f"
+      "id": "0c9ce7ce"
     },
     {
       "cell_type": "code",
@@ -150,7 +150,7 @@
         "print('Number of question pairs: ', N)\n",
         "data.head()"
       ],
-      "id": "a1d6d69d",
+      "id": "96c01386",
       "execution_count": null,
       "outputs": []
     },
@@ -160,7 +160,7 @@
       "source": [
         "We first split the data into a train and test set. The test set will be used later to evaluate our model.\n"
       ],
-      "id": "8b624d1b"
+      "id": "0ab7510e"
     },
     {
       "cell_type": "code",
@@ -179,7 +179,7 @@
         "print(\"Train set:\", len(data_train), \"Test set:\", len(data_test))\n",
         "del(data) # remove to free memory"
       ],
-      "id": "bf0c199d",
+      "id": "0cd6e2fc",
       "execution_count": null,
       "outputs": []
     },
@@ -191,7 +191,7 @@
         "We build two batches as input for the Siamese network and we assume that question $q1_i$ (question $i$ in the first batch) is a duplicate of $q2_i$ (question $i$ in the second batch), but all other questions in the second batch are not duplicates of $q1_i$.  \n",
         "The test set uses the original pairs of questions and the status describing if the questions are duplicates.\n"
       ],
-      "id": "c0612865"
+      "id": "f1c11f61"
     },
     {
       "cell_type": "code",
@@ -208,7 +208,7 @@
         "print('number of duplicate questions: ', len(td_index))\n",
         "print('indexes of first ten duplicate questions:', td_index[:10])"
       ],
-      "id": "d1eb4a89",
+      "id": "03ea7770",
       "execution_count": null,
       "outputs": []
     },
@@ -226,7 +226,7 @@
         "print(data_train['question2'][5])\n",
         "print('is_duplicate: ', data_train['is_duplicate'][5])"
       ],
-      "id": "ae31bc21",
+      "id": "5af7caf4",
       "execution_count": null,
       "outputs": []
     },
@@ -244,7 +244,7 @@
         "Q2_test_words = np.array(data_test['question2'])\n",
         "y_test  = np.array(data_test['is_duplicate'])"
       ],
-      "id": "a1cd3645",
+      "id": "4cab7157",
       "execution_count": null,
       "outputs": []
     },
@@ -256,7 +256,7 @@
         "\n",
         "<br>Let's print to see what your data looks like.\n"
       ],
-      "id": "b887e5e4"
+      "id": "a15e32fe"
     },
     {
       "cell_type": "code",
@@ -279,7 +279,7 @@
         "print('Question 2: ', Q2_test_words[0], '\\n')\n",
         "print('is_duplicate =', y_test[0], '\\n')"
       ],
-      "id": "b9ab7264",
+      "id": "8b306b12",
       "execution_count": null,
       "outputs": []
     },
@@ -293,7 +293,7 @@
         "You need a python default dictionary which later, during inference, assigns the values $0$ to all Out Of Vocabulary (OOV) words.<br>\n",
         "Then you encode each word of the selected duplicate pairs with an index. Given a question, you can then just encode it as a list of numbers. \n"
       ],
-      "id": "4b266cc1"
+      "id": "de4a08d3"
     },
     {
       "cell_type": "code",
@@ -309,7 +309,7 @@
         "Q1_test = np.empty_like(Q1_test_words)\n",
         "Q2_test = np.empty_like(Q2_test_words)"
       ],
-      "id": "5d06d6ff",
+      "id": "34ab76ea",
       "execution_count": null,
       "outputs": []
     },
@@ -338,7 +338,7 @@
         "            vocab[word] = len(vocab) + 1\n",
         "print('The length of the vocabulary is: ', len(vocab))"
       ],
-      "id": "550cb95e",
+      "id": "ee23e751",
       "execution_count": null,
       "outputs": []
     },
@@ -356,7 +356,7 @@
         "print(vocab['Astrology'])\n",
         "print(vocab['Astronomy'])  #not in vocabulary, returns 0"
       ],
-      "id": "bc95116a",
+      "id": "63641560",
       "execution_count": null,
       "outputs": []
     },
@@ -371,7 +371,7 @@
         "    Q1_test[idx] = nltk.word_tokenize(Q1_test_words[idx])\n",
         "    Q2_test[idx] = nltk.word_tokenize(Q2_test_words[idx])"
       ],
-      "id": "6d1b4e4b",
+      "id": "16b93da9",
       "execution_count": null,
       "outputs": []
     },
@@ -388,7 +388,7 @@
         "print('Train set has reduced to: ', len(Q1_train) ) \n",
         "print('Test set length: ', len(Q1_test) ) "
       ],
-      "id": "db4fc1dc",
+      "id": "a97ba44b",
       "execution_count": null,
       "outputs": []
     },
@@ -402,7 +402,7 @@
         "\n",
         "You will now convert every question to a tensor, or an array of numbers, using your vocabulary built above.\n"
       ],
-      "id": "57e9717a"
+      "id": "d5cdcb70"
     },
     {
       "cell_type": "code",
@@ -421,7 +421,7 @@
         "    Q1_test[i] = [vocab[word] for word in Q1_test[i]]\n",
         "    Q2_test[i] = [vocab[word] for word in Q2_test[i]]"
       ],
-      "id": "cd701c71",
+      "id": "80c5625d",
       "execution_count": null,
       "outputs": []
     },
@@ -445,7 +445,7 @@
         "print('encoded version:')\n",
         "print(Q1_test[0]) "
       ],
-      "id": "60d9c433",
+      "id": "337955ba",
       "execution_count": null,
       "outputs": []
     },
@@ -455,7 +455,7 @@
       "source": [
         "You will now split your train set into a training/validation set so that you can use it to train and evaluate your Siamese model.\n"
       ],
-      "id": "8bea7dbd"
+      "id": "d833e721"
     },
     {
       "cell_type": "code",
@@ -475,7 +475,7 @@
         "print(\"The length of the training set is:  \", len(train_Q1))\n",
         "print(\"The length of the validation set is: \", len(val_Q1))"
       ],
-      "id": "19657fa9",
+      "id": "4cab613e",
       "execution_count": null,
       "outputs": []
     },
@@ -509,7 +509,7 @@
         "- Use yield to return `input1, input2`. \n",
         "- Don't forget to reset `input1, input2`  to empty arrays at the end (data generator resumes from where it last left).\n"
       ],
-      "id": "2d354efd"
+      "id": "e6372397"
     },
     {
       "cell_type": "code",
@@ -588,7 +588,7 @@
         "            # reset the batches\n",
         "            input1, input2 = [], []  # reset the batches"
       ],
-      "id": "007aeba3",
+      "id": "2f5bef52",
       "execution_count": null,
       "outputs": []
     },
@@ -607,7 +607,7 @@
         "print(\"First questions  : \",'\\n', res1, '\\n')\n",
         "print(\"Second questions : \",'\\n', res2)"
       ],
-      "id": "61d3c43b",
+      "id": "e13e81a9",
       "execution_count": null,
       "outputs": []
     },
@@ -691,7 +691,7 @@
         "    \n",
         "- `tl.parallel`: It is a combinator layer (like `Serial`) that applies a list of layers in parallel to its inputs. [docs](https://trax-ml.readthedocs.io/en/latest/trax.layers.html#trax.layers.combinators.Parallel) / [source code](https://github.com/google/trax/blob/37aba571a89a8ad86be76a569d0ec4a46bdd8642/trax/layers/combinators.py#L152)\n"
       ],
-      "id": "44ebb099"
+      "id": "e8a97a71"
     },
     {
       "cell_type": "code",
@@ -731,7 +731,7 @@
         "    model = tl.Parallel(q_processor, q_processor)\n",
         "    return model"
       ],
-      "id": "da0a6419",
+      "id": "e864319e",
       "execution_count": null,
       "outputs": []
     },
@@ -741,7 +741,7 @@
       "source": [
         "Setup the Siamese network model\n"
       ],
-      "id": "5505015d"
+      "id": "08f7dd3d"
     },
     {
       "cell_type": "code",
@@ -757,7 +757,7 @@
         "model = Siamese()\n",
         "print(model)"
       ],
-      "id": "5484fc23",
+      "id": "58ce3c7f",
       "execution_count": null,
       "outputs": []
     },
@@ -844,7 +844,7 @@
         "Once you have this code matching the expected results, you can clip out the section between ### START CODE HERE and ### END CODE HERE it out and insert it into TripletLoss below.\n",
         "</details> \n"
       ],
-      "id": "c1c3b93e"
+      "id": "5abc5576"
     },
     {
       "cell_type": "code",
@@ -896,7 +896,7 @@
         "    \n",
         "    return triplet_loss"
       ],
-      "id": "67104d88",
+      "id": "88437374",
       "execution_count": null,
       "outputs": []
     },
@@ -909,7 +909,7 @@
         "TripletLossFn(v2,v1)\n",
         "print(\"Triplet Loss:\", TripletLossFn(v2,v1))"
       ],
-      "id": "106ed933",
+      "id": "77631822",
       "execution_count": null,
       "outputs": []
     },
@@ -924,7 +924,7 @@
         "\n",
         "To make a layer out of a function with no trainable variables, use `tl.Fn`.\n"
       ],
-      "id": "f0c071a8"
+      "id": "d32b8f79"
     },
     {
       "cell_type": "code",
@@ -935,7 +935,7 @@
         "    triplet_loss_fn = partial(TripletLossFn, margin=margin)\n",
         "    return tl.Fn('TripletLoss', triplet_loss_fn)"
       ],
-      "id": "b330c03e",
+      "id": "63740762",
       "execution_count": null,
       "outputs": []
     },
@@ -949,7 +949,7 @@
         "\n",
         "Now you are going to train your model. As usual, you have to define the cost function and the optimizer. You also have to feed in the built model. Before, going into the training, we will use a special data set up. We will define the inputs using the data generator we built above. The lambda function acts as a seed to remember the last batch that was given. Run the cell below to get the question pairs inputs. \n"
       ],
-      "id": "d406fdf3"
+      "id": "e51cf6f5"
     },
     {
       "cell_type": "code",
@@ -967,7 +967,7 @@
         "print('train_Q1.shape ', train_Q1.shape)\n",
         "print('val_Q1.shape   ', val_Q1.shape)"
       ],
-      "id": "3a88754e",
+      "id": "827252d7",
       "execution_count": null,
       "outputs": []
     },
@@ -1001,7 +1001,7 @@
         "\n",
         "This function should return a `training.Loop` object. To read more about this check the [docs](https://trax-ml.readthedocs.io/en/latest/trax.supervised.html?highlight=loop#trax.supervised.training.Loop).\n"
       ],
-      "id": "4b756064"
+      "id": "cf68ea5c"
     },
     {
       "cell_type": "code",
@@ -1053,7 +1053,7 @@
         "\n",
         "    return training_loop"
       ],
-      "id": "764e506d",
+      "id": "d6e430fd",
       "execution_count": null,
       "outputs": []
     },
@@ -1071,7 +1071,7 @@
         "training_loop = train_model(Siamese, TripletLoss, lr_schedule)\n",
         "training_loop.run(train_steps)"
       ],
-      "id": "ffa82ff3",
+      "id": "0f215ffc",
       "execution_count": null,
       "outputs": []
     },
@@ -1091,7 +1091,7 @@
         "\n",
         "In this section you will learn how to evaluate a Siamese network. You will first start by loading a pretrained model and then you will use it to predict. \n"
       ],
-      "id": "62b76cd8"
+      "id": "26734b0d"
     },
     {
       "cell_type": "code",
@@ -1104,7 +1104,7 @@
         "model = Siamese()\n",
         "model.init_from_file('model.pkl.gz')"
       ],
-      "id": "0d0b2a8c",
+      "id": "3ad546d2",
       "execution_count": null,
       "outputs": []
     },
@@ -1137,7 +1137,7 @@
         " \n",
         "Due to some limitations of this environment, running classify multiple times may result in the kernel failing. If that happens *Restart Kernal & clear output* and then run from the top. During development, consider using a smaller set of data to reduce the number of calls to model(). \n"
       ],
-      "id": "8aeb82cc"
+      "id": "40f47fdc"
     },
     {
       "cell_type": "code",
@@ -1190,7 +1190,7 @@
         "    \n",
         "    return accuracy"
       ],
-      "id": "e3b4eff1",
+      "id": "91301b10",
       "execution_count": null,
       "outputs": []
     },
@@ -1208,7 +1208,7 @@
         "accuracy = classify(Q1_test,Q2_test, y_test, 0.7, model, vocab, batch_size = 512) \n",
         "print(\"Accuracy\", accuracy)"
       ],
-      "id": "f5f21ccf",
+      "id": "346ff9f6",
       "execution_count": null,
       "outputs": []
     },
@@ -1239,7 +1239,7 @@
         "- compute the cosine similarity (dot product) of v1, v2\n",
         "- compute res by comparing d to the threshold\n"
       ],
-      "id": "66e33f06"
+      "id": "5b64115b"
     },
     {
       "cell_type": "code",
@@ -1298,7 +1298,7 @@
         "\n",
         "    return res"
       ],
-      "id": "53a75e61",
+      "id": "89af3353",
       "execution_count": null,
       "outputs": []
     },
@@ -1318,7 +1318,7 @@
         "# 1 means it is duplicated, 0 otherwise\n",
         "predict(question1 , question2, 0.7, model, vocab, verbose = True)"
       ],
-      "id": "0c572160",
+      "id": "e557a468",
       "execution_count": null,
       "outputs": []
     },
@@ -1342,7 +1342,7 @@
         "True\n",
         "```\n"
       ],
-      "id": "7d80b28f"
+      "id": "ac43f169"
     },
     {
       "cell_type": "code",
@@ -1360,7 +1360,7 @@
         "# 1 means it is duplicated, 0 otherwise\n",
         "predict(question1 , question2, 0.7, model, vocab, verbose=True)"
       ],
-      "id": "7edd3fa3",
+      "id": "9f7e2c26",
       "execution_count": null,
       "outputs": []
     },
@@ -1397,7 +1397,7 @@
         "\n",
         "Congratulations, you have now built a powerful system that can recognize question duplicates. In the next course we will use transformers for machine translation, summarization, question answering, and chatbots. \n"
       ],
-      "id": "49576723"
+      "id": "bab7685c"
     }
   ],
   "metadata": {

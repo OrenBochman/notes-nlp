@@ -25,7 +25,7 @@
         "\n",
         "## Imports\n"
       ],
-      "id": "b40a68aa"
+      "id": "0c108591"
     },
     {
       "cell_type": "code",
@@ -48,7 +48,7 @@
         "# to print the entire np array\n",
         "np.set_printoptions(threshold=sys.maxsize)"
       ],
-      "id": "52c9d410",
+      "id": "38c471e7",
       "execution_count": null,
       "outputs": []
     },
@@ -59,7 +59,7 @@
         "## Sentence gets embedded, add positional encoding\n",
         "Embed the words, then create vectors representing each word's position in each sentence $\\in \\{ 0, 1, 2, \\ldots , K\\}$ = `range(max_len)`, where `max_len` = $K+1$)\n"
       ],
-      "id": "d2f3015c"
+      "id": "945a5e2e"
     },
     {
       "cell_type": "code",
@@ -91,7 +91,7 @@
         "        # Add positional encoding layer with maximum input length and mode specified\n",
         "        tl.PositionalEncoding(max_len=max_len, mode=mode)] "
       ],
-      "id": "e8e6427e",
+      "id": "3f6a1e60",
       "execution_count": null,
       "outputs": []
     },
@@ -113,7 +113,7 @@
         "* Typically ends with a ReLU activation, but we'll leave open the possibility of a different activation\n",
         "* Most of the parameters are here\n"
       ],
-      "id": "2708b029"
+      "id": "06c88475"
     },
     {
       "cell_type": "code",
@@ -151,7 +151,7 @@
         "        tl.Dropout(rate=dropout, mode=mode) \n",
         "    ]"
       ],
-      "id": "830c14c7",
+      "id": "8bda8cda",
       "execution_count": null,
       "outputs": []
     },
@@ -162,7 +162,7 @@
         "## Decoder block\n",
         "Here, we return a list containing two residual blocks. The first wraps around the causal attention layer, whose inputs are normalized and to which we apply dropout regulation. The second wraps around the feed-forward layer. You may notice that the second call to `tl.Residual()` doesn't call a normalization layer before calling the feed-forward layer. This is because the normalization layer is included in the feed-forward layer.\n"
       ],
-      "id": "9d8015fa"
+      "id": "51bbf991"
     },
     {
       "cell_type": "code",
@@ -201,7 +201,7 @@
         "        ),\n",
         "      ]"
       ],
-      "id": "f459a9aa",
+      "id": "8201f66a",
       "execution_count": null,
       "outputs": []
     },
@@ -212,7 +212,7 @@
         "## The transformer decoder: putting it all together\n",
         "## A.k.a. repeat N times, dense layer and softmax for output\n"
       ],
-      "id": "332ff352"
+      "id": "96f18fe9"
     },
     {
       "cell_type": "code",
@@ -270,7 +270,7 @@
         "        tl.LogSoftmax() \n",
         "    )"
       ],
-      "id": "70ad39b4",
+      "id": "0c593784",
       "execution_count": null,
       "outputs": []
     },
@@ -282,7 +282,7 @@
         "\n",
         "In this week's assignment, you'll see how to train a transformer decoder on the [cnn_dailymail](https://www.tensorflow.org/datasets/catalog/cnn_dailymail) dataset, available from TensorFlow Datasets (part of TensorFlow Data Services). Because training such a model from scratch is time-intensive, you'll use a pre-trained model to summarize documents later in the assignment. Due to time and storage concerns, we will also not train the decoder on a different summarization dataset in this lab. If you have the time and space, we encourage you to explore the other [summarization](https://www.tensorflow.org/datasets/catalog/overview#summarization) datasets at TensorFlow Datasets. Which of them might suit your purposes better than the `cnn_dailymail` dataset? Where else can you find datasets for text summarization models?\n"
       ],
-      "id": "73dc759a"
+      "id": "29891155"
     }
   ],
   "metadata": {

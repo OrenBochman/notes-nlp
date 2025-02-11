@@ -27,7 +27,7 @@
         "    - [2.1  Trax Reversible Layers](#2.1)\n",
         "    - [2.2  Residual Model](#2.2)\n"
       ],
-      "id": "93f065ad"
+      "id": "caa4941f"
     },
     {
       "cell_type": "code",
@@ -47,7 +47,7 @@
         "from trax.shapes import ShapeDtype\n",
         "from trax.shapes import signature"
       ],
-      "id": "36d044a9",
+      "id": "c4368704",
       "execution_count": null,
       "outputs": []
     },
@@ -74,7 +74,7 @@
         " \n",
         "Trax `branch` figures prominently in the residual network layer so we will first examine it. You can see from the figure above that we will need a function that will copy an input and send it down multiple paths. This is accomplished with a  [branch layer](https://trax-ml.readthedocs.io/en/latest/trax.layers.html#module-trax.layers.combinators), one of the Trax 'combinators'. Branch is a combinator that applies a list of layers in parallel to copies of inputs. Lets try it out!  First we will need some layers to play with. Let's build some from functions.\n"
       ],
-      "id": "5f260036"
+      "id": "2941fe4a"
     },
     {
       "cell_type": "code",
@@ -99,7 +99,7 @@
         "    bl_add1.n_out,\n",
         ")"
       ],
-      "id": "5ad51822",
+      "id": "94715a1a",
       "execution_count": null,
       "outputs": []
     },
@@ -110,7 +110,7 @@
         "bl_3add1s = tl.Branch(bl_add1, bl_add2, bl_add3)\n",
         "bl_3add1s"
       ],
-      "id": "962f7e8a",
+      "id": "b312edf4",
       "execution_count": null,
       "outputs": []
     },
@@ -124,7 +124,7 @@
         "<center><b>Figure 3: One in, one out Branch</b></center>\n",
         "On output, each layer, in succession pushes its results onto the stack. Note that the push/pull operations impact the top of the stack. Elements that are not part of the operation (n, and m in the diagram) remain intact.\n"
       ],
-      "id": "62ca3ca2"
+      "id": "c8f02865"
     },
     {
       "cell_type": "code",
@@ -133,7 +133,7 @@
         "# n_in = 1, Each bl_addx pushes n_out = 1 elements onto the stack\n",
         "bl_3add1s(x)"
       ],
-      "id": "6b7d5f11",
+      "id": "dd386828",
       "execution_count": null,
       "outputs": []
     },
@@ -146,7 +146,7 @@
         "m = \"m\"  # n, m will remain on the stack\n",
         "bl_3add1s([x, n, m]) "
       ],
-      "id": "d8efe726",
+      "id": "c36c64b6",
       "execution_count": null,
       "outputs": []
     },
@@ -156,7 +156,7 @@
       "source": [
         "Each layer in the input list copies as many inputs from the stack as it needs, and their outputs are successively combined on stack. Put another way, each element of the branch can have differing numbers of inputs and outputs. Let's try a more complex example.\n"
       ],
-      "id": "ba17d62f"
+      "id": "5a93fe8c"
     },
     {
       "cell_type": "code",
@@ -170,7 +170,7 @@
         ")  # but you have to tell it how many outputs there are\n",
         "bl_3ops = tl.Branch(bl_add1, bl_addab, bl_rep3x)"
       ],
-      "id": "91632d8c",
+      "id": "325a18d7",
       "execution_count": null,
       "outputs": []
     },
@@ -183,7 +183,7 @@
         "<center><b>Figure 4: variable in, variable out Branch</b></center>\n",
         "The stack when the operation is finished is 5 entries reflecting the total from each layer.\n"
       ],
-      "id": "38b227e3"
+      "id": "21159327"
     },
     {
       "cell_type": "code",
@@ -193,7 +193,7 @@
         "y = np.array([3])\n",
         "bl_3ops([x, y, n, m])"
       ],
-      "id": "d9adb3f6",
+      "id": "4621f4e0",
       "execution_count": null,
       "outputs": []
     },
@@ -205,7 +205,7 @@
         "<img src = \"branch3.PNG\" height=\"260\" width=\"600\">\n",
         "<center><b>Figure 5: Branch for Residual</b></center>\n"
       ],
-      "id": "e3cc3555"
+      "id": "a0de1ad4"
     },
     {
       "cell_type": "code",
@@ -216,7 +216,7 @@
         "bl_2ops = tl.Branch(bl_add1, None)\n",
         "bl_2ops([x, n, m])"
       ],
-      "id": "0d63f073",
+      "id": "cf24cdb4",
       "execution_count": null,
       "outputs": []
     },
@@ -228,7 +228,7 @@
         "### Part 1.2  Residual Model\n",
         "OK, your turn. Write a function 'MyResidual', that uses `tl.Branch` and `tl.Add` to build a residual layer. If you are curious about the Trax implementation, you can see the code [here](https://github.com/google/trax/blob/190ec6c3d941d8a9f30422f27ef0c95dc16d2ab1/trax/layers/combinators.py).\n"
       ],
-      "id": "97b16fcd"
+      "id": "15a00c57"
     },
     {
       "cell_type": "code",
@@ -242,7 +242,7 @@
         "        ### END CODE HERE ###\n",
         "    )"
       ],
-      "id": "351e1fb8",
+      "id": "c9ae125a",
       "execution_count": null,
       "outputs": []
     },
@@ -255,7 +255,7 @@
         "x = np.array([1])\n",
         "mr([x, n, m])"
       ],
-      "id": "35511545",
+      "id": "2b569eb9",
       "execution_count": null,
       "outputs": []
     },
@@ -268,7 +268,7 @@
         "\n",
         "Great! Now, let's build the 4 layer residual Network in Figure 2. You can use `MyResidual`, or if you prefer, the tl.Residual in Trax, or a combination!\n"
       ],
-      "id": "45141e02"
+      "id": "7f9539c6"
     },
     {
       "cell_type": "code",
@@ -278,7 +278,7 @@
         "Gl = tl.Fn(\"G\", lambda x0: (10 * x0), n_out=1)\n",
         "x1 = np.array([1])"
       ],
-      "id": "e50472d6",
+      "id": "7a713eb5",
       "execution_count": null,
       "outputs": []
     },
@@ -295,7 +295,7 @@
         "    ### END CODE HERE ###\n",
         ")"
       ],
-      "id": "61140124",
+      "id": "1d7d9964",
       "execution_count": null,
       "outputs": []
     },
@@ -306,7 +306,7 @@
         "# Lets try it\n",
         "resfg([x1, n, m])"
       ],
-      "id": "fc915303",
+      "id": "42066d62",
       "execution_count": null,
       "outputs": []
     },
@@ -332,7 +332,7 @@
         "\n",
         "Let's take a look at how this is used in the Reformer.\n"
       ],
-      "id": "868af564"
+      "id": "8b29c72c"
     },
     {
       "cell_type": "code",
@@ -343,7 +343,7 @@
         ")\n",
         "refm"
       ],
-      "id": "c4485630",
+      "id": "63d02c28",
       "execution_count": null,
       "outputs": []
     },
@@ -369,7 +369,7 @@
         "\n",
         "Let's try out some of these layers! We'll start with the ones that just operate on the stack, Dup() and Swap().\n"
       ],
-      "id": "6787d557"
+      "id": "3757f083"
     },
     {
       "cell_type": "code",
@@ -381,7 +381,7 @@
         "dl = tl.Dup()\n",
         "dl(x1)"
       ],
-      "id": "4adab963",
+      "id": "7b17601d",
       "execution_count": null,
       "outputs": []
     },
@@ -393,7 +393,7 @@
         "sl = tl.ReversibleSwap()\n",
         "sl([x1, x2])"
       ],
-      "id": "bdccd507",
+      "id": "5e58f475",
       "execution_count": null,
       "outputs": []
     },
@@ -406,7 +406,7 @@
         "<center><b>Figure 11: Two versions of Swap() </b></center>\n",
         "The ReverseXYZ functions include a \"reverse\" compliment to their \"forward\" function that provides the functionality to run in reverse when doing backpropagation. It can also be run in reverse by simply calling 'reverse'.\n"
       ],
-      "id": "2bce2dac"
+      "id": "9adc4cdd"
     },
     {
       "cell_type": "code",
@@ -415,7 +415,7 @@
         "# Demonstrate reverse swap\n",
         "print(x1, x2, sl.reverse([x1, x2]))"
       ],
-      "id": "c8179589",
+      "id": "8dc2f928",
       "execution_count": null,
       "outputs": []
     },
@@ -425,7 +425,7 @@
       "source": [
         "Let's try ReversibleHalfResidual, First we'll need some layers..\n"
       ],
-      "id": "52dd54fa"
+      "id": "d33a1040"
     },
     {
       "cell_type": "code",
@@ -434,7 +434,7 @@
         "Fl = tl.Fn(\"F\", lambda x0: (2 * x0), n_out=1)\n",
         "Gl = tl.Fn(\"G\", lambda x0: (10 * x0), n_out=1)"
       ],
-      "id": "0b64ddd0",
+      "id": "308bf2d8",
       "execution_count": null,
       "outputs": []
     },
@@ -444,7 +444,7 @@
       "source": [
         "Just a note about ReversibleHalfResidual. As this is written, it resides in the Reformer model and is a layer. It is invoked a bit differently that other layers. Rather than tl.XYZ, it is just ReversibleHalfResidual(layers..) as shown below. This may change in the future.\n"
       ],
-      "id": "78f70c74"
+      "id": "72bf58dd"
     },
     {
       "cell_type": "code",
@@ -453,7 +453,7 @@
         "half_res_F = ReversibleHalfResidual(Fl)\n",
         "print(type(half_res_F), \"\\n\", half_res_F)"
       ],
-      "id": "b10b11cd",
+      "id": "807a02f4",
       "execution_count": null,
       "outputs": []
     },
@@ -463,7 +463,7 @@
       "source": [
         "half_res_F([x1, x1])  # this is going to produce an error - why?"
       ],
-      "id": "c7aec490",
+      "id": "76df43fa",
       "execution_count": null,
       "outputs": []
     },
@@ -475,7 +475,7 @@
         "half_res_F.init(shapes.signature([x1, x1]))\n",
         "half_res_F([x1, x1])"
       ],
-      "id": "c5a165a8",
+      "id": "c8d1a845",
       "execution_count": null,
       "outputs": []
     },
@@ -493,7 +493,7 @@
         "<center><img src = \"Revnet6.PNG\" height=\"800\" width=\"1600\"> </center>\n",
         "<center><b>Figure 12: Reversible Model we will build using Trax components </b></center>\n"
       ],
-      "id": "1873f273"
+      "id": "862432ab"
     },
     {
       "cell_type": "code",
@@ -509,7 +509,7 @@
         "blks = [None, None]\n",
         "### END CODE HERE ###"
       ],
-      "id": "f76ce60a",
+      "id": "081821ee",
       "execution_count": null,
       "outputs": []
     },
@@ -526,7 +526,7 @@
         ")\n",
         "mod"
       ],
-      "id": "e5420519",
+      "id": "9cac739f",
       "execution_count": null,
       "outputs": []
     },
@@ -568,7 +568,7 @@
         "]\n",
         "```\n"
       ],
-      "id": "9b4d71b4"
+      "id": "34cdb44a"
     },
     {
       "cell_type": "code",
@@ -578,7 +578,7 @@
         "out = mod(x1)\n",
         "out"
       ],
-      "id": "e6c326ff",
+      "id": "15d77e67",
       "execution_count": null,
       "outputs": []
     },
@@ -591,7 +591,7 @@
         "\n",
         "OK, now you have had a chance to try all the 'Reversible' functions in Trax. On to the Assignment!\n"
       ],
-      "id": "1bad9695"
+      "id": "b2a342fa"
     }
   ],
   "metadata": {

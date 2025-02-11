@@ -35,7 +35,7 @@
         "\n",
         "For this exercise, we will use a Twitter dataset that comes with NLTK. This dataset has been manually annotated and serves to establish baselines for models quickly. Let us import them now as well as a few other libraries we will be using.\n"
       ],
-      "id": "4659c986"
+      "id": "3eb341dc"
     },
     {
       "cell_type": "code",
@@ -46,7 +46,7 @@
         "import matplotlib.pyplot as plt            # library for visualization\n",
         "import random                              # pseudo-random number generator"
       ],
-      "id": "90613f06",
+      "id": "a7e4918e",
       "execution_count": null,
       "outputs": []
     },
@@ -60,7 +60,7 @@
         "\n",
         "The dataset is already downloaded in the Coursera workspace. In a local computer however, we can download the data by doing:\n"
       ],
-      "id": "30f9ec45"
+      "id": "e94e5b04"
     },
     {
       "cell_type": "code",
@@ -69,7 +69,7 @@
         "# downloads sample twitter dataset. uncomment the line below if running on a local machine.\n",
         "# nltk.download('twitter_samples')"
       ],
-      "id": "a5278acf",
+      "id": "3a04f659",
       "execution_count": null,
       "outputs": []
     },
@@ -79,7 +79,7 @@
       "source": [
         "We can load the text fields of the positive and negative tweets by using the module's `strings()` method like this:\n"
       ],
-      "id": "a55f3692"
+      "id": "98f96b6a"
     },
     {
       "cell_type": "code",
@@ -89,7 +89,7 @@
         "all_positive_tweets = twitter_samples.strings('positive_tweets.json')\n",
         "all_negative_tweets = twitter_samples.strings('negative_tweets.json')"
       ],
-      "id": "6c4fcae9",
+      "id": "2c9dfe54",
       "execution_count": null,
       "outputs": []
     },
@@ -99,7 +99,7 @@
       "source": [
         "Next, we'll print a report with the number of positive and negative tweets. It is also essential to know the data structure of the datasets\n"
       ],
-      "id": "a81eec38"
+      "id": "d65869e4"
     },
     {
       "cell_type": "code",
@@ -111,7 +111,7 @@
         "print('\\nThe type of all_positive_tweets is: ', type(all_positive_tweets))\n",
         "print('The type of a tweet entry is: ', type(all_negative_tweets[0]))"
       ],
-      "id": "d86a448f",
+      "id": "442c195b",
       "execution_count": null,
       "outputs": []
     },
@@ -123,7 +123,7 @@
         "\n",
         "We can make a more visually appealing report by using Matplotlib's [pyplot](https://matplotlib.org/tutorials/introductory/pyplot.html) library. Let us see how to create a [pie chart](https://matplotlib.org/3.2.1/gallery/pie_and_polar_charts/pie_features.html#sphx-glr-gallery-pie-and-polar-charts-pie-features-py) to show the same information as above. This simple snippet will serve we in future visualizations of this kind of data.\n"
       ],
-      "id": "e638ce51"
+      "id": "61965dd8"
     },
     {
       "cell_type": "code",
@@ -148,7 +148,7 @@
         "# Display the chart\n",
         "plt.show()"
       ],
-      "id": "81ff96f5",
+      "id": "81399d94",
       "execution_count": null,
       "outputs": []
     },
@@ -162,7 +162,7 @@
         "\n",
         "Below, we will print one random positive and one random negative tweet. We have added a color mark at the beginning of the string to further distinguish the two. (Warning: This is taken from a public dataset of real tweets and a very small portion has explicit content.)\n"
       ],
-      "id": "75f4a911"
+      "id": "ea8e0fc4"
     },
     {
       "cell_type": "code",
@@ -174,7 +174,7 @@
         "# print negative in red\n",
         "print('\\033[91m' + all_negative_tweets[random.randint(0,5000)])"
       ],
-      "id": "6a9506a7",
+      "id": "4df33fcb",
       "execution_count": null,
       "outputs": []
     },
@@ -195,7 +195,7 @@
         "\n",
         "The videos explained each of these steps and why they are important. Let's see how we can do these to a given tweet. We will choose just one and see how this is transformed by each preprocessing step.\n"
       ],
-      "id": "a3f4f17f"
+      "id": "a7e35639"
     },
     {
       "cell_type": "code",
@@ -205,7 +205,7 @@
         "tweet = all_positive_tweets[2277]\n",
         "print(tweet)"
       ],
-      "id": "84ad2b87",
+      "id": "551b98e7",
       "execution_count": null,
       "outputs": []
     },
@@ -215,7 +215,7 @@
       "source": [
         "Let's import a few more libraries for this purpose.\n"
       ],
-      "id": "25cd25fe"
+      "id": "b82d64a8"
     },
     {
       "cell_type": "code",
@@ -224,7 +224,7 @@
         "# download the stopwords from NLTK\n",
         "nltk.download('stopwords')"
       ],
-      "id": "7e8df375",
+      "id": "8d910b6b",
       "execution_count": null,
       "outputs": []
     },
@@ -239,7 +239,7 @@
         "from nltk.stem import PorterStemmer        # module for stemming\n",
         "from nltk.tokenize import TweetTokenizer   # module for tokenizing strings"
       ],
-      "id": "b1bd74d4",
+      "id": "79a042ce",
       "execution_count": null,
       "outputs": []
     },
@@ -251,7 +251,7 @@
         "\n",
         "Since we have a Twitter dataset, we'd like to remove some substrings commonly used on the platform like the hashtag, retweet marks, and hyperlinks. We'll use the [re](https://docs.python.org/3/library/re.html) library to perform regular expression operations on our tweet. We'll define our search pattern and use the `sub()` method to remove matches by substituting with an empty character (i.e. `''`)\n"
       ],
-      "id": "634b36c5"
+      "id": "ea49dd7e"
     },
     {
       "cell_type": "code",
@@ -272,7 +272,7 @@
         "\n",
         "print(tweet2)"
       ],
-      "id": "ba7adf97",
+      "id": "51b37250",
       "execution_count": null,
       "outputs": []
     },
@@ -284,7 +284,7 @@
         "\n",
         "To tokenize means to split the strings into individual words without blanks or tabs. In this same step, we will also convert each word in the string to lower case. The [tokenize](https://www.nltk.org/api/nltk.tokenize.html#module-nltk.tokenize.casual) module from NLTK allows us to do these easily:\n"
       ],
-      "id": "ebdd26c8"
+      "id": "a8b19aea"
     },
     {
       "cell_type": "code",
@@ -305,7 +305,7 @@
         "print('Tokenized string:')\n",
         "print(tweet_tokens)"
       ],
-      "id": "ca3ed40f",
+      "id": "8c2d093f",
       "execution_count": null,
       "outputs": []
     },
@@ -317,7 +317,7 @@
         "\n",
         "The next step is to remove stop words and punctuation. Stop words are words that don't add significant meaning to the text. You'll see the list provided by NLTK when we run the cells below.\n"
       ],
-      "id": "626d3869"
+      "id": "03af69c1"
     },
     {
       "cell_type": "code",
@@ -332,7 +332,7 @@
         "print('\\nPunctuation\\n')\n",
         "print(string.punctuation)"
       ],
-      "id": "5ed5b7d3",
+      "id": "e0b146d6",
       "execution_count": null,
       "outputs": []
     },
@@ -347,7 +347,7 @@
         "\n",
         "Time to clean up our tokenized tweet!\n"
       ],
-      "id": "2a451e4e"
+      "id": "c5cfba50"
     },
     {
       "cell_type": "code",
@@ -368,7 +368,7 @@
         "print('removed stop words and punctuation:')\n",
         "print(tweets_clean)"
       ],
-      "id": "32986e26",
+      "id": "ebd9965f",
       "execution_count": null,
       "outputs": []
     },
@@ -398,7 +398,7 @@
         " \n",
         "NLTK has different modules for stemming and we will be using the [PorterStemmer](https://www.nltk.org/api/nltk.stem.html#module-nltk.stem.porter) module which uses the [Porter Stemming Algorithm](https://tartarus.org/martin/PorterStemmer/). Let's see how we can use it in the cell below.\n"
       ],
-      "id": "bd90e548"
+      "id": "18e91884"
     },
     {
       "cell_type": "code",
@@ -422,7 +422,7 @@
         "print('stemmed words:')\n",
         "print(tweets_stem)"
       ],
-      "id": "13afe77b",
+      "id": "e26f881d",
       "execution_count": null,
       "outputs": []
     },
@@ -438,7 +438,7 @@
         "\n",
         "To obtain the same result as in the previous code cells, we will only need to call the function `process_tweet()`. Let's do that in the next cell.\n"
       ],
-      "id": "dfad2435"
+      "id": "43ae1d50"
     },
     {
       "cell_type": "code",
@@ -460,7 +460,7 @@
         "print('preprocessed tweet:')\n",
         "print(tweets_stem) # Print the result"
       ],
-      "id": "70ce456c",
+      "id": "a00a7dda",
       "execution_count": null,
       "outputs": []
     },
@@ -470,7 +470,7 @@
       "source": [
         "That's it for this lab! We now know what is going on when we call the preprocessing helper function in this week's assignment. Hopefully, this exercise has also given we some insights on how to tweak this for other types of text datasets.\n"
       ],
-      "id": "0d3256dc"
+      "id": "a4af6012"
     }
   ],
   "metadata": {

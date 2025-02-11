@@ -30,7 +30,7 @@
         "\n",
         "To get started, import and initialize all the libraries we will need.\n"
       ],
-      "id": "84e0589a"
+      "id": "ddfee601"
     },
     {
       "cell_type": "code",
@@ -43,7 +43,7 @@
         "from nltk.tokenize import word_tokenize\n",
         "from utils2 import get_dict"
       ],
-      "id": "efa62e43",
+      "id": "b4b74747",
       "execution_count": null,
       "outputs": []
     },
@@ -65,7 +65,7 @@
         "\n",
         "To demonstrate the cleaning and tokenization process, consider a corpus that contains emojis and various punctuation signs.\n"
       ],
-      "id": "cf2fd6d2"
+      "id": "feb499ce"
     },
     {
       "cell_type": "code",
@@ -74,7 +74,7 @@
         "# Define a corpus\n",
         "corpus = 'Who ❤️ \"word embeddings\" in 2020? I do!!!'"
       ],
-      "id": "cb67df8c",
+      "id": "5731b69f",
       "execution_count": null,
       "outputs": []
     },
@@ -84,7 +84,7 @@
       "source": [
         "First, replace all interrupting punctuation signs — such as commas and exclamation marks — with periods.\n"
       ],
-      "id": "c8645040"
+      "id": "95506d31"
     },
     {
       "cell_type": "code",
@@ -99,7 +99,7 @@
         "# Print cleaned corpus\n",
         "print(f'After cleaning punctuation:  {data}')"
       ],
-      "id": "2202194f",
+      "id": "7ba0ff85",
       "execution_count": null,
       "outputs": []
     },
@@ -109,7 +109,7 @@
       "source": [
         "Next, use NLTK's tokenization engine to split the corpus into individual tokens.\n"
       ],
-      "id": "e1f56e2d"
+      "id": "bdfe593a"
     },
     {
       "cell_type": "code",
@@ -124,7 +124,7 @@
         "# Print the tokenized version of the corpus\n",
         "print(f'After tokenization:  {data}')"
       ],
-      "id": "078b29aa",
+      "id": "f03bf8fb",
       "execution_count": null,
       "outputs": []
     },
@@ -134,7 +134,7 @@
       "source": [
         "Finally, as we saw in the lecture, get rid of numbers and punctuation other than periods, and convert all the remaining tokens to lowercase.\n"
       ],
-      "id": "a5d10420"
+      "id": "67dcf362"
     },
     {
       "cell_type": "code",
@@ -153,7 +153,7 @@
         "# Print the tokenized and filtered version of the corpus\n",
         "print(f'After cleaning:  {data}')"
       ],
-      "id": "f85b388b",
+      "id": "5dba3e3e",
       "execution_count": null,
       "outputs": []
     },
@@ -165,7 +165,7 @@
         "\n",
         "Now let's streamline the cleaning and tokenization process by wrapping the previous steps in a function.\n"
       ],
-      "id": "e3a62dd6"
+      "id": "3b2c35fc"
     },
     {
       "cell_type": "code",
@@ -182,7 +182,7 @@
         "           ]\n",
         "    return data"
       ],
-      "id": "e7de2aa7",
+      "id": "1f88ba49",
       "execution_count": null,
       "outputs": []
     },
@@ -192,7 +192,7 @@
       "source": [
         "Apply this function to the corpus that you'll be working on in the rest of this notebook: \"I am happy because I am learning\"\n"
       ],
-      "id": "2e0dc84c"
+      "id": "30f0e044"
     },
     {
       "cell_type": "code",
@@ -210,7 +210,7 @@
         "# Print the tokenized version of the corpus\n",
         "print(f'Words (tokens):  {words}')"
       ],
-      "id": "80ac1382",
+      "id": "6804b873",
       "execution_count": null,
       "outputs": []
     },
@@ -220,7 +220,7 @@
       "source": [
         "**Now try it out yourself with your own sentence.**\n"
       ],
-      "id": "df654b0d"
+      "id": "53ff4777"
     },
     {
       "cell_type": "code",
@@ -229,7 +229,7 @@
         "# Run this with any sentence\n",
         "tokenize(\"Now it's your turn: try with your own sentence!\")"
       ],
-      "id": "3bb74e82",
+      "id": "616ce597",
       "execution_count": null,
       "outputs": []
     },
@@ -243,7 +243,7 @@
         "\n",
         "The `get_windows` function in the next cell was introduced in the lecture.\n"
       ],
-      "id": "5747a9f4"
+      "id": "43eb2ab9"
     },
     {
       "cell_type": "code",
@@ -258,7 +258,7 @@
         "        yield context_words, center_word\n",
         "        i += 1"
       ],
-      "id": "fe4063e6",
+      "id": "5997cd9d",
       "execution_count": null,
       "outputs": []
     },
@@ -270,7 +270,7 @@
         "\n",
         "Here is how we can use this function to extract context words and center words from a list of tokens. These context and center words will make up the training set that we will use to train the CBOW model.\n"
       ],
-      "id": "2a42577e"
+      "id": "a13f8120"
     },
     {
       "cell_type": "code",
@@ -280,7 +280,7 @@
         "for x, y in get_windows(['i', 'am', 'happy', 'because', 'i', 'am', 'learning'], 2):\n",
         "    print(f'{x}\\t{y}')"
       ],
-      "id": "b664c07e",
+      "id": "2021496c",
       "execution_count": null,
       "outputs": []
     },
@@ -296,7 +296,7 @@
         "\n",
         "**Now try it out yourself. In the next cell, we can change both the sentence and the context half-size.**\n"
       ],
-      "id": "b4f3140c"
+      "id": "dc5d9d11"
     },
     {
       "cell_type": "code",
@@ -306,7 +306,7 @@
         "for x, y in get_windows(tokenize(\"Now it's your turn: try with your own sentence!\"), 1):\n",
         "    print(f'{x}\\t{y}')"
       ],
-      "id": "cfa29bfd",
+      "id": "619b6d64",
       "execution_count": null,
       "outputs": []
     },
@@ -324,7 +324,7 @@
         "\n",
         "To create one-hot word vectors, we can start by mapping each unique word to a unique integer (or index). We have provided a helper function, `get_dict`, that creates a Python dictionary that maps words to integers and back.\n"
       ],
-      "id": "e501a17e"
+      "id": "b78a6dd4"
     },
     {
       "cell_type": "code",
@@ -333,7 +333,7 @@
         "# Get 'word2Ind' and 'Ind2word' dictionaries for the tokenized corpus\n",
         "word2Ind, Ind2word = get_dict(words)"
       ],
-      "id": "614286f5",
+      "id": "f9fdc0e0",
       "execution_count": null,
       "outputs": []
     },
@@ -343,7 +343,7 @@
       "source": [
         "Here's the dictionary that maps words to numeric indices.\n"
       ],
-      "id": "51e3f688"
+      "id": "1aeb5451"
     },
     {
       "cell_type": "code",
@@ -354,7 +354,7 @@
         "# Print 'word2Ind' dictionary\n",
         "word2Ind"
       ],
-      "id": "130441a8",
+      "id": "8dc4dfd4",
       "execution_count": null,
       "outputs": []
     },
@@ -364,7 +364,7 @@
       "source": [
         "We can use this dictionary to get the index of a word.\n"
       ],
-      "id": "85e5ebdb"
+      "id": "3d8c7307"
     },
     {
       "cell_type": "code",
@@ -373,7 +373,7 @@
         "# Print value for the key 'i' within word2Ind dictionary\n",
         "print(\"Index of the word 'i':  \",word2Ind['i'])"
       ],
-      "id": "281133a6",
+      "id": "6b72ceea",
       "execution_count": null,
       "outputs": []
     },
@@ -383,7 +383,7 @@
       "source": [
         "And conversely, here's the dictionary that maps indices to words.\n"
       ],
-      "id": "72ef57b7"
+      "id": "36474782"
     },
     {
       "cell_type": "code",
@@ -392,7 +392,7 @@
         "# Print 'Ind2word' dictionary\n",
         "Ind2word"
       ],
-      "id": "52bfd9c8",
+      "id": "fc9bc4f6",
       "execution_count": null,
       "outputs": []
     },
@@ -405,7 +405,7 @@
         "# Print value for the key '2' within Ind2word dictionary\n",
         "print(\"Word which has index 2:  \",Ind2word[2] )"
       ],
-      "id": "a35b78f9",
+      "id": "f2ef116d",
       "execution_count": null,
       "outputs": []
     },
@@ -415,7 +415,7 @@
       "source": [
         "Finally, get the length of either of these dictionaries to get the size of the vocabulary of your corpus, in other words the number of different words making up the corpus.\n"
       ],
-      "id": "1d1f1e30"
+      "id": "15bb63d1"
     },
     {
       "cell_type": "code",
@@ -427,7 +427,7 @@
         "# Print length of word2Ind dictionary\n",
         "print(\"Size of vocabulary: \", V)"
       ],
-      "id": "1825a1db",
+      "id": "82c1af32",
       "execution_count": null,
       "outputs": []
     },
@@ -441,7 +441,7 @@
         "\n",
         "Consider the word \"happy\". First, retrieve its numeric index.\n"
       ],
-      "id": "7c45f716"
+      "id": "703ec66c"
     },
     {
       "cell_type": "code",
@@ -453,7 +453,7 @@
         "# Print index of word 'happy'\n",
         "n"
       ],
-      "id": "a98a6990",
+      "id": "f12ae29c",
       "execution_count": null,
       "outputs": []
     },
@@ -463,7 +463,7 @@
       "source": [
         "Now create a vector with the size of the vocabulary, and fill it with zeros.\n"
       ],
-      "id": "e8ac8e7e"
+      "id": "96af34cc"
     },
     {
       "cell_type": "code",
@@ -475,7 +475,7 @@
         "# Print vector\n",
         "center_word_vector"
       ],
-      "id": "a7b0a03d",
+      "id": "3379234e",
       "execution_count": null,
       "outputs": []
     },
@@ -485,7 +485,7 @@
       "source": [
         "We can confirm that the vector has the right size.\n"
       ],
-      "id": "c178be81"
+      "id": "b942110f"
     },
     {
       "cell_type": "code",
@@ -494,7 +494,7 @@
         "# Assert that the length of the vector is the same as the size of the vocabulary\n",
         "len(center_word_vector) == V"
       ],
-      "id": "cb1e9222",
+      "id": "bf574609",
       "execution_count": null,
       "outputs": []
     },
@@ -504,7 +504,7 @@
       "source": [
         "Next, replace the 0 of the $n$-th element with a 1.\n"
       ],
-      "id": "1faf9faf"
+      "id": "f61ba403"
     },
     {
       "cell_type": "code",
@@ -513,7 +513,7 @@
         "# Replace element number 'n' with a 1\n",
         "center_word_vector[n] = 1"
       ],
-      "id": "2afd691d",
+      "id": "6650f7f5",
       "execution_count": null,
       "outputs": []
     },
@@ -523,7 +523,7 @@
       "source": [
         "And we have your one-hot word vector.\n"
       ],
-      "id": "e179f2e6"
+      "id": "92a7c426"
     },
     {
       "cell_type": "code",
@@ -532,7 +532,7 @@
         "# Print vector\n",
         "center_word_vector"
       ],
-      "id": "6cdc3183",
+      "id": "0b9b833e",
       "execution_count": null,
       "outputs": []
     },
@@ -542,7 +542,7 @@
       "source": [
         "**We can now group all of these steps in a convenient function, which takes as parameters: a word to be encoded, a dictionary that maps words to indices, and the size of the vocabulary.**\n"
       ],
-      "id": "491e766f"
+      "id": "d2d27227"
     },
     {
       "cell_type": "code",
@@ -554,7 +554,7 @@
         "    one_hot_vector[word2Ind[word]] = 1\n",
         "    return one_hot_vector"
       ],
-      "id": "43229de2",
+      "id": "e178348f",
       "execution_count": null,
       "outputs": []
     },
@@ -564,7 +564,7 @@
       "source": [
         "Check that it works as intended.\n"
       ],
-      "id": "3e433ba8"
+      "id": "95f5254d"
     },
     {
       "cell_type": "code",
@@ -573,7 +573,7 @@
         "# Print output of 'word_to_one_hot_vector' function for word 'happy'\n",
         "word_to_one_hot_vector('happy', word2Ind, V)"
       ],
-      "id": "873d387b",
+      "id": "3eff46bd",
       "execution_count": null,
       "outputs": []
     },
@@ -583,7 +583,7 @@
       "source": [
         "**What is the word vector for \"learning\"?**\n"
       ],
-      "id": "6ec7b7af"
+      "id": "c6b2cdb8"
     },
     {
       "cell_type": "code",
@@ -592,7 +592,7 @@
         "# Print output of 'word_to_one_hot_vector' function for word 'learning'\n",
         "word_to_one_hot_vector('learning', word2Ind, V)"
       ],
-      "id": "c0e11285",
+      "id": "3a61c42f",
       "execution_count": null,
       "outputs": []
     },
@@ -610,7 +610,7 @@
         "\n",
         "Let's start with a list of context words.\n"
       ],
-      "id": "17550737"
+      "id": "dd9c4729"
     },
     {
       "cell_type": "code",
@@ -619,7 +619,7 @@
         "# Define list containing context words\n",
         "context_words = ['i', 'am', 'because', 'i']"
       ],
-      "id": "2b4b4a81",
+      "id": "b21f0bb9",
       "execution_count": null,
       "outputs": []
     },
@@ -629,7 +629,7 @@
       "source": [
         "Using Python's list comprehension construct and the `word_to_one_hot_vector` function that we created in the previous section, we can create a list of one-hot vectors representing each of the context words.\n"
       ],
-      "id": "56eb352f"
+      "id": "f85377fd"
     },
     {
       "cell_type": "code",
@@ -641,7 +641,7 @@
         "# Print one-hot vectors for each context word\n",
         "context_words_vectors"
       ],
-      "id": "8105b01e",
+      "id": "b4bbd1fd",
       "execution_count": null,
       "outputs": []
     },
@@ -651,7 +651,7 @@
       "source": [
         "And we can now simply get the average of these vectors using numpy's `mean` function, to get the vector representation of the context words.\n"
       ],
-      "id": "d494879c"
+      "id": "61324d91"
     },
     {
       "cell_type": "code",
@@ -660,7 +660,7 @@
         "# Compute mean of the vectors using numpy\n",
         "np.mean(context_words_vectors, axis=0)"
       ],
-      "id": "cf1adb58",
+      "id": "e715ef46",
       "execution_count": null,
       "outputs": []
     },
@@ -672,7 +672,7 @@
         "\n",
         "**Now create the `context_words_to_vector` function that takes in a list of context words, a word-to-index dictionary, and a vocabulary size, and outputs the vector representation of the context words.**\n"
       ],
-      "id": "828fb6ae"
+      "id": "99ef8470"
     },
     {
       "cell_type": "code",
@@ -684,7 +684,7 @@
         "    context_words_vectors = np.mean(context_words_vectors, axis=0)\n",
         "    return context_words_vectors"
       ],
-      "id": "0f3e9fa0",
+      "id": "64f09b32",
       "execution_count": null,
       "outputs": []
     },
@@ -694,7 +694,7 @@
       "source": [
         "And check that we obtain the same output as the manual approach above.\n"
       ],
-      "id": "55e8504d"
+      "id": "aef2d9eb"
     },
     {
       "cell_type": "code",
@@ -703,7 +703,7 @@
         "# Print output of 'context_words_to_vector' function for context words: 'i', 'am', 'because', 'i'\n",
         "context_words_to_vector(['i', 'am', 'because', 'i'], word2Ind, V)"
       ],
-      "id": "d7531acb",
+      "id": "a3c34436",
       "execution_count": null,
       "outputs": []
     },
@@ -713,7 +713,7 @@
       "source": [
         "**What is the vector representation of the context words \"am happy i am\"?**\n"
       ],
-      "id": "f1f38ac7"
+      "id": "14c0a550"
     },
     {
       "cell_type": "code",
@@ -722,7 +722,7 @@
         "# Print output of 'context_words_to_vector' function for context words: 'am', 'happy', 'i', 'am'\n",
         "context_words_to_vector(['am', 'happy', 'i', 'am'], word2Ind, V)"
       ],
-      "id": "295c1507",
+      "id": "09553abf",
       "execution_count": null,
       "outputs": []
     },
@@ -739,7 +739,7 @@
         "\n",
         "We can now combine the functions that we created in the previous sections, to build a training set for the CBOW model, starting from the following tokenized corpus.\n"
       ],
-      "id": "1792e867"
+      "id": "decdc381"
     },
     {
       "cell_type": "code",
@@ -748,7 +748,7 @@
         "# Print corpus\n",
         "words"
       ],
-      "id": "7dd53db9",
+      "id": "f66c906e",
       "execution_count": null,
       "outputs": []
     },
@@ -758,7 +758,7 @@
       "source": [
         "To do this we need to use the sliding window function (`get_windows`) to extract the context words and center words, and we then convert these sets of words into a basic vector representation using `word_to_one_hot_vector` and `context_words_to_vector`.\n"
       ],
-      "id": "be986298"
+      "id": "0b4bc051"
     },
     {
       "cell_type": "code",
@@ -770,7 +770,7 @@
         "    print(f'Center word:  {center_word} -> {word_to_one_hot_vector(center_word, word2Ind, V)}')\n",
         "    print()"
       ],
-      "id": "ab10bcde",
+      "id": "3f691865",
       "execution_count": null,
       "outputs": []
     },
@@ -781,7 +781,7 @@
         "In this practice notebook you'll be performing a single iteration of training using a single example, but in this week's assignment you'll train the CBOW model using several iterations and batches of example.\n",
         "Here is how we would use a Python generator function (remember the `yield` keyword from the lecture?) to make it easier to iterate over a set of examples.\n"
       ],
-      "id": "5dba324d"
+      "id": "18a3ab57"
     },
     {
       "cell_type": "code",
@@ -792,7 +792,7 @@
         "    for context_words, center_word in get_windows(words, C):\n",
         "        yield context_words_to_vector(context_words, word2Ind, V), word_to_one_hot_vector(center_word, word2Ind, V)"
       ],
-      "id": "abf5b3ca",
+      "id": "b1c01905",
       "execution_count": null,
       "outputs": []
     },
@@ -802,7 +802,7 @@
       "source": [
         "The output of this function can be iterated on to get successive context word vectors and center word vectors, as demonstrated in the next cell.\n"
       ],
-      "id": "de7c6e1a"
+      "id": "4e95a577"
     },
     {
       "cell_type": "code",
@@ -814,7 +814,7 @@
         "    print(f'Center word vector:  {center_word_vector}')\n",
         "    print()"
       ],
-      "id": "5f5db7ab",
+      "id": "af67b05b",
       "execution_count": null,
       "outputs": []
     },
@@ -828,7 +828,7 @@
         "\n",
         "**Keep it up!**\n"
       ],
-      "id": "c2f151fe"
+      "id": "fde38eb3"
     }
   ],
   "metadata": {

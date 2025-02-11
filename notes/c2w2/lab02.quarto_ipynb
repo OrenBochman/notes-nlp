@@ -25,7 +25,7 @@
         "In this lecture notebook we will create a matrix using some tag information and then modify it using different approaches.\n",
         "This will serve as hands-on experience working with Numpy and as an introduction to some elements used for POS tagging.\n"
       ],
-      "id": "95e0fbe3"
+      "id": "e7b2bbcc"
     },
     {
       "cell_type": "code",
@@ -34,7 +34,7 @@
         "import numpy as np\n",
         "import pandas as pd"
       ],
-      "id": "6d0aabdc",
+      "id": "3ed73379",
       "execution_count": null,
       "outputs": []
     },
@@ -46,7 +46,7 @@
         "\n",
         "For this notebook we will be using a toy example including only three tags (or states). In a real world application there are many more tags which can be found [here](https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html).\n"
       ],
-      "id": "6ecf11cd"
+      "id": "e57c78a4"
     },
     {
       "cell_type": "code",
@@ -55,7 +55,7 @@
         "# Define tags for Adverb, Noun and To (the preposition) , respectively\n",
         "tags = ['RB', 'NN', 'TO']"
       ],
-      "id": "3ddf1f27",
+      "id": "e87d6dc0",
       "execution_count": null,
       "outputs": []
     },
@@ -73,7 +73,7 @@
         "\n",
         "In this notebook we will be looking at the first one:\n"
       ],
-      "id": "2609f479"
+      "id": "7ba99993"
     },
     {
       "cell_type": "code",
@@ -93,7 +93,7 @@
         "    ('TO', 'RB'): 200\n",
         "}"
       ],
-      "id": "086b71a7",
+      "id": "7ceb3bee",
       "execution_count": null,
       "outputs": []
     },
@@ -107,7 +107,7 @@
         "\n",
         "Now we will create a matrix that includes these frequencies using Numpy arrays:\n"
       ],
-      "id": "8792f92f"
+      "id": "de97afe2"
     },
     {
       "cell_type": "code",
@@ -122,7 +122,7 @@
         "# Print matrix\n",
         "transition_matrix"
       ],
-      "id": "0ab67629",
+      "id": "0456c6e3",
       "execution_count": null,
       "outputs": []
     },
@@ -132,7 +132,7 @@
       "source": [
         "Visually we can see the matrix has the correct dimensions. Don't forget we can check this too using the `shape` attribute:\n"
       ],
-      "id": "4179633f"
+      "id": "6b8af892"
     },
     {
       "cell_type": "code",
@@ -141,7 +141,7 @@
         "# Print shape of the matrix\n",
         "transition_matrix.shape"
       ],
-      "id": "fddcf56a",
+      "id": "ad87d14e",
       "execution_count": null,
       "outputs": []
     },
@@ -151,7 +151,7 @@
       "source": [
         "Before filling this matrix with the values of the `transition_counts` dictionary we should sort the tags so that their placement in the matrix is consistent:\n"
       ],
-      "id": "444e6f5f"
+      "id": "983f191d"
     },
     {
       "cell_type": "code",
@@ -163,7 +163,7 @@
         "# Print sorted list\n",
         "sorted_tags"
       ],
-      "id": "aa0156e1",
+      "id": "001f2119",
       "execution_count": null,
       "outputs": []
     },
@@ -173,7 +173,7 @@
       "source": [
         "To fill this matrix with the correct values we can use a `double for loop`. We could also use `itertools.product` to one line this double loop:\n"
       ],
-      "id": "5b6b2baf"
+      "id": "6a43d8ce"
     },
     {
       "cell_type": "code",
@@ -191,7 +191,7 @@
         "# Print matrix\n",
         "transition_matrix"
       ],
-      "id": "137d524a",
+      "id": "bd971bf8",
       "execution_count": null,
       "outputs": []
     },
@@ -203,7 +203,7 @@
         "\n",
         "For this we can use a `Pandas DataFrame`. In particular, a function that takes the matrix as input and prints out a pretty version of it will be very useful:\n"
       ],
-      "id": "09ba283e"
+      "id": "d0dda489"
     },
     {
       "cell_type": "code",
@@ -213,7 +213,7 @@
         "def print_matrix(matrix):\n",
         "    print(pd.DataFrame(matrix, index=sorted_tags, columns=sorted_tags))"
       ],
-      "id": "c4466ddd",
+      "id": "3ccebc8c",
       "execution_count": null,
       "outputs": []
     },
@@ -223,7 +223,7 @@
       "source": [
         "Notice that the tags are not a parameter of the function. This is because the `sorted_tags` list will not change in the rest of the notebook so it is safe to use the variable previously declared. To test this function simply run: \n"
       ],
-      "id": "00d861dd"
+      "id": "b74f1924"
     },
     {
       "cell_type": "code",
@@ -232,7 +232,7 @@
         "# Print the 'transition_matrix' by calling the 'print_matrix' function\n",
         "print_matrix(transition_matrix)"
       ],
-      "id": "887f200e",
+      "id": "2ca7c4ed",
       "execution_count": null,
       "outputs": []
     },
@@ -252,7 +252,7 @@
         "\n",
         "For instance try scaling each value in the matrix by a factor of $\\frac{1}{10}$. Normally we would loop over each value in the matrix, updating them accordingly. But in Numpy this is as easy as dividing the whole matrix by 10:\n"
       ],
-      "id": "db2fef37"
+      "id": "4ae1bb07"
     },
     {
       "cell_type": "code",
@@ -264,7 +264,7 @@
         "# Print scaled matrix\n",
         "print_matrix(transition_matrix)"
       ],
-      "id": "022f3710",
+      "id": "a2ee22ff",
       "execution_count": null,
       "outputs": []
     },
@@ -276,7 +276,7 @@
         "\n",
         "This can be easily done with vectorization. First we will compute the sum of each row:\n"
       ],
-      "id": "54b0732b"
+      "id": "7f4c15af"
     },
     {
       "cell_type": "code",
@@ -288,7 +288,7 @@
         "# Print sum of rows\n",
         "rows_sum"
       ],
-      "id": "2973666a",
+      "id": "5b18f752",
       "execution_count": null,
       "outputs": []
     },
@@ -302,7 +302,7 @@
         "\n",
         "When working with Numpy, always remember to check the shape of the arrays we are working with, many unexpected errors happen because of axes not being consistent. The `shape` attribute is your friend for these cases.\n"
       ],
-      "id": "f83e111c"
+      "id": "d5d05118"
     },
     {
       "cell_type": "code",
@@ -314,7 +314,7 @@
         "# Print normalized matrix\n",
         "print_matrix(transition_matrix)"
       ],
-      "id": "924f75f2",
+      "id": "6040118f",
       "execution_count": null,
       "outputs": []
     },
@@ -324,7 +324,7 @@
       "source": [
         "Notice that the normalization that was carried out forces the sum of each row to be equal to `1`. We can easily check this by running the `sum` method on the resulting matrix:\n"
       ],
-      "id": "a6e8bcf2"
+      "id": "02faca95"
     },
     {
       "cell_type": "code",
@@ -332,7 +332,7 @@
       "source": [
         "transition_matrix.sum(axis=1, keepdims=True)"
       ],
-      "id": "8dbe39e1",
+      "id": "c6660822",
       "execution_count": null,
       "outputs": []
     },
@@ -344,7 +344,7 @@
         "\n",
         "This can be done using a standard `for loop` or `vectorization`. You'll see both in action:\n"
       ],
-      "id": "90ad4953"
+      "id": "fa9fd90b"
     },
     {
       "cell_type": "code",
@@ -358,7 +358,7 @@
         "# Copy transition matrix for numpy functions example\n",
         "t_matrix_np = np.copy(transition_matrix)"
       ],
-      "id": "db20893e",
+      "id": "d1b8b6be",
       "execution_count": null,
       "outputs": []
     },
@@ -368,7 +368,7 @@
       "source": [
         "#### Using a for-loop\n"
       ],
-      "id": "0a36894c"
+      "id": "76022447"
     },
     {
       "cell_type": "code",
@@ -381,7 +381,7 @@
         "# Print matrix\n",
         "print_matrix(t_matrix_for)"
       ],
-      "id": "c2ebfe02",
+      "id": "946fb7ca",
       "execution_count": null,
       "outputs": []
     },
@@ -391,7 +391,7 @@
       "source": [
         "#### Using vectorization\n"
       ],
-      "id": "6347ccf6"
+      "id": "e3b3cfc2"
     },
     {
       "cell_type": "code",
@@ -403,7 +403,7 @@
         "# Print shape of diagonal\n",
         "d.shape"
       ],
-      "id": "1e29ae3d",
+      "id": "00cc9c43",
       "execution_count": null,
       "outputs": []
     },
@@ -413,7 +413,7 @@
       "source": [
         "We can save the diagonal in a numpy array using Numpy's `diag()` function. Notice that this array has shape `(3,)` so it is inconsistent with the dimensions of the `rows_sum` array which are `(3, 1)`. You'll have to reshape before moving forward. For this we can use Numpy's `reshape()` function, specifying the desired shape in a tuple:\n"
       ],
-      "id": "3da88efe"
+      "id": "65f2d7aa"
     },
     {
       "cell_type": "code",
@@ -425,7 +425,7 @@
         "# Print shape of diagonal\n",
         "d.shape"
       ],
-      "id": "c764796b",
+      "id": "34f34e2c",
       "execution_count": null,
       "outputs": []
     },
@@ -439,7 +439,7 @@
         "\n",
         "To update the original matrix we can use Numpy's `fill_diagonal()` function.\n"
       ],
-      "id": "12ebbf81"
+      "id": "955bd06e"
     },
     {
       "cell_type": "code",
@@ -454,7 +454,7 @@
         "# Print the matrix\n",
         "print_matrix(t_matrix_np)"
       ],
-      "id": "17d03ed3",
+      "id": "0234a242",
       "execution_count": null,
       "outputs": []
     },
@@ -464,7 +464,7 @@
       "source": [
         "To perform a sanity check that both methods yield the same result we can compare both matrices. Notice that this operation is also vectorized so we will get the equality check for each element in both matrices:\n"
       ],
-      "id": "68718a06"
+      "id": "b72456c0"
     },
     {
       "cell_type": "code",
@@ -473,7 +473,7 @@
         "# Check for equality\n",
         "t_matrix_for == t_matrix_np"
       ],
-      "id": "a93e3fae",
+      "id": "ac55d479",
       "execution_count": null,
       "outputs": []
     },
@@ -485,7 +485,7 @@
         "\n",
         "**Keep it up!**\n"
       ],
-      "id": "a041020b"
+      "id": "d6c7fa2a"
     }
   ],
   "metadata": {

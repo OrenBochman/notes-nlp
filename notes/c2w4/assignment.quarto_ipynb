@@ -118,7 +118,7 @@
         " \\hat y &= softmax(z)   \\tag{4} \\\\\n",
         "\\end{align}\n"
       ],
-      "id": "d649be56"
+      "id": "2c6f1d99"
     },
     {
       "cell_type": "code",
@@ -131,7 +131,7 @@
         "from collections import Counter\n",
         "from utils2 import sigmoid, get_batches, compute_pca, get_dict"
       ],
-      "id": "75bd8793",
+      "id": "333ab82b",
       "execution_count": null,
       "outputs": []
     },
@@ -142,7 +142,7 @@
         "# Download sentence tokenizer\n",
         "nltk.data.path.append('.')"
       ],
-      "id": "855fc722",
+      "id": "1618022e",
       "execution_count": null,
       "outputs": []
     },
@@ -159,7 +159,7 @@
         "data = [ ch.lower() for ch in data if ch.isalpha() or ch == '.']    #  Lower case and drop non-alphabetical tokens\n",
         "print(\"Number of tokens:\", len(data),'\\n', data[:15])               #  print data sample"
       ],
-      "id": "4a471cb0",
+      "id": "a41ddb44",
       "execution_count": null,
       "outputs": []
     },
@@ -172,7 +172,7 @@
         "print(\"Size of vocabulary: \",len(fdist) )\n",
         "print(\"Most frequent tokens: \",fdist.most_common(20) ) # print the 20 most frequent words and their freq."
       ],
-      "id": "a7ac6156",
+      "id": "73c20180",
       "execution_count": null,
       "outputs": []
     },
@@ -183,7 +183,7 @@
         "#### Mapping words to indices and indices to words\n",
         "We provide a helper function to create a dictionary that maps words to indices and indices to words.\n"
       ],
-      "id": "e9779418"
+      "id": "1b6fb4a2"
     },
     {
       "cell_type": "code",
@@ -194,7 +194,7 @@
         "V = len(word2Ind)\n",
         "print(\"Size of vocabulary: \", V)"
       ],
-      "id": "8587e537",
+      "id": "0e2a8671",
       "execution_count": null,
       "outputs": []
     },
@@ -206,7 +206,7 @@
         "print(\"Index of the word 'king' :  \",word2Ind['king'] )\n",
         "print(\"Word which has index 2743:  \",Ind2word[2743] )"
       ],
-      "id": "76fe8162",
+      "id": "d5981dea",
       "execution_count": null,
       "outputs": []
     },
@@ -234,7 +234,7 @@
         "\n",
         "**Note:** In the next cell we will encounter a random seed. Please **DO NOT** modify this seed so your solution can be tested correctly.\n"
       ],
-      "id": "02c88758"
+      "id": "953a2f03"
     },
     {
       "cell_type": "code",
@@ -267,7 +267,7 @@
         "\n",
         "    return W1, W2, b1, b2"
       ],
-      "id": "28fa91c2",
+      "id": "e535362d",
       "execution_count": null,
       "outputs": []
     },
@@ -286,7 +286,7 @@
         "print(f\"tmp_b1.shape: {tmp_b1.shape}\")\n",
         "print(f\"tmp_b2.shape: {tmp_b2.shape}\")"
       ],
-      "id": "02aace3e",
+      "id": "336ba5e7",
       "execution_count": null,
       "outputs": []
     },
@@ -328,7 +328,7 @@
         "- numpy.exp\n",
         "- numpy.sum (set the axis so that we take the sum of each column in z)\n"
       ],
-      "id": "45bb336a"
+      "id": "ad5aebe1"
     },
     {
       "cell_type": "code",
@@ -353,7 +353,7 @@
         "    \n",
         "    return yhat"
       ],
-      "id": "9f70d441",
+      "id": "b93067c7",
       "execution_count": null,
       "outputs": []
     },
@@ -368,7 +368,7 @@
         "tmp_sm = softmax(tmp)\n",
         "display(tmp_sm)"
       ],
-      "id": "204893e8",
+      "id": "dff2a662",
       "execution_count": null,
       "outputs": []
     },
@@ -412,7 +412,7 @@
         "</p>\n",
         "</details>\n"
       ],
-      "id": "24beb871"
+      "id": "e3151a84"
     },
     {
       "cell_type": "code",
@@ -444,7 +444,7 @@
         "\n",
         "    return z, h"
       ],
-      "id": "a33e6e58",
+      "id": "b0407c83",
       "execution_count": null,
       "outputs": []
     },
@@ -478,7 +478,7 @@
         "print(\"h has values:\")\n",
         "print(tmp_h)"
       ],
-      "id": "762e78b2",
+      "id": "ec06b253",
       "execution_count": null,
       "outputs": []
     },
@@ -509,7 +509,7 @@
         "\n",
         "- We have implemented the *cross-entropy* cost function for you.\n"
       ],
-      "id": "3fda06f5"
+      "id": "baabfb34"
     },
     {
       "cell_type": "code",
@@ -523,7 +523,7 @@
         "    cost = np.squeeze(cost)\n",
         "    return cost"
       ],
-      "id": "6ffdc83b",
+      "id": "f070de1a",
       "execution_count": null,
       "outputs": []
     },
@@ -561,7 +561,7 @@
         "print(\"call compute_cost\")\n",
         "print(f\"tmp_cost {tmp_cost:.4f}\")"
       ],
-      "id": "65ac7422",
+      "id": "a5a7de5a",
       "execution_count": null,
       "outputs": []
     },
@@ -593,7 +593,7 @@
         "Now that we have understood how the CBOW model works, we will train it. <br>\n",
         "We created a function for the forward propagation. Now we will implement a function that computes the gradients to backpropagate the errors.\n"
       ],
-      "id": "ca6500e6"
+      "id": "7a635e9c"
     },
     {
       "cell_type": "code",
@@ -632,7 +632,7 @@
         "    \n",
         "    return grad_W1, grad_W2, grad_b1, grad_b2"
       ],
-      "id": "792eaa96",
+      "id": "4e7d3792",
       "execution_count": null,
       "outputs": []
     },
@@ -684,7 +684,7 @@
         "print(f\"tmp_grad_b1.shape {tmp_grad_b1.shape}\")\n",
         "print(f\"tmp_grad_b2.shape {tmp_grad_b2.shape}\")"
       ],
-      "id": "f684a934",
+      "id": "92db2a58",
       "execution_count": null,
       "outputs": []
     },
@@ -734,7 +734,7 @@
         "\n",
         "Also: print the cost after each batch is processed (use batch size = 128)"
       ],
-      "id": "f411f355"
+      "id": "ee12f19b"
     },
     {
       "cell_type": "code",
@@ -790,7 +790,7 @@
         "            \n",
         "    return W1, W2, b1, b2"
       ],
-      "id": "0e39bd8b",
+      "id": "4090a9e6",
       "execution_count": null,
       "outputs": []
     },
@@ -807,7 +807,7 @@
         "print(\"Call gradient_descent\")\n",
         "W1, W2, b1, b2 = gradient_descent(data, word2Ind, N, V, num_iters)"
       ],
-      "id": "e0ba2b7e",
+      "id": "9b3ec558",
       "execution_count": null,
       "outputs": []
     },
@@ -843,7 +843,7 @@
         "\n",
         "In this part we will visualize the word vectors trained using the function we just coded above. \n"
       ],
-      "id": "337e63a3"
+      "id": "58bc299d"
     },
     {
       "cell_type": "code",
@@ -862,7 +862,7 @@
         "X = embs[idx, :]\n",
         "print(X.shape, idx)  # X.shape:  Number of words of dimension N each "
       ],
-      "id": "ed7a202b",
+      "id": "96dad6f2",
       "execution_count": null,
       "outputs": []
     },
@@ -876,7 +876,7 @@
         "    pyplot.annotate(word, xy=(result[i, 0], result[i, 1]))\n",
         "pyplot.show()"
       ],
-      "id": "554c1700",
+      "id": "efd0a6f1",
       "execution_count": null,
       "outputs": []
     },
@@ -886,7 +886,7 @@
       "source": [
         "We can see that man and king are next to each other. However, we have to be careful with the interpretation of this projected word vectors, since the PCA depends on the projection -- as shown in the following illustration.\n"
       ],
-      "id": "f15e6183"
+      "id": "442f6213"
     },
     {
       "cell_type": "code",
@@ -898,7 +898,7 @@
         "    pyplot.annotate(word, xy=(result[i, 3], result[i, 1]))\n",
         "pyplot.show()"
       ],
-      "id": "687a6b89",
+      "id": "41ed39a8",
       "execution_count": null,
       "outputs": []
     }

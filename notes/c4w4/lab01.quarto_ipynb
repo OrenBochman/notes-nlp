@@ -72,7 +72,7 @@
         "* [stop_gradient](https://trax-ml.readthedocs.io/en/latest/trax.fastmath.html): Some operations are intentionally excluded from backprop gradient calculations by setting their gradients to zero.\n",
         "* Below we will execute `from trax.fastmath import numpy as np `, this uses accelerated forms of numpy functions. This is, however a *subset* of numpy\n"
       ],
-      "id": "512fe322"
+      "id": "2ad6ae14"
     },
     {
       "cell_type": "code",
@@ -102,7 +102,7 @@
         "#     return jax.lax.tie_in(x, y)\n",
         "#   return y"
       ],
-      "id": "ef9b2a48",
+      "id": "1ed98e7c",
       "execution_count": null,
       "outputs": []
     },
@@ -131,7 +131,7 @@
         "\n",
         "The routine below *mask_self_attention* implements a flexible masking capability. The masking is controlled by the information in q_info and kv_info.\n"
       ],
-      "id": "cc88cd87"
+      "id": "cae00ca2"
     },
     {
       "cell_type": "code",
@@ -153,7 +153,7 @@
         "        dots = dots - 1e9 * mask\n",
         "    return dots"
       ],
-      "id": "1b99304e",
+      "id": "03a5d509",
       "execution_count": null,
       "outputs": []
     },
@@ -185,7 +185,7 @@
         "\n",
         "We'll create a routine to implement that here with the addition of a passthrough. The matrix operations we will be working on below are easier to follow if we can maintain integer values. So, for tests, we will skip the softmax in some cases.\n"
       ],
-      "id": "0fcd1dbd"
+      "id": "964206f3"
     },
     {
       "cell_type": "code",
@@ -200,7 +200,7 @@
         "    else:\n",
         "        return (o, logsumexp)"
       ],
-      "id": "0d1e0600",
+      "id": "b007101b",
       "execution_count": null,
       "outputs": []
     },
@@ -210,7 +210,7 @@
       "source": [
         "Let's check our implementation.\n"
       ],
-      "id": "02b58b30"
+      "id": "3181c011"
     },
     {
       "cell_type": "code",
@@ -224,7 +224,7 @@
         "print(sma2)\n",
         "print(a_logsumexp)"
       ],
-      "id": "74f274f3",
+      "id": "c9702623",
       "execution_count": null,
       "outputs": []
     },
@@ -251,7 +251,7 @@
         "**Step 2:** use our_softmax() to perform a softmax on masked output of the dot product, dots.\n",
         "**Step 3:** matrix multiply (np.matmul) dots and v.\n"
       ],
-      "id": "a96a5ce8"
+      "id": "7e131dd0"
     },
     {
       "cell_type": "code",
@@ -329,7 +329,7 @@
         "  dots_logsumexp = np.reshape(dots_logsumexp, (-1,))\n",
         "  return out, dots_logsumexp"
       ],
-      "id": "be881157",
+      "id": "1af86be8",
       "execution_count": null,
       "outputs": []
     },
@@ -358,7 +358,7 @@
         "    )\n",
         "print(o, \"\\n\", logits)"
       ],
-      "id": "e5ce8dc9",
+      "id": "470da2b8",
       "execution_count": null,
       "outputs": []
     },
@@ -476,7 +476,7 @@
         "\n",
         "We're not asking you to modify anything in this routine. There are some comments to draw your attention to a few lines.\n"
       ],
-      "id": "55957827"
+      "id": "7264e391"
     },
     {
       "cell_type": "code",
@@ -547,7 +547,7 @@
         "        out = apply_broadcasted_dropout(out, self.output_dropout, output_rng)\n",
         "        return out, state"
       ],
-      "id": "21739211",
+      "id": "7f5282ef",
       "execution_count": null,
       "outputs": []
     },
@@ -582,7 +582,7 @@
         ")\n",
         "_, _ = osa.init(tl.shapes.signature(x), rng=rng_osa)"
       ],
-      "id": "b4c57575",
+      "id": "cbf8f059",
       "execution_count": null,
       "outputs": []
     },
@@ -592,7 +592,7 @@
       "source": [
         "osa(x)"
       ],
-      "id": "ca72ac6f",
+      "id": "b5d2da04",
       "execution_count": null,
       "outputs": []
     },
@@ -697,7 +697,7 @@
         "* add buckets and offsets and reshape into a one dimensional array\n",
         "This will return a 1D array of size n_hashes * vec.shape[0].\n"
       ],
-      "id": "6b3e2196"
+      "id": "c79154fb"
     },
     {
       "cell_type": "code",
@@ -773,7 +773,7 @@
         "    if verbose: print(\"buckets with offsets\", buckets.shape, \"\\n\", buckets)\n",
         "    return buckets"
       ],
-      "id": "1e8835dc",
+      "id": "1ec57e69",
       "execution_count": null,
       "outputs": []
     },
@@ -803,7 +803,7 @@
         "    ohv = our_hash_vectors(ohv_q, ohv_rng, ohv_n_buckets, ohv_n_hashes, mask=None)\n",
         "    print(\"ohv shape\", ohv.shape, \"\\nohv\", ohv)  # (ohv_n_hashes * ohv_n_buckets)"
       ],
-      "id": "75bccda6",
+      "id": "fc99c777",
       "execution_count": null,
       "outputs": []
     },
@@ -947,7 +947,7 @@
         "\n",
         "Use the example code below the routine to check and help debug your results.\n"
       ],
-      "id": "8a7f6864"
+      "id": "38b5731c"
     },
     {
       "cell_type": "code",
@@ -984,7 +984,7 @@
         "    sv = np.take(v, st, axis=0)\n",
         "    return sq, sv, sticker, undo_sort"
       ],
-      "id": "567ab742",
+      "id": "ab561c70",
       "execution_count": null,
       "outputs": []
     },
@@ -1017,7 +1017,7 @@
         "print(\"sq.shape\", t_sq.shape, \"sv.shape\", t_sv.shape)\n",
         "print(\"sq\\n\", t_sq)"
       ],
-      "id": "7aaa7354",
+      "id": "2bd97675",
       "execution_count": null,
       "outputs": []
     },
@@ -1123,7 +1123,7 @@
         "\n",
         "There is a good deal of [reshaping](https://numpy.org/doc/stable/reference/generated/numpy.reshape.html) to get things into the right formats. The code has many print statements that match the expected values below. You can use those to check your work as you go along. If you don't do a lot of 3-dimensional matrix multiplications in your daily life, it might be worthwhile to open a spare cell and practice a few simple examples to get the hang of it! Here is one to start with:\n"
       ],
-      "id": "79f30565"
+      "id": "5dfddb81"
     },
     {
       "cell_type": "code",
@@ -1136,7 +1136,7 @@
         ")  # the -1 usage is very handy, see numpy reshape\n",
         "print(ar.shape)"
       ],
-      "id": "e29dda40",
+      "id": "01f2ee09",
       "execution_count": null,
       "outputs": []
     },
@@ -1165,7 +1165,7 @@
         "\n",
         "**Step 5** This step combines the results of multiple hashes. Recall, the softmax was only over the values in one hash, this extends it to all the hashes. Read through it, the code is provided. Note this is taking place *after* the matrix multiply with v while the softmax output is used before the multiply. How does this achieve the correct result?\n"
       ],
-      "id": "e1edb2e4"
+      "id": "6f82c23d"
     },
     {
       "cell_type": "code",
@@ -1207,7 +1207,7 @@
         "\n",
         "    return(o)"
       ],
-      "id": "856b864e",
+      "id": "0474138c",
       "execution_count": null,
       "outputs": []
     },
@@ -1242,7 +1242,7 @@
         ")\n",
         "print(\"out\\n\", out)"
       ],
-      "id": "f71600cb",
+      "id": "40aa6895",
       "execution_count": null,
       "outputs": []
     },
@@ -1479,7 +1479,7 @@
         "\n",
         "You can examine the full implementations below. Area's we did not 'attend to' in our implementations above include variable bucket sizes and masking. We will instantiate a layer of the full implementation below. We tried to use the same variable names above to make it easier to decipher the full version. Note that some of the functionality we implemented in our routines is split between `attend` and `forward_unbatched`. We've inserted our version of hash below, but use the original version of `attend`.\n"
       ],
-      "id": "5a0a66d4"
+      "id": "153ee678"
     },
     {
       "cell_type": "code",
@@ -1593,7 +1593,7 @@
         "    dots_logsumexp = np.reshape(dots_logsumexp, (-1,))\n",
         "    return out, dots_logsumexp"
       ],
-      "id": "5f3c55e7",
+      "id": "b24ce49a",
       "execution_count": null,
       "outputs": []
     },
@@ -1703,7 +1703,7 @@
         "        out = apply_broadcasted_dropout(out, self.output_dropout, output_rng)\n",
         "        return out, state"
       ],
-      "id": "3d6aa7eb",
+      "id": "833f1423",
       "execution_count": null,
       "outputs": []
     },
@@ -1747,7 +1747,7 @@
         "al_osa = fastmath.random.get_prng(1)\n",
         "_, _ = al.init(tl.shapes.signature(x), rng=al_osa)"
       ],
-      "id": "9bb63eb2",
+      "id": "36f2f40b",
       "execution_count": null,
       "outputs": []
     },
@@ -1760,7 +1760,7 @@
       "source": [
         "al(x)"
       ],
-      "id": "e2b6ab04",
+      "id": "3e9006e3",
       "execution_count": null,
       "outputs": []
     },
@@ -1799,7 +1799,7 @@
         "\n",
         "**Congratuations!** you have created a custom layer and have become familiar with LSHSelfAttention.\n"
       ],
-      "id": "2e7182ab"
+      "id": "061dcae3"
     }
   ],
   "metadata": {

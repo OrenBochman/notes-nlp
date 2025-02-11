@@ -1,0 +1,1158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>NLP Specialization</title>
+<link>https://orenbochman.github.io/notes-nlp/#category=Podcast</link>
+<atom:link href="https://orenbochman.github.io/notes-nlp/index-podcast.xml" rel="self" type="application/rss+xml"/>
+<description>Course and Research notes</description>
+<image>
+<url>https://orenbochman.github.io/notes-nlp/images/nlp-brain-wordcloud.jpg</url>
+<title>NLP Specialization</title>
+<link>https://orenbochman.github.io/notes-nlp/#category=Podcast</link>
+</image>
+<generator>quarto-1.6.39</generator>
+<lastBuildDate>Thu, 06 Feb 2025 22:00:00 GMT</lastBuildDate>
+<item>
+  <title>Morphological Word Embeddings</title>
+  <dc:creator>Oren Bochman</dc:creator>
+  <link>https://orenbochman.github.io/notes-nlp/reviews/paper/morphological-embeddings/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/reviews/paper/morphological-embeddings/cover.jpg" class="img-fluid figure-img"></p>
+<figcaption>Litrature review</figcaption>
+</figure>
+</div></div><p>This is a mentioned in the tokenization lab in course four week 3</p>
+<p>Time permitting I will try and dive deeper into this paper.</p>
+<section id="podcast" class="level2">
+<h2 class="anchored" data-anchor-id="podcast">Podcast</h2>
+<audio controls="1">
+<source src="podcast.mp3" type="audio/mpeg">
+</audio>
+</section>
+<section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<blockquote class="blockquote">
+<p>Linguistic similarity is multi-faceted. For instance, two words may be similar with respect to semantics, syntax, or morphology inter alia. Continuous word-embeddings have been shown to capture most of these shades of similarity to some degree. This work considers guiding word-embeddings with morphologically annotated data, a form of semisupervised learning, encouraging the vectors to encode a word’s morphology, i.e., words close in the embedded space share morphological features. We extend the log-bilinear model to this end and show that indeed our learned embeddings achieve this, using German as a case study. – <span class="citation" data-cites="cotterell2019morphological">(Cotterell and Schütze 2019)</span></p>
+</blockquote>
+<!-- TODO: add review and podcast for this paper-->
+<!-- TODO: link here from LSH lessons-->
+</section>
+<section id="terminology" class="level2">
+<h2 class="anchored" data-anchor-id="terminology">Terminology</h2>
+<p>Here are some terms and concepts discussed in the sources, with explanations:</p>
+<dl>
+<dt>Word embeddings</dt>
+<dd>
+These are vector representations of words in a continuous space, where similar words are located close to each other in the vector space. The goal is to capture linguistic similarity, but the definition of “similarity” can vary (semantic, syntactic, morphological). Word embeddings are typically trained to produce representations that capture linguistic similarity.
+</dd>
+<dt>Log-bilinear model (LBL)</dt>
+<dd>
+This is a language model that learns features along with weights, as opposed to using hand-crafted features. It uses context to predict the next word, and word embeddings fall out as low dimensional representations of the context. The LBL is a generalization of the log-linear model.
+</dd>
+<dt>Morphology</dt>
+<dd>
+The study of word structure, including how words are formed from morphemes (the smallest units of meaning).
+</dd>
+<dt>Morphological tags</dt>
+<dd>
+These are annotations that describe the morphological properties of a word, such as case, gender, number, tense, etc.. They can be very detailed for morphologically rich languages. For example, in German, a word might be tagged to indicate its part of speech, case, gender, and number.
+</dd>
+<dt>Morphologically rich languages</dt>
+<dd>
+Languages with a high morpheme-per-word ratio, where word-internal structure is important for processing. German and Czech are cited as examples.
+</dd>
+<dt>Morphologically impoverished languages</dt>
+<dd>
+Languages with a low morpheme-per-word ratio, such as English.
+</dd>
+<dt>Multi-task objective</dt>
+<dd>
+Training a model to perform multiple tasks simultaneously. In this case, the model is trained to predict both the next word and its morphological tag.
+</dd>
+<dt>Semi-supervised learning</dt>
+<dd>
+Training a model on a partially annotated corpus, using both labeled and unlabeled data. This approach is useful when large amounts of unannotated text are available.
+</dd>
+<dt>Contextual signature</dt>
+<dd>
+The words surrounding a given word. The context in which a word appears can be used to determine the word’s meaning and morphological properties.
+</dd>
+<dt>Hamming distance</dt>
+<dd>
+A measure of the difference between two binary strings, calculated as the number of positions at which the corresponding bits are different. In this context, it is used to compare morphological tags, which are represented as bit vectors.
+</dd>
+<dt>MORPHOSIM</dt>
+<dd>
+A metric for evaluating morphologically-driven embeddings that measures how morphologically similar a word is to its nearest neighbors in the embedding space. It is calculated as the average Hamming distance between morphological tags of a word and its neighbors. Lower values are better, as they indicate that the nearest neighbors of each word are closer morphologically.
+</dd>
+</dl>
+</section>
+<section id="outline" class="level2">
+<h2 class="anchored" data-anchor-id="outline">Outline</h2>
+<ul>
+<li>Introduction
+<ul>
+<li>Presents the importance of capturing word morphology, especially for morphologically-rich languages.</li>
+<li>Highlights the multifaceted nature of linguistic similarity (semantics, syntax, morphology).</li>
+<li>Discusses the goal of the paper: to develop word embeddings that specifically encode morphological relationships.</li>
+</ul></li>
+<li>Related Work
+<ul>
+<li>Discusses previous integration of morphology into language models, including factored language models and neural network-based approaches.</li>
+<li>Notes the role of morphology in computational morphology, particularly in morphological tagging for inflectionally-rich languages.</li>
+<li>Highlights the significance of distributional similarity in morphological analysis.</li>
+</ul></li>
+<li>Log-Bilinear Model
+<ul>
+<li>Describes the log-bilinear model (LBL), a generalization of the log-linear model with learned features.</li>
+<li>Presents the LBL’s energy function and probability distribution in the context of language modeling.</li>
+</ul></li>
+<li>Morph-LBL
+<ul>
+<li>Proposes a multi-task objective that jointly predicts the next word and its morphological tag.</li>
+<li>Describes the model’s joint probability distribution, incorporating morphological tag features.</li>
+<li>Discusses the use of semi-supervised learning, allowing training on partially annotated corpora</li>
+</ul></li>
+<li>Evaluation
+<ul>
+<li>Mentions the qualitative evaluation using t-SNE, showing clusters reflecting morphological and POS relationships.</li>
+<li>Introduces MorphoSim, a novel quantitative metric to assess the extent to which similar embeddings are morphologically related.</li>
+</ul></li>
+<li>Experiments and Results
+<ul>
+<li>Presents experiments on the German TIGER corpus, comparing Morph-LBL with the original LBL and Word2Vec.</li>
+<li>Describes two experiments:
+<ul>
+<li>Experiment 1: Evaluates the morphological information encoded in embeddings using a k-NN classifier.</li>
+<li>Experiment 2: Compares models using the MorphoSim metric to measure morphological similarity among nearest neighbors.</li>
+</ul></li>
+<li>Discusses the results, highlighting Morph-LBL’s superior performance in capturing morphological relationships, even without observing all tags during training.</li>
+</ul></li>
+<li>Conclusion and Future Work
+<ul>
+<li>Summarizes the contributions of the paper: introducing Morph-LBL for inducing morphologically guided embeddings.</li>
+<li>Notes the model’s success in leveraging distributional signatures to capture morphology.</li>
+<li>Discusses future work on integrating orthographic features for further improvement.</li>
+<li>Mentions potential applications in morphological tagging and other NLP tasks.</li>
+</ul></li>
+</ul>
+</section>
+<section id="log-bilinear-model" class="level2">
+<h2 class="anchored" data-anchor-id="log-bilinear-model">Log-Bilinear Model</h2>
+<p><img src="https://latex.codecogs.com/png.latex?p(w%5Cmid%20h)%20=%0A%5Cfrac%7B%5Cexp%5Cleft(s_%5Ctheta(w,h)%5Cright)%7D%7B%5Csum_%7Bw'%7D%0A%5Cexp%5Cleft(s_%5Ctheta(w',h)%5Cright)%7D%20%5Cqquad%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?w"> is a word, <img src="https://latex.codecogs.com/png.latex?h"> is a history and <img src="https://latex.codecogs.com/png.latex?s_%5Ctheta"> is an energy function. Following the notation of , in the LBL we define <img src="https://latex.codecogs.com/png.latex?%0As_%5Ctheta(w,h)%20=%20%5Cleft(%5Csum_%7Bi=1%7D%5E%7Bn-1%7D%20C_i%0Ar_%7Bh_i%7D%5Cright)%5ET%20q_w%20+%20b_w%20%5Cqquad%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?n-1"> is the history length</p>
+</section>
+<section id="morph-lbl" class="level2">
+<h2 class="anchored" data-anchor-id="morph-lbl">Morph-LBL</h2>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%20%20p(w,%20t%20%5Cmid%20h)%20%5Cpropto%20%5Cexp((%20f_t%5ET%20S%20%20+%20%5Csum_%7Bi=1%7D%5E%7Bn-1%7DC_i%20r_%7Bh_i%7D)%5ET%20q_w%20+%20b_%7Bw%7D%20)%20%5Cqquad%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?f_t"> is a hand-crafted feature vector for a morphological tag <img src="https://latex.codecogs.com/png.latex?t"> and <img src="https://latex.codecogs.com/png.latex?S"> is an additional weight matrix.</p>
+<p>Upon inspection, we see that</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0Ap(t%20%5Cmid%20w,h)%20%5Cpropto%20%5Cexp(S%5ET%20f_t%20q_w)%20%5Cqquad%0A"></p>
+<p>Hence given a fixed embedding <img src="https://latex.codecogs.com/png.latex?q_w"> for word <img src="https://latex.codecogs.com/png.latex?w">, we can interpret <img src="https://latex.codecogs.com/png.latex?S"> as the weights of a conditional log-linear model used to predict the tag <img src="https://latex.codecogs.com/png.latex?t">.</p>
+</section>
+<section id="the-paper" class="level2">
+<h2 class="anchored" data-anchor-id="the-paper">The Paper</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="./paper.pdf" class="col-page" data-group="slides" width="800" height="1000"></p>
+<figcaption>paper</figcaption>
+</figure>
+</div>
+</section>
+<section id="resources" class="level2">
+<h2 class="anchored" data-anchor-id="resources">Resources</h2>
+<ul>
+<li><a href="http://www.eva.mpg.de/lingua/resources/glossing-rules.php">Leipzig Glossing Rules</a> which provides a standard way to explain morphological features by examples</li>
+<li><a href="https://www.youtube.com/watch?v=y9sVFrmGu0w&amp;ab_channel=GrahamNeubig">CMU Multilingual NLP 2020 (17): Morphological Analysis and Inflection</a> <!--
+- [nb-lm](https://notebooklm.google.com/notebook/f594ff01-19f2-49b0-a0ac-84176fb22667?_gl=1*1rba7bx*_ga*MzAyOTc3ODMwLjE3Mzg1MDQ5Njc.*_ga_W0LDH41ZCB*MTczODkyMzY5Ni41LjAuMTczODkyMzY5Ni42MC4wLjA.)
+--></li>
+<li><span class="citation" data-cites="kann-etal-2016-neural">Kann, Cotterell, and Schütze (2016)</span> <a href="https://github.com/ryancotterell/neural-canonical-segmentation">code</a></li>
+<li><a href="https://unimorph.github.io/">unimorph</a> univorsal morphological database</li>
+</ul>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="ref-cotterell2019morphological" class="csl-entry">
+Cotterell, Ryan, and Hinrich Schütze. 2019. <span>“Morphological Word Embeddings.”</span> <em>arXiv Preprint arXiv:1907.02423</em>.
+</div>
+<div id="ref-kann-etal-2016-neural" class="csl-entry">
+Kann, Katharina, Ryan Cotterell, and Hinrich Schütze. 2016. <span>“Neural Morphological Analysis: Encoding-Decoding Canonical Segments.”</span> In <em>Proceedings of the 2016 Conference on Empirical Methods in Natural Language Processing</em>, edited by Jian Su, Kevin Duh, and Xavier Carreras, 961–67. Austin, Texas: Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/D16-1097">https://doi.org/10.18653/v1/D16-1097</a>.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2025,
+  author = {Bochman, Oren},
+  title = {Morphological {Word} {Embeddings}},
+  date = {2025-02-07},
+  url = {https://orenbochman.github.io/notes-nlp/reviews/paper/morphological-embeddings/},
+  langid = {en}
+}
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2025" class="csl-entry quarto-appendix-citeas">
+Bochman, Oren. 2025. <span>“Morphological Word Embeddings.”</span>
+February 7, 2025. <a href="https://orenbochman.github.io/notes-nlp/reviews/paper/morphological-embeddings/">https://orenbochman.github.io/notes-nlp/reviews/paper/morphological-embeddings/</a>.
+</div></div></section></div> ]]></description>
+  <category>Paper</category>
+  <category>Review</category>
+  <category>Podcast</category>
+  <category>NLP</category>
+  <category>Morphology</category>
+  <guid>https://orenbochman.github.io/notes-nlp/reviews/paper/morphological-embeddings/</guid>
+  <pubDate>Thu, 06 Feb 2025 22:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>The Secret Life of Pronouns What Our Words Say About Us</title>
+  <dc:creator>Oren Bochman</dc:creator>
+  <link>https://orenbochman.github.io/notes-nlp/reviews/book/seret-life-of-pronouns/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/reviews/book/seret-life-of-pronouns/cover.jpg" class="img-fluid figure-img" data-group="slides"></p>
+<figcaption>cover</figcaption>
+</figure>
+</div></div><div class="page-columns page-full"><blockquote class="blockquote">
+<p>To grunt and sweat under a weary life, But that the dread of something after death, <mark>The undiscovered country from whose bourn No traveler returns, puzzles the will, And makes us rather bear those ills we have, Than fly to others that we know not of</mark>?<sup>1</sup> — Hamlet Act 3, Scene 1 by William Shakespeare.</p>
+</blockquote><div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;Pronouns oft fall prey to the stop word filter, yet they hold the keys to unlocking the depth of intimate meaning</p></div></div></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+TL;DR – ML, NLP and the secret life of pronouns
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/images/in_a_nutshell.jpg" class="img-fluid figure-img"></p>
+<figcaption>Pronouns in a nutshell</figcaption>
+</figure>
+</div>
+<ul>
+<li>When I got started with NLP I was coding search engines and conventional wisdom was <mark>pronouns don’t pass the <strong>stop word filter</strong></mark></li>
+<li>One of the gems I learned on that job was that <mark>everything in the corpus can be provide invaluable information if we only know how to index it</mark>.</li>
+<li>After reading this book and I started to unlocked the power of the pronouns.</li>
+<li>At Hungarian School I discovered how pronouns combine with case ending to create a vast vistas of untapped NLP resource.</li>
+<li>Cognitive AI I noted that pronouns and particles are key in extending the primitive verb system via thematic roles to get a very rich semantic systems in the lexicon with little costs in learning.</li>
+</ul>
+</div>
+</div>
+</div>
+<section id="podcast" class="level2">
+<h2 class="anchored" data-anchor-id="podcast">Podcast</h2>
+<audio controls="1">
+<source src="podcast.mp3" type="audio/mpeg">
+</audio>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The secret life of pronouns in context
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>I got interested in this book when I was deep into wikipedia research. I was in a place where I wanted to be able to attribute content to the authors. I had read some disturbing articles with prior work on the topic by some researchers from my Alma Mater. However, I eventually came across this book and it seemed to put the ideas in a better form. Less about ML and more about the type of writers and their personalities.</p>
+</div>
+</div>
+<p>In <span class="citation" data-cites="pennebaker2013secret">(Pennebaker 2013)</span> “The Secret Life of Pronouns: What Our Words Say About Us,” the author explores how the seemingly innocuous function words we use—pronouns, articles, prepositions, and auxiliary verbs—can reveal a great deal about our personalities, emotions, social connections, and psychological states. James W. Pennebaker, the author and a social psychologist, uses computer-based text analysis methods to uncover these hidden patterns.</p>
+</section>
+<section id="outline" class="level2">
+<h2 class="anchored" data-anchor-id="outline">Outline</h2>
+<ul>
+<li><p><strong>Key Questions and Themes:</strong></p>
+<ul>
+<li><strong>Can language reveal psychological states?</strong> The author is primarily interested in what people’s words say about their psychological states. The book investigates whether language features can reveal how people are thinking and whether this information can be used to change their thinking.</li>
+<li><strong>How do function words differ from content words?</strong> The book distinguishes between content and style of speech, arguing that function words, which reflect language style, reveal more about a person than content words. Function words are tied to the relationship between speaker and listener.</li>
+<li><strong>Do men and women use words differently?</strong> The book explores gender differences in language use, noting that women are typically more attentive to the thoughts and feelings of others, while men are less so. It also investigates whether different writing styles reflect different personalities.</li>
+<li><strong>Can language predict behavior?</strong> The book examines whether language use can predict behaviors such as success in college, risk of suicide, leadership styles, and likelihood of declaring war.</li>
+<li><strong>How can language be used as a tool for change?</strong> The author examines whether analyzing words can lead to improvements in relationships, teaching, and leadership. Additionally, the book looks at how writing about emotional upheavals can improve mental and physical health, and whether using certain types of words can influence the effectiveness of that writing.</li>
+<li><strong>Can language reveal deception?</strong> The book explores linguistic markers of deception, such as the use of first-person singular pronouns and the mention of other individuals.</li>
+<li><strong>Can language analysis help identify authors?</strong> The book presents methods for identifying authors using function words, punctuation, and obscure words.</li>
+</ul></li>
+<li><p><strong>Main Examples and Studies:</strong></p>
+<ul>
+<li><strong>Expressive Writing:</strong> Early research focused on the benefits of writing about traumatic experiences, leading to the development of the LIWC (Linguistic Inquiry and Word Count) program. This program helps analyze word categories associated with healthy writing such as positive emotion words, cognitive words, and the ability to construct a story.</li>
+<li><strong>The Bottle and the Two People Pictures:</strong> Participants described pictures, and their descriptions were analyzed for function word use and content. For example, people who focused on shadows in the bottle picture tended to be more creative. The second picture revealed common themes such as social connections, clothing, and accessories.</li>
+<li><strong>Thinking Styles:</strong> The book describes how people’s function words can be statistically grouped into categories reflecting thinking styles, such as formal, analytic, and narrative. These thinking styles can predict how people relate to others and organize their worlds.</li>
+<li><strong>9/11 Blog Analysis:</strong> The language used in blog posts was analyzed before and after the 9/11 attacks. Researchers noted an increase in negative emotion words, a decrease in positive emotion words, and a temporary increase in cognitive words.</li>
+<li><strong>College Admissions Essays:</strong> The study examined whether the writing style in college admissions essays could predict college grades.</li>
+<li><strong>The Federalist Papers:</strong> The book discusses the use of function words to determine the authorship of the anonymous Federalist Papers.</li>
+<li><strong>Language Style Matching (LSM):</strong> LSM is a technique to determine how similarly two people use function words. It is used in studies of couples, speed dating, and even the writings of historical figures to analyze the relationship between the authors.</li>
+<li><strong>Obama’s Pronoun Use</strong>: The book analyzes Barack Obama’s use of first-person singular pronouns. His relatively low use of I-words is interpreted as a sign of self-confidence.</li>
+</ul></li>
+<li><p><strong>Additional Insights:</strong></p>
+<ul>
+<li><strong>Stealth Words:</strong> The book emphasizes the importance of function words, often called “stealth words,” which are often overlooked.</li>
+<li><strong>The Role of Computers:</strong> Computer technology has revolutionized the study of language, allowing researchers to analyze large datasets and uncover hidden patterns that would be impossible to see with manual analysis.</li>
+<li><strong>Language as a Tool:</strong> Language can be used not only as a window into the inner workings of people, but also as a tool for guiding thinking and promoting change.</li>
+<li><strong>Interdisciplinary Approach</strong>: The author’s work draws on multiple disciplines including psychology, linguistics, computer science, history, and political science.</li>
+</ul></li>
+</ul>
+
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="ref-pennebaker2013secret" class="csl-entry">
+Pennebaker, J. W. 2013. <em>The Secret Life of Pronouns: What Our Words Say about Us</em>. Bloomsbury USA. <a href="https://books.google.co.il/books?id=p9KmCAAAQBAJ">https://books.google.co.il/books?id=p9KmCAAAQBAJ</a>.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2025,
+  author = {Bochman, Oren},
+  title = {The {Secret} {Life} of {Pronouns} {What} {Our} {Words} {Say}
+    {About} {Us}},
+  date = {2025-01-30},
+  url = {https://orenbochman.github.io/notes-nlp/reviews/book/seret-life-of-pronouns/},
+  langid = {en}
+}
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2025" class="csl-entry quarto-appendix-citeas">
+Bochman, Oren. 2025. <span>“The Secret Life of Pronouns What Our Words
+Say About Us.”</span> January 30, 2025. <a href="https://orenbochman.github.io/notes-nlp/reviews/book/seret-life-of-pronouns/">https://orenbochman.github.io/notes-nlp/reviews/book/seret-life-of-pronouns/</a>.
+</div></div></section></div> ]]></description>
+  <category>Review</category>
+  <category>Book</category>
+  <category>NLP</category>
+  <category>Sentiment Analysis</category>
+  <category>Sentiment Analysis</category>
+  <category>Podcast</category>
+  <guid>https://orenbochman.github.io/notes-nlp/reviews/book/seret-life-of-pronouns/</guid>
+  <pubDate>Wed, 29 Jan 2025 22:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>ELMo - Deep contextualized word representations</title>
+  <dc:creator>Oren Bochman</dc:creator>
+  <link>https://orenbochman.github.io/notes-nlp/reviews/paper/ELMo/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/images/literature-review-open-book.jpg" class="img-fluid figure-img"></p>
+<figcaption>Litrature review</figcaption>
+</figure>
+</div></div><section id="podcast" class="level2">
+<h2 class="anchored" data-anchor-id="podcast">Podcast</h2>
+<audio controls="1">
+<source src="podcast.mp3" type="audio/mpeg">
+</audio>
+</section>
+<section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<blockquote class="blockquote">
+<p>We introduce a new type of deep contextualized word representation that models both</p>
+<ol type="1">
+<li><p>complex characteristics of word use (e.g., syntax and semantics), and</p></li>
+<li><p>how these uses vary across linguistic contexts (i.e., to model polysemy).</p></li>
+</ol>
+<p>Our word vectors are learned functions of the internal states of a deep bidirectional language model (biLM), which is pretrained on a large text corpus. We show that these representations can be easily added to existing models and significantly improve the state of the art across six challenging NLP problems, including question answering, textual entailment and sentiment analysis. We also present an analysis showing that exposing the deep internals of the pre-trained network is crucial, allowing downstream models to mix different types of semi-supervision signals.</p>
+</blockquote>
+</section>
+<section id="outline" class="level2">
+<h2 class="anchored" data-anchor-id="outline">Outline</h2>
+<ul>
+<li><strong>I. Introduction</strong>
+<ul>
+<li>Ideally, word representations should model complex characteristics of word use, such as syntax and semantics, and how these uses vary across linguistic contexts, to model polysemy.</li>
+<li>The authors introduces a new type of <strong>deep contextualized word representation</strong> (ELMo) that addresses these challenges, integrates easily into existing models, and improves state-of-the-art results.</li>
+</ul></li>
+<li><strong>II. ELMo (Embeddings from Language Models)</strong>
+<ul>
+<li><strong>ELMo representations are functions of the entire input sentence, not just individual tokens</strong>.</li>
+<li>They are computed using a <strong>bidirectional LSTM</strong> (biLM) trained on a large text corpus with a language model objective.</li>
+<li>ELMo representations are <strong>deep</strong>, in the sense they are a function of all internal layers of the biLM.</li>
+<li>A linear combination of the vectors stacked above each input word is learned for each end task.</li>
+<li>Internal states are combined to create rich word representations</li>
+<li>Higher-level LSTM states capture context-dependent aspects of word meaning (semantics),</li>
+<li>Lower-level states model aspects of syntax.</li>
+<li>Exposing all of these signals allows learned models to select the most useful types of semi-supervision for each end task.</li>
+</ul></li>
+<li><strong>III. Bidirectional Language Models (biLM)</strong>
+<ul>
+<li>A forward language model predicts the next token given the history of previous tokens.</li>
+<li>A backward language model predicts the previous token given the future context.</li>
+<li>A biLM combines both forward and backward LMs, maximizing the log-likelihood of both directions.</li>
+<li>The biLM uses tied parameters for token representations and the Softmax layer in both directions, but maintains separate parameters for LSTMs in each direction.</li>
+</ul></li>
+<li><strong>IV. ELMo Specifics</strong>
+<ul>
+<li>For each token, an L-layer biLM computes a set of 2L+1 representations.</li>
+<li>ELMo collapses all biLM layers into a single vector using a task-specific weighting of all layers.</li>
+<li>A scalar parameter scales the entire ELMo vector.</li>
+<li>Layer normalization can be applied to each biLM layer before weighting.</li>
+</ul></li>
+<li><strong>V. Integrating ELMo into Supervised NLP Tasks</strong>
+<ul>
+<li>The weights of the pre-trained biLM are frozen, and then the ELMo vector is concatenated with the existing token representation before being passed into the task’s RNN.</li>
+<li>For some tasks, ELMo is also included at the output of the task RNN.</li>
+<li>Dropout is added to ELMo, and sometimes the ELMo weights are regularized.</li>
+</ul></li>
+<li><strong>VI. Pre-trained biLM Architecture</strong>
+<ul>
+<li>The biLMs are similar to previous architectures but modified to support joint training of both directions and add a residual connection between LSTM layers.</li>
+<li>The model uses 2 biLSTM layers with 4096 units and 512-dimension projections, with a residual connection.</li>
+<li>The context-insensitive type representation uses character n-gram convolutional filters and highway layers.</li>
+<li>The biLM provides three layers of representation for each input token.</li>
+</ul></li>
+<li><strong>VII. Evaluation</strong>
+<ul>
+<li>ELMo was evaluated on six benchmark NLP tasks, including question answering, textual entailment, and sentiment analysis.</li>
+<li><strong>Adding ELMo significantly improves the state-of-the-art in every case</strong>.</li>
+<li>For tasks where direct comparisons are possible, ELMo outperforms CoVe.</li>
+<li>Deep representations outperform those derived from just the top layer of an LSTM.</li>
+</ul></li>
+<li><strong>VIII. Task-Specific Results</strong>
+<ul>
+<li><strong>Question Answering (SQuAD):</strong> ELMo significantly improved the F1 score.</li>
+<li><strong>Textual Entailment (SNLI):</strong> ELMo improved accuracy.</li>
+<li><strong>Semantic Role Labeling (SRL):</strong> ELMo improved the F1 score.</li>
+<li><strong>Coreference Resolution:</strong> ELMo improved the average F1 score.</li>
+<li><strong>Named Entity Extraction (NER):</strong> ELMo enhanced biLSTM-CRF achieved a new state-of-the-art F1 score.</li>
+<li><strong>Sentiment Analysis (SST-5):</strong> ELMo improved accuracy over the prior state-of-the-art.</li>
+</ul></li>
+<li><strong>IX. Analysis</strong>
+<ul>
+<li><mark>Using deep contextual representations improves performance compared to just using the top layer.</mark></li>
+<li>ELMo provides better overall performance than representations from a machine translation encoder like CoVe.</li>
+<li>Syntactic information is better represented at lower layers, while semantic information is better captured at higher layers.</li>
+<li><strong>Including ELMo at both the input and output layers of the supervised model can improve performance for some tasks</strong>.</li>
+<li>ELMo increases sample efficiency, requiring fewer training updates and less data to reach the same level of performance.</li>
+<li>The contextual information captured by ELMo is more important than the sub-word information.</li>
+<li>Pre-trained word vectors provide a marginal improvement when used with ELMo.</li>
+</ul></li>
+<li><strong>X. Key Findings</strong>
+<ul>
+<li><strong>ELMo efficiently encodes different types of syntactic and semantic information about words in context</strong>.</li>
+<li>Using all layers of the biLM improves overall task performance.</li>
+<li><strong>ELMo provides a general approach for learning high-quality, deep, context-dependent representations</strong>.</li>
+</ul></li>
+</ul>
+</section>
+<section id="the-paper" class="level2">
+<h2 class="anchored" data-anchor-id="the-paper">The Paper</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="./paper.pdf" class="col-page" data-group="slides" width="800" height="1000"></p>
+<figcaption>paper</figcaption>
+</figure>
+</div>
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2021,
+  author = {Bochman, Oren},
+  title = {ELMo - {Deep} Contextualized Word Representations},
+  date = {2021-05-09},
+  url = {https://orenbochman.github.io/notes-nlp/reviews/paper/ELMo/},
+  langid = {en}
+}
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2021" class="csl-entry quarto-appendix-citeas">
+Bochman, Oren. 2021. <span>“ELMo - Deep Contextualized Word
+Representations.”</span> May 9, 2021. <a href="https://orenbochman.github.io/notes-nlp/reviews/paper/ELMo/">https://orenbochman.github.io/notes-nlp/reviews/paper/ELMo/</a>.
+</div></div></section></div> ]]></description>
+  <category>Attention</category>
+  <category>Bidirectional LSTM</category>
+  <category>Deep learning</category>
+  <category>Embeddings</category>
+  <category>LLM</category>
+  <category>NLP</category>
+  <category>Paper</category>
+  <category>Review</category>
+  <category>Stub</category>
+  <category>Podcast</category>
+  <guid>https://orenbochman.github.io/notes-nlp/reviews/paper/ELMo/</guid>
+  <pubDate>Sat, 08 May 2021 21:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Exposing Attention Glitches with Flip-Flop Language Modeling</title>
+  <dc:creator>Oren Bochman</dc:creator>
+  <link>https://orenbochman.github.io/notes-nlp/reviews/paper/exposing-glitches/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/images/literature-review-open-book.jpg" class="img-fluid figure-img"></p>
+<figcaption>Litrature review</figcaption>
+</figure>
+</div></div><section id="podcast" class="level2">
+<h2 class="anchored" data-anchor-id="podcast">Podcast</h2>
+<audio controls="1">
+<source src="podcast.mp3" type="audio/mpeg">
+</audio>
+</section>
+<section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<blockquote class="blockquote">
+<p>Why do large language models sometimes output factual inaccuracies and exhibit erroneous reasoning? The brittleness of these models, particularly when executing long chains of reasoning, currently seems to be an inevitable price to pay for their advanced capabilities of coherently synthesizing knowledge, pragmatics, and abstract thought. Towards making sense of this fundamentally unsolved problem, this work identifies and analyzes the phenomenon of attention glitches, in which the Transformer architecture’s inductive biases intermittently fail to capture robust reasoning. To isolate the issue, we introduce flip-flop language modeling (FFLM), a parametric family of synthetic benchmarks designed to probe the extrapolative behavior of neural language models. This simple generative task requires a model to copy binary symbols over long-range dependencies, ignoring the tokens in between. We find that Transformer FFLMs suffer from a long tail of sporadic reasoning errors, some of which we can eliminate using various regularization techniques. Our preliminary mechanistic analyses show why the remaining errors may be very difficult to diagnose and resolve. We hypothesize that attention glitches account for (some of) the closed-domain hallucinations in natural LLMs. – <span class="citation" data-cites="liu2023exposingattentionglitchesflipflop">(Liu et al. 2023)</span></p>
+</blockquote>
+</section>
+<section id="outline" class="level2">
+<h2 class="anchored" data-anchor-id="outline">Outline</h2>
+<ul>
+<li>Introduction
+<ul>
+<li>Describes the problem of factual inaccuracies and erroneous reasoning in large language models (LLMs), particularly in long chains of reasoning.</li>
+<li>Presents integer addition problems as a simple example of algorithmic reasoning where LLMs exhibit sporadic errors, highlighting both their capabilities and limitations.</li>
+<li>Introduces the concept of “attention glitches” as a potential explanation for these errors, suggesting that the Transformer architecture’s inductive biases may intermittently fail to capture robust reasoning.</li>
+</ul></li>
+<li>Flip-flop Automata and the FFLM Task
+<ul>
+<li>Defines flip-flop strings and flip-flop languages, focusing on a canonical family parameterized by the probabilities of write, read, and ignore instructions.</li>
+<li>Introduces the flip-flop language modeling (FFLM) task, which involves training language models to generate or predict continuations of flip-flop strings, emphasizing the importance of perfect read operation accuracy.</li>
+<li>Discusses the rationale for focusing on flip-flops, highlighting their role as fundamental building blocks of memory and their relevance to various reasoning tasks.</li>
+</ul></li>
+<li>Attention Glitches: A Long Tail of Errors for Transformer FFLMs
+<ul>
+<li>Presents the main empirical result: Transformer models trained on FFLM exhibit a long tail of unpredictable reasoning errors (attention glitches), even on simple tasks like remembering one bit.</li>
+<li>Highlights the contrast between Transformers and LSTMs, showing that LSTMs achieve perfect accuracy on FFLM with significantly fewer resources.</li>
+<li>Notes that similar attention glitches are observed in real LLMs when prompted to complete natural language embeddings of flip-flop tasks.</li>
+<li>Discusses multiple potential mechanisms for attention glitches, including implicit n-gram models, Lipschitz limitations of soft attention, and the difficulty of non-commutative tiebreaking.</li>
+</ul></li>
+<li>Mitigations for Attention Glitches
+<ul>
+<li>Investigates various approaches to eliminate attention glitches in Transformer FFLMs, using a 6-layer 19M-parameter model as a canonical baseline.</li>
+<li>Discusses the effects of training data and scale, showing that training on rare sequences significantly reduces errors, while resource scaling provides weaker improvements.</li>
+<li>Explores indirect algorithmic controls, including standard regularization techniques and attention-sharpening regularizers, finding that some choices improve extrapolation but none completely eliminate glitches.</li>
+<li>Presents a preliminary mechanistic study of trained networks, showing that attention-sharpening promotes hard attention but errors persist due to the complexity and redundancy of attention patterns.</li>
+</ul></li>
+<li>Conclusion and Future Challenges
+<ul>
+<li>Summarizes the findings, emphasizing that attention glitches represent a systematic architectural flaw in Transformers that may contribute to closed-domain hallucinations in natural LLMs.</li>
+<li>Discusses the challenges of confirming or refuting the hypothesis that attention glitches cause hallucinations in natural LLMs, highlighting the need for further research.</li>
+<li>Suggests potential paths to hallucination-free Transformers, including data diversity, scale, regularization, and architectural innovations inspired by recurrent models.</li>
+<li>Mentions the broader impacts and limitations of the work, emphasizing its foundational nature and the potential for unintended consequences of improved factual reliability in LLMs.</li>
+</ul></li>
+<li>Appendix
+<ul>
+<li>Provides deferred background information on flip-flop terminology and history, including the definition of the flip-flop automaton and its transformation monoid.</li>
+<li>Discusses additional related work on hallucinations, long-range dependencies, explicit memory mechanisms, and Transformers’ performance on algorithmic tasks.</li>
+<li>Explains the rationale for the specific flip-flop language used in the study, highlighting its compatibility with standard language modeling and its parsimonious encoding.</li>
+<li>Elaborates on the hypothesis that attention glitches cause hallucinations in natural LLMs, discussing the challenges of formalizing and testing this hypothesis.</li>
+<li>Presents full experimental results, including details for LLM addition prompts, extrapolation failures of standard Transformers, effects of training data and scale, indirect algorithmic controls, and preliminary mechanistic studies.</li>
+<li>Provides proofs for propositions related to the realizability of FFL by small Transformers, the failure of soft attention due to attention dilution, and the failure of hard attention due to bad margins for positional embeddings.</li>
+<li>Notes the software, compute infrastructure, and resource costs associated with the experiments.</li>
+</ul></li>
+</ul>
+</section>
+<section id="the-paper" class="level2">
+<h2 class="anchored" data-anchor-id="the-paper">The Paper</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="./paper.pdf" class="col-page" data-group="slides" width="800" height="1000"></p>
+<figcaption>paper</figcaption>
+</figure>
+</div>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="ref-liu2023exposingattentionglitchesflipflop" class="csl-entry">
+Liu, Bingbin, Jordan T. Ash, Surbhi Goel, Akshay Krishnamurthy, and Cyril Zhang. 2023. <span>“Exposing Attention Glitches with Flip-Flop Language Modeling.”</span> <a href="https://arxiv.org/abs/2306.00946">https://arxiv.org/abs/2306.00946</a>.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2021,
+  author = {Bochman, Oren},
+  title = {Exposing {Attention} {Glitches} with {Flip-Flop} {Language}
+    {Modeling}},
+  date = {2021-05-09},
+  url = {https://orenbochman.github.io/notes-nlp/reviews/paper/exposing-glitches/},
+  langid = {en}
+}
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2021" class="csl-entry quarto-appendix-citeas">
+Bochman, Oren. 2021. <span>“Exposing Attention Glitches with Flip-Flop
+Language Modeling.”</span> May 9, 2021. <a href="https://orenbochman.github.io/notes-nlp/reviews/paper/exposing-glitches/">https://orenbochman.github.io/notes-nlp/reviews/paper/exposing-glitches/</a>.
+</div></div></section></div> ]]></description>
+  <category>Attention</category>
+  <category>LSTM</category>
+  <category>Deep learning</category>
+  <category>LLM</category>
+  <category>NLP</category>
+  <category>Paper</category>
+  <category>Podcast</category>
+  <category>Review</category>
+  <guid>https://orenbochman.github.io/notes-nlp/reviews/paper/exposing-glitches/</guid>
+  <pubDate>Sat, 08 May 2021 21:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Effective Approaches to Attention-based Neural Machine Translation</title>
+  <dc:creator>Oren Bochman</dc:creator>
+  <link>https://orenbochman.github.io/notes-nlp/reviews/paper/effective/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/images/literature-review-open-book.jpg" class="img-fluid figure-img"></p>
+<figcaption>Literature review</figcaption>
+</figure>
+</div></div><p>This review is a bit of a mess, it has gone through at least three editions of this blog and I have learned much about writing and structuring a review since then. I think it needs a bit of an overhaul. This latest version is a step in the right direction.</p>
+<p>There are many other review of this paper but I think that covering this paper is highly relevant followup to the assignments for <a href="http://localhost:7780/notes/c4w1/">NMT</a> as well as the earlier assignment in for <a href="http://localhost:7780/notes/c1w4/">MT with KNN</a> in the Classification and Vector Space Models course.</p>
+
+<div class="no-row-height column-margin column-container"><div id="vid-01" class="">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/IxQtK2SjWWM?t=7" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<p>Attention models by Christopher D. Manning</p>
+</div><div id="vid-02" class="">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/R05UzD8SQLE?t=6" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<p>Paper Explained by Professor. Maziar Raissi</p>
+</div><div id="vid-03" class="">
+<div class="quarto-video"><video id="video_shortcode_videojs_video1" class="video-js vjs-default-skin vjs-fluid" controls="" preload="auto" data-setup="{}" title=""><source src="https://aclanthology.org/D15-1166.mp4"></video></div>
+<p>Presentation in Proceedings of the 2015 Conference on Empirical Methods in Natural Language Processing</p>
+</div></div>
+
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+TL;DR
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/images/in_a_nutshell.jpg" class="img-fluid figure-img"></p>
+<figcaption>Attention in a Nutshell</figcaption>
+</figure>
+</div>
+<p>This is an attention paper for machine translation.</p>
+<p>The earlier work in <span class="citation" data-cites="bahdanau2016neuralmachinetranslationjointly">Bahdanau, Cho, and Bengio (2016)</span> the authors used a bidirectional RNN with (GRUs) as the encoder and a unidirectional RNN with GRUs as the decoder. The attention mechanism dynamically aligned source words with the target words during decoding.</p>
+<p>In this paper the authors used stacked LSTMs for both the encoder and decoder. The paper proposed two simple and effective classes of attention mechanisms: a global approach that always attends to all source words and a local approach that only looks at a subset of source words at a time. The paper demonstrated the effectiveness of both approaches on the WMT translation tasks between English and German in both directions. The paper also introduced the concept of input-feeding approach, which feeds attentional vectors as inputs to the next time steps to inform the model about past alignment decisions.</p>
+<p>The paper is a must-read for anyone interested in neural machine translation and attention mechanisms in NLP. Not long after the transformer architecture was introduced in 2017 with attention becoming the backbone of the model.</p>
+</div>
+</div>
+<section id="podcast" class="level2">
+<h2 class="anchored" data-anchor-id="podcast">Podcast</h2>
+<audio controls="1">
+<source src="podcast.mp3" type="audio/mpeg">
+</audio>
+</section>
+<section id="effective-approaches-to-attention-based-neural-machine-translation" class="level2">
+<h2 class="anchored" data-anchor-id="effective-approaches-to-attention-based-neural-machine-translation">Effective Approaches to Attention-based Neural Machine Translation</h2>
+</section>
+<section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<blockquote class="blockquote">
+<p>An attentional mechanism has lately been used to improve neural machine translation (NMT) by selectively focusing on parts of the source sentence during translation. However, there has been little work exploring useful architectures for attention-based NMT. This paper examines two simple and effective classes of attentional mechanism: a global approach which always attends to all source words and a local one that only looks at a subset of source words at a time. We demonstrate the effectiveness of both approaches on the WMT translation tasks between English and German in both directions.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>With local attention, we achieve a significant gain of 5.0 BLEU points over non-attentional systems that already incorporate known techniques such as dropout. Our ensemble model using different attention architectures yields a new state-of-the-art result in the WMT’15 English to German translation task with 25.9 BLEU points, an improvement of 1.0 BLEU points over the existing best system backed by NMT and an n-gram reranker. – <span class="citation" data-cites="luong2015effectiveapproachesattentionbasedneural">(Luong, Pham, and Manning 2015)</span></p>
+</blockquote>
+</section>
+<section id="dot-product-attention" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="dot-product-attention">Dot-Product Attention</h2>
+<p><strong>Dot-Product attention</strong> is the first of three attention mechanisms covered in the course and the simplest covered in this paper. Dot-Product Attention is a good fit, in an engineering sense, for a encoder-decoder architecture with tasks where the source source sequence is fully available at the start and the tasks is mapping or transformation the source sequence to an output sequence like in alignment, or translation.</p>
+<div id="fig-01" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://orenbochman.github.io/notes-nlp/reviews/paper/effective/img/fig-01.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Neural machine translation – a stacking recurrent architecture for translating a source sequence A B C D into a target sequence X Y Z. Here, <code>&lt;eos&gt;</code> marks the end of a sentence.
+</figcaption>
+</figure>
+</div>
+<p>The first assignment in the course using encoder decoder LSTM model with attention is so similar to the setup disused in this paper, I would not be surprised if it may well have inspired it.</p>
+<hr>
+<p>This is a review of the paper in which scaled dot product attention was introduced in 2015 by <em>Minh-Thang Luong, Hieu Pham, Christopher D. Manning</em> in <a href="https://arxiv.org/pdf/1508.04025v5.pdf">Effective Approaches to Attention-based Neural Machine Translation</a> which is available at <a href="https://paperswithcode.com/paper/effective-approaches-to-attention-based">papers with code</a>. In this paper they tried to take the attention mechanism being used in other tasks and to distill it to its essence and at the same time to also find a more general form.</p>
+<div class="columns">
+<div class="column" style="width:45%;">
+<div id="fig-02" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/reviews/paper/effective/img/fig-02.png" class="img-fluid figure-img"></p>
+<figcaption>Global Attention</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Global attentional model – at each time step t, the model infers a variable-length alignment weight vector at based on the current target state ht and all source states ̄hs. A global contextvector ct is then computed as the weighted average, according to at, over all the source states.
+</figcaption>
+</figure>
+</div>
+</div><div class="column" style="width:10%;">
+<!-- empty column to create gap -->
+</div><div class="column" style="width:45%;">
+<div id="fig-03" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/reviews/paper/effective/img/fig-03.png" class="img-fluid figure-img"></p>
+<figcaption>Local attention</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Local attention model – the model first predicts a single aligned position <img src="https://latex.codecogs.com/png.latex?p_t"> or the current target word. A window centered around the source position <img src="https://latex.codecogs.com/png.latex?p_t"> is then used to compute a context vector <img src="https://latex.codecogs.com/png.latex?c_t">, a weighted average of the source hidden states in the window. The weights at are inferred from the current target state <img src="https://latex.codecogs.com/png.latex?h_t"> and those source states <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Bh%7D_s"> in the window.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="fig-04" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/reviews/paper/effective/img/fig-04.png" class="img-fluid figure-img"></p>
+<figcaption>Input-feeding approach</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Input-feeding approach – Attentional vectors <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Bh%7D_s"> are fed as inputs to the next time steps to inform the model about past alignment decisions
+</figcaption>
+</figure>
+</div>
+<div id="fig-05" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/reviews/paper/effective/img/fig-05.png" class="img-fluid figure-img"></p>
+<figcaption>Learning curves</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-05-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Learning curves – test cost (ln perplexity) on newstest2014 for English-German NMTs as training progresses.
+</figcaption>
+</figure>
+</div>
+<div id="fig-06" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/reviews/paper/effective/img/fig-06.png" class="img-fluid figure-img"></p>
+<figcaption>Length Analysis</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-06-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: Length Analysis – translation qualities of different systems as sentences become longer
+</figcaption>
+</figure>
+</div>
+<p>They also came up with a interesting way to visualize the alignment’s attention mechanism.</p>
+<div id="fig-07" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-07-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/reviews/paper/effective/img/fig-07.png" class="img-fluid figure-img"></p>
+<figcaption>alignment-visulization</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-07-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7: Alignment visualizations – shown are images of the attention weights learned by various models: (top left) global, (top right) local-m, and (bottom left) local-p.&nbsp;The gold alignments are displayed at the bottom right corner.
+</figcaption>
+</figure>
+</div>
+<p>So to recap: Luong et all were focused on alignment problem in NMT. When they try to tackle it using attention as function of the content and a function of its location. They came up with a number of ways to distill and generalize the attention mechanism.</p>
+<hr>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/reviews/paper/effective/img/page01.png" class="img-fluid figure-img"></p>
+<figcaption>page 1</figcaption>
+</figure>
+</div></div><p>Attention was just another engineering technique to improve alignment and it had not yet taken center stage in the models, as it would in <a href="img/https://arxiv.org/abs/1706.03762">Attention Is All We Need</a> (<span class="citation" data-cites="vaswani2023attentionneed">Vaswani et al. (2023)</span>).I find it useful to garner the concepts and intuition which inspired these researchers to adapt attention and how they come up with this form of attention.</p>
+<p>The abstract begins with:</p>
+<blockquote class="blockquote">
+<p>“An attentional mechanism has lately been used to improve neural machine translation (NMT) by selectively focusing on parts of the source sentence during translation.”</p>
+</blockquote>
+<p>which was covered in last lesson. The abstract continues with:</p>
+<blockquote class="blockquote">
+<p>“This paper examines two simple and effective classes of attentional mechanism: a <strong>global</strong> approach which always attends to <strong>all</strong> source words and a <strong>local</strong> one that only looks at a <strong>subset</strong> of source words at a time.”</p>
+</blockquote>
+<p>talks about</p>
+<hr>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/reviews/paper/effective/img/page02.png" class="img-fluid figure-img"></p>
+<figcaption>page 2</figcaption>
+</figure>
+</div></div></section>
+<section id="neural-machine-translation" class="level2">
+<h2 class="anchored" data-anchor-id="neural-machine-translation">§2 Neural Machine Translation:</h2>
+<p>This section provides a summary of the the NMT task using 4 equations: In particular they note that in the decoder the conditional probability of the target given the source is of the form: <img src="https://latex.codecogs.com/png.latex?%0Alog%20%5Cspace%20p(y%20%5Cvert%20x)%20=%20%5Csum_%7Bj=1%7D%5Em%20log%20%5Cspace%20p%20(y_j%20%5Cvert%20y_%7B%3Cj%7D%20,%20s)%0A"></p>
+<p>Where <img src="https://latex.codecogs.com/png.latex?x_i"> are the <em>source</em> sentence and <img src="https://latex.codecogs.com/png.latex?y_i"> are the <em>target</em> sentence. <img src="https://latex.codecogs.com/png.latex?%0Ap%20(y_j%20%5Cvert%20y%7B%3Cj%7D%20,%20s)%20=%20softmax%20(g(h_j))%0A"></p>
+<p>Here, <img src="https://latex.codecogs.com/png.latex?h_j"> is the RNN hidden unit, abstractly computed as: <img src="https://latex.codecogs.com/png.latex?%0Ah_j%20=%20f(h_%7Bj-1%7D,s)%0A"></p>
+<p>Our training objective is formulated as follows <img src="https://latex.codecogs.com/png.latex?%0AJ_t=%5Csum_%7B(x,y)%5Cin%20D%7D%20-log%20%5Cspace%20p(x%20%5Cvert%20y)%0A"></p>
+<p>With D being our parallel training corpus.</p>
+<hr>
+</section>
+<section id="overview-of-attention" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="overview-of-attention">§3 Overview of attention</h2>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/reviews/paper/effective/img/page03.png" class="img-fluid figure-img"></p>
+<figcaption>page 3</figcaption>
+</figure>
+</div></div><p>Next they provide a recap of the attention mechanism to set their starting point: &gt;Specifically, given the target hidden state <img src="https://latex.codecogs.com/png.latex?h_t"> and the source-side context vector <img src="https://latex.codecogs.com/png.latex?c_t">, we employ a simple concatenation layer to combine the information from both vectors to produce an attentional hidden state as follows:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbar%7Bh%7D_t%20=%20tanh(W_c%5Bc_t;h_t%5D)%0A"></p>
+<blockquote class="blockquote">
+<p>The attentional vector <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Bh%7D_t"> is then fed through the softmax layer to produce the predictive distribution formulated as:</p>
+</blockquote>
+<p><img src="https://latex.codecogs.com/png.latex?%0Ap(y_t%7Cy%7B%3Ct%7D,%20x)%20=%20softmax(W_s%5Cbar%7Bh%7D_t)%0A"></p>
+</section>
+<section id="global-attention" class="level2">
+<h2 class="anchored" data-anchor-id="global-attention">§3.1 Global attention</h2>
+<p>This is defined in §3.1 of the paper as:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign%7D%0A%20%20%20a_t(s)%20&amp;%20=%20align(h_t,%5Cbar%7Bh%7D_s)%20%20%5Cnewline%0A%20%20%20&amp;%20=%20%5Cfrac%7B%20e%5E%7Bscore(h_t,%5Cbar%7Bh%7D_s)%7D%20%7D%7B%20%5Csum_%7Bs'%7D%20e%5E%7Bscore(h_t,%5Cbar%7Bh%7D_s)%7D%20%7D%20%5Cnewline%0A%20%20%20&amp;%20=%20softmax(score(h_t,%5Cbar%7Bh%7D_s))%0A%5Cend%7Balign%7D%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?h_t"> and <img src="https://latex.codecogs.com/png.latex?h_s"> are the target and source sequences and <img src="https://latex.codecogs.com/png.latex?score()"> which is referred to as a <em>content-based</em> function as one of three alternative forms provided:</p>
+<section id="dot-product-attention-1" class="level3">
+<h3 class="anchored" data-anchor-id="dot-product-attention-1">Dot product attention:</h3>
+<p><img src="https://latex.codecogs.com/png.latex?%0Ascore(h_t,%5Cbar%7Bh%7D_s)=h_t%5ET%5Cbar%7Bh%7D_s%0A"> This form combines the source and target using a dot product. Geometrically this essentially a projection operation.</p>
+</section>
+<section id="general-attention" class="level3">
+<h3 class="anchored" data-anchor-id="general-attention">General attention:</h3>
+<p><img src="https://latex.codecogs.com/png.latex?%0Ascore(h_t,%5Cbar%7Bh%7D_s)=h_t%5ETW_a%5Cbar%7Bh%7D_s%0A"></p>
+<p>this form combines the source and target using a dot product after applying a learned attention weights to the source. Geometrically this is a projection of the target on a linear transformation of the source or <strong>scaled dot product attention</strong> as it is now known</p>
+</section>
+<section id="concatenative-attention" class="level3">
+<h3 class="anchored" data-anchor-id="concatenative-attention">Concatenative attention:</h3>
+<p><img src="https://latex.codecogs.com/png.latex?%0Ascore(h_t,%5Cbar%7Bh%7D_s)=v_a%5ET%20tanh(W_a%20%5Bh_t;%5Cbar%7Bh%7D_s%5D)%0A"></p>
+<p>This is a little puzzling <img src="https://latex.codecogs.com/png.latex?v_a%5ET"> is not accounted for and seems to be a learned attention vector which is projected onto the linearly weighted combination of the hidden states of the encoder and decoder. they also mention having considered using a <em>location based function</em> location :</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0Aa_t%20=%20softmax(W_a%20h_t)%0A"></p>
+which is just a linear transform of the hidden target state <img src="https://latex.codecogs.com/png.latex?h_t">
+<hr>
+</section>
+</section>
+<section id="local-attention" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="local-attention">§3.2 Local Attention</h2>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/reviews/paper/effective/img/page04.png" class="img-fluid figure-img"></p>
+<figcaption>page 4</figcaption>
+</figure>
+</div></div><p>in §3.2 they consider a local attention mechanism. This is a resource saving modification of global attention using the simple concept of applying the mechanism within a fixed sized window.</p>
+<blockquote class="blockquote">
+<p>We propose a local attentional mechanism that chooses to focus only on a small subset of the source positions per target word. This model takes inspiration from the tradeoff between the soft and hard attentional models proposed by Xu et al.&nbsp;(2015) to tackle the image caption generation task.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Our local attention mechanism selectively focuses on a small window of context and is differentiable. … In concrete details, the model first generates an aligned position <img src="https://latex.codecogs.com/png.latex?p_t"> for each target word at time <img src="https://latex.codecogs.com/png.latex?t">. The context vector <img src="https://latex.codecogs.com/png.latex?c_t"></p>
+</blockquote>
+<p>is then derived as a weighted average over the set of source hidden states within the window <img src="https://latex.codecogs.com/png.latex?%5Bp_t%E2%88%92D,%20p_t+D%5D">; Where <img src="https://latex.codecogs.com/png.latex?D"> is empirically selected. The <em>big idea</em> here is to use a fixed window size for this step to conserve resources when translating paragraphs or documents - a laudable notion for times where LSTM gobbled up resources in proportion to the sequence length…</p>
+<p>They also talk about <em>monotonic alignment</em> where <img src="https://latex.codecogs.com/png.latex?p_t=t"> and <em>predictive alignment</em></p>
+<p><img src="https://latex.codecogs.com/png.latex?%0Ap_t=S%5Ccdot%20sigmoid(v_p%5ETtanh(W_ph_t))%0A"></p>
+<p><img src="https://latex.codecogs.com/png.latex?%0Aa_t(s)=align(h_t,%5Cbar%7Bh%7D_s)e%5E%7B(-%5Cfrac%7B(s-p_t)%5E2%7D%7Bs%5Csigma%5E2%7D)%7D%0A"></p>
+<p>with align() as defined above and</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Csigma=%5Cfrac%7BD%7D%7B2%7D%0A"></p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/reviews/paper/effective/img/page05.png" class="img-fluid figure-img"></p>
+<figcaption>page 5</figcaption>
+</figure>
+</div></div><p>I found the rest of the paper lesser interest</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/reviews/paper/effective/img/page06.png" class="img-fluid figure-img"></p>
+<figcaption>page 6</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/reviews/paper/effective/img/page07.png" class="img-fluid figure-img"></p>
+<figcaption>page 7</figcaption>
+</figure>
+</div><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/reviews/paper/effective/img/page08.png" class="img-fluid figure-img"></p>
+<figcaption>page 8</figcaption>
+</figure>
+</div></div>
+
+<p>In §5.4 In alignment quality</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/reviews/paper/effective/img/page09.png" class="img-fluid figure-img"></p>
+<figcaption>page 9</figcaption>
+</figure>
+</div></div><p>some sample translations</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/reviews/paper/effective/img/page10.png" class="img-fluid figure-img"></p>
+<figcaption>page 10</figcaption>
+</figure>
+</div></div><p>the references</p>
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/reviews/paper/effective/img/page11.png" class="img-fluid figure-img"></p>
+<figcaption>page 11</figcaption>
+</figure>
+</div></div><p>This is appendix A which shows the visualization of alignment weights.</p>
+</section>
+<section id="outline" class="level2">
+<h2 class="anchored" data-anchor-id="outline">Outline</h2>
+<!-- mark with strikeout supperplous and obvious entries -->
+<ul>
+<li>Introduction
+<ul>
+<li>Lists the advantages of neural machine translation (NMT)
+<ul>
+<li>Minimal domain knowledge</li>
+<li>Conceptual simplicity</li>
+<li>Ability to generalize well to long sequences</li>
+<li>Small memory footprint</li>
+<li>Easy implementation of decoders</li>
+</ul></li>
+<li>Discusses the concept of attention in neural networks</li>
+<li>Mentions different applications of attention in different tasks</li>
+<li>Highlights the application of attention mechanism in NMT by Bahdanau et al.&nbsp;(2015) and the lack of further exploration</li>
+<li>Presents the purpose of the paper, which is to design two novel types of attention-based models
+<ul>
+<li>A global approach</li>
+<li>A local approach</li>
+</ul></li>
+<li>Presents the experimental evaluation of the proposed approaches on WMT translation tasks and its analysis</li>
+</ul></li>
+<li>Neural Machine Translation
+<ul>
+<li>Describes the conditional probability of translating a source sentence to a target sentence</li>
+<li>Presents the two components of a basic NMT system an Encoder and a Decoder</li>
+<li>Discusses the use of recurrent neural network (RNN) architectures in NMT</li>
+<li>Presents the parameterization of the probability of decoding each word in the target sentence</li>
+<li>Presents the training objective used in NMT</li>
+</ul></li>
+<li>Attention-based Models
+<ul>
+<li>Classifies the various attention-based models into two broad categories
+<ul>
+<li>Global attention</li>
+<li>Local attention</li>
+</ul></li>
+<li>Presents the common process followed by both global and local attention models for deriving the context vector</li>
+<li>Describes the concatenation of target hidden state and source-side context vector for prediction</li>
+</ul></li>
+<li>Global Attention
+<ul>
+<li>Describes the concept of global attention model</li>
+<li>Presents the derivation of a variable-length alignment vector by comparing the current target hidden state with each source hidden state</li>
+<li>Presents three different alternatives for the content-based function used in calculating the alignment vector</li>
+<li>Describes the location-based function used in early attempts to build attention-based models</li>
+<li>Describes the calculation of the context vector as the weighted average over all the source hidden states</li>
+<li>Presents a comparison of the proposed global attention approach to the model by Bahdanau et al.&nbsp;(2015)
+<ul>
+<li>Simpler architecture</li>
+<li>Simpler computation path</li>
+<li>Use of multiple alignment functions</li>
+</ul></li>
+</ul></li>
+<li>Local Attention
+<ul>
+<li>Describes the concept of local attention model</li>
+<li>Mentions the inspiration from the soft and hard attentional models</li>
+<li>Describes the selection of a small window of context and its advantages over soft and hard attention models</li>
+<li>Presents two variants of the local attention model
+<ul>
+<li>Monotonic alignment</li>
+<li>Predictive alignment</li>
+</ul></li>
+<li>Describes the comparison to the selective attention mechanism by Gregor et al.&nbsp;(2015)</li>
+</ul></li>
+<li>Input-feeding Approach
+<ul>
+<li>Describes the suboptimal nature of making independent attentional decisions in the global and local approaches</li>
+<li>Discusses the need for joint alignment decisions taking into account past alignment information</li>
+<li>Presents the input-feeding approach</li>
+<li>Mentions the effects of input-feeding approach
+<ul>
+<li>Makes the model fully aware of previous alignment choices</li>
+<li>Creates a deep network spanning both horizontally and vertically</li>
+</ul></li>
+<li>Presents the comparison to other related works
+<ul>
+<li>Use of context vectors by Bahdanau et al.&nbsp;(2015)</li>
+<li>Doubly attentional approach by Xu et al.&nbsp;(2015)</li>
+</ul></li>
+</ul></li>
+<li>Experiments
+<ul>
+<li>Describes the evaluation setup and datasets used
+<ul>
+<li>newstest2013 as development set</li>
+<li>newstest2014 and newstest2015 as test sets</li>
+</ul></li>
+<li>Mentions the use of case-sensitive BLEU for reporting translation performances</li>
+<li>Describes the two types of BLEU used
+<ul>
+<li>Tokenized BLEU</li>
+<li>NIST BLEU</li>
+</ul></li>
+</ul></li>
+<li>Training Details
+<ul>
+<li>Describes the data used for training NMT systems
+<ul>
+<li>WMT’14 training data</li>
+</ul></li>
+<li>Presents the details of vocabulary size and filtering criteria used</li>
+<li>Discusses the architecture of the LSTM models and training settings</li>
+<li>Mentions the training speed and time</li>
+</ul></li>
+<li>English-German Results
+<ul>
+<li>Discusses the different systems used for comparison</li>
+<li>Presents the progressive improvements achieved by
+<ul>
+<li>Reversing the source sentence</li>
+<li>Using dropout</li>
+<li>Using global attention approach</li>
+<li>Using input-feeding approach</li>
+<li>Using local attention model with predictive alignments</li>
+</ul></li>
+<li>Notes the correlation between perplexity and translation quality</li>
+<li>Mentions the use of unknown replacement technique and the achievement of new SOTA result by ensembling 8 different models</li>
+<li>Describes the results of testing the models on newstest2015 and the establishment of new SOTA performance</li>
+</ul></li>
+<li>German-English Results
+<ul>
+<li>Mentions the evaluation setup for the German-English translation task</li>
+<li>Presents the results highlighting the effectiveness of
+<ul>
+<li>Attentional mechanism</li>
+<li>Input-feeding approach</li>
+<li>Content-based dot product function with dropout</li>
+<li>Unknown word replacement technique</li>
+</ul></li>
+</ul></li>
+<li>Analysis
+<ul>
+<li>Describes the purpose of conducting extensive analysis
+<ul>
+<li>Understanding of the learning process</li>
+<li>Ability to handle long sentences</li>
+<li>Choice of attentional architectures</li>
+<li>Alignment quality</li>
+</ul></li>
+</ul></li>
+<li>Learning Curves
+<ul>
+<li>Presents the analysis of the learning curves for different models</li>
+<li>Notes the separation between non-attentional and attentional models</li>
+<li>Briefly mentions the effectiveness of input-feeding approach and local attention models</li>
+</ul></li>
+<li>Effects of Translating Long Sentences
+<ul>
+<li>Briefly discusses the grouping of sentences based on lengths and computation of BLEU score per group</li>
+<li>Mentions the effectiveness of attentional models in handling long sentences</li>
+<li>Notes the superior performance of the best model across all sentence length buckets</li>
+</ul></li>
+<li>Choices of Attentional Architectures
+<ul>
+<li>Presents the analysis of different attention models and alignment functions</li>
+<li>Highlights the poor performance of the location-based function</li>
+<li>Briefly mentions the performance of content-based functions
+<ul>
+<li>Good performance of dot function for global attention</li>
+<li>Better performance of general function for local attention</li>
+</ul></li>
+<li>Notes the best performance of local attention model with predictive alignments</li>
+</ul></li>
+<li>Alignment Quality
+<ul>
+<li>Briefly discusses the use of alignment error rate (AER) metric to evaluate the alignment quality</li>
+<li>Mentions the data used for evaluating alignment quality and the process of extracting one-to-one alignments</li>
+<li>Presents the results of AER evaluation and the comparison to Berkeley aligner</li>
+<li>Notes the better performance of local attention models compared to the global one</li>
+<li>Briefly discusses the AER of the ensemble</li>
+</ul></li>
+</ul>
+</section>
+<section id="the-paper" class="level2">
+<h2 class="anchored" data-anchor-id="the-paper">The Paper</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="./paper.pdf" class="col-page" data-group="slides" width="800" height="1000"></p>
+<figcaption>paper</figcaption>
+</figure>
+</div>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="ref-bahdanau2016neuralmachinetranslationjointly" class="csl-entry">
+Bahdanau, Dzmitry, Kyunghyun Cho, and Yoshua Bengio. 2016. <span>“Neural Machine Translation by Jointly Learning to Align and Translate.”</span> <a href="https://arxiv.org/abs/1409.0473">https://arxiv.org/abs/1409.0473</a>.
+</div>
+<div id="ref-luong2015effectiveapproachesattentionbasedneural" class="csl-entry">
+Luong, Minh-Thang, Hieu Pham, and Christopher D. Manning. 2015. <span>“Effective Approaches to Attention-Based Neural Machine Translation.”</span> <a href="https://arxiv.org/abs/1508.04025">https://arxiv.org/abs/1508.04025</a>.
+</div>
+<div id="ref-vaswani2023attentionneed" class="csl-entry">
+Vaswani, Ashish, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. 2023. <span>“Attention Is All You Need.”</span> <a href="https://arxiv.org/abs/1706.03762">https://arxiv.org/abs/1706.03762</a>.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2021,
+  author = {Bochman, Oren},
+  title = {Effective {Approaches} to {Attention-based} {Neural}
+    {Machine} {Translation}},
+  date = {2021-05-08},
+  url = {https://orenbochman.github.io/notes-nlp/reviews/paper/effective/},
+  langid = {en}
+}
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2021" class="csl-entry quarto-appendix-citeas">
+Bochman, Oren. 2021. <span>“Effective Approaches to Attention-Based
+Neural Machine Translation.”</span> May 8, 2021. <a href="https://orenbochman.github.io/notes-nlp/reviews/paper/effective/">https://orenbochman.github.io/notes-nlp/reviews/paper/effective/</a>.
+</div></div></section></div> ]]></description>
+  <category>NLP</category>
+  <category>Paper</category>
+  <category>Attention</category>
+  <category>Deep learning</category>
+  <category>Review</category>
+  <category>Podcast</category>
+  <guid>https://orenbochman.github.io/notes-nlp/reviews/paper/effective/</guid>
+  <pubDate>Fri, 07 May 2021 21:00:00 GMT</pubDate>
+</item>
+</channel>
+</rss>

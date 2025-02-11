@@ -1,0 +1,98 @@
+---
+date: 2021-05-09
+title: 'ELMo - Deep contextualized word representations'
+subtitle: Review
+description: 'review of the paper "Deep contextualized word representations" on dot product attention'
+categories:
+  - Attention
+  - Bidirectional LSTM
+  - Deep learning
+  - Embeddings
+  - LLM
+  - NLP 
+  - Paper
+  - Review
+  - Stub
+  - Podcast
+draft: false
+---
+
+![Litrature review](/images/literature-review-open-book.jpg){.column-margin}
+
+## Podcast
+
+<audio controls="1"><source src="podcast.mp3" type="audio/mpeg"></audio>
+
+## Abstract
+
+> We introduce a new type of deep contextualized word representation that models both 
+>
+> (1) complex characteristics of word use (e.g., syntax and semantics), and 
+>
+> (2) how these uses vary across linguistic contexts (i.e., to model polysemy). 
+>
+> Our word vectors are learned functions of the internal states of a deep bidirectional language model (biLM), which is pretrained on a large text corpus. We show that these representations can be easily added to existing models and significantly improve the state of the art across six challenging NLP problems, including question answering, textual entailment and sentiment analysis. We also present an analysis showing that exposing the deep internals of the pre-trained network is crucial, allowing downstream models to mix different types of semi-supervision signals.
+
+## Outline
+
+- **I. Introduction**
+  *   Ideally, word representations should model complex characteristics of word use, such as syntax and semantics, and how these uses vary across linguistic contexts, to model polysemy.
+  *   The authors introduces a new type of **deep contextualized word representation** (ELMo) that addresses these challenges, integrates easily into existing models, and improves state-of-the-art results.
+- **II. ELMo (Embeddings from Language Models)**
+  *   **ELMo representations are functions of the entire input sentence, not just individual tokens**.
+  *   They are computed using a **bidirectional LSTM** (biLM) trained on a large text corpus with a language model objective.
+  *   ELMo representations are **deep**, in the sense they are a function of all internal layers of the biLM.
+  *   A linear combination of the vectors stacked above each input word is learned for each end task.
+  *   Internal states are combined to create rich word representations
+    *   Higher-level LSTM states capture context-dependent aspects of word meaning (semantics),
+    *   Lower-level states model aspects of syntax.
+  *   Exposing all of these signals allows learned models to select the most useful types of semi-supervision for each end task.
+- **III. Bidirectional Language Models (biLM)**
+  *   A forward language model predicts the next token given the history of previous tokens.
+  *   A backward language model predicts the previous token given the future context.
+  *   A biLM combines both forward and backward LMs, maximizing the log-likelihood of both directions.
+  *   The biLM uses tied parameters for token representations and the Softmax layer in both directions, but maintains separate parameters for LSTMs in each direction.
+- **IV. ELMo Specifics**
+  *   For each token, an L-layer biLM computes a set of 2L+1 representations.
+  *   ELMo collapses all biLM layers into a single vector using a task-specific weighting of all layers.
+  *   A scalar parameter scales the entire ELMo vector.
+  *   Layer normalization can be applied to each biLM layer before weighting.
+- **V. Integrating ELMo into Supervised NLP Tasks**
+  *   The weights of the pre-trained biLM are frozen, and then the ELMo vector is concatenated with the existing token representation before being passed into the task's RNN.
+  *  For some tasks, ELMo is also included at the output of the task RNN.
+  *   Dropout is added to ELMo, and sometimes the ELMo weights are regularized.
+- **VI. Pre-trained biLM Architecture**
+  *   The biLMs are similar to previous architectures but modified to support joint training of both directions and add a residual connection between LSTM layers.
+  *   The model uses 2 biLSTM layers with 4096 units and 512-dimension projections, with a residual connection.
+  *   The context-insensitive type representation uses character n-gram convolutional filters and highway layers.
+  *   The biLM provides three layers of representation for each input token.
+- **VII. Evaluation**
+  *   ELMo was evaluated on six benchmark NLP tasks, including question answering, textual entailment, and sentiment analysis.
+  *   **Adding ELMo significantly improves the state-of-the-art in every case**.
+  *   For tasks where direct comparisons are possible, ELMo outperforms CoVe.
+  *   Deep representations outperform those derived from just the top layer of an LSTM.
+- **VIII. Task-Specific Results**
+  *   **Question Answering (SQuAD):** ELMo significantly improved the F1 score.
+  *   **Textual Entailment (SNLI):** ELMo improved accuracy.
+  *   **Semantic Role Labeling (SRL):** ELMo improved the F1 score.
+  *   **Coreference Resolution:** ELMo improved the average F1 score.
+  *   **Named Entity Extraction (NER):** ELMo enhanced biLSTM-CRF achieved a new state-of-the-art F1 score.
+  *    **Sentiment Analysis (SST-5):** ELMo improved accuracy over the prior state-of-the-art.
+- **IX. Analysis**
+    * [Using deep contextual representations improves performance compared to just using the top layer.]{.mark}
+    * ELMo provides better overall performance than representations from a machine translation encoder like CoVe.
+    * Syntactic information is better represented at lower layers, while semantic information is better captured at higher layers.
+    *   **Including ELMo at both the input and output layers of the supervised model can improve performance for some tasks**.
+    *   ELMo increases sample efficiency, requiring fewer training updates and less data to reach the same level of performance.
+    *   The contextual information captured by ELMo is more important than the sub-word information.
+   * Pre-trained word vectors provide a marginal improvement when used with ELMo.
+- **X. Key Findings**
+  *   **ELMo efficiently encodes different types of syntactic and semantic information about words in context**.
+  *   Using all layers of the biLM improves overall task performance.
+  *   **ELMo provides a general approach for learning high-quality, deep, context-dependent representations**.
+
+
+## The Paper
+
+![paper](./paper.pdf){.col-page width=800px height=1000px group="slides"}
+

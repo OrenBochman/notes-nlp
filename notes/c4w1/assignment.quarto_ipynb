@@ -81,7 +81,7 @@
         "\n",
         "We will first start by importing the packages we will use in this assignment. As in the previous course of this specialization, we will use the [Trax](https://github.com/google/trax) library created and maintained by the [Google Brain team](https://research.google/teams/brain/) to do most of the heavy lifting. It provides submodules to fetch and process the datasets, as well as build and train the model.\n"
       ],
-      "id": "5c16ab6e"
+      "id": "aa48d023"
     },
     {
       "cell_type": "code",
@@ -98,7 +98,7 @@
         "\n",
         "!pip list | grep trax"
       ],
-      "id": "7af8de7a",
+      "id": "ae516004",
       "execution_count": null,
       "outputs": []
     },
@@ -109,7 +109,7 @@
         "Next, we will import the dataset we will use to train the model. To meet the storage constraints in this lab environment, we will just use a small dataset from [Opus](http://opus.nlpl.eu/), a growing collection of translated texts from the web. Particularly, we will get an English to German translation subset specified as `opus/medical` which has medical related texts. If storage is not an issue, you can opt to get a larger corpus such as the English to German translation dataset from [ParaCrawl](https://paracrawl.eu/), a large multi-lingual translation dataset created by the European Union. Both of these datasets are available via [Tensorflow Datasets (TFDS)](https://www.tensorflow.org/datasets)\n",
         "and you can browse through the other available datasets [here](https://www.tensorflow.org/datasets/catalog/overview). We have downloaded the data for you in the `data/` directory of your workspace. As you'll see below, you can easily access this dataset from TFDS with `trax.data.TFDS`. The result is a python generator function yielding tuples. Use the `keys` argument to select what appears at which position in the tuple. For example, `keys=('en', 'de')` below will return pairs as (English sentence, German sentence).  \n"
       ],
-      "id": "19a26a91"
+      "id": "f55e3e86"
     },
     {
       "cell_type": "code",
@@ -130,7 +130,7 @@
         "                                eval_holdout_size=0.01, # 1% for eval\n",
         "                                train=False)"
       ],
-      "id": "73ddbbfb",
+      "id": "f674cb3a",
       "execution_count": null,
       "outputs": []
     },
@@ -140,7 +140,7 @@
       "source": [
         "Notice that TFDS returns a generator *function*, not a generator. This is because in Python, you cannot reset generators so you cannot go back to a previously yielded value. During deep learning training, you use Stochastic Gradient Descent and don't actually need to go back -- but it is sometimes good to be able to do that, and that's where the functions come in. It is actually very common to use generator functions in Python -- e.g., `zip` is a generator function. You can read more about [Python generators](https://book.pythontips.com/en/latest/generators.html) to understand why we use them. Let's print a a sample pair from our train and eval data. Notice that the raw ouput is represented in bytes (denoted by the `b'` prefix) and these will be converted to strings internally in the next steps.\n"
       ],
-      "id": "b6e0e3d4"
+      "id": "a56ec4e8"
     },
     {
       "cell_type": "code",
@@ -153,7 +153,7 @@
         "eval_stream = eval_stream_fn()\n",
         "print(colored('eval data (en, de) tuple:', 'red'), next(eval_stream))"
       ],
-      "id": "b6f0e5fe",
+      "id": "cecd02ca",
       "execution_count": null,
       "outputs": []
     },
@@ -168,7 +168,7 @@
         "\n",
         "**Tokenizing the sentences using subword representations:** As you've learned in the earlier courses of this specialization, we want to represent each sentence as an array of integers instead of strings. For our application, we will use *subword* representations to tokenize our sentences. This is a common technique to avoid out-of-vocabulary words by allowing parts of words to be represented separately. For example, instead of having separate entries in your vocabulary for --\"fear\", \"fearless\", \"fearsome\", \"some\", and \"less\"--, you can simply store --\"fear\", \"some\", and \"less\"-- then allow your tokenizer to combine these subwords when needed. This allows it to be more flexible so you won't have to save uncommon words explicitly in your vocabulary (e.g. *stylebender*, *nonce*, etc). Tokenizing is done with the `trax.data.Tokenize()` command and we have provided you the combined subword vocabulary for English and German (i.e. `ende_32k.subword`) saved in the `data` directory. Feel free to open this file to see how the subwords look like.\n"
       ],
-      "id": "81367ac0"
+      "id": "7248813f"
     },
     {
       "cell_type": "code",
@@ -182,7 +182,7 @@
         "tokenized_train_stream = trax.data.Tokenize(vocab_file=VOCAB_FILE, vocab_dir=VOCAB_DIR)(train_stream)\n",
         "tokenized_eval_stream = trax.data.Tokenize(vocab_file=VOCAB_FILE, vocab_dir=VOCAB_DIR)(eval_stream)"
       ],
-      "id": "1a224264",
+      "id": "d465c15e",
       "execution_count": null,
       "outputs": []
     },
@@ -192,7 +192,7 @@
       "source": [
         "**Append an end-of-sentence token to each sentence:** We will assign a token (i.e. in this case `1`) to mark the end of a sentence. This will be useful in inference/prediction so we'll know that the model has completed the translation.\n"
       ],
-      "id": "a7e17dad"
+      "id": "de37b2de"
     },
     {
       "cell_type": "code",
@@ -216,7 +216,7 @@
         "# append EOS to the eval data\n",
         "tokenized_eval_stream = append_eos(tokenized_eval_stream)"
       ],
-      "id": "ea7a7cf2",
+      "id": "76e8bfbb",
       "execution_count": null,
       "outputs": []
     },
@@ -226,7 +226,7 @@
       "source": [
         "**Filter long sentences:** We will place a limit on the number of tokens per sentence to ensure we won't run out of memory. This is done with the `trax.data.FilterByLength()` method and you can see its syntax below.\n"
       ],
-      "id": "b17bb5dd"
+      "id": "4c9fa243"
     },
     {
       "cell_type": "code",
@@ -245,7 +245,7 @@
         "print(colored(f'Single tokenized example input:', 'red' ), train_input)\n",
         "print(colored(f'Single tokenized example target:', 'red'), train_target)"
       ],
-      "id": "cd77ce27",
+      "id": "4c7da415",
       "execution_count": null,
       "outputs": []
     },
@@ -268,7 +268,7 @@
         "- <span style='color:blue'> tokenize(): </span> converts a text sentence to its corresponding token list (i.e. list of indices). Also converts words to subwords (parts of words).\n",
         "- <span style='color:blue'> detokenize(): </span> converts a token list to its corresponding sentence (i.e. string).\n"
       ],
-      "id": "54224b28"
+      "id": "905b984b"
     },
     {
       "cell_type": "code",
@@ -329,7 +329,7 @@
         "    \n",
         "    return trax.data.detokenize(integers, vocab_file=vocab_file, vocab_dir=vocab_dir)"
       ],
-      "id": "dc7f94f7",
+      "id": "b002daeb",
       "execution_count": null,
       "outputs": []
     },
@@ -339,7 +339,7 @@
       "source": [
         "Let's see how we might use these functions:\n"
       ],
-      "id": "6cc79bdb"
+      "id": "6bfc88ea"
     },
     {
       "cell_type": "code",
@@ -359,7 +359,7 @@
         "print(colored(f\"tokenize('hello'): \", 'green'), tokenize('hello', vocab_file=VOCAB_FILE, vocab_dir=VOCAB_DIR))\n",
         "print(colored(f\"detokenize([17332, 140, 1]): \", 'green'), detokenize([17332, 140, 1], vocab_file=VOCAB_FILE, vocab_dir=VOCAB_DIR))"
       ],
-      "id": "ccb82879",
+      "id": "46dce47c",
       "execution_count": null,
       "outputs": []
     },
@@ -380,7 +380,7 @@
         "We batch the sentences with similar length together (e.g. the blue sentences in the image above) and only add minimal padding to make them have equal length (usually up to the nearest power of two). This allows to waste less computation when processing padded sequences.\n",
         "In Trax, it is implemented in the [bucket_by_length](https://github.com/google/trax/blob/5fb8aa8c5cb86dabb2338938c745996d5d87d996/trax/supervised/inputs.py#L378) function.\n"
       ],
-      "id": "24c9229b"
+      "id": "ea8dbb1b"
     },
     {
       "cell_type": "code",
@@ -410,7 +410,7 @@
         "train_batch_stream = trax.data.AddLossWeights(id_to_mask=0)(train_batch_stream)\n",
         "eval_batch_stream = trax.data.AddLossWeights(id_to_mask=0)(eval_batch_stream)"
       ],
-      "id": "20937b8f",
+      "id": "58a34d6c",
       "execution_count": null,
       "outputs": []
     },
@@ -423,7 +423,7 @@
         "\n",
         "We will now be displaying some of our data. You will see that the functions defined above (i.e. `tokenize()` and `detokenize()`) do the same things you have been doing again and again throughout the specialization. We gave these so you can focus more on building the model from scratch. Let us first get the data generator and get one batch of the data.\n"
       ],
-      "id": "251ded1f"
+      "id": "8a79dbb4"
     },
     {
       "cell_type": "code",
@@ -439,7 +439,7 @@
         "print(\"input_batch shape: \", input_batch.shape)\n",
         "print(\"target_batch shape: \", target_batch.shape)"
       ],
-      "id": "6f70ae07",
+      "id": "804aad1c",
       "execution_count": null,
       "outputs": []
     },
@@ -451,7 +451,7 @@
         "\n",
         "We can now visually inspect some of the data. You can run the cell below several times to shuffle through the sentences. Just to note, while this is a standard data set that is used widely, it does have some known wrong translations. With that, let's pick a random sentence and print its tokenized representation.\n"
       ],
-      "id": "1a2f4fc1"
+      "id": "41017e1d"
     },
     {
       "cell_type": "code",
@@ -466,7 +466,7 @@
         "print(colored('THIS IS THE GERMAN TRANSLATION: \\n', 'red'), detokenize(target_batch[index], vocab_file=VOCAB_FILE, vocab_dir=VOCAB_DIR), '\\n')\n",
         "print(colored('THIS IS THE TOKENIZED VERSION OF THE GERMAN TRANSLATION: \\n', 'red'), target_batch[index], '\\n')"
       ],
-      "id": "eec4854c",
+      "id": "81d32380",
       "execution_count": null,
       "outputs": []
     },
@@ -519,7 +519,7 @@
         "\n",
         "**Instructions:** Implement the `input_encoder_fn` function.\n"
       ],
-      "id": "1a31f1f0"
+      "id": "13df42a4"
     },
     {
       "cell_type": "code",
@@ -553,7 +553,7 @@
         "\n",
         "    return input_encoder"
       ],
-      "id": "b531fa27",
+      "id": "e656677b",
       "execution_count": null,
       "outputs": []
     },
@@ -563,7 +563,7 @@
       "source": [
         "*Note: To make this notebook more neat, we moved the unit tests to a separate file called `w1_unittest.py`. Feel free to open it from your workspace if needed. We have placed comments in that file to indicate which functions are testing which part of the assignment (e.g. `test_input_encoder_fn()` has the unit tests for UNQ_C1).*\n"
       ],
-      "id": "7e1e5d8f"
+      "id": "e3fda4a8"
     },
     {
       "cell_type": "code",
@@ -575,7 +575,7 @@
         "w1_unittest.test_input_encoder_fn(input_encoder_fn)\n",
         "# END UNIT TEST"
       ],
-      "id": "a18331fc",
+      "id": "7c0db5ab",
       "execution_count": null,
       "outputs": []
     },
@@ -600,7 +600,7 @@
         "\n",
         "**Instructions:** Implement the `pre_attention_decoder_fn` function.\n"
       ],
-      "id": "f510a5a5"
+      "id": "98e54834"
     },
     {
       "cell_type": "code",
@@ -638,7 +638,7 @@
         "    \n",
         "    return pre_attention_decoder"
       ],
-      "id": "cd0700d8",
+      "id": "23ed5555",
       "execution_count": null,
       "outputs": []
     },
@@ -652,7 +652,7 @@
         "\n",
         "# END UNIT TEST"
       ],
-      "id": "150db575",
+      "id": "87aaae78",
       "execution_count": null,
       "outputs": []
     },
@@ -671,7 +671,7 @@
         "\n",
         "**Instructions:** Implement the  `prepare_attention_input` function\n"
       ],
-      "id": "bded4cc8"
+      "id": "6c400d7d"
     },
     {
       "cell_type": "code",
@@ -717,7 +717,7 @@
         "    \n",
         "    return queries, keys, values, mask"
       ],
-      "id": "bc912a45",
+      "id": "1d94b50d",
       "execution_count": null,
       "outputs": []
     },
@@ -729,7 +729,7 @@
         "w1_unittest.test_prepare_attention_input(prepare_attention_input)\n",
         "# END UNIT TEST"
       ],
-      "id": "48a76a44",
+      "id": "e0b9bef5",
       "execution_count": null,
       "outputs": []
     },
@@ -795,7 +795,7 @@
         "\n",
         "**Step 9:** Normalize the output to log probabilities by passing the activations in Step 8 to a [tl.LogSoftmax](https://trax-ml.readthedocs.io/en/latest/trax.layers.html#trax.layers.core.LogSoftmax) layer.\n"
       ],
-      "id": "38b92a19"
+      "id": "67205cd4"
     },
     {
       "cell_type": "code",
@@ -871,7 +871,7 @@
         "    \n",
         "    return model"
       ],
-      "id": "048f08b0",
+      "id": "edb7bb62",
       "execution_count": null,
       "outputs": []
     },
@@ -883,7 +883,7 @@
         "w1_unittest.test_NMTAttn(NMTAttn)\n",
         "# END UNIT TEST"
       ],
-      "id": "d5467b3f",
+      "id": "f238d0ac",
       "execution_count": null,
       "outputs": []
     },
@@ -895,7 +895,7 @@
         "model = NMTAttn()\n",
         "print(model)"
       ],
-      "id": "40194114",
+      "id": "22b5ebea",
       "execution_count": null,
       "outputs": []
     },
@@ -959,7 +959,7 @@
         "\n",
         "**Instructions:** Instantiate a train task.\n"
       ],
-      "id": "2f58d579"
+      "id": "44d83747"
     },
     {
       "cell_type": "code",
@@ -990,7 +990,7 @@
         "    ### END CODE HERE ###\n",
         ")"
       ],
-      "id": "748571bb",
+      "id": "45153982",
       "execution_count": null,
       "outputs": []
     },
@@ -1004,7 +1004,7 @@
         "w1_unittest.test_train_task(train_task)\n",
         "# END UNIT TEST"
       ],
-      "id": "9de0da4c",
+      "id": "64897db5",
       "execution_count": null,
       "outputs": []
     },
@@ -1017,7 +1017,7 @@
         "\n",
         "The [EvalTask](https://trax-ml.readthedocs.io/en/latest/trax.supervised.html#trax.supervised.training.EvalTask) on the other hand allows us to see how the model is doing while training. For our application, we want it to report the cross entropy loss and accuracy.\n"
       ],
-      "id": "3e66acf4"
+      "id": "4eb30c81"
     },
     {
       "cell_type": "code",
@@ -1032,7 +1032,7 @@
         "    metrics=[tl.CrossEntropyLoss(), tl.Accuracy()],\n",
         ")"
       ],
-      "id": "1f0cb971",
+      "id": "1551bfca",
       "execution_count": null,
       "outputs": []
     },
@@ -1045,7 +1045,7 @@
         "\n",
         "The [Loop](https://trax-ml.readthedocs.io/en/latest/trax.supervised.html#trax.supervised.training.Loop) class defines the model we will train as well as the train and eval tasks to execute. Its `run()` method allows us to execute the training for a specified number of steps.\n"
       ],
-      "id": "8f04912b"
+      "id": "d5c21c20"
     },
     {
       "cell_type": "code",
@@ -1065,7 +1065,7 @@
         "                              eval_tasks=[eval_task],\n",
         "                              output_dir=output_dir)"
       ],
-      "id": "f018f2e4",
+      "id": "00b87d68",
       "execution_count": null,
       "outputs": []
     },
@@ -1076,7 +1076,7 @@
         "# NOTE: Execute the training loop. This will take around 8 minutes to complete.\n",
         "training_loop.run(10)"
       ],
-      "id": "091d4c7b",
+      "id": "fd2ef23b",
       "execution_count": null,
       "outputs": []
     },
@@ -1091,7 +1091,7 @@
         "\n",
         "We will start by first loading in a pre-trained copy of the model you just coded. Please run the cell below to do just that.\n"
       ],
-      "id": "9ae44b69"
+      "id": "1da907f3"
     },
     {
       "cell_type": "code",
@@ -1104,7 +1104,7 @@
         "model.init_from_file(\"model.pkl.gz\", weights_only=True)\n",
         "model = tl.Accelerate(model)"
       ],
-      "id": "937c975c",
+      "id": "f97ca388",
       "execution_count": null,
       "outputs": []
     },
@@ -1152,7 +1152,7 @@
         "    <li> The log probabilities output will have the shape: (batch size, decoder length, vocab size). It will contain log probabilities for each token in the <i>cur_output_tokens</i> plus 1 for the start symbol introduced by the ShiftRight in the preattention decoder. For example, if cur_output_tokens is [1, 2, 5], the model will output an array of log probabilities each for tokens 0 (start symbol), 1, 2, and 5. To generate the next symbol, you just want to get the log probabilities associated with the last token (i.e. token 5 at index 3). You can slice the model output at [0, 3, :] to get this. It will be up to you to generalize this for any length of cur_output_tokens </li>\n",
         "</ul>\n"
       ],
-      "id": "8647f06d"
+      "id": "1a5245de"
     },
     {
       "cell_type": "code",
@@ -1205,7 +1205,7 @@
         "\n",
         "    return symbol, float(log_probs[symbol])"
       ],
-      "id": "c8837a89",
+      "id": "2c568809",
       "execution_count": null,
       "outputs": []
     },
@@ -1217,7 +1217,7 @@
         "w1_unittest.test_next_symbol(next_symbol, model)\n",
         "# END UNIT TEST"
       ],
-      "id": "e727341c",
+      "id": "4c461824",
       "execution_count": null,
       "outputs": []
     },
@@ -1232,7 +1232,7 @@
         "\n",
         "**Instructions**: Implement the `sampling_decode()` function.\n"
       ],
-      "id": "25f7c4c9"
+      "id": "28c92bd7"
     },
     {
       "cell_type": "code",
@@ -1289,7 +1289,7 @@
         "    \n",
         "    return cur_output_tokens, log_prob, sentence"
       ],
-      "id": "9ef4b5a0",
+      "id": "b726e580",
       "execution_count": null,
       "outputs": []
     },
@@ -1301,7 +1301,7 @@
         "# Run it several times with each setting and see how often the output changes.\n",
         "sampling_decode(\"I love languages.\", model, temperature=0.0, vocab_file=VOCAB_FILE, vocab_dir=VOCAB_DIR)"
       ],
-      "id": "51346176",
+      "id": "a4421181",
       "execution_count": null,
       "outputs": []
     },
@@ -1313,7 +1313,7 @@
         "w1_unittest.test_sampling_decode(sampling_decode, model)\n",
         "# END UNIT TEST"
       ],
-      "id": "bc770932",
+      "id": "188fe603",
       "execution_count": null,
       "outputs": []
     },
@@ -1323,7 +1323,7 @@
       "source": [
         "We have set a default value of `0` to the temperature setting in our implementation of `sampling_decode()` above. As you may have noticed in the `logsoftmax_sample()` method, this setting will ultimately result in greedy decoding. As mentioned in the lectures, this algorithm generates the translation by getting the most probable word at each step. It gets the argmax of the output array of your model and then returns that index. See the testing function and sample inputs below. You'll notice that the output will remain the same each time you run it.\n"
       ],
-      "id": "8d8dde14"
+      "id": "e2b75ebf"
     },
     {
       "cell_type": "code",
@@ -1349,7 +1349,7 @@
         "    \n",
         "    return translated_sentence"
       ],
-      "id": "fcfb2f7b",
+      "id": "798526dc",
       "execution_count": null,
       "outputs": []
     },
@@ -1362,7 +1362,7 @@
         "\n",
         "greedy_decode_test(your_sentence, model, vocab_file=VOCAB_FILE, vocab_dir=VOCAB_DIR);"
       ],
-      "id": "833cffe7",
+      "id": "8d3f58c4",
       "execution_count": null,
       "outputs": []
     },
@@ -1372,7 +1372,7 @@
       "source": [
         "greedy_decode_test('You are almost done with the assignment!', model, vocab_file=VOCAB_FILE, vocab_dir=VOCAB_DIR);"
       ],
-      "id": "5a0a76c2",
+      "id": "a92900ba",
       "execution_count": null,
       "outputs": []
     },
@@ -1396,7 +1396,7 @@
         "\n",
         "First, let's build a function to generate several samples. You can use the `sampling_decode()` function you developed earlier to do this easily. We want to record the token list and log probability for each sample as these will be needed in the next step.\n"
       ],
-      "id": "776355a7"
+      "id": "cc2a0f59"
     },
     {
       "cell_type": "code",
@@ -1437,7 +1437,7 @@
         "                \n",
         "    return samples, log_probs"
       ],
-      "id": "e6bd86a0",
+      "id": "3308d85d",
       "execution_count": null,
       "outputs": []
     },
@@ -1448,7 +1448,7 @@
         "# generate 4 samples with the default temperature (0.6)\n",
         "generate_samples('I love languages.', 4, model, vocab_file=VOCAB_FILE, vocab_dir=VOCAB_DIR)"
       ],
-      "id": "c36b7050",
+      "id": "fc902d54",
       "execution_count": null,
       "outputs": []
     },
@@ -1460,7 +1460,7 @@
         "\n",
         "Let us now build our functions to compare a sample against another. There are several metrics available as shown in the lectures and you can try experimenting with any one of these. For this assignment, we will be calculating scores for unigram overlaps. One of the more simple metrics is the [Jaccard similarity](https://en.wikipedia.org/wiki/Jaccard_index) which gets the intersection over union of two sets. We've already implemented it below for your perusal.\n"
       ],
-      "id": "5cefe970"
+      "id": "63a4fe8f"
     },
     {
       "cell_type": "code",
@@ -1491,7 +1491,7 @@
         "    \n",
         "    return overlap"
       ],
-      "id": "1cd8eb6c",
+      "id": "a766bb2e",
       "execution_count": null,
       "outputs": []
     },
@@ -1502,7 +1502,7 @@
         "# let's try using the function. remember the result here and compare with the next function below.\n",
         "jaccard_similarity([1, 2, 3], [1, 2, 3, 4])"
       ],
-      "id": "6088b127",
+      "id": "2bdebeec",
       "execution_count": null,
       "outputs": []
     },
@@ -1519,7 +1519,7 @@
         "\n",
         "**Instructions**: Implement the `rouge1_similarity()` function.\n"
       ],
-      "id": "274c794a"
+      "id": "828e2ee3"
     },
     {
       "cell_type": "code",
@@ -1580,7 +1580,7 @@
         "    \n",
         "    return rouge1_score\n"
       ],
-      "id": "a576bf6c",
+      "id": "3ae1abc8",
       "execution_count": null,
       "outputs": []
     },
@@ -1591,7 +1591,7 @@
         "# notice that this produces a different value from the jaccard similarity earlier\n",
         "rouge1_similarity([1, 2, 3], [1, 2, 3, 4])"
       ],
-      "id": "b1b39cba",
+      "id": "d22a076c",
       "execution_count": null,
       "outputs": []
     },
@@ -1603,7 +1603,7 @@
         "w1_unittest.test_rouge1_similarity(rouge1_similarity)\n",
         "# END UNIT TEST"
       ],
-      "id": "efbefcc4",
+      "id": "915ca4d7",
       "execution_count": null,
       "outputs": []
     },
@@ -1628,7 +1628,7 @@
         "\n",
         "**Instructions**: Implement the `average_overlap()` function.\n"
       ],
-      "id": "5f35e580"
+      "id": "bdca61a3"
     },
     {
       "cell_type": "code",
@@ -1683,7 +1683,7 @@
         "        ### END CODE HERE ###\n",
         "    return scores"
       ],
-      "id": "bb6477a3",
+      "id": "58be2933",
       "execution_count": null,
       "outputs": []
     },
@@ -1693,7 +1693,7 @@
       "source": [
         "average_overlap(jaccard_similarity, [[1, 2, 3], [1, 2, 4], [1, 2, 4, 5]], [0.4, 0.2, 0.5])"
       ],
-      "id": "edde4dd2",
+      "id": "731bbde9",
       "execution_count": null,
       "outputs": []
     },
@@ -1705,7 +1705,7 @@
         "w1_unittest.test_average_overlap(average_overlap)\n",
         "# END UNIT TEST"
       ],
-      "id": "d9b67f60",
+      "id": "043784a0",
       "execution_count": null,
       "outputs": []
     },
@@ -1715,7 +1715,7 @@
       "source": [
         "In practice, it is also common to see the weighted mean being used to calculate the overall score instead of just the arithmetic mean. We have implemented it below and you can use it in your experiements to see which one will give better results.\n"
       ],
-      "id": "f6020295"
+      "id": "2759d756"
     },
     {
       "cell_type": "code",
@@ -1770,7 +1770,7 @@
         "    \n",
         "    return scores"
       ],
-      "id": "1952bdc7",
+      "id": "b32373f0",
       "execution_count": null,
       "outputs": []
     },
@@ -1780,7 +1780,7 @@
       "source": [
         "weighted_avg_overlap(jaccard_similarity, [[1, 2, 3], [1, 2, 4], [1, 2, 4, 5]], [0.4, 0.2, 0.5])"
       ],
-      "id": "2d557ee5",
+      "id": "25745dd6",
       "execution_count": null,
       "outputs": []
     },
@@ -1797,7 +1797,7 @@
         "\n",
         "**Instructions**: Implement the `mbr_overlap()` function.\n"
       ],
-      "id": "cd3f2f72"
+      "id": "672e82b7"
     },
     {
       "cell_type": "code",
@@ -1842,7 +1842,7 @@
         "    ### END CODE HERE ###\n",
         "    return (translated_sentence, max_index, scores)"
       ],
-      "id": "7cae816a",
+      "id": "59d1eed0",
       "execution_count": null,
       "outputs": []
     },
@@ -1855,7 +1855,7 @@
         "# put a custom string here\n",
         "your_sentence = 'She speaks English and German.'"
       ],
-      "id": "61b386f8",
+      "id": "2ebdabc8",
       "execution_count": null,
       "outputs": []
     },
@@ -1865,7 +1865,7 @@
       "source": [
         "mbr_decode(your_sentence, 4, weighted_avg_overlap, jaccard_similarity, model, TEMPERATURE, vocab_file=VOCAB_FILE, vocab_dir=VOCAB_DIR)[0]"
       ],
-      "id": "5abc2b2c",
+      "id": "0cc94065",
       "execution_count": null,
       "outputs": []
     },
@@ -1875,7 +1875,7 @@
       "source": [
         "mbr_decode('Congratulations!', 4, average_overlap, rouge1_similarity, model, TEMPERATURE, vocab_file=VOCAB_FILE, vocab_dir=VOCAB_DIR)[0]"
       ],
-      "id": "77863de7",
+      "id": "7fd0df19",
       "execution_count": null,
       "outputs": []
     },
@@ -1885,7 +1885,7 @@
       "source": [
         "mbr_decode('You have completed the assignment!', 4, average_overlap, rouge1_similarity, model, TEMPERATURE, vocab_file=VOCAB_FILE, vocab_dir=VOCAB_DIR)[0]"
       ],
-      "id": "856d8e6e",
+      "id": "f169c309",
       "execution_count": null,
       "outputs": []
     },
@@ -1895,7 +1895,7 @@
       "source": [
         "**This unit test take a while to run. Please be patient**\n"
       ],
-      "id": "0a2efd6a"
+      "id": "b307f597"
     },
     {
       "cell_type": "code",
@@ -1905,7 +1905,7 @@
         "w1_unittest.test_mbr_decode(mbr_decode, model)\n",
         "# END UNIT TEST"
       ],
-      "id": "638c639c",
+      "id": "9d014feb",
       "execution_count": null,
       "outputs": []
     },
@@ -1915,7 +1915,7 @@
       "source": [
         "#### Congratulations! Next week, you'll dive deeper into attention models and study the Transformer architecture. You will build another network but without the recurrent part. It will show that attention is all you need! It should be fun!\n"
       ],
-      "id": "e0cae769"
+      "id": "3c85cecc"
     }
   ],
   "metadata": {

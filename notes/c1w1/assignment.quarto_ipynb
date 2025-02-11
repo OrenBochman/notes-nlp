@@ -51,7 +51,7 @@
         "\n",
         "## Import functions and data\n"
       ],
-      "id": "6f429684"
+      "id": "f73a3b67"
     },
     {
       "cell_type": "code",
@@ -61,7 +61,7 @@
         "import nltk\n",
         "from os import getcwd"
       ],
-      "id": "04599f26",
+      "id": "5de41a73",
       "execution_count": null,
       "outputs": []
     },
@@ -87,7 +87,7 @@
         "* `process_tweet()`: cleans the text, tokenizes it into separate words, removes stopwords, and converts words to stems.\n",
         "* `build_freqs()`: this counts how often a word in the 'corpus' (the entire set of tweets) was associated with a positive label '1' or a negative label '0', then builds the `freqs` dictionary, where each key is a (word,label) tuple, and the value is the count of its frequency within the corpus of tweets.\n"
       ],
-      "id": "d07fe3b6"
+      "id": "6134216c"
     },
     {
       "cell_type": "code",
@@ -99,7 +99,7 @@
         "filePath = f\"{getcwd()}/../tmp2/\"\n",
         "nltk.data.path.append(filePath)"
       ],
-      "id": "85308bdb",
+      "id": "53133eae",
       "execution_count": null,
       "outputs": []
     },
@@ -113,7 +113,7 @@
         "\n",
         "from utils import process_tweet, build_freqs"
       ],
-      "id": "b615b82b",
+      "id": "46d4410b",
       "execution_count": null,
       "outputs": []
     },
@@ -126,7 +126,7 @@
         "    * If we used all three datasets, we would introduce duplicates of the positive tweets and negative tweets.  \n",
         "    * We will select just the five thousand positive tweets and five thousand negative tweets.\n"
       ],
-      "id": "de0542d1"
+      "id": "15f2c6c0"
     },
     {
       "cell_type": "code",
@@ -136,7 +136,7 @@
         "all_positive_tweets = twitter_samples.strings('positive_tweets.json')\n",
         "all_negative_tweets = twitter_samples.strings('negative_tweets.json')"
       ],
-      "id": "36ae791d",
+      "id": "30bd2e90",
       "execution_count": null,
       "outputs": []
     },
@@ -146,7 +146,7 @@
       "source": [
         "* Train test split: 20% will be in the test set, and 80% in the training set.\n"
       ],
-      "id": "714861fe"
+      "id": "f1615afc"
     },
     {
       "cell_type": "code",
@@ -161,7 +161,7 @@
         "train_x = train_pos + train_neg \n",
         "test_x = test_pos + test_neg"
       ],
-      "id": "81d8ca7d",
+      "id": "9a849b61",
       "execution_count": null,
       "outputs": []
     },
@@ -171,7 +171,7 @@
       "source": [
         "* Create the numpy array of positive labels and negative labels.\n"
       ],
-      "id": "a00f4f03"
+      "id": "dda6e45f"
     },
     {
       "cell_type": "code",
@@ -181,7 +181,7 @@
         "train_y = np.append(np.ones((len(train_pos), 1)), np.zeros((len(train_neg), 1)), axis=0)\n",
         "test_y = np.append(np.ones((len(test_pos), 1)), np.zeros((len(test_neg), 1)), axis=0)"
       ],
-      "id": "5686275b",
+      "id": "e3318773",
       "execution_count": null,
       "outputs": []
     },
@@ -193,7 +193,7 @@
         "print(\"train_y.shape = \" + str(train_y.shape))\n",
         "print(\"test_y.shape = \" + str(test_y.shape))"
       ],
-      "id": "93c2200f",
+      "id": "3a735731",
       "execution_count": null,
       "outputs": []
     },
@@ -218,7 +218,7 @@
         "* The `freqs` dictionary is the frequency dictionary that's being built. \n",
         "* The key is the tuple (word, label), such as (\"happy\",1) or (\"happy\",0).  The value stored for each key is the count of how many times the word \"happy\" was associated with a positive label, or how many times \"happy\" was associated with a negative label.\n"
       ],
-      "id": "854b14a4"
+      "id": "26bbdb3e"
     },
     {
       "cell_type": "code",
@@ -231,7 +231,7 @@
         "print(\"type(freqs) = \" + str(type(freqs)))\n",
         "print(\"len(freqs) = \" + str(len(freqs.keys())))"
       ],
-      "id": "7c9be962",
+      "id": "e1244b60",
       "execution_count": null,
       "outputs": []
     },
@@ -248,7 +248,7 @@
         "### Process tweet\n",
         "The given function `process_tweet()` tokenizes the tweet into individual words, removes stop words and applies stemming.\n"
       ],
-      "id": "86686982"
+      "id": "55a6acec"
     },
     {
       "cell_type": "code",
@@ -258,7 +258,7 @@
         "print('This is an example of a positive tweet: \\n', train_x[0])\n",
         "print('\\nThis is an example of the processed version of the tweet: \\n', process_tweet(train_x[0]))"
       ],
-      "id": "7ed3762d",
+      "id": "2a2900aa",
       "execution_count": null,
       "outputs": []
     },
@@ -303,7 +303,7 @@
         "</p>\n",
         "</details>\n"
       ],
-      "id": "d56b2397"
+      "id": "846a75ae"
     },
     {
       "cell_type": "code",
@@ -325,7 +325,7 @@
         "    \n",
         "    return h"
       ],
-      "id": "2105ab77",
+      "id": "2ed23ed1",
       "execution_count": null,
       "outputs": []
     },
@@ -344,7 +344,7 @@
         "else:\n",
         "    print('Oops again!')"
       ],
-      "id": "0ef5bfd4",
+      "id": "bb484a3e",
       "execution_count": null,
       "outputs": []
     },
@@ -382,7 +382,7 @@
         "* Similarly, when the model predicts 0 ($h(z(\\theta)) = 0$) and the actual label is also 0, the loss for that training example is 0. \n",
         "* However, when the model prediction is close to 1 ($h(z(\\theta)) = 0.9999$) and the label is 0, the second term of the log loss becomes a large negative number, which is then multiplied by the overall factor of -1 to convert it to a positive loss value. $-1 \\times (1 - 0) \\times log(1 - 0.9999) \\approx 9.2$ The closer the model prediction gets to 1, the larger the loss.\n"
       ],
-      "id": "ffb7cda2"
+      "id": "36b66492"
     },
     {
       "cell_type": "code",
@@ -391,7 +391,7 @@
         "# verify that when the model predicts close to 1, but the actual label is 0, the loss is a large positive value\n",
         "-1 * (1 - 0) * np.log(1 - 0.9999) # loss is about 9.2"
       ],
-      "id": "54f96611",
+      "id": "230b5560",
       "execution_count": null,
       "outputs": []
     },
@@ -401,7 +401,7 @@
       "source": [
         "* Likewise, if the model predicts close to 0 ($h(z) = 0.0001$) but the actual label is 1, the first term in the loss function becomes a large number: $-1 \\times log(0.0001) \\approx 9.2$.  The closer the prediction is to zero, the larger the loss.\n"
       ],
-      "id": "204b63cc"
+      "id": "be219d1d"
     },
     {
       "cell_type": "code",
@@ -410,7 +410,7 @@
         "# verify that when the model predicts close to 0 but the actual label is 1, the loss is a large positive value\n",
         "-1 * np.log(0.0001) # loss is about 9.2"
       ],
-      "id": "e4716d15",
+      "id": "dd02fc26",
       "execution_count": null,
       "outputs": []
     },
@@ -469,7 +469,7 @@
         "</p>\n",
         "</details>\n"
       ],
-      "id": "8446ac45"
+      "id": "cc915cf2"
     },
     {
       "cell_type": "code",
@@ -511,7 +511,7 @@
         "    J = float(J)\n",
         "    return J, theta"
       ],
-      "id": "a0e9183e",
+      "id": "1c1f65a8",
       "execution_count": null,
       "outputs": []
     },
@@ -532,7 +532,7 @@
         "print(f\"The cost after training is {tmp_J:.8f}.\")\n",
         "print(f\"The resulting vector of weights is {[round(t, 8) for t in np.squeeze(tmp_theta)]}\")"
       ],
-      "id": "2327f703",
+      "id": "06599e7e",
       "execution_count": null,
       "outputs": []
     },
@@ -573,7 +573,7 @@
         "</p>\n",
         "</details>\n"
       ],
-      "id": "bf18318e"
+      "id": "bbcae1eb"
     },
     {
       "cell_type": "code",
@@ -612,7 +612,7 @@
         "    assert(x.shape == (1, 3))\n",
         "    return x"
       ],
-      "id": "b82f677b",
+      "id": "c4a0a8d1",
       "execution_count": null,
       "outputs": []
     },
@@ -627,7 +627,7 @@
         "tmp1 = extract_features(train_x[0], freqs)\n",
         "print(tmp1)"
       ],
-      "id": "d28902f3",
+      "id": "30e632bd",
       "execution_count": null,
       "outputs": []
     },
@@ -640,7 +640,7 @@
         "[[1.00e+00 3.02e+03 6.10e+01]]\n",
         "```\n"
       ],
-      "id": "9c2c4de3"
+      "id": "4131f806"
     },
     {
       "cell_type": "code",
@@ -651,7 +651,7 @@
         "tmp2 = extract_features('blorb bleeeeb bloooob', freqs)\n",
         "print(tmp2)"
       ],
-      "id": "6bd6dbc2",
+      "id": "9abf6dd5",
       "execution_count": null,
       "outputs": []
     },
@@ -672,7 +672,7 @@
         "\n",
         "This section is given to you.  Please read it for understanding and run the cell.\n"
       ],
-      "id": "72efc19a"
+      "id": "12eb6093"
     },
     {
       "cell_type": "code",
@@ -691,7 +691,7 @@
         "print(f\"The cost after training is {J:.8f}.\")\n",
         "print(f\"The resulting vector of weights is {[round(t, 8) for t in np.squeeze(theta)]}\")"
       ],
-      "id": "9db6686f",
+      "id": "53d345db",
       "execution_count": null,
       "outputs": []
     },
@@ -719,7 +719,7 @@
         "\n",
         "$$y_{pred} = sigmoid(\\mathbf{x} \\cdot \\theta)$$\n"
       ],
-      "id": "ee59e026"
+      "id": "55ff197b"
     },
     {
       "cell_type": "code",
@@ -747,7 +747,7 @@
         "    \n",
         "    return y_pred"
       ],
-      "id": "ac90d2b4",
+      "id": "678d14d3",
       "execution_count": null,
       "outputs": []
     },
@@ -759,7 +759,7 @@
         "for tweet in ['I am happy', 'I am bad', 'this movie should have been great.', 'great', 'great great', 'great great great', 'great great great great']:\n",
         "    print( '%s -> %f' % (tweet, predict_tweet(tweet, freqs, theta)))"
       ],
-      "id": "2f9bc2b7",
+      "id": "9a5389b0",
       "execution_count": null,
       "outputs": []
     },
@@ -778,7 +778,7 @@
         "great great great great -> 0.561561\n",
         "```\n"
       ],
-      "id": "febb949d"
+      "id": "d706e4fa"
     },
     {
       "cell_type": "code",
@@ -788,7 +788,7 @@
         "my_tweet = 'I am learning :)'\n",
         "predict_tweet(my_tweet, freqs, theta)"
       ],
-      "id": "15d03f86",
+      "id": "86aa14cb",
       "execution_count": null,
       "outputs": []
     },
@@ -817,7 +817,7 @@
         "</p>\n",
         "</details>\n"
       ],
-      "id": "44bf71ee"
+      "id": "d7f3e18b"
     },
     {
       "cell_type": "code",
@@ -859,7 +859,7 @@
         "    \n",
         "    return accuracy"
       ],
-      "id": "18ccaa7a",
+      "id": "a9db33fe",
       "execution_count": null,
       "outputs": []
     },
@@ -870,7 +870,7 @@
         "tmp_accuracy = test_logistic_regression(test_x, test_y, freqs, theta)\n",
         "print(f\"Logistic regression model's accuracy = {tmp_accuracy:.4f}\")"
       ],
-      "id": "23cadbe7",
+      "id": "f0872eb0",
       "execution_count": null,
       "outputs": []
     },
@@ -886,7 +886,7 @@
         "\n",
         "In this part we will see some tweets that your model misclassified. Why do we think the misclassifications happened? Specifically what kind of tweets does your model misclassify?"
       ],
-      "id": "5de54e00"
+      "id": "4b9300ae"
     },
     {
       "cell_type": "code",
@@ -902,7 +902,7 @@
         "        print('THE PROCESSED TWEET IS:', process_tweet(x))\n",
         "        print('%d\\t%0.8f\\t%s' % (y, y_hat, ' '.join(process_tweet(x)).encode('ascii', 'ignore')))"
       ],
-      "id": "f48ff990",
+      "id": "ca1c7384",
       "execution_count": null,
       "outputs": []
     },
@@ -914,7 +914,7 @@
         "\n",
         "# Part 6: Predict with your own tweet"
       ],
-      "id": "7cee4615"
+      "id": "0031a9ff"
     },
     {
       "cell_type": "code",
@@ -930,7 +930,7 @@
         "else: \n",
         "    print('Negative sentiment')"
       ],
-      "id": "74658f09",
+      "id": "ccbfc3bb",
       "execution_count": null,
       "outputs": []
     }

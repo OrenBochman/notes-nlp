@@ -31,7 +31,7 @@
         "- work with defaultdict\n",
         "- work with string data\n"
       ],
-      "id": "49391ca8"
+      "id": "1740c09e"
     },
     {
       "cell_type": "code",
@@ -40,7 +40,7 @@
         "import string\n",
         "from collections import defaultdict"
       ],
-      "id": "0b19432b",
+      "id": "3d90fd23",
       "execution_count": null,
       "outputs": []
     },
@@ -56,7 +56,7 @@
         "\n",
         "Python's context managers are great because we don't need to explicitly close the connection to the file, this is done under the hood:\n"
       ],
-      "id": "6b84b7a6"
+      "id": "34e917ff"
     },
     {
       "cell_type": "code",
@@ -66,7 +66,7 @@
         "with open(\"WSJ_02-21.pos\", 'r') as f:\n",
         "    lines = f.readlines()"
       ],
-      "id": "ebd54532",
+      "id": "331b15f9",
       "execution_count": null,
       "outputs": []
     },
@@ -76,7 +76,7 @@
       "source": [
         "To check the contents of the dataset we can print the first 5 lines:\n"
       ],
-      "id": "2a6b539b"
+      "id": "23292eec"
     },
     {
       "cell_type": "code",
@@ -89,7 +89,7 @@
         "for i in range(5):\n",
         "    print(f'line number {i+1}: {lines[i]}')"
       ],
-      "id": "ebb449df",
+      "id": "e02b190b",
       "execution_count": null,
       "outputs": []
     },
@@ -103,7 +103,7 @@
         "\n",
         "To better understand how the information is structured in the dataset it is recommended to print an unformatted version of it:\n"
       ],
-      "id": "d0a2f20c"
+      "id": "b1dda36b"
     },
     {
       "cell_type": "code",
@@ -112,7 +112,7 @@
         "# Print first line (unformatted)\n",
         "lines[0]"
       ],
-      "id": "40d4c150",
+      "id": "a109a65a",
       "execution_count": null,
       "outputs": []
     },
@@ -134,7 +134,7 @@
         "\n",
         "For step 1 we can use the fact that every word and tag are separated by a tab and that words always come first. Using list comprehension the words list can be created like this:\n"
       ],
-      "id": "69ad2886"
+      "id": "590cc1d3"
     },
     {
       "cell_type": "code",
@@ -143,7 +143,7 @@
         "# Get the words from each line in the dataset\n",
         "words = [line.split('\\t')[0] for line in lines]"
       ],
-      "id": "6a5cdc31",
+      "id": "8abf3e17",
       "execution_count": null,
       "outputs": []
     },
@@ -155,7 +155,7 @@
         "\n",
         "Now we don't need to worry about the case when the word is not present within the dictionary because getting the value for that key will simply return a zero. Isn't that cool?\n"
       ],
-      "id": "1bdd74af"
+      "id": "2a97b216"
     },
     {
       "cell_type": "code",
@@ -168,7 +168,7 @@
         "for word in words:\n",
         "    freq[word] += 1"
       ],
-      "id": "783e70cf",
+      "id": "3d531e6b",
       "execution_count": null,
       "outputs": []
     },
@@ -178,7 +178,7 @@
       "source": [
         "Filtering the `freq` dictionary can be done using list comprehensions again (aren't they handy?). We should filter out words that appeared only once and also words that are just a newline character:\n"
       ],
-      "id": "4133d77c"
+      "id": "e33a4035"
     },
     {
       "cell_type": "code",
@@ -187,7 +187,7 @@
         "# Create the vocabulary by filtering the 'freq' dictionary\n",
         "vocab = [k for k, v in freq.items() if (v > 1 and k != '\\n')]"
       ],
-      "id": "26dc50b5",
+      "id": "6752b27e",
       "execution_count": null,
       "outputs": []
     },
@@ -197,7 +197,7 @@
       "source": [
         "Finally, the `sort` method will take care of the final step. Notice that it changes the list directly so we don't need to reassign the `vocab` variable:\n"
       ],
-      "id": "f3c40adb"
+      "id": "e57c23c1"
     },
     {
       "cell_type": "code",
@@ -210,7 +210,7 @@
         "for i in range(4000, 4005):\n",
         "    print(vocab[i])"
       ],
-      "id": "70a43436",
+      "id": "fbe1a02a",
       "execution_count": null,
       "outputs": []
     },
@@ -243,7 +243,7 @@
         "\n",
         "This function is implemented next. Notice that the `any()` function is being heavily used. It returns `True` if at least one of the cases it evaluates is `True`.\n"
       ],
-      "id": "f436946e"
+      "id": "d46ed3a0"
     },
     {
       "cell_type": "code",
@@ -295,7 +295,7 @@
         "    # If none of the previous criteria is met, return plain unknown\n",
         "    return \"--unk--\""
       ],
-      "id": "811f8a66",
+      "id": "93054605",
       "execution_count": null,
       "outputs": []
     },
@@ -315,7 +315,7 @@
         "\n",
         "The function is implemented next. Notice That the `split()` method can be used without specifying the delimiter, in which case it will default to any whitespace.\n"
       ],
-      "id": "d94f2cbb"
+      "id": "9f9fead4"
     },
     {
       "cell_type": "code",
@@ -335,7 +335,7 @@
         "            word = assign_unk(word)\n",
         "    return word, tag"
       ],
-      "id": "b52a1886",
+      "id": "92a3cfce",
       "execution_count": null,
       "outputs": []
     },
@@ -345,7 +345,7 @@
       "source": [
         "Now we can try this function with some examples to test that it is working as intended:\n"
       ],
-      "id": "8a4adaf7"
+      "id": "bcc8228b"
     },
     {
       "cell_type": "code",
@@ -353,7 +353,7 @@
       "source": [
         "get_word_tag('\\n', vocab)"
       ],
-      "id": "f1cb47cb",
+      "id": "ec05e5e6",
       "execution_count": null,
       "outputs": []
     },
@@ -363,7 +363,7 @@
       "source": [
         "Since this line only includes a newline character it returns a placeholder word and tag.\n"
       ],
-      "id": "2d0d4dd8"
+      "id": "e2914f8f"
     },
     {
       "cell_type": "code",
@@ -371,7 +371,7 @@
       "source": [
         "get_word_tag('In\\tIN\\n', vocab)"
       ],
-      "id": "e61c02fe",
+      "id": "ed0c592d",
       "execution_count": null,
       "outputs": []
     },
@@ -381,7 +381,7 @@
       "source": [
         "This one is a valid line and the function does a fair job at returning the correct (word, tag) pair.\n"
       ],
-      "id": "5861750a"
+      "id": "8c05458e"
     },
     {
       "cell_type": "code",
@@ -389,7 +389,7 @@
       "source": [
         "get_word_tag('tardigrade\\tNN\\n', vocab)"
       ],
-      "id": "501690cb",
+      "id": "8d9a3de2",
       "execution_count": null,
       "outputs": []
     },
@@ -401,7 +401,7 @@
         "\n",
         "The `assign_unk` function fails to detect that it is a noun so it returns an `unknown token`.\n"
       ],
-      "id": "4a4468b6"
+      "id": "c717dccf"
     },
     {
       "cell_type": "code",
@@ -409,7 +409,7 @@
       "source": [
         "get_word_tag('scrutinize\\tVB\\n', vocab)"
       ],
-      "id": "89b9fb67",
+      "id": "535a6b13",
       "execution_count": null,
       "outputs": []
     },
@@ -425,7 +425,7 @@
         "\n",
         "**Keep it up!**\n"
       ],
-      "id": "2f85236c"
+      "id": "63a3b875"
     }
   ],
   "metadata": {

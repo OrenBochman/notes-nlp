@@ -1,0 +1,114 @@
+---
+title: "Floating Constraints in Lexical Choice"
+subtitle: "review"
+---
+
+![Litrature review](/images/literature-review-open-book.jpg){.column-margin}
+
+
+::: {#vid-01 .column-margin}
+{{< video https://www.youtube.com/watch?v=DffGdrfY9gI&ab_channel=DeepLearningAI >}}
+:::
+
+## Context
+
+This is one of the three paper mentioned by Kathleen McKeown in her heroes of NLP interview by Andrew NG. The paper is about the floating constraints in lexical choice.
+
+Looking quickly over it I noticed a couple of things:
+
+@article{mckeown1997floating,
+  title={Floating constraints in lexical choice},
+  author={McKeown, Kathleen and Elhadad, Michael and Robin, Jacques},
+  year={1997}
+}
+
+1. I was familiar with Elhadad's work on generation. I had read his work on FUF Functional Unification Formalism in the 90s which introduced me to the paradigm of unification before I even knew about Prolog or logic programming. 
+1. I found it fascinating that McKeown and Elhadad had worked together on this paper and even a bit curious about what they were looking into here. 
+1. Since McKeown brought it up, it might intimate that there is something worth looking into here. And it is discusing aspects of generative language models.
+
+
+## Abstract
+
+> Lexical choice is a computationally complex task, requiring a generation system to consider a potentially large number of mappings between concepts and words. Constraints that aid in determining which word is best come from a wide variety of sources, including syntax, semantics, pragmatics, the lexicon, and the underlying domain. Furthermore, in some situations, different constraints come into play early on, while in others, they apply much later. This makes it difficult to determine a systematic ordering in which to apply constraints. In this paper, we present a general approach to lexical choice that can handle multiple, interacting constraints. We focus on the problem of floating constraints, semantic or pragmatic constraints that float, appearing at a variety of different syntactic ranks, often merged with other semantic constraints. This means that multiple content units can be realized by a single surface element, and conversely, that a single content unit can be realized by a variety of surface elements. Our approach uses the Functional Unification Formalism (FuF) to represent a generation lexicon, allowing for declarative and compositional representation of individual constraints. - [@mckeown1997floating]
+
+## Outline
+
+- Introduction
+  - Mentions the complexity of lexical choice in language generation.
+  - Notes the diverse sources of constraints on lexical choice, including syntax, semantics, lexicon, domain, and pragmatics.
+  - Highlights the challenges posed by floating constraints, which are semantic or pragmatic constraints that can appear at various syntactic ranks and be merged with other semantic constraints.
+  - Presents examples of floating constraints in sentences.
+- An Architecture for Lexical Choice
+    - Discusses the role of lexical choice within a typical language generation architecture.
+    - Argues for placing the lexical choice module between the content planner and the surface sentence generator.
+    - Describes the input and output of the lexical choice module, emphasizing the need for language-independent conceptual input.
+    - Presents the two tasks of lexical choice: syntagmatic^[of or denoting the relationship between two or more linguistic units used sequentially to make well-formed structures. The combination of 'that handsome man + ate + some chicken' forms a syntagmatic relationship. If the word position is changed, it also changes the meaning of the sentence, eg 'Some chicken ate the handsome man] decisions (determining thematic structure) and paradigmatic^[Paradigmatic relation describes the relationship between words that can be substituted for words with the same word class (eg replacing a noun with another noun)] decisions (choosing specific words).
+    - Introduces the FUF/SURGE package as the implementation environment.
+- Phrase Planning in Lexical Choice
+    - Describes the need for phrase planning to articulate multiple semantic relations into a coherent linguistic structure.
+    - Explains how the Lexical Chooser selects the head relation and builds its argument structure based on focus and perspective.
+    - Details how remaining relations are attached as modifiers, considering options like embedding, subordination, and syntactic forms of modifiers.
+- Cross-ranking and Merged Realizations 
+    - Discusses the non-isomorphism between semantic and syntactic structures, necessitating merging and cross-ranking realizations.
+    - Provides examples of merging (multiple semantic elements realized by a single word) and cross-ranking (single semantic element realized at different syntactic ranks).
+    - Emphasizes the need for linguistically neutral input to support this flexibility.
+    - Explains the implementation of merging and cross-ranking using FUF, highlighting the challenges of search and the use of bk-class for efficient backtracking.
+- Interlexical Constraints
+    - Defines interlexical constraints as arising from alternative sets of collocations for realizing pairs of content units.
+    - Presents an example of interlexical constraints with verbs and nouns in the basketball domain.
+    - Discusses different strategies for encoding interlexical constraints in the Lexical Chooser.
+    - Introduces the :wait mechanism in FUF to delay the choice of one collocate until the other is chosen, preserving modularity and avoiding backtracking.
+- Other Approaches to Lexical Choice
+    - Reviews other systems using FUF for lexical choice, comparing their architectures and features to ADVISOR-II.
+    - Discusses non-FUF-based systems, categorizing them by their positioning of lexical choice in the generation process and analyzing their handling of various constraints.
+- Conclusion
+    - Summarizes the contributions of the paper, highlighting the ability to handle a wide range of constraints, the use of FUF for declarative representation and interaction, and the algorithm for lexical selection and syntactic structure building.
+    - Emphasizes the importance of syntagmatic choice and perspective selection for handling floating constraints.
+    - Notes the use of lazy evaluation and dependency-directed backtracking for computational efficiency.
+    - Mentions future directions, such as developing domain-independent lexicon modules and methods for organizing large-scale lexica.
+
+## Reflection
+
+- In unification-based approaches, any word is a candidate unless it is ruled out by a constraint. With an LLM a word is selected based on its probability.
+- The idea of constraints is deeply embedded in Linguistics. The two type that immediately come to mind are:
+    - Subcategorization constraints which are rules that govern the selection of complements and adjuncts. These are syntactic constraints.
+    - Selectional constraints which are rules that govern the selection of arguments. These are semantic constraints
+- Other constraints that I did not have to deal with as often are pragmatics and these are resolved from the state of the world or common sense knowledge.
+- In FUF there are many more constraints and if care isn't taken, the system can become over constrained and no words will be selected.
+- One Neat aspect of the approach though is that FUF language could be merged with a query to generate a text. 
+- Unfortunately as fat as I recall the FUF had to be specified by hand. The only people who could do this were the people who designed the system. They needed to be expert at linguistics and logic programming. Even I was pretty sharp at the time the linguistics being referred was far too challenging. I learned that in reality every   computational linguist worth their salt had their own theory of language and their own version of grammar and that FUF was just one of many. 
+- It seems that today attention mechanisms within LSTMs or Transformers are capable of learning a pragmatic formalism without a linguist stepping in to specify it.
+
+
+Why this is still interesting:
+
+Imagine we want to build a low resource capable language model. 
+
+We would really like it to be good with grammar 
+Also we would like it to have a lexicon that is as rich as the person it is interacting with.
+And we would also like to make available to it the common sense knowledge that it would need to use in the context of current and possibly a profile based on past conversations....
+On the other hand we don't want to require a 70 billion parameter model to do this. So what do we do?
+
+Let imagine we start by training on Wikipedia, after all wikipedia's mission is to become the sum of all human knowledge. By do we realy need all of the information in Wikipedia in out edge model?
+
+The answer is no but the real question is how can we partition the training  information and the wights etc so that we have a powerful model with a basic grammar and lexicon but which can load a knowledge graph, extra lexicons and common sense knowledge as needed. 
+
+So I had this idea from lookin at a @ouhalla1999introducing. It pointed out there were phrase boundries and that if the sentence was transformed in a number of ways t would still make sense if we did this with respect to a phrase but if we used cucnks that were too small or too big the transofrmation would create malformed sentences. The operations of intrerest were movement and deletion.
+
+
+ and that can  still have a model that is both small but able to access this extra material.
+
+One direction seems to me is that we want to apply queries to all the training material as we train the model. Based on the queries that we retrieve each clause or phrase we can decide where we want to learn it and if we want to learn it at all.
+
+(If it is common sense knowledge we may already know it. If it is semi structured we may want to put it into wikidata. If it is neither we may want to avoid learning it at all. We may still want to use it for improving the grammar and lexicon.) However we may want to store it in a speclised lexicon for domains like medicinee or law. 
+
+
+
+We could also decide if and how to eliminate it from we want to 
+The queries should match each bit of information in the sentence. These are our queries. While the facts may change form 
+
+1. say we want to decompose a wikipedia article 
+
+## The Paper
+
+![paper](./paper.pdf){.col-page width="800px" height="1000px" group="slides"}

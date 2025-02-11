@@ -20,7 +20,7 @@
         "\n",
         "![course banner](/images/Course-Logo-3-3.webp){.column-margin .nolightbox} \n"
       ],
-      "id": "03302103"
+      "id": "e983924a"
     },
     {
       "cell_type": "code",
@@ -39,7 +39,7 @@
         "#trax.supervised.trainer_lib.init_random_number_generators(10)\n",
         "numpy.random.seed(seed)"
       ],
-      "id": "5edf5627",
+      "id": "19763ae6",
       "execution_count": null,
       "outputs": []
     },
@@ -51,7 +51,7 @@
         "\n",
         "Before building the model you will need to define a function that applies L2 normalization to a tensor. This is very important because in this week's assignment you will create a custom loss function which expects the tensors it receives to be normalized. Luckily this is pretty straightforward:\n"
       ],
-      "id": "bf3409de"
+      "id": "7baf9d65"
     },
     {
       "cell_type": "code",
@@ -60,7 +60,7 @@
         "def normalize(x):\n",
         "    return x / np.sqrt(np.sum(x * x, axis=-1, keepdims=True))"
       ],
-      "id": "0da5cc0b",
+      "id": "a6add745",
       "execution_count": null,
       "outputs": []
     },
@@ -70,7 +70,7 @@
       "source": [
         "Notice that the denominator can be replaced by `np.linalg.norm(x, axis=-1, keepdims=True)` to achieve the same results and that Trax's numpy is being used within the function.\n"
       ],
-      "id": "6b35f202"
+      "id": "3cf04a89"
     },
     {
       "cell_type": "code",
@@ -79,7 +79,7 @@
         "tensor = numpy.random.random((2,5))\n",
         "print(f'The tensor is of type: {type(tensor)}\\n\\nAnd looks like this:\\n\\n {tensor}')"
       ],
-      "id": "784aa859",
+      "id": "5dc336d4",
       "execution_count": null,
       "outputs": []
     },
@@ -90,7 +90,7 @@
         "norm_tensor = normalize(tensor)\n",
         "print(f'The normalized tensor is of type: {type(norm_tensor)}\\n\\nAnd looks like this:\\n\\n {norm_tensor}')"
       ],
-      "id": "27da09d7",
+      "id": "b21230a2",
       "execution_count": null,
       "outputs": []
     },
@@ -112,7 +112,7 @@
         "\n",
         "Putting everything together the Siamese model will look like this:\n"
       ],
-      "id": "a4013f86"
+      "id": "422d85c0"
     },
     {
       "cell_type": "code",
@@ -132,7 +132,7 @@
         "# Use the Parallel combinator to create a Siamese model out of the LSTM \n",
         "Siamese = tl.Parallel(LSTM, LSTM)"
       ],
-      "id": "0f0d9f41",
+      "id": "761d68ab",
       "execution_count": null,
       "outputs": []
     },
@@ -142,7 +142,7 @@
       "source": [
         "Next is a helper function that prints information for every layer (sublayer within `Serial`):\n"
       ],
-      "id": "f7be2ac1"
+      "id": "9e8fef33"
     },
     {
       "cell_type": "code",
@@ -160,7 +160,7 @@
         "print('Detail of LSTM models:\\n')\n",
         "show_layers(LSTM, 'Serial.sublayers')"
       ],
-      "id": "fb4dc5bc",
+      "id": "365dfcf2",
       "execution_count": null,
       "outputs": []
     },
@@ -174,7 +174,7 @@
         "\n",
         "**Keep it up!**\n"
       ],
-      "id": "b10aa351"
+      "id": "cf26ba7b"
     }
   ],
   "metadata": {

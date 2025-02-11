@@ -32,7 +32,7 @@
         "\n",
         "To get started, import and initialize all the libraries we will need.\n"
       ],
-      "id": "d57b5e5f"
+      "id": "28cedbe6"
     },
     {
       "cell_type": "code",
@@ -41,7 +41,7 @@
         "import sys\n",
         "!{sys.executable} -m pip install emoji"
       ],
-      "id": "20f3d054",
+      "id": "c738659e",
       "execution_count": null,
       "outputs": []
     },
@@ -59,7 +59,7 @@
         "\n",
         "nltk.download('punkt')  # download pre-trained Punkt tokenizer for English"
       ],
-      "id": "282a9780",
+      "id": "d45073c6",
       "execution_count": null,
       "outputs": []
     },
@@ -81,7 +81,7 @@
         "\n",
         "To demonstrate the cleaning and tokenization process, consider a corpus that contains emojis and various punctuation signs.\n"
       ],
-      "id": "72054dc0"
+      "id": "8408e37b"
     },
     {
       "cell_type": "code",
@@ -89,7 +89,7 @@
       "source": [
         "corpus = 'Who ❤️ \"word embeddings\" in 2020? I do!!!'"
       ],
-      "id": "ef03caa7",
+      "id": "c239a3f8",
       "execution_count": null,
       "outputs": []
     },
@@ -99,7 +99,7 @@
       "source": [
         "First, replace all interrupting punctuation signs — such as commas and exclamation marks — with periods.\n"
       ],
-      "id": "ae2dcac2"
+      "id": "453c66b1"
     },
     {
       "cell_type": "code",
@@ -109,7 +109,7 @@
         "data = re.sub(r'[,!?;-]+', '.', corpus)\n",
         "print(f'After cleaning punctuation:  {data}')"
       ],
-      "id": "62b93b4d",
+      "id": "4c6d422a",
       "execution_count": null,
       "outputs": []
     },
@@ -119,7 +119,7 @@
       "source": [
         "Next, use NLTK's tokenization engine to split the corpus into individual tokens.\n"
       ],
-      "id": "1b485d36"
+      "id": "312cd97d"
     },
     {
       "cell_type": "code",
@@ -129,7 +129,7 @@
         "data = nltk.word_tokenize(data)\n",
         "print(f'After tokenization:  {data}')"
       ],
-      "id": "17e11132",
+      "id": "e8c2f3f4",
       "execution_count": null,
       "outputs": []
     },
@@ -139,7 +139,7 @@
       "source": [
         "Finally, as we saw in the lecture, get rid of numbers and punctuation other than periods, and convert all the remaining tokens to lowercase.\n"
       ],
-      "id": "e5d3f89a"
+      "id": "c7276930"
     },
     {
       "cell_type": "code",
@@ -153,7 +153,7 @@
         "       ]\n",
         "print(f'After cleaning:  {data}')"
       ],
-      "id": "ae69fea3",
+      "id": "3a9b6a3d",
       "execution_count": null,
       "outputs": []
     },
@@ -165,7 +165,7 @@
         "\n",
         "Now let's streamline the cleaning and tokenization process by wrapping the previous steps in a function.\n"
       ],
-      "id": "ca65bcf9"
+      "id": "dbeece10"
     },
     {
       "cell_type": "code",
@@ -181,7 +181,7 @@
         "           ]\n",
         "    return data"
       ],
-      "id": "16a286f7",
+      "id": "17fc8c96",
       "execution_count": null,
       "outputs": []
     },
@@ -191,7 +191,7 @@
       "source": [
         "Apply this function to the corpus that you'll be working on in the rest of this notebook: \"I am happy because I am learning\"\n"
       ],
-      "id": "997f450f"
+      "id": "0832a8eb"
     },
     {
       "cell_type": "code",
@@ -202,7 +202,7 @@
         "words = tokenize(corpus)\n",
         "print(f'Words (tokens):  {words}')"
       ],
-      "id": "11132b9c",
+      "id": "a0a427a6",
       "execution_count": null,
       "outputs": []
     },
@@ -212,7 +212,7 @@
       "source": [
         "**Now try it out yourself with your own sentence.**\n"
       ],
-      "id": "1b2e5b00"
+      "id": "c61e0275"
     },
     {
       "cell_type": "code",
@@ -220,7 +220,7 @@
       "source": [
         "tokenize(\"Now it's your turn: try with your own sentence!\")"
       ],
-      "id": "39763654",
+      "id": "20e8e107",
       "execution_count": null,
       "outputs": []
     },
@@ -234,7 +234,7 @@
         "\n",
         "The `get_windows` function in the next cell was introduced in the lecture.\n"
       ],
-      "id": "da19ff88"
+      "id": "9b3d11c7"
     },
     {
       "cell_type": "code",
@@ -248,7 +248,7 @@
         "        yield context_words, center_word\n",
         "        i += 1"
       ],
-      "id": "22130ebf",
+      "id": "93ecad59",
       "execution_count": null,
       "outputs": []
     },
@@ -260,7 +260,7 @@
         "\n",
         "Here is how we can use this function to extract context words and center words from a list of tokens. These context and center words will make up the training set that we will use to train the CBOW model.\n"
       ],
-      "id": "bd2f0cc9"
+      "id": "393aa651"
     },
     {
       "cell_type": "code",
@@ -272,7 +272,7 @@
         "        ):\n",
         "    print(f'{x}\\t{y}')"
       ],
-      "id": "54f85a08",
+      "id": "6173af9c",
       "execution_count": null,
       "outputs": []
     },
@@ -288,7 +288,7 @@
         "\n",
         "**Now try it out yourself. In the next cell, we can change both the sentence and the context half-size.**\n"
       ],
-      "id": "477e42dd"
+      "id": "1130858b"
     },
     {
       "cell_type": "code",
@@ -297,7 +297,7 @@
         "for x, y in get_windows(tokenize(\"Now it's your turn: try with your own sentence!\"), 1):\n",
         "    print(f'{x}\\t{y}')"
       ],
-      "id": "624bb62c",
+      "id": "604f7cf3",
       "execution_count": null,
       "outputs": []
     },
@@ -315,7 +315,7 @@
         "\n",
         "To create one-hot word vectors, we can start by mapping each unique word to a unique integer (or index). We have provided a helper function, `get_dict`, that creates a Python dictionary that maps words to integers and back.\n"
       ],
-      "id": "10141142"
+      "id": "39deaa8e"
     },
     {
       "cell_type": "code",
@@ -323,7 +323,7 @@
       "source": [
         "word2Ind, Ind2word = get_dict(words)"
       ],
-      "id": "9ef507ee",
+      "id": "e242e5c9",
       "execution_count": null,
       "outputs": []
     },
@@ -333,7 +333,7 @@
       "source": [
         "Here's the dictionary that maps words to numeric indices.\n"
       ],
-      "id": "8a20ac29"
+      "id": "9825b5a5"
     },
     {
       "cell_type": "code",
@@ -343,7 +343,7 @@
       "source": [
         "word2Ind"
       ],
-      "id": "f17d3229",
+      "id": "0013501f",
       "execution_count": null,
       "outputs": []
     },
@@ -353,7 +353,7 @@
       "source": [
         "We can use this dictionary to get the index of a word.\n"
       ],
-      "id": "129cbb89"
+      "id": "53349110"
     },
     {
       "cell_type": "code",
@@ -361,7 +361,7 @@
       "source": [
         "print(\"Index of the word 'i':  \",word2Ind['i'])"
       ],
-      "id": "723f51ef",
+      "id": "ecb05bbc",
       "execution_count": null,
       "outputs": []
     },
@@ -371,7 +371,7 @@
       "source": [
         "And conversely, here's the dictionary that maps indices to words.\n"
       ],
-      "id": "ff208778"
+      "id": "be356e76"
     },
     {
       "cell_type": "code",
@@ -379,7 +379,7 @@
       "source": [
         "Ind2word"
       ],
-      "id": "cd002cdd",
+      "id": "990b9085",
       "execution_count": null,
       "outputs": []
     },
@@ -391,7 +391,7 @@
       "source": [
         "print(\"Word which has index 2:  \",Ind2word[2] )"
       ],
-      "id": "6da123f5",
+      "id": "9ef4ceaf",
       "execution_count": null,
       "outputs": []
     },
@@ -401,7 +401,7 @@
       "source": [
         "Finally, get the length of either of these dictionaries to get the size of the vocabulary of your corpus, in other words the number of different words making up the corpus.\n"
       ],
-      "id": "a25ead17"
+      "id": "ba462d0a"
     },
     {
       "cell_type": "code",
@@ -410,7 +410,7 @@
         "V = len(word2Ind)\n",
         "print(\"Size of vocabulary: \", V)"
       ],
-      "id": "228154e9",
+      "id": "01d9bd97",
       "execution_count": null,
       "outputs": []
     },
@@ -424,7 +424,7 @@
         "\n",
         "Consider the word \"happy\". First, retrieve its numeric index.\n"
       ],
-      "id": "a5586cc7"
+      "id": "50c86ca0"
     },
     {
       "cell_type": "code",
@@ -433,7 +433,7 @@
         "n = word2Ind['happy']\n",
         "n"
       ],
-      "id": "6f4a46de",
+      "id": "c75b64b2",
       "execution_count": null,
       "outputs": []
     },
@@ -443,7 +443,7 @@
       "source": [
         "Now create a vector with the size of the vocabulary, and fill it with zeros.\n"
       ],
-      "id": "9bd2ca26"
+      "id": "9c9eff0b"
     },
     {
       "cell_type": "code",
@@ -452,7 +452,7 @@
         "center_word_vector = np.zeros(V)\n",
         "center_word_vector"
       ],
-      "id": "f3e67d32",
+      "id": "1893a5a6",
       "execution_count": null,
       "outputs": []
     },
@@ -462,7 +462,7 @@
       "source": [
         "We can confirm that the vector has the right size.\n"
       ],
-      "id": "83cc1b00"
+      "id": "36e15709"
     },
     {
       "cell_type": "code",
@@ -470,7 +470,7 @@
       "source": [
         "len(center_word_vector) == V"
       ],
-      "id": "75e70d36",
+      "id": "e35ac28d",
       "execution_count": null,
       "outputs": []
     },
@@ -480,7 +480,7 @@
       "source": [
         "Next, replace the 0 of the $n$-th element with a 1.\n"
       ],
-      "id": "90e53ff0"
+      "id": "8404944e"
     },
     {
       "cell_type": "code",
@@ -488,7 +488,7 @@
       "source": [
         "center_word_vector[n] = 1"
       ],
-      "id": "26223640",
+      "id": "e4de6fe4",
       "execution_count": null,
       "outputs": []
     },
@@ -498,7 +498,7 @@
       "source": [
         "And we have your one-hot word vector.\n"
       ],
-      "id": "142b5e9f"
+      "id": "54012804"
     },
     {
       "cell_type": "code",
@@ -506,7 +506,7 @@
       "source": [
         "center_word_vector"
       ],
-      "id": "09f27c52",
+      "id": "ae6aca72",
       "execution_count": null,
       "outputs": []
     },
@@ -516,7 +516,7 @@
       "source": [
         "**We can now group all of these steps in a convenient function, which takes as parameters: a word to be encoded, a dictionary that maps words to indices, and the size of the vocabulary.**\n"
       ],
-      "id": "be5928e2"
+      "id": "53c314ec"
     },
     {
       "cell_type": "code",
@@ -529,7 +529,7 @@
         "    # END your code here\n",
         "    return one_hot_vector"
       ],
-      "id": "fe157602",
+      "id": "fcd5a9d7",
       "execution_count": null,
       "outputs": []
     },
@@ -539,7 +539,7 @@
       "source": [
         "Check that it works as intended.\n"
       ],
-      "id": "1a6df9d1"
+      "id": "76c53951"
     },
     {
       "cell_type": "code",
@@ -547,7 +547,7 @@
       "source": [
         "word_to_one_hot_vector('happy', word2Ind, V)"
       ],
-      "id": "27725c30",
+      "id": "4a854a98",
       "execution_count": null,
       "outputs": []
     },
@@ -557,7 +557,7 @@
       "source": [
         "**What is the word vector for \"learning\"?**\n"
       ],
-      "id": "9370ebec"
+      "id": "750625f9"
     },
     {
       "cell_type": "code",
@@ -567,7 +567,7 @@
         "word_to_one_hot_vector('learning', word2Ind, V)\n",
         "# END your code here"
       ],
-      "id": "5b1029bf",
+      "id": "ffbe9304",
       "execution_count": null,
       "outputs": []
     },
@@ -585,7 +585,7 @@
         "\n",
         "Let's start with a list of context words.\n"
       ],
-      "id": "22f84b6d"
+      "id": "f9d2cb8c"
     },
     {
       "cell_type": "code",
@@ -593,7 +593,7 @@
       "source": [
         "context_words = ['i', 'am', 'because', 'i']"
       ],
-      "id": "7b72df4e",
+      "id": "f30c1159",
       "execution_count": null,
       "outputs": []
     },
@@ -603,7 +603,7 @@
       "source": [
         "Using Python's list comprehension construct and the `word_to_one_hot_vector` function that we created in the previous section, we can create a list of one-hot vectors representing each of the context words.\n"
       ],
-      "id": "ca591ab2"
+      "id": "385b5d05"
     },
     {
       "cell_type": "code",
@@ -612,7 +612,7 @@
         "context_words_vectors = [word_to_one_hot_vector(w, word2Ind, V) for w in context_words]\n",
         "context_words_vectors"
       ],
-      "id": "185af186",
+      "id": "5eae7e8d",
       "execution_count": null,
       "outputs": []
     },
@@ -622,7 +622,7 @@
       "source": [
         "And we can now simply get the average of these vectors using numpy's `mean` function, to get the vector representation of the context words.\n"
       ],
-      "id": "46bb0180"
+      "id": "02438472"
     },
     {
       "cell_type": "code",
@@ -630,7 +630,7 @@
       "source": [
         "np.mean(context_words_vectors, axis=0)"
       ],
-      "id": "ea11488d",
+      "id": "650a3e28",
       "execution_count": null,
       "outputs": []
     },
@@ -642,7 +642,7 @@
         "\n",
         "**Now create the `context_words_to_vector` function that takes in a list of context words, a word-to-index dictionary, and a vocabulary size, and outputs the vector representation of the context words.**\n"
       ],
-      "id": "bd735385"
+      "id": "93897751"
     },
     {
       "cell_type": "code",
@@ -655,7 +655,7 @@
         "    # END your code here\n",
         "    return context_words_vectors"
       ],
-      "id": "78dcfb79",
+      "id": "5b4853be",
       "execution_count": null,
       "outputs": []
     },
@@ -665,7 +665,7 @@
       "source": [
         "And check that we obtain the same output as the manual approach above.\n"
       ],
-      "id": "cdfbe556"
+      "id": "18b10dac"
     },
     {
       "cell_type": "code",
@@ -673,7 +673,7 @@
       "source": [
         "context_words_to_vector(['i', 'am', 'because', 'i'], word2Ind, V)"
       ],
-      "id": "23954193",
+      "id": "3d8464e6",
       "execution_count": null,
       "outputs": []
     },
@@ -683,7 +683,7 @@
       "source": [
         "**What is the vector representation of the context words \"am happy i am\"?**\n"
       ],
-      "id": "8395845d"
+      "id": "61712185"
     },
     {
       "cell_type": "code",
@@ -693,7 +693,7 @@
         "context_words_to_vector(['am', 'happy', 'i', 'am'], word2Ind, V)\n",
         "# END your code here"
       ],
-      "id": "80fd2cb2",
+      "id": "2714cfee",
       "execution_count": null,
       "outputs": []
     },
@@ -710,7 +710,7 @@
         "\n",
         "We can now combine the functions that we created in the previous sections, to build a training set for the CBOW model, starting from the following tokenized corpus.\n"
       ],
-      "id": "6520db63"
+      "id": "a78e1d74"
     },
     {
       "cell_type": "code",
@@ -718,7 +718,7 @@
       "source": [
         "words"
       ],
-      "id": "56eb82c9",
+      "id": "04ea79bd",
       "execution_count": null,
       "outputs": []
     },
@@ -728,7 +728,7 @@
       "source": [
         "To do this we need to use the sliding window function (`get_windows`) to extract the context words and center words, and we then convert these sets of words into a basic vector representation using `word_to_one_hot_vector` and `context_words_to_vector`.\n"
       ],
-      "id": "22d862b7"
+      "id": "4d8bed29"
     },
     {
       "cell_type": "code",
@@ -739,7 +739,7 @@
         "    print(f'Center word:  {center_word} -> {word_to_one_hot_vector(center_word, word2Ind, V)}')\n",
         "    print()"
       ],
-      "id": "669bcd55",
+      "id": "92f452aa",
       "execution_count": null,
       "outputs": []
     },
@@ -750,7 +750,7 @@
         "In this practice notebook you'll be performing a single iteration of training using a single example, but in this week's assignment you'll train the CBOW model using several iterations and batches of example.\n",
         "Here is how we would use a Python generator function (remember the `yield` keyword from the lecture?) to make it easier to iterate over a set of examples.\n"
       ],
-      "id": "adf22c26"
+      "id": "14c6dd1c"
     },
     {
       "cell_type": "code",
@@ -760,7 +760,7 @@
         "    for context_words, center_word in get_windows(words, C):\n",
         "        yield context_words_to_vector(context_words, word2Ind, V), word_to_one_hot_vector(center_word, word2Ind, V)"
       ],
-      "id": "63040d21",
+      "id": "6977d1f3",
       "execution_count": null,
       "outputs": []
     },
@@ -770,7 +770,7 @@
       "source": [
         "The output of this function can be iterated on to get successive context word vectors and center word vectors, as demonstrated in the next cell.\n"
       ],
-      "id": "2967096b"
+      "id": "4ee6ceb8"
     },
     {
       "cell_type": "code",
@@ -781,7 +781,7 @@
         "    print(f'Center word vector:  {center_word_vector}')\n",
         "    print()"
       ],
-      "id": "262cc49e",
+      "id": "19ca323c",
       "execution_count": null,
       "outputs": []
     },
@@ -826,7 +826,7 @@
         "\n",
         "Let's fix a value for $\\mathbf{z_1}$ as a working example.\n"
       ],
-      "id": "76b2ca67"
+      "id": "43724544"
     },
     {
       "cell_type": "code",
@@ -836,7 +836,7 @@
         "z_1 = 10*np.random.rand(5, 1)-5\n",
         "z_1"
       ],
-      "id": "96c442fe",
+      "id": "c7dd4805",
       "execution_count": null,
       "outputs": []
     },
@@ -848,7 +848,7 @@
         "\n",
         "First create a copy of this vector.\n"
       ],
-      "id": "82cb4d1f"
+      "id": "84cf9d28"
     },
     {
       "cell_type": "code",
@@ -856,7 +856,7 @@
       "source": [
         "h = z_1.copy()"
       ],
-      "id": "6f638773",
+      "id": "90c051a3",
       "execution_count": null,
       "outputs": []
     },
@@ -866,7 +866,7 @@
       "source": [
         "Now determine which of its values are negative.\n"
       ],
-      "id": "a93f5f5d"
+      "id": "c3cfd0aa"
     },
     {
       "cell_type": "code",
@@ -874,7 +874,7 @@
       "source": [
         "h < 0"
       ],
-      "id": "bc93972a",
+      "id": "ea68c85e",
       "execution_count": null,
       "outputs": []
     },
@@ -884,7 +884,7 @@
       "source": [
         "We can now simply set all of the values which are negative to 0.\n"
       ],
-      "id": "da9c5039"
+      "id": "8f50e44f"
     },
     {
       "cell_type": "code",
@@ -892,7 +892,7 @@
       "source": [
         "h[h < 0] = 0"
       ],
-      "id": "d5b0bdb7",
+      "id": "e7c28a14",
       "execution_count": null,
       "outputs": []
     },
@@ -902,7 +902,7 @@
       "source": [
         "And that's it: we have the ReLU of $\\mathbf{z_1}$!\n"
       ],
-      "id": "dcdbe315"
+      "id": "a110821f"
     },
     {
       "cell_type": "code",
@@ -910,7 +910,7 @@
       "source": [
         "h"
       ],
-      "id": "e4856e8f",
+      "id": "bd436ca6",
       "execution_count": null,
       "outputs": []
     },
@@ -920,7 +920,7 @@
       "source": [
         "**Now implement ReLU as a function.**\n"
       ],
-      "id": "2cbf1fdf"
+      "id": "5bea13c6"
     },
     {
       "cell_type": "code",
@@ -934,7 +934,7 @@
         "    \n",
         "    return result"
       ],
-      "id": "65ca1fdf",
+      "id": "cb08c640",
       "execution_count": null,
       "outputs": []
     },
@@ -944,7 +944,7 @@
       "source": [
         "**And check that it's working.**\n"
       ],
-      "id": "982251c1"
+      "id": "580cb093"
     },
     {
       "cell_type": "code",
@@ -953,7 +953,7 @@
         "z = np.array([[-1.25459881], [ 4.50714306], [ 2.31993942], [ 0.98658484], [-3.4398136 ]])\n",
         "relu(z)"
       ],
-      "id": "bf23b88d",
+      "id": "3e7bdf16",
       "execution_count": null,
       "outputs": []
     },
@@ -984,7 +984,7 @@
         "\n",
         "Let's work through an example.\n"
       ],
-      "id": "c1d290e2"
+      "id": "d327ec05"
     },
     {
       "cell_type": "code",
@@ -993,7 +993,7 @@
         "z = np.array([9, 8, 11, 10, 8.5])\n",
         "z"
       ],
-      "id": "22ca01e2",
+      "id": "fe84f787",
       "execution_count": null,
       "outputs": []
     },
@@ -1003,7 +1003,7 @@
       "source": [
         "You'll need to calculate the exponentials of each element, both for the numerator and for the denominator.\n"
       ],
-      "id": "ea6019b0"
+      "id": "04cfd5ca"
     },
     {
       "cell_type": "code",
@@ -1012,7 +1012,7 @@
         "e_z = np.exp(z)\n",
         "e_z"
       ],
-      "id": "df260ef2",
+      "id": "eea315d8",
       "execution_count": null,
       "outputs": []
     },
@@ -1022,7 +1022,7 @@
       "source": [
         "The denominator is equal to the sum of these exponentials.\n"
       ],
-      "id": "a5855b63"
+      "id": "a5b633c1"
     },
     {
       "cell_type": "code",
@@ -1031,7 +1031,7 @@
         "sum_e_z = np.sum(e_z)\n",
         "sum_e_z"
       ],
-      "id": "3038a20c",
+      "id": "8f1dc0f1",
       "execution_count": null,
       "outputs": []
     },
@@ -1041,7 +1041,7 @@
       "source": [
         "And the value of the first element of $\\textrm{softmax}(\\textbf{z})$ is given by:\n"
       ],
-      "id": "19aeb1d1"
+      "id": "591ba7b6"
     },
     {
       "cell_type": "code",
@@ -1049,7 +1049,7 @@
       "source": [
         "e_z[0]/sum_e_z"
       ],
-      "id": "f523d285",
+      "id": "0bf1d07d",
       "execution_count": null,
       "outputs": []
     },
@@ -1061,7 +1061,7 @@
         "\n",
         "**Implement the softmax function.**\n"
       ],
-      "id": "3fc6730f"
+      "id": "a82cb153"
     },
     {
       "cell_type": "code",
@@ -1074,7 +1074,7 @@
         "    return e_z / sum_e_z\n",
         "    # END your code here"
       ],
-      "id": "e5b3af36",
+      "id": "505e738d",
       "execution_count": null,
       "outputs": []
     },
@@ -1084,7 +1084,7 @@
       "source": [
         "**Now check that it works.**\n"
       ],
-      "id": "a365794c"
+      "id": "d611b51c"
     },
     {
       "cell_type": "code",
@@ -1092,7 +1092,7 @@
       "source": [
         "softmax([9, 8, 11, 10, 8.5])"
       ],
-      "id": "b2815a8e",
+      "id": "e03c29e7",
       "execution_count": null,
       "outputs": []
     },
@@ -1110,7 +1110,7 @@
         "\n",
         "Create a vector of length $V$ filled with zeros.\n"
       ],
-      "id": "b1a50af8"
+      "id": "7d8dbcff"
     },
     {
       "cell_type": "code",
@@ -1121,7 +1121,7 @@
         "x_array = np.zeros(V)\n",
         "x_array"
       ],
-      "id": "82b85714",
+      "id": "068aaa37",
       "execution_count": null,
       "outputs": []
     },
@@ -1131,7 +1131,7 @@
       "source": [
         "This is a 1-dimensional array, as revealed by the `.shape` property of the array.\n"
       ],
-      "id": "36215f38"
+      "id": "afa288eb"
     },
     {
       "cell_type": "code",
@@ -1139,7 +1139,7 @@
       "source": [
         "x_array.shape"
       ],
-      "id": "5863fb50",
+      "id": "f84d347c",
       "execution_count": null,
       "outputs": []
     },
@@ -1151,7 +1151,7 @@
         "\n",
         "The easiest way to convert a 1D vector to a 2D column matrix is to set its `.shape` property to the number of rows and one column, as shown in the next cell.\n"
       ],
-      "id": "446f079d"
+      "id": "87b862fd"
     },
     {
       "cell_type": "code",
@@ -1161,7 +1161,7 @@
         "x_column_vector.shape = (V, 1)  # alternatively ... = (x_array.shape[0], 1)\n",
         "x_column_vector"
       ],
-      "id": "ae6ec66d",
+      "id": "e1e61755",
       "execution_count": null,
       "outputs": []
     },
@@ -1171,7 +1171,7 @@
       "source": [
         "The shape of the resulting \"vector\" is:\n"
       ],
-      "id": "827c9de4"
+      "id": "ebbb3496"
     },
     {
       "cell_type": "code",
@@ -1179,7 +1179,7 @@
       "source": [
         "x_column_vector.shape"
       ],
-      "id": "72b8409e",
+      "id": "a0998509",
       "execution_count": null,
       "outputs": []
     },
@@ -1197,7 +1197,7 @@
         "\n",
         "Set $N$ equal to 3. Remember that $N$ is a hyperparameter of the CBOW model that represents the size of the word embedding vectors, as well as the size of the hidden layer.\n"
       ],
-      "id": "c288e6f6"
+      "id": "26b59367"
     },
     {
       "cell_type": "code",
@@ -1205,7 +1205,7 @@
       "source": [
         "N = 3"
       ],
-      "id": "e68b4f66",
+      "id": "d92a9331",
       "execution_count": null,
       "outputs": []
     },
@@ -1219,7 +1219,7 @@
         "\n",
         "In the assignment we will implement a function to do this yourself using `numpy.random.rand`. In this notebook, we've pre-populated these matrices and vectors for you.\n"
       ],
-      "id": "3e015b1b"
+      "id": "4bc3c0bb"
     },
     {
       "cell_type": "code",
@@ -1245,7 +1245,7 @@
         "               [-0.34802326],\n",
         "               [-0.07017815]])"
       ],
-      "id": "c844203e",
+      "id": "5b721d7e",
       "execution_count": null,
       "outputs": []
     },
@@ -1255,7 +1255,7 @@
       "source": [
         "**Check that the dimensions of these matrices match those shown in the figure above.**\n"
       ],
-      "id": "1c4f9f2d"
+      "id": "be1e4840"
     },
     {
       "cell_type": "code",
@@ -1270,7 +1270,7 @@
         "print(f'size of b2: {b2.shape} (Vx1)')\n",
         "# END your code here"
       ],
-      "id": "37eda425",
+      "id": "e72185e2",
       "execution_count": null,
       "outputs": []
     },
@@ -1284,7 +1284,7 @@
         "\n",
         "> We don't need to worry about the Python syntax, but there are some explanations below if we want to know what's happening behind the scenes.\n"
       ],
-      "id": "d44c9193"
+      "id": "9e985b4a"
     },
     {
       "cell_type": "code",
@@ -1292,7 +1292,7 @@
       "source": [
         "training_examples = get_training_example(words, 2, word2Ind, V)"
       ],
-      "id": "8f3f1147",
+      "id": "ba25506d",
       "execution_count": null,
       "outputs": []
     },
@@ -1304,7 +1304,7 @@
         ">\n",
         "> In this case `get_training_examples` `yield`s training examples, and iterating on `training_examples` will return the successive training examples.\n"
       ],
-      "id": "fd07e00f"
+      "id": "7fb5ed83"
     },
     {
       "cell_type": "code",
@@ -1312,7 +1312,7 @@
       "source": [
         "x_array, y_array = next(training_examples)"
       ],
-      "id": "c312fe71",
+      "id": "630a3fdd",
       "execution_count": null,
       "outputs": []
     },
@@ -1326,7 +1326,7 @@
         "\n",
         "The vector representing the context words, which will be fed into the neural network, is:\n"
       ],
-      "id": "5e099a7f"
+      "id": "4fca53ef"
     },
     {
       "cell_type": "code",
@@ -1334,7 +1334,7 @@
       "source": [
         "x_array"
       ],
-      "id": "559ada20",
+      "id": "9742be14",
       "execution_count": null,
       "outputs": []
     },
@@ -1344,7 +1344,7 @@
       "source": [
         "The one-hot vector representing the center word to be predicted is:\n"
       ],
-      "id": "22258799"
+      "id": "4e239f01"
     },
     {
       "cell_type": "code",
@@ -1352,7 +1352,7 @@
       "source": [
         "y_array"
       ],
-      "id": "d0907198",
+      "id": "3df1a71b",
       "execution_count": null,
       "outputs": []
     },
@@ -1362,7 +1362,7 @@
       "source": [
         "Now convert these vectors into matrices (or 2D arrays) to be able to perform matrix multiplication on the right types of objects, as explained above.\n"
       ],
-      "id": "7a9d5727"
+      "id": "3d87ab8a"
     },
     {
       "cell_type": "code",
@@ -1379,7 +1379,7 @@
         "print('y')\n",
         "print(y)"
       ],
-      "id": "95659fde",
+      "id": "6a23efbe",
       "execution_count": null,
       "outputs": []
     },
@@ -1398,7 +1398,7 @@
         "\n",
         "First, we can calculate the value of $\\mathbf{z_1}$.\n"
       ],
-      "id": "3ee119db"
+      "id": "45fd0539"
     },
     {
       "cell_type": "code",
@@ -1406,7 +1406,7 @@
       "source": [
         "z1 = np.dot(W1, x) + b1"
       ],
-      "id": "175c9f0c",
+      "id": "ba64d598",
       "execution_count": null,
       "outputs": []
     },
@@ -1418,7 +1418,7 @@
         "\n",
         "As expected we get an $N$ by 1 matrix, or column vector with $N$ elements, where $N$ is equal to the embedding size, which is 3 in this example.\n"
       ],
-      "id": "528ce65b"
+      "id": "1ffd88a3"
     },
     {
       "cell_type": "code",
@@ -1426,7 +1426,7 @@
       "source": [
         "z1"
       ],
-      "id": "eb72dddd",
+      "id": "20955aac",
       "execution_count": null,
       "outputs": []
     },
@@ -1436,7 +1436,7 @@
       "source": [
         "We can now take the ReLU of $\\mathbf{z_1}$ to get $\\mathbf{h}$, the vector with the values of the hidden layer.\n"
       ],
-      "id": "ea125a3f"
+      "id": "dd9fdfe7"
     },
     {
       "cell_type": "code",
@@ -1445,7 +1445,7 @@
         "h = relu(z1)\n",
         "h"
       ],
-      "id": "d9e3a63f",
+      "id": "88adfc62",
       "execution_count": null,
       "outputs": []
     },
@@ -1466,7 +1466,7 @@
         "\n",
         "**First, calculate $\\mathbf{z_2}$.**\n"
       ],
-      "id": "9cd4ce17"
+      "id": "cabb226a"
     },
     {
       "cell_type": "code",
@@ -1478,7 +1478,7 @@
         "\n",
         "z2"
       ],
-      "id": "80d3d596",
+      "id": "216fb6cd",
       "execution_count": null,
       "outputs": []
     },
@@ -1498,7 +1498,7 @@
         "\n",
         "**Now calculate the value of $\\mathbf{\\hat y}$.**\n"
       ],
-      "id": "cad58a62"
+      "id": "2f0ff017"
     },
     {
       "cell_type": "code",
@@ -1510,7 +1510,7 @@
         "\n",
         "y_hat"
       ],
-      "id": "aa0e600e",
+      "id": "0e341152",
       "execution_count": null,
       "outputs": []
     },
@@ -1549,7 +1549,7 @@
         "\n",
         "First let's recall what the prediction was.\n"
       ],
-      "id": "5f94dd8e"
+      "id": "a930798a"
     },
     {
       "cell_type": "code",
@@ -1557,7 +1557,7 @@
       "source": [
         "y_hat"
       ],
-      "id": "ab8f1c10",
+      "id": "5be58979",
       "execution_count": null,
       "outputs": []
     },
@@ -1567,7 +1567,7 @@
       "source": [
         "And the actual target value is:\n"
       ],
-      "id": "b20bba6b"
+      "id": "80ea922b"
     },
     {
       "cell_type": "code",
@@ -1575,7 +1575,7 @@
       "source": [
         "y"
       ],
-      "id": "f825bdb8",
+      "id": "3c8c47c0",
       "execution_count": null,
       "outputs": []
     },
@@ -1605,7 +1605,7 @@
         "<p>Once we have a vector equal to the element-wise multiplication of <code>y</code> and <code>y_hat</code>, we can use <code>np.sum</code> to calculate the sum of the elements of this vector.</p>\n",
         "</details>\n"
       ],
-      "id": "779065b4"
+      "id": "077441b8"
     },
     {
       "cell_type": "code",
@@ -1617,7 +1617,7 @@
         "    # END your code here\n",
         "    return loss"
       ],
-      "id": "4d62e1af",
+      "id": "70268dd3",
       "execution_count": null,
       "outputs": []
     },
@@ -1627,7 +1627,7 @@
       "source": [
         "**Now use this function to calculate the loss with the actual values of $\\mathbf{y}$ and $\\mathbf{\\hat y}$.**\n"
       ],
-      "id": "68968f19"
+      "id": "42400281"
     },
     {
       "cell_type": "code",
@@ -1635,7 +1635,7 @@
       "source": [
         "cross_entropy_loss(y_hat, y)"
       ],
-      "id": "cde8137f",
+      "id": "479e0854",
       "execution_count": null,
       "outputs": []
     },
@@ -1670,7 +1670,7 @@
         "\n",
         "$$\\frac{\\partial J}{\\partial \\mathbf{b_2}} = \\mathbf{\\hat{y}} - \\mathbf{y} \\tag{10}$$\n"
       ],
-      "id": "97cadd7b"
+      "id": "7c9d14e3"
     },
     {
       "cell_type": "code",
@@ -1682,7 +1682,7 @@
         "\n",
         "grad_b2"
       ],
-      "id": "d0f10e21",
+      "id": "f5c848db",
       "execution_count": null,
       "outputs": []
     },
@@ -1704,7 +1704,7 @@
         "\n",
         "> Hint: use `.T` to get a transposed matrix, e.g. `h.T` returns $\\mathbf{h^\\top}$.\n"
       ],
-      "id": "23f3e32f"
+      "id": "461753de"
     },
     {
       "cell_type": "code",
@@ -1716,7 +1716,7 @@
         "\n",
         "grad_W2"
       ],
-      "id": "b567d2c7",
+      "id": "7d88f1c1",
       "execution_count": null,
       "outputs": []
     },
@@ -1736,7 +1736,7 @@
         "\n",
         "$$\\frac{\\partial J}{\\partial \\mathbf{b_1}} = \\rm{ReLU}\\left ( \\mathbf{W_2^\\top} (\\mathbf{\\hat{y}} - \\mathbf{y})\\right ) \\tag{9}$$\n"
       ],
-      "id": "38adeb90"
+      "id": "6e042766"
     },
     {
       "cell_type": "code",
@@ -1748,7 +1748,7 @@
         "\n",
         "grad_b1"
       ],
-      "id": "2ee1012e",
+      "id": "c7524bca",
       "execution_count": null,
       "outputs": []
     },
@@ -1766,7 +1766,7 @@
         "\n",
         "$$\\frac{\\partial J}{\\partial \\mathbf{W_1}} = \\rm{ReLU}\\left ( \\mathbf{W_2^\\top} (\\mathbf{\\hat{y}} - \\mathbf{y})\\right )\\mathbf{x}^\\top \\tag{7}$$\n"
       ],
-      "id": "6d3d7894"
+      "id": "43a90d16"
     },
     {
       "cell_type": "code",
@@ -1778,7 +1778,7 @@
         "\n",
         "grad_W1"
       ],
-      "id": "b221beab",
+      "id": "1e8a6da8",
       "execution_count": null,
       "outputs": []
     },
@@ -1794,7 +1794,7 @@
         "\n",
         "Before moving on to gradient descent, double-check that all the matrices have the expected dimensions.\n"
       ],
-      "id": "a3626cfe"
+      "id": "9c3bd598"
     },
     {
       "cell_type": "code",
@@ -1809,7 +1809,7 @@
         "print(f'size of grad_b2: {grad_b2.shape} (Vx1)')\n",
         "# END your code here"
       ],
-      "id": "f80640cb",
+      "id": "3dd9ce44",
       "execution_count": null,
       "outputs": []
     },
@@ -1830,7 +1830,7 @@
         "\n",
         "First, let set a value for $\\alpha$.\n"
       ],
-      "id": "9679678b"
+      "id": "c69271dd"
     },
     {
       "cell_type": "code",
@@ -1838,7 +1838,7 @@
       "source": [
         "alpha = 0.03"
       ],
-      "id": "3f84f94a",
+      "id": "80205d72",
       "execution_count": null,
       "outputs": []
     },
@@ -1848,7 +1848,7 @@
       "source": [
         "The updated weight matrix $\\mathbf{W_1}$ will be:\n"
       ],
-      "id": "10ac5ad0"
+      "id": "80300b73"
     },
     {
       "cell_type": "code",
@@ -1856,7 +1856,7 @@
       "source": [
         "W1_new = W1 - alpha * grad_W1"
       ],
-      "id": "2e874d59",
+      "id": "affda2e1",
       "execution_count": null,
       "outputs": []
     },
@@ -1866,7 +1866,7 @@
       "source": [
         "Let's compare the previous and new values of $\\mathbf{W_1}$:\n"
       ],
-      "id": "2a1c6c8f"
+      "id": "e2d63bf2"
     },
     {
       "cell_type": "code",
@@ -1878,7 +1878,7 @@
         "print('new value of W1:')\n",
         "print(W1_new)"
       ],
-      "id": "2da413b8",
+      "id": "aac6c7e2",
       "execution_count": null,
       "outputs": []
     },
@@ -1896,7 +1896,7 @@
         " \\mathbf{b_2} &:= \\mathbf{b_2} - \\alpha \\frac{\\partial J}{\\partial \\mathbf{b_2}} \\tag{14}\\\\\n",
         "\\end{align}\n"
       ],
-      "id": "48915cfe"
+      "id": "abaedadc"
     },
     {
       "cell_type": "code",
@@ -1917,7 +1917,7 @@
         "print('b2_new')\n",
         "print(b2_new)"
       ],
-      "id": "e1f029f7",
+      "id": "80ee5948",
       "execution_count": null,
       "outputs": []
     },
@@ -1962,7 +1962,7 @@
         "\n",
         "For example $\\mathbf{W_1}$ is this matrix:\n"
       ],
-      "id": "d890aab3"
+      "id": "0848f393"
     },
     {
       "cell_type": "code",
@@ -1970,7 +1970,7 @@
       "source": [
         "W1"
       ],
-      "id": "4e3e112b",
+      "id": "ebbdcc35",
       "execution_count": null,
       "outputs": []
     },
@@ -1982,7 +1982,7 @@
         "\n",
         "The first, second, etc. words are ordered as follows.\n"
       ],
-      "id": "abc90a90"
+      "id": "a88d324a"
     },
     {
       "cell_type": "code",
@@ -1991,7 +1991,7 @@
         "for i in range(V):\n",
         "    print(Ind2word[i])"
       ],
-      "id": "ec7e46d9",
+      "id": "b05ad31b",
       "execution_count": null,
       "outputs": []
     },
@@ -2001,7 +2001,7 @@
       "source": [
         "So the word embedding vectors corresponding to each word are:\n"
       ],
-      "id": "7ebb06d4"
+      "id": "125ace4b"
     },
     {
       "cell_type": "code",
@@ -2014,7 +2014,7 @@
         "    \n",
         "    print(f'{word}: {word_embedding_vector}')"
       ],
-      "id": "91271de2",
+      "id": "f361f27a",
       "execution_count": null,
       "outputs": []
     },
@@ -2026,7 +2026,7 @@
         "\n",
         "The second option is to take $\\mathbf{W_2}$ transposed, and take its columns as the word embedding vectors just like we did for $\\mathbf{W_1}$.\n"
       ],
-      "id": "a94eaf2b"
+      "id": "26293cd1"
     },
     {
       "cell_type": "code",
@@ -2034,7 +2034,7 @@
       "source": [
         "W2.T"
       ],
-      "id": "3df3ffd4",
+      "id": "1dda6fa5",
       "execution_count": null,
       "outputs": []
     },
@@ -2049,7 +2049,7 @@
         "    \n",
         "    print(f'{word}: {word_embedding_vector}')"
       ],
-      "id": "6776c0ff",
+      "id": "1fc24b94",
       "execution_count": null,
       "outputs": []
     },
@@ -2063,7 +2063,7 @@
         "\n",
         "**Calculate the average of $\\mathbf{W_1}$ and $\\mathbf{W_2^\\top}$, and store the result in `W3`.**\n"
       ],
-      "id": "2fe1f231"
+      "id": "dd66f7a6"
     },
     {
       "cell_type": "code",
@@ -2075,7 +2075,7 @@
         "\n",
         "W3"
       ],
-      "id": "1f98a516",
+      "id": "043d43df",
       "execution_count": null,
       "outputs": []
     },
@@ -2091,7 +2091,7 @@
         "\n",
         "Extracting the word embedding vectors works just like the two previous options, by taking the columns of the matrix you've just created.\n"
       ],
-      "id": "da5c010a"
+      "id": "0d8fe7ef"
     },
     {
       "cell_type": "code",
@@ -2104,7 +2104,7 @@
         "    \n",
         "    print(f'{word}: {word_embedding_vector}')"
       ],
-      "id": "519e29cd",
+      "id": "6a7e0910",
       "execution_count": null,
       "outputs": []
     },
@@ -2120,7 +2120,7 @@
         "- We will also complete several iterations of training, until we reach an acceptably low cross-entropy cost, at which point we can extract good word embeddings from the weight matrices.\n",
         "- After extracting the word embedding vectors, we will use principal component analysis (PCA) to visualize the vectors, which will enable we to perform an intrinsic evaluation of the quality of the vectors, as explained in the lecture.\n"
       ],
-      "id": "7662134e"
+      "id": "fe63b03e"
     }
   ],
   "metadata": {

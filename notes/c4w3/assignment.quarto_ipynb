@@ -73,7 +73,7 @@
         "\n",
         "## Part 0: Importing the Packages {#01}\n"
       ],
-      "id": "60100ecd"
+      "id": "f0f05a3f"
     },
     {
       "cell_type": "code",
@@ -101,7 +101,7 @@
         "# Set random seed\n",
         "np.random.seed(42)"
       ],
-      "id": "7984a1d0",
+      "id": "48f8ee84",
       "execution_count": null,
       "outputs": []
     },
@@ -115,7 +115,7 @@
         "\n",
         "Run the cell below to see how the examples look like. \n"
       ],
-      "id": "8264566a"
+      "id": "40640189"
     },
     {
       "cell_type": "code",
@@ -128,7 +128,7 @@
         "for i in range(5):\n",
         "    print(f'example number {i+1}: \\n\\n{example_jsons[i]} \\n')"
       ],
-      "id": "88ef77b9",
+      "id": "3acfaf15",
       "execution_count": null,
       "outputs": []
     },
@@ -140,7 +140,7 @@
         "\n",
         "To check this run the following cell:\n"
       ],
-      "id": "9f8d924f"
+      "id": "1fe62fb6"
     },
     {
       "cell_type": "code",
@@ -148,7 +148,7 @@
       "source": [
         "type(example_jsons[0].get('text'))"
       ],
-      "id": "2c525bbc",
+      "id": "01fbc572",
       "execution_count": null,
       "outputs": []
     },
@@ -183,7 +183,7 @@
         "\n",
         "You will now take the `text` and convert it to `inputs` and `targets`.\n"
       ],
-      "id": "61910a03"
+      "id": "15e5f990"
     },
     {
       "cell_type": "code",
@@ -192,7 +192,7 @@
         "# Grab text field from dictionary\n",
         "natural_language_texts = [example_json['text'] for example_json in example_jsons]"
       ],
-      "id": "37c7f4df",
+      "id": "b9419bf3",
       "execution_count": null,
       "outputs": []
     },
@@ -203,7 +203,7 @@
         "# First text example\n",
         "natural_language_texts[4]"
       ],
-      "id": "a0bebfef",
+      "id": "ca5509f4",
       "execution_count": null,
       "outputs": []
     },
@@ -221,7 +221,7 @@
         "\n",
         "Run the cells below to see what is going on. \n"
       ],
-      "id": "0b9adc7b"
+      "id": "a1980980"
     },
     {
       "cell_type": "code",
@@ -247,7 +247,7 @@
         "        vocab_file='sentencepiece.model',\n",
         "        vocab_dir='.'))"
       ],
-      "id": "65346999",
+      "id": "084b33ab",
       "execution_count": null,
       "outputs": []
     },
@@ -259,7 +259,7 @@
         "tokenized_text = [(tokenize(word).tolist(), word) for word in natural_language_texts[0].split()]\n",
         "print(tokenized_text, '\\n')"
       ],
-      "id": "0e31f91c",
+      "id": "1c332f90",
       "execution_count": null,
       "outputs": []
     },
@@ -270,7 +270,7 @@
         "# We can see that detokenize successfully undoes the tokenization\n",
         "print(f\"tokenized: {tokenize('Beginners')}\\ndetokenized: {detokenize(tokenize('Beginners'))}\")"
       ],
-      "id": "15026e17",
+      "id": "01550604",
       "execution_count": null,
       "outputs": []
     },
@@ -297,7 +297,7 @@
         "\n",
         "**NOTE:** Targets may have more than the 52 sentinels we replace, but this is just to give you an idea of things.\n"
       ],
-      "id": "72f56443"
+      "id": "6b4604af"
     },
     {
       "cell_type": "code",
@@ -321,7 +321,7 @@
         "\n",
         "    return sentinels"
       ],
-      "id": "c0c29485",
+      "id": "dc6b632c",
       "execution_count": null,
       "outputs": []
     },
@@ -331,7 +331,7 @@
       "source": [
         "sentinels = get_sentinels(vocab_size, display=True)"
       ],
-      "id": "c1cd12e7",
+      "id": "25939482",
       "execution_count": null,
       "outputs": []
     },
@@ -349,7 +349,7 @@
         "    # We need to decode and then prettyfy it.\n",
         "    return pretty_decode(detokenize(encoded_str_list))"
       ],
-      "id": "8f8d0b68",
+      "id": "ca89d052",
       "execution_count": null,
       "outputs": []
     },
@@ -359,7 +359,7 @@
       "source": [
         "pretty_decode(\"I want to dress up as an Intellectual this halloween.\")"
       ],
-      "id": "ae38b539",
+      "id": "d822ba80",
       "execution_count": null,
       "outputs": []
     },
@@ -379,7 +379,7 @@
         "\n",
         "### Exercise 01 {#ex01}\n"
       ],
-      "id": "f5ce432c"
+      "id": "36c4d131"
     },
     {
       "cell_type": "code",
@@ -444,7 +444,7 @@
         "    \n",
         "    return inps, targs"
       ],
-      "id": "5c177302",
+      "id": "5305d5d8",
       "execution_count": null,
       "outputs": []
     },
@@ -474,7 +474,7 @@
         "print(f\"tokenized inputs:\\n\\n{inps}\\n\")\n",
         "print(f\"targets:\\n\\n{targs}\")"
       ],
-      "id": "a69cbeef",
+      "id": "e521a681",
       "execution_count": null,
       "outputs": []
     },
@@ -498,7 +498,7 @@
         "\n",
         "You will now use the inputs and the targets from the `tokenize_and_mask` function you implemented above. Take a look at the masked sentence using your `inps` and `targs` from the sentence above. \n"
       ],
-      "id": "f98e68d4"
+      "id": "921c40a4"
     },
     {
       "cell_type": "code",
@@ -513,7 +513,7 @@
         "print('Inputs: \\n\\n', pretty_decode(inps))\n",
         "print('\\nTargets: \\n\\n', pretty_decode(targs))"
       ],
-      "id": "568da64d",
+      "id": "7bd65d88",
       "execution_count": null,
       "outputs": []
     },
@@ -525,7 +525,7 @@
         "\n",
         "You will now create pairs using your dataset. You will iterate over your data and create (inp, targ) pairs using the functions that we have given you. \n"
       ],
-      "id": "3bb444dd"
+      "id": "669a5f70"
     },
     {
       "cell_type": "code",
@@ -534,7 +534,7 @@
         "# Apply tokenize_and_mask\n",
         "inputs_targets_pairs = [tokenize_and_mask(text) for text in natural_language_texts]"
       ],
-      "id": "6f564ae5",
+      "id": "1648067c",
       "execution_count": null,
       "outputs": []
     },
@@ -556,7 +556,7 @@
         "              f'inputs:\\n{wrapper.fill(text=inps)}\\n\\n'\n",
         "              f'targets:\\n{wrapper.fill(text=tgts)}\\n\\n\\n\\n')"
       ],
-      "id": "7624bd17",
+      "id": "1dd7adf0",
       "execution_count": null,
       "outputs": []
     },
@@ -566,7 +566,7 @@
       "source": [
         "display_input_target_pairs(inputs_targets_pairs)"
       ],
-      "id": "ca506b13",
+      "id": "3cf59d06",
       "execution_count": null,
       "outputs": []
     },
@@ -606,7 +606,7 @@
         "\n",
         "### Exercise 02 {#ex02}\n"
       ],
-      "id": "791bd7ca"
+      "id": "7a0780b9"
     },
     {
       "cell_type": "code",
@@ -659,7 +659,7 @@
         "    \n",
         "    return ff_block"
       ],
-      "id": "8072bea1",
+      "id": "4c060324",
       "execution_count": null,
       "outputs": []
     },
@@ -677,7 +677,7 @@
         "feed_forward_example = FeedForwardBlock(d_model=512, d_ff=2048, dropout=0.8, dropout_shared_axes=0, mode = 'train', activation = tl.Relu)\n",
         "print(feed_forward_example)"
       ],
-      "id": "85fb2d03",
+      "id": "4c5f0f8d",
       "execution_count": null,
       "outputs": []
     },
@@ -702,7 +702,7 @@
         "\n",
         "### Exercise 03 {#ex03}\n"
       ],
-      "id": "0a5a9923"
+      "id": "91bc9816"
     },
     {
       "cell_type": "code",
@@ -790,7 +790,7 @@
         "    \n",
         "    return encoder_block"
       ],
-      "id": "4aa16cdf",
+      "id": "a00caa68",
       "execution_count": null,
       "outputs": []
     },
@@ -802,7 +802,7 @@
         "encoder_example = EncoderBlock(d_model=512, d_ff=2048, n_heads=6, dropout=0.8, dropout_shared_axes=0, mode = 'train', ff_activation=tl.Relu)\n",
         "print(encoder_example)"
       ],
-      "id": "c1d9f10d",
+      "id": "700ed20c",
       "execution_count": null,
       "outputs": []
     },
@@ -876,7 +876,7 @@
         "\n",
         "### Exercise 04 {#ex04}\n"
       ],
-      "id": "1c2ff599"
+      "id": "50a1cf04"
     },
     {
       "cell_type": "code",
@@ -957,7 +957,7 @@
         "\n",
         "    ### END CODE HERE ###"
       ],
-      "id": "d4772bd2",
+      "id": "8b496f01",
       "execution_count": null,
       "outputs": []
     },
@@ -975,7 +975,7 @@
         "# Only 1 layer is used to keep the output readable\n",
         "TransformerEncoder(n_layers=1)"
       ],
-      "id": "955fcff7",
+      "id": "a9f24289",
       "execution_count": null,
       "outputs": []
     },
@@ -1046,7 +1046,7 @@
         "\n",
         "[T5 SQuAD Model Colab](https://drive.google.com/file/d/1c-8KJkTySRGqCx_JjwjvXuRBTNTqEE0N/view?usp=sharing)\n"
       ],
-      "id": "002b8f90"
+      "id": "830fbadc"
     }
   ],
   "metadata": {

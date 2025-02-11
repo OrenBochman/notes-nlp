@@ -29,7 +29,7 @@
         "\n",
         "The rationale behind this change is that you will be using Trax's numpy (which is compatible with JAX) far more often. Trax's numpy supports most of the same functions as the regular numpy so the change won't be noticeable in most cases.\n"
       ],
-      "id": "ce2e6cc2"
+      "id": "1c6693c1"
     },
     {
       "cell_type": "code",
@@ -38,7 +38,7 @@
         "import jax\n",
         "print(jax.__version__)"
       ],
-      "id": "35da97b7",
+      "id": "b5f9aa7f",
       "execution_count": null,
       "outputs": []
     },
@@ -57,7 +57,7 @@
         "#trax.supervised.trainer_lib.init_random_number_generators(32)\n",
         "numpy.random.seed(32)"
       ],
-      "id": "e4a1fe21",
+      "id": "b39018d8",
       "execution_count": null,
       "outputs": []
     },
@@ -71,7 +71,7 @@
         "\n",
         "This is one of the functionalities that Trax's numpy does not currently support in the same way as the regular numpy. \n"
       ],
-      "id": "8d38891d"
+      "id": "ee3a1ebb"
     },
     {
       "cell_type": "code",
@@ -81,7 +81,7 @@
         "print(f\"The regular numpy array looks like this:\\n\\n {numpy_array}\\n\")\n",
         "print(f\"It is of type: {type(numpy_array)}\")"
       ],
-      "id": "74308e0d",
+      "id": "34d9c243",
       "execution_count": null,
       "outputs": []
     },
@@ -91,7 +91,7 @@
       "source": [
         "You can easily cast regular numpy arrays or lists into trax numpy arrays using the `trax.fastmath.numpy.array()` function:\n"
       ],
-      "id": "b6fb3ca9"
+      "id": "ae9b2ef2"
     },
     {
       "cell_type": "code",
@@ -101,7 +101,7 @@
         "print(f\"The trax numpy array looks like this:\\n\\n {trax_numpy_array}\\n\")\n",
         "print(f\"It is of type: {type(trax_numpy_array)}\")"
       ],
-      "id": "a133f502",
+      "id": "0a8ba975",
       "execution_count": null,
       "outputs": []
     },
@@ -134,7 +134,7 @@
         "   - `predictions` : batch of tensors corresponding to lines of text predicted by the model.\n",
         "   - `targets` : batch of actual tensors corresponding to lines of text.\n"
       ],
-      "id": "b0126b92"
+      "id": "a88b609f"
     },
     {
       "cell_type": "code",
@@ -154,7 +154,7 @@
         "print(f'predictions has shape: {predictions.shape}')\n",
         "print(f'targets has shape: {targets.shape}')"
       ],
-      "id": "1e23440e",
+      "id": "33f5f020",
       "execution_count": null,
       "outputs": []
     },
@@ -168,7 +168,7 @@
         "\n",
         "Notice that `predictions.shape[-1]` will return the size of the last dimension of `predictions`.\n"
       ],
-      "id": "d1bb21ec"
+      "id": "a6a954b9"
     },
     {
       "cell_type": "code",
@@ -177,7 +177,7 @@
         "reshaped_targets = tl.one_hot(targets, predictions.shape[-1]) #trax's one_hot function takes the input as one_hot(x, n_categories, dtype=optional)\n",
         "print(f'reshaped_targets has shape: {reshaped_targets.shape}')"
       ],
-      "id": "7b6fc8c0",
+      "id": "73d9d42b",
       "execution_count": null,
       "outputs": []
     },
@@ -187,7 +187,7 @@
       "source": [
         "By calculating the product of the predictions and the reshaped targets and summing across the last dimension, the total log perplexity can be computed:\n"
       ],
-      "id": "a5580a3b"
+      "id": "16b51969"
     },
     {
       "cell_type": "code",
@@ -195,7 +195,7 @@
       "source": [
         "total_log_ppx = np.sum(predictions * reshaped_targets, axis= -1)"
       ],
-      "id": "0f34583e",
+      "id": "4c4a193f",
       "execution_count": null,
       "outputs": []
     },
@@ -205,7 +205,7 @@
       "source": [
         "Now you will need to account for the padding so this metric is not artificially deflated (since a lower perplexity means a better model). For identifying which elements are padding and which are not, you can use `np.equal()` and get a tensor with `1s` in the positions of actual values and `0s` where there are paddings.\n"
       ],
-      "id": "68d1705a"
+      "id": "fe8ccc45"
     },
     {
       "cell_type": "code",
@@ -215,7 +215,7 @@
         "print(f'non_pad has shape: {non_pad.shape}\\n')\n",
         "print(f'non_pad looks like this: \\n\\n {non_pad}')"
       ],
-      "id": "575aff8e",
+      "id": "35ee1c07",
       "execution_count": null,
       "outputs": []
     },
@@ -225,7 +225,7 @@
       "source": [
         "By computing the product of the total log perplexity and the non_pad tensor we remove the effect of padding on the metric:\n"
       ],
-      "id": "d9986fc9"
+      "id": "0c67da47"
     },
     {
       "cell_type": "code",
@@ -234,7 +234,7 @@
         "real_log_ppx = total_log_ppx * non_pad\n",
         "print(f'real perplexity still has shape: {real_log_ppx.shape}')"
       ],
-      "id": "4a5be224",
+      "id": "a02d5a6b",
       "execution_count": null,
       "outputs": []
     },
@@ -244,7 +244,7 @@
       "source": [
         "You can check the effect of filtering out the padding by looking at the two log perplexity tensors:\n"
       ],
-      "id": "fe5df546"
+      "id": "33c8965c"
     },
     {
       "cell_type": "code",
@@ -253,7 +253,7 @@
         "print(f'log perplexity tensor before filtering padding: \\n\\n {total_log_ppx}\\n')\n",
         "print(f'log perplexity tensor after filtering padding: \\n\\n {real_log_ppx}')"
       ],
-      "id": "fc6e2d82",
+      "id": "416d4e73",
       "execution_count": null,
       "outputs": []
     },
@@ -263,7 +263,7 @@
       "source": [
         "To get a single average log perplexity across all the elements in the batch you can sum across both dimensions and divide by the number of elements. Notice that the result will be the negative of the real log perplexity of the model:\n"
       ],
-      "id": "23152242"
+      "id": "857b52fa"
     },
     {
       "cell_type": "code",
@@ -273,7 +273,7 @@
         "log_ppx = -log_ppx\n",
         "print(f'The log perplexity and perplexity of the model are respectively: {log_ppx} and {np.exp(log_ppx)}')"
       ],
-      "id": "d8b39374",
+      "id": "114ee932",
       "execution_count": null,
       "outputs": []
     },
@@ -283,7 +283,7 @@
       "source": [
         "**Congratulations on finishing this lecture notebook!** Now you should have a clear understanding of how to work with Trax's numpy and how to compute the perplexity to evaluate your language models. **Keep it up!**\n"
       ],
-      "id": "9a14b220"
+      "id": "3b459b5b"
     }
   ],
   "metadata": {
