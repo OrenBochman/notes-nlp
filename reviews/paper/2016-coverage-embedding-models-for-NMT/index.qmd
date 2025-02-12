@@ -1,0 +1,113 @@
+---
+date: 2025-02-12
+title: 'Coverage Embedding Models for Neural Machine Translation'
+subtitle: Review
+categories: [Paper, Review]
+keywords: [NLP,Stub, NMT, Podcast]
+draft: True
+---
+
+![Literature review](/images/literature-review-open-book.jpg){.column-margin}
+
+Improving attention
+
+::: {.callout-note}
+
+## TL;DR - Coverage Embedding
+
+![Coverage Embedding in a Nutshell](/images/in_a_nutshell.jpg)
+
+
+:::
+
+## Podcast
+
+<audio controls="1"><source src="podcast.mp3" type="audio/mpeg"></audio>
+
+## Abstract 
+
+> In this paper, we enhance the attention-based neural machine translation (NMT) by adding explicit coverage embedding models to alleviate issues of repeating and dropping translations in NMT. For each source word, our model starts with a full coverage embedding vector to track the coverage status, and then keeps updating it with neural networks as the translation goes. Experiments on the large-scale Chinese-to-English task show that our enhanced model improves the translation quality significantly on various test sets over the strong large vocabulary NMT system. -- [@mi-etal-2016-coverage]
+
+## Outline
+
+
+**1. Introduction**
+*   Neural Machine Translation (NMT), especially attention-based models, has gained popularity.
+*   Attention mechanisms focus on source words to predict target words.
+*   However, these models lack history or coverage information, leading to repetition or dropping of words.
+*   Traditional Statistical Machine Translation (SMT) uses a "coverage vector" to track translated words.
+*   SMT coverage vectors use 0s and 1s, whereas attention probabilities are soft. SMT systems handle one-to-many fertilities using phrases or hiero rules, while NMT systems predict one word at a time.
+*   The paper introduces coverage embedding vectors, updated at each step, to address these issues.
+*   Each source word has its own coverage embedding vector that starts as a full embedding vector (as opposed to 0 in SMT).
+*   The coverage embedding vectors are updated based on attention weights, moving toward an empty vector for words that have been translated.
+
+**2. Neural Machine Translation**
+*   Attention-based NMT is an encoder-decoder network.
+*   The encoder uses a bi-directional recurrent neural network to encode the source sentence into hidden states.
+*   The decoder predicts the target translation by maximizing the conditional log-probability of the correct translation.
+*   The probability of each target word is determined by the previous word and the hidden state.
+*   The hidden state is computed using a weighted sum of the encoder states, with weights derived from a two-layer neural network.
+*   The paper introduces coverage embedding models into the NMT by adding an input to the attention model.
+
+**3. Coverage Embedding Models**
+*   The model uses a coverage embedding for each source word that is updated at each time step.
+*  **Each source word has its own coverage embedding vector,** and the number of coverage embedding vectors is the same as the source vocabulary size.
+*   The coverage embedding matrix is initialized with coverage embedding vectors for all source words.
+*   Coverage embeddings are updated using neural networks (GRU or subtraction).
+*   As the translation progresses, coverage embeddings of translated words should approach zero.
+*   Two methods are proposed to update the coverage embedding vectors: GRU and subtraction.
+
+    *   **3.1.1 Updating with a GRU**
+        *   The coverage model is updated using a GRU, incorporating the current target word and attention weights.
+        *   The GRU uses update and reset gates to control the update of the coverage embedding vector.
+    *   **3.1.2 Updating as Subtraction**
+        *   The coverage embedding is updated by subtracting the embedding of the target word, weighted by the attention probability.
+
+*   **3.2 Objectives**
+    *   Coverage embedding models are integrated into attention NMT by adding coverage embedding vectors to the first layer of the attention model.
+    *   The goal is to remove partial information from the coverage embedding vectors based on the attention probability.
+    *   The model minimizes the absolute values of the embedding matrix.
+    *   The model can also use supervised alignments to know when the coverage embedding should be close to zero.
+
+**4. Related Work**
+*   Other parallel and independent research on similar topics exists.
+*   Tu et al. (2016) also uses a GRU to model the coverage vector. However, this approach differs from the current paper's method by initializing the word coverage vector with a scalar and adding an accumulation operation and a fertility function.
+*   Cohn et al. (2016) augments the attention model with features from traditional SMT.
+
+**5. Experiments**
+*   Experiments were conducted on a Chinese-to-English translation task.
+*   Two training sets were used: one with 5 million sentence pairs and another with 11 million.
+*   The development set consisted of 4491 sentences.
+*   Test sets included NIST MT06, MT08 news, and MT08 web.
+*   Full vocabulary sizes were 300k and 500k, with coverage embedding vector sizes of 100.
+*   AdaDelta was used to update model parameters with a mini-batch size of 80.
+*   The output vocabulary was a subset of the full vocabulary, including the top 2k most frequent words and the top 10 candidates from word-to-word/phrase translation tables.
+*   The maximum length of a source phrase was 4.
+*   A traditional SMT system, a hybrid syntax-based tree-to-string model, was used as a baseline.
+*  Four different settings for coverage embedding models were tested: updating with a GRU (UGRU), updating as a subtraction (USub), the combination of both methods (UGRU+USub), and UGRU+USub with an additional objective (+Obj).
+
+    *   **5.2 Translation Results**
+        *   The coverage embedding models improved translation quality significantly over a large vocabulary NMT (LVNMT) baseline system.
+        *   UGRU+USub performed best, achieving a 2.6 point improvement over LVNMT.
+        *   Improvements of coverage models over LVNMT were statistically significant.
+        *   The UGRU model also improved performance when using a larger training set of 11 million sentences.
+
+    *   **5.3 Alignment Results**
+        *   The best coverage model (UGRU + USub) improved the F1 score by 2.2 points over the baseline NMT system.
+        *   Coverage embedding models reduce the number of repeated phrases in the output.
+
+**6. Conclusion**
+*   The paper proposed coverage embedding models for attention-based NMT.
+*   The models use a coverage embedding vector for each source word and update these vectors as the translation progresses.
+*   Experiments showed significant improvements over a strong large vocabulary NMT system.
+
+**References**
+*   A list of references is provided, including papers related to NMT, attention mechanisms, and statistical machine translation.
+
+
+<!-- TODO: add , reflection, and terminology and for this paper-->
+<!-- TODO: link here from LSH lessons-->
+
+## The Paper
+
+![paper](./paper.pdf){.col-page width=800px height=1000px group="slides"}

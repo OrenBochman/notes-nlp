@@ -1,0 +1,733 @@
+---
+date: 2022-01-18
+title: "Text Classification"
+subtitle: "CMU CS11-737: Multilingual NLP"
+description: "This week we will cover text classification and sequence labeling. We will start with the basics of text classification, and then move on to more advanced topics like sequence labeling."
+categories: 
+    - Attention
+    - Multilingual NLP
+    - NLP
+    - Notes
+---
+
+![course banner](/images/tiling.png){.column-margin .nolightbox width="200px"}
+
+::: {#vid-01 .column-margin}
+{{< video https://www.youtube.com/watch?v=JpOJiL9ZF7w&ab_channel=GrahamNeubig >}}
+
+Lesson Video
+:::
+
+::: {#sup-slide-deck .column-margin group="slides"}
+![This week's slides](slides.pdf){width="420px" height="340px" style="@page {size: 16in 9in;  margin: 0;}" group="slides"}
+
+Slides for this week
+:::
+
+
+::: {#sup-slide-deck2 .column-margin group="slides"}
+![This week's slides](slides-speech.pdf){width="420px" height="340px" style="@page {size: 16in 9in;  margin: 0;}" group="slides"}
+
+Speech Slides
+:::
+
+::: {.callout-note}
+## Learning Objectives  {.unnumbered}
+
+- Why multilingual NLP?
+- What makes multilingual NLP hard?
+- Survey of linguistic diversity of class
+:::
+
+
+
+::: {.callout-note collapse="true"}
+### Transcript {.unnumbered}
+<!-- Transcript here is machine generated no punctuation and I eddited it a but but it needs more work and I dont see the benefits unless I can run it through some tool. -->
+
+> Welcome everyone to CS 11-737. 
+
+> This is a multilingual natural language processing and it will be run by me (Graham Neubig) and Alan Black and Shinji Watanabe.
+
+> We're going to be covering all aspects of NLP from a multilingual perspective and I am waiting for Alan to come in. I don't know if he's here 
+
+>> I'm here 
+
+> The title here says "multilingual natural language processing" and the reason why we're interested in multilingual natural language processing is that in the other classes that I teach like CS 11-711 most of the time when we talk about NLP a great amount of our work not all of it is on English processing.  
+> So we say natural language but what we actually mean is English.
+> However there's many many languages in the world.
+
+> Estimates say between six thousand five hundred to seven thousand depending on you know where you draw the boundaries or you know depending on how many of these languages still have a significant number of speakers if any at all. 
+
+> But basically there's a huge amount of languages.
+
+> A huge amount of linguistic diversity throughout the world and it'd be great if we could create systems that allow us to process all of them.
+
+> In addition, when I talk about languages what exactly are languages isn't clear, right?
+
+> So we say English but the English I speak is very different from many of the Indian English speakers. You hear Australian english speakers British english speakers and speakers from South Africa. We all speak the same language we're all kind of mutually intelligible. 
+
+> But we have very different ways of pronunciation we have very different terms for some things. Like truck versus lorry or elevator versus lift. Even if you go all the way to singapore for example there's even kind of different varieties of grammar and things. 
+
+> Like a lot of variety even within what we consider a single language.
+
+> Another thing to think about is: consider how we build NLP systems and you know a very long time ago, you know 40 years ago or something like this, it was very standard to build rule-based nlp systems where basically what we would do is, we would come up with a rules that were written out in a PERL program a Python program or C++ program and these rules would be entirely devised by a linguist who knew the language under consideration and in some cases for some applications these actually work pretty okay.  
+
+> For example language generation still mostly uses world-based systems with
+templates and other things like this however they require lots of human
+effort especially for more complex tasks and they require effort for each
+language for which they are developed and of course you know most people in
+this class are very familiar with machine learning based systems or at least know that
+most of nlp runs on machine learning based systems now and these work really well when a lot of
+lots of data is available but they also require that data is available and if no data is
+available whatsoever then they don't work of course so
+basically um we're looking at two different methodologies here the
+role-based methodology is relying on a scarce resource human expertise
+the machine learning based systems are requiring data which also is a scarce resource in many
+scenarios in many languages we don't have a whole lot of it so because of this we are uh you know
+we run into similar problems that you know it's hard to even uh create these
+um uh these models as well so machine learning models uh what we're
+talking about uh is something formally that maps an input x into an output y
+and in the you know case of uh nlp uh usually the input x or the output y
+will be text so if you took 11 7 11 with me you're familiar with
+this but basically we have input text x being text output y being text in another language which corresponds to
+translation uh input x being text output y being a response corresponds to dialogue
+input x being speech and the transcript is speech recognition [Music] in input x being text
+and output why being linguistic structure this would be language analysis so basically you know if we want to
+build a machine learning model uh we need an appropriate way to represent our
+input an appropriate way to generate our output in an appropriate data set that consists of you know at least some
+inputs and outputs uh or something you know related to the inputs and
+outputs in order to train the model well
+and to learn we can use paired data including
+both the inputs and outputs source data which includes only the input so that
+could be something like monolingual text or target data which also could be something like monolingual
+another really salient thing that we need to be able to do for multilingual learning or cross-lingual learning is we
+can use paired source and target data in similar languages so
+we're going to talk a lot about language similarity in this class starting today and continuing in a few lectures
+and this is a really powerful tool in allowing us to generalize to new languages where we
+don't have lots of data in that language itself
+so this is just one example of the long tail of data
+and um this is another interesting um
+or this is an interesting chart from wikipedia that i calculated myself it's basically the number of articles in
+wikipedia compared to the language rank and basically what you can see is after
+the first 10 you know english has 60
+let's see six million articles on wikipedia um and then the number of articles for language quickly drops
+after you get outside of english uh this uh second language here does anyone
+have a guess what this is
+if if you don't know already you're never going to get it right but uh but you can try chinese
+chinese
+good good guesses everyone we have lots of guesses for high resource languages actually the answer is cebuano
+which is definitely not a high resource language and uh the reason why uh number two is chiboando is because some swedish software engineer wrote a bot to generate wikipedia articles in cebuano for every municipality in the world and every uh every like animal or plant in the world so there's all these uh bot generated articles for cebuanos so
+uh you know you would never guess that that would be number two but it also highlights the problem that even if you
+have lots of data uh for some languages very often it's kind of like low uh low quality as well.
+So uh there's actually another paper that just came out uh recently let's see if i can find it very very quickly. 
+It's from google where they also outline the the amount of training data that they are able to find in the languages that they process .
+It just came out of uh like week or two ago.
+If you can see this here.
+This is the amount of uh multilingual data that they have for certain
+languages so you can see that after you get down past the first hundred languages or so
+uh they're able to get uh i'm guessing this is probably sentences
+they're able to get somewhere on the order of maybe a million sentences of training data for
+the top 100 languages and then as you get down to you know 200 languages or so they still
+have um 10 million sentences in those languages so monolingual data there's
+certainly more monolingual data than there is bilingual data um but you can see that this drops off
+and this is on a log scale so you can see that english and kind of the the top highest resource languages are
+uh you know have much much more data than all the others exponentially
+more data
+let me put this in the zoom zoom chat in case anyone wants to welcome
+so um how do we cope with this we can do that through better models or algorithms
+so sophisticated modeling and training algorithms uh in order to do this you need to know
+like uh natural language processing and machine learning and we'll be talking about things like that
+um also more uh linguistically informed methods uh that means we need to know
+linguistics we can also do it through better data so
+every piece of relevant data for a task in a loan resource language can help
+and how we acquire this data requires us to be resourceful and we'll talk about what good ways of gathering data
+um we can also make data if necessary so if you want to work on a particular
+language it helps to be connected uh to you know people who know the language and can help you out
+and um you know different situations require different solutions
+so every situation is going to be unique based on the task that you want to tackle and the language you're
+interested in it's uh you know its current situation so
+uh you need to be aware of uh how to basically map from whatever situation you're interested in into the most
+appropriate solutions for that uh situation um i had a good question uh when we say
+bilingual data do we need parallel data generated or curated by human experts and ellen answered mostly curated by humans
+um it could be parallel data generated automatically but that usually isn't
+counted at these sorts of counts because he would need to um you know it's going to be less diverse it's going to be
+stilted or things like that so yeah
+so this class will cover a lot of things um it will cover things like linguistics including things like typology
+orthography morphology syntax language contact and change in code switching
+and actually sorry i missed phonology there as well which is probably important for speech
+um also a data annotated and unannotated sources data annotation linguistic
+databases active learning and tasks like language identification
+sequence labeling translation speech recognition and synthesis and syntactic analysis
+um we'll also cover some of the societal considerations like ethics and the connection between language and society
+and this is really important um especially in some multilingual contexts
+because when we're talking about language it's very easy to think about it in the abstract as you know something that we
+are uh you know we're treating as a computational object in some cases but
+language is fundamentally used as a method of communication between humans and so humans it's a very important part
+of people's lives and especially if you're talking about low resource languages
+or languages that have been historically oppressed by people or by you know colonizers or things like
+this this can be a important ethical issue about who owns the language and other things like that as
+well um and the idea is uh by the end of the
+class we'd like you to be able to build a strong functioning language system in a low resource language that you do not
+know um with the idea being that if you can do it in a language that you don't know you'll be able to do it even better in a
+language that you do know so um uh that's kind of the goal of class
+so that's a high level motivation are there any questions about that before i move on into a kind of an overview of
+what we're going to cover
+okay um so we're
+training multilingual nlp systems one very important part of this is data
+creation and curation and the first step is obtaining curated
+training data in the language that you're interested in and what i mean by curated is basically it's in the form in a form
+that you can use easily uh not random pdfs uh that were scanned
+in the 1950s uh somewhere on the internet because that's hard to you know feed into your uh fercy machine
+translation so we need to think about like what
+types of data we'll be using uh monolingual multilingual or annotated uh
+data so it could be text it could be multilingual text aligned or annotated
+data with whatever you know linguistic features or annotations you want to predict
+also where can you get it can you get it from annotated data sources
+like uh you know there's a whole industry of nlp papers
+where people have gone in and done some variety of interesting annotation on text usually english text
+so that you could be using but unfortunately uh you know most of these wonderful like
+common sense reasoning data sets or numerical question answering data sets or whatever
+the popular thing that people are creating uh for acl 2022 2023 is
+don't exist in most languages in the world um another thing is curated text
+collections so how can we get text in that language and uh or do we need to scrape it on our own from from the
+internet can we create data how can we
+efficiently create high quality data so
+efficient uh [Music] efficient is important but high quality is equally important it's particularly
+difficult to create high quality data in you know languages that don't have lots
+of trained linguists or where you don't necessarily know the language so we're going to be talking about some of those
+things as well and uh ethical issues like working with communities language ownership like i
+mentioned before um there was a question what's the difference between multilingual data and annotated data
+um so you can annotated data is basically where a human annotator has gone in and written something
+on the data or like given some sort of uh you know information on the data in addition to
+the original text itself um so uh to give an example uh
+like part of speech tag corpora so somebody has gone in and read
+the text and assigned a part of speech tag to each um to each word another example would be
+named entity recognized corpora named entity tagged corpora or question answering corporal where you've
+annotated it with annotated an existing text with a question and the appropriate answer for that uh so these would all be
+annotated uh that's an orthogonal access to multilingual so you can have a
+multilingual annotated data set as well so multi-languages means in multiple
+languages um can i give an example of a text of a task that is only applicable to
+some languages i think that's an interesting question i don't
+think there are many tasks that are only applicable to some languages
+um [Music] there are some tasks that are kind of trivially easy in some languages like um
+pronunciation estimation is trivially easy in languages where the pronunciation exactly matches the more
+the orthography morphological analysis for chinese is
+not very hard because chinese has basically no morphology
+so there are some cases where the typological features of the language basically
+uh mean that there's no need to do that task but i think most nlp tasks are
+applicable to most languages
+very good question um so once we have a data set we apply
+multi lingual training techniques um and we're going to be talking about lots and lots of these so it's kind of a central
+focus of the class so one way we can do this is by training a large multilingual NLP system by feeding in lots of data this would be an example like of a translation system from many languages
+into english and there's lots of challenges in doing this that we'll need to tackle.
+
+> For example how to train effectively how to ensure representation of low resource languages.
+
+> Other things that we're going to talk about is *transfer learning*.
+
+> Basically we train on one language and then transfer to another, or train on many languages and transfer to another.
+
+>So this is like a special variety of multilingual learning where we really care about one language in particular and we would really like to improve accuracy there.
+
+> If you're working for the government of azerbaijan they might really care about your Azerbaijani English or English Azerbaijani translation so they don't care if you're doing really well on French to English translation they just want you to maximize accuracy and that's where kind of a transfer
+you know focus transfer approach is useful and we'll talk about methods to do that as well
+another really popular variety of transfer is training on unannotated data and transferring to supervised tasks and
+that's useful for precisely the reason that i talked about before in the google
+paper where you can get more uh you know monolingual data or especially more
+textual data than annotated data so that's an important topic as well
+so another thing that we're going to talk about is multilingual learning kind of from a linguistic
+perspective and um an important concept here is typology
+and what typology does is it basically uh says that languages across the world have similarities and differences
+and typology is kind of the practice and the result of organizing languages along
+multiple axes so to give a couple examples of this um
+one way you can organize languages is according to the script that they use and this is really really important in
+nlp because for example it's much easier to transfer across languages that use the same script
+just because you know words that are pronounced the same way uh tend to have similar meanings in
+related languages and uh if they're written the same way then it's easier to tell if they're
+pronounced the same way there's many many different scripts in the world of course the most common one
+is latin script which we're all familiar with and using right now there's also cyrillic arabic
+you know chinese in japan they use katakana and kanji
+many many different scripts in uh in india in the various languages uh around
+india and south asia in general and then there's some other scripts that you've likely not even
+you know most people here have not heard about before like cree or cherokee
+um or things like this
+another one is phonology so how is the language pronounced um and uh
+this is probably very salient to you if you learned english as a second language speaker english has many many vowels
+many many vowel sounds in it whereas many other languages this is an
+example from farsi which really only has six vowel sounds and um so
+uh the ways the vowels are pronounced are diff different and like if you want
+to learn english from farsi uh then you're going to have to learn a lot of new vowel sounds and that makes
+it kind of difficult to learn english also even if farsi has only six vowel sounds that
+might be slightly different or even very different vowel sounds from japanese which has five thousands
+um so uh you know phonology is basically how do we um
+how do we pronounce words and how does that interact with other parts of the language
+morphology and syntax so what is the system of word formation
+and syntax is how are words brought together to make sentences so if we look at
+uh this morphology here english has very simple morphology so she opened the door for him again
+um the only real kind of thing that happened in word formation
+here is the the lemma open got a suffix opened and that turned uh
+open into the past tense um if we look at japanese which is an agglutinative language that has more
+morphology here we have akite which means
+open the door for him basically and so all of this is expressed in a
+single uh in a single word and then we have a polysynthetic
+language which basically means very very rich morphology and in mohawk she opened the door for him again
+as one word basically so all of this is expressed in the suffix uh that you add into the uh
+that into the language and there's uh interesting interactions between morphology and syntax also like uh
+morphology morphologically rich languages tend to have certain syntax and vice versa
+syntax is how words are brought together to make sentences so as we know in english uh the stereotypical word order
+for english or the major word order for english is a subject verb object
+in japanese it's subject object verb
+in other languages like irish or arabic it's a verb subject object like this
+and um in other languages like malagasy it's verb object
+subject and of course this is not the only you know this is not the only order we
+use we use other orders in english as well but um you know lots of other features you can define
+here but this is kind of an important salient element of the languages
+there's also language varieties contact and change so languages contact uh one
+another and gradually evolve um this is a beautiful illustration of a
+language family tree that some people might have seen before this is the indo-european language
+family and all of the languages said split off uh from it so like hindi
+uh english italian spanish punjabi kurdish all have split off at
+different times uh but they all have a common ancestor uh there's a lot of language families in
+the world indo-european is the biggest one most widely spoken one but there's also other ones like uralic
+um uh which includes things like finnish and hungarian and other things like that
+and there's similarities in structure like syntax between similar languages and language families
+but more salient is the similarity in words so in proto-indo-european there was this word
+over here that split off into all these other words like the english ii all the way
+over to you know hindi languages hindi words and other words like this so
+because all the languages are related to each other uh this results in you know
+essentially similarities between the languages that we can exploit from learning uh multilingual and open
+systems as well um and another thing we're going to be
+talking about in the class is multilingual applications so uh we're going to be talking um
+in about sequence labeling and classification uh like language id part of speech tagging named entity recognition entity
+linking with sequence encoders and subword encodings and um we're going to be talking about
+data from universal dependencies part of speech tags wikipedia based name density recognition
+and linking and other things like this and how can we get multilingual data for all of these uh important tests
+uh we'll be talking about morphology and syntactic analysis so how can we take this quechua uh you know
+polysynthetic word and break it down into an analysis like this that tells us
+um you know what each of these segments means what part of speech it is uh things like this
+and syntactic analysis covers things like dependency parsing and uh you know
+phrase structure parsing and i'm particularly interested in these applications not you know because we all
+love staring at morphological analyses and parse trees uh all day you know it's not like
+question answering or um or machine translation things that are immediately useful but rather i'm excited about them
+from the point of view of being able to you know create a grammar textbook for an under-resourced language or help
+linguists with their linguistic inquiry about uh you know how the languages and
+uh the whole world are similar or different or things like this so from that point of view i think
+it's very interesting this is an application we're also going to talk about machine
+translation and sequence sequence models so um sequence sequence problems can be all
+kinds of different problems like the ones i talked about before and we're going to be talking about you
+know sequence sequence models with attention transformers and also if you took eleven seven eleven we're going to
+be going into a bit more detail about kind of advanced methods for machine translation that we covered
+there uh because you know machine translation is one of the more important uh you know
+multilingual tasks um and also low resource considerations
+um in for modeling challenges uh we have multilingual sharing of structured vocabulary
+uh balancing training over many languages doing efficient transfer between languages
+and incorporating various varieties of the supervision we do have for low resource languages so these are going to
+be very important topics in classes
+so are there any questions on this here uh if not i'll turn it over to shinji
+for speech and we'll also have some time to ask questions at the end hopefully if you that you need to
+i'll stop my share for you
+okay um i i don't see any questions so shinji if you want to
+sure uh can you see my screen yes okay
+and also just i wanna test the audio is working
+welcome to the multilingual nlp pores either sounds okay yeah
+uh it's obviously it's not my voice it comes from the dds
+okay i briefly explained about the speech extra part in this marketing of energy
+welcome and the uh this is a kind of uh the schedule uh actually uh the that we
+uh have of five courses or mainly dealing with speech but of course some
+of the other important speech applications and so on are in the other part of the lectures but this the five
+lectures from the uh march 1st to march 15th we intensively uh introduce the speech
+technologies and the first part we first
+introduce some basic speech what is speech and i will also explain about the
+various speech applications and which uh we will also other gifts
+that are more uh the introduction to the uh towards the other other causes in the
+speech courses and they we also release assignments we
+hear in the march first which is also related to speech and the next part
+uh that i will explain about the automatic speed recognition
+and the the the after the automatic speed recognition uh i will also explain about sequence to
+sync as models however this is a little bit more customized to the speech processing
+there are some overlap in the the machine translation part but i will try to emphasize the difference
+how we customize it for the speech problem and we'll cover the sequence to
+sequence based asn tedious and the professor aram black
+will also introduce a text to speech data in general
+and then the last part of the lecture of the speech part i will try to introduce the various uh marginal uh sr uh and the
+ttl systems and in technically there are a lot of overlaps with the multilingual the
+translation and other techniques for low resource or transfer learning and so on
+uh but again that i will try to emphasize the problem uh data used for
+the speech recognition and tts problems
+and i think this can be a quite obvious now but the data that i will explain
+about what is feature condition uh automatic speech recognition
+input is speech and the output is corresponding text
+and nowadays actually there are a lot of the speech recognition applications so i'm
+happy that i don't have to introduce so much but it used to be even speech
+recognition is not a general term and i have to spend some of the time to explain what
+is speech recognition and so on and here uh that i listed some of the uh
+the the applications products but in cmu we actually uh developed a lot of speech
+technology speech recognition uh technologies uh and so on so in relation
+to the other contribution to the uh the other research cmu actually also leading
+the technology side open source side in the speech recognition
+and i would like to actually show you the demonstration
+uh of the speech recognition uh can you see the other google crop
+i think so okay cool yeah thank you and this is actually the tool that we are
+maintaining espnet and i checked just using the google prop of that and this will be also uh used
+for our assignment so it will be good if you guys know these other tools a little bit but of course we will explain it
+later uh in the assignments uh the face and here i want to give you some example
+of the speech recognition and i prepared a couple of models
+english japanese spanish mandarin and the last one is the
+multilingual asl it's actually can accept 52 languages although the some of the
+languages the performance is not very good but at least uh that it's potentially can recognize 52 languages
+and today uh since uh my other main language is japanese so i kind of make a
+demonstration based on the japanese i just you know uh the tuta japanese uh other model
+and the download and so on model download and so on takes time so i already kind of skipped i already uh did
+it in our uh in advance and
+let's do some demonstration kyo yuukih
+foreign
+and hopefully to be recognized
+so this is a sentence and i believe many of them i cannot know that the japanese
+but please trust me actually this is perfectly recognized
+yes right they actually know that japanese so that the priests trust us that my uh
+in the japanese is correctly pronounced and also that this system correctly are
+they recognize my speech okay this is a speech recognition
+and the next part uh is the tts that is also data covering
+covered by our lecture and this is a kind of our inverse problem of asl given
+the text uh to produce the uh the uh natural human sound
+and similar to the asl uh in addition to many success uh in the uh
+the tts other products cmu is actually one of the uh the
+the the quite active institute that also uh developed various
+tools various open source tools and maintain them so that i think that you
+guys have a great experience of not only studying uh the tts technique itself but
+also the technology a system that we are developing
+okay so now i move to the remarks uh oh maybe i it's better to give you some
+demonstration of the tps because i prepared that as well
+so tts uh i actually using the same other uh system demonstrates an espnet toolkit
+and the i we have our uh actually uh the three other language
+uh the uh in the option english japanese mandarin
+and so on and then i selected the english today and i finished the model setup already
+because it takes a time to download the model and let's do the synthesis
+i have to shovel
+snow today
+okay i have to shovel snow today
+there's some kind of a bit uh the uh the crazy sound happens but overall the
+sound uh okay right uh i will have another example
+[Music]
+it sounds very weird right actually the other we have to provide that the
+abbreviation correctly
+and hopefully do the work multilingual nlp
+okay it's working so that's the kind of tts system
+and i have a couple of remarks related to this the lecture so the asl and the tts and related
+technologies are explained these lectures but like the the other nlp part of the
+courses this lecture is more like introducing the high level
+explanation insta introduction and system description of asl and tts
+so if you want to know more about the such kind of technologies uh it'll be
+great if you also consider to take the speech recognition and speech processing courses where you
+can find more fundamental and algorithm of these uh techniques
+and shamu is lucky you know cmu covers all entire human language technology courses so you guys in addition to this
+multilingual energy you can learn speech recognition tts and so on
+and the uh i also would like to mention that and it's actually uh similar to the
+grams that are the remarks most of asl tts technologies are
+still studied with major languages so as you can see from my kind of list
+of the models most of the language is a major language japanese chinese mandarin german spanish and so on uh right
+and dude this is exactly what brown mentioned due to the resources the know-how the the marketing
+other priorities and so on uh makes the current situations
+however in this multilingual course try
+this problem and we want to actually provide uh what kind of our other languages any
+of the languages you can build at the front other based on the uh sr and the
+tts system in our lecture so what you can learn from this lecture
+is exactly like that i will try to explain how we built a new
+other asl and tts techniques uh systems for a
+new language and actually one of the assignments uh in assignment three
+is uh for you guys to pick up one language and collect some data or they're using
+existing data whatever is fine but then building a asl system
+that will be your assignment and also in this lecture we did a bit
+focus on more on the end-to-end sr but we can also try to cover the other other
+pipeline techniques in asl and dts and the last slide
+one of the ultimate goals of the human language technologies and i think this is also one of the important uh the goal
+in this multilingual energy course is to realize the speech to speech translation
+this is a kind of we can say that combining sr machine translation tds
+and note that we don't directly explain about these technologies but the
+that we can definitely providing the explanation instructions of the core
+technologies of these approaches so after you guys either finish these courses maybe you can also build a
+speech space translation and since we also have our uh the term
+project so if someone is interested in maybe you can also tackle a speech to speech
+translation problem yeah that is from my side
+great thanks for watching are there any um are there any questions about this
+i think it was relatively uh relatively straightforward but cool to
+have the demos cool um okay
+so i'm i'm gonna talk a little bit about logistics um before we
+go on to ellen's part um and so logistics
+first to introduce the instructors and tas we have three instructors and five tas
+so um ellen uh ellen black is the other instructor uh he'll be talking in a
+second um i had trouble guessing uh what ellen's research multilingual research areas
+where because he does everything but these are the ones that i thought of recently code switching dialogue speech synthesis
+um if you want to add any areas of interest [Music]
+no i think that's quite good i mean i have to project the things that i'm uh doing the multilingual aspect and these
+are definitely core parts of what i'm doing at the moment well um and so i i like to cover
+just about any part of multilingual nlp i'd like everything we can do in english to be done in any of the other languages
+i'm particularly interested in machine translation as well so that's a big part of my research and i'm i guess
+more and more interested in computational linguistics and um language
+you know education for endangered languages and other things like this as well so
+those are kind of my areas shinji talked already but you know speech recognition
+synthesis speech translation anything that has to give a speech advice for tas we have five
+excellent tas so uh i'll maybe i'll go through everybody and
+if you want to add any anything else about your research interests you can um so schwankai
+chung is working on speech recognition um thing reaching
+has previously worked on machine translation and dialogue in multilingual things he's worked on several different
+things um uh atheia daviani
+is working on number processing for speech synthesis uh patrick uh fernandez is
+working on machine translation also i guess model interpretability related things and uh vijay swanathan is working on
+information extraction so we have a pretty wide variety and for every class i try to share this with
+you so you know for your class project which people are the best people to be talking to basically
+um so you know we can a lot of us can cover other areas as well so if you don't know
+who might be the best uh person to talk to just reach out to us we can tell you um oh uh what languages do we know um is
+another important thing so i am a native english speaker i
+am fluent in japanese i can i can speak not native but nearly native level
+japanese i know a little bit of chinese korean and spanish um enough to read but not enough to speak
+well um uh ella andersonji or any of the other tas would like to share
+so i speak a form of english called scots english i also speak scots
+and i also speak japanese not as well as graham but better than most foreigners i
+lived there for years um i can read chinese but can't speak it and
+i can read most european languages and understand them and in fact for many languages i can work out um
+more than you would expect so uh i actually would not have so many uh
+language variations but probably uh the among other the members here my japanese
+is the best in terms of uh that i am the i was born and i was
+grew up in japan and another thing i want to mention is that yeah i'm kind of typical that i
+only speak japanese and english but can now uh work under the marginal processing so it will be great to have
+some kind of a language uh the experience adapt but the the marketing
+of techniques uh you don't need our other uh marginal uh the knowledge and
+the expertise and i i liked how ellen also said he speaks the scots variety of english so i
+speak the midwestern uh american variety of english and i speak
+uh i speak the kansai variety of japanese uh most of the time [Music]
+tokyo japanese so so let's um let's also in the chat if people wouldn't mind sharing what uh
+what languages are represented in the class that would be cool too to see especially you know um i i imagine we
+have a lot of people who speak you know chinese and hindi but if you have any others
+particularly less less common ones that would be really cool too
+so we have korean mandarin hindi marathi arabic
+canada tamil french russian haitian
+spanish canada indonesian
+punjabi bengali malaya portuguese
+uh latin [Music] telugu i'm skipping the ones that are
+duplicated but uh
+okay let's see um sanskrit
+uh spanish cool yeah i'm sure we have more uh that
+was just people who are uh who we're willing to share so that's great um i'd also like to talk about the class
+format next um so the class format here is a little bit of a
+i wouldn't say unusual but it's not just a purely lecture format basically um the idea is that we have a shortish lecture
+um you know maybe 30 30 to 40 minutes and um
+we for each lecture there will be a discussion question that we will try to
+tell you before the lecture and also usually a reading that you can read before you come to the lecture to help
+prime you for the discussion question and um the reason why we do this is um this is
+uh you know a class where there's lots of room for creativity especially you know
+in your final projects and other things like this so we'd like to give people a an opportunity to you know think deeply
+and actively about you know the questions we have here uh to get you ready for that
+after that we have a very special feature of this class which uh is always
+a very interesting called the language intent and basically what we're going to do is uh we're going to have
+uh one group every lecture introduce a language and introduce some of the unique features of it like the
+typological features or you know um just anything you think is interesting
+and ellen is going to give an example of this for hindi uh in about five minutes
+and um i wrote in groups of two to three i'm sorry this is a mistake uh this was from last time when the class was
+smaller this time the class is larger so we're actually going to ask you to do it in groups of four so that everybody gets at
+least one chance to present um and then after we have the language intent we're going to do
+the breakout room discussion uh or something like a code uh data assignment walk through so um most of
+the time we're gonna have discussion but sometimes we're we're going to be uh doing other things
+um and then in the case that we did a discussion um because we're going to break out into breakout rooms or groups to do the
+discussion um we're going to have a short summary at the very end where every group talks about maybe one or two interesting
+things that they came up with that might be kind of unique i say breakout rooms for zoom because
+we'll do that via zoom but if we reconvene to an inversing class um we will uh we'll probably just do it
+by breaking into into groups in the class um for the grading policy uh i have here
+uh the class and discussion participation is 15 language intent everybody's required to
+do this um there really aren't very many wrong answers so like as long as you do it you basically will get five percent
+as long as you do a good job um and then uh we have uh three assignments
+on multilingual sequence labeling uh which is an individual assignment uh then a multilingual translation group
+assignment multi-lingual speech recognition group assignment and final project uh where you you can kind of
+do something free for um so for 120
+like as i mentioned every single class we're going to have a discussion period however on thursday we're not
+going to have a discussion period because um on thursday the first assignment is going to be assigned so
+we're going to have the tas like go through the assignment and uh give you an idea of like what you
+should be doing have a q a about that so uh yeah that's all we have in terms of
+logistics for the class um are there any questions that people would like to ask
+uh and if not we'll jump right into owen's language
+uh yeah when it's not the code work what is the discussion about usually
+so um one example of a discussion that we might be uh having soon
+is um [Music] like
+for example for a class when we talk about language similarity and typology
+um there is a reading about uh there might be a reading about
+transfer choosing which languages to transfer from in transfer learning or at least that's
+what we did last year um that's ellen's class we'll let him decide exactly what we do uh this year but
+um so there's a paper where you'll read about which languages to transfer from in
+transfer learning we'll have a lecture about kind of similarities between languages
+and then in the discussion period we'd have a discussion about for example
+um given a language that you know which languages do you think would be the best languages to transfer from
+uh when you're doing a particular nlp task and why um so then you'd have to think you know
+what have i learned about cross-lingual learning uh what have i learned about typology what do i know
+about the language that i'm unfamiliar with and so which languages would be the best language to transfer from based on
+this knowledge that i got from the class so that that's just one example and then we go around in a small group
+and i'll discuss this and hopefully that would give you some insights into you know what other languages look like and
+things like that thank you
+great and i'll stop cheering
+okay i think we can see let's go
+okay so this is an example of the language intent and i'm going to choose hindi and i'm going to use hindi
+because i sort of know a little hindi and being british hindi is one of our non-english languages that's spoken in
+the uk because of historical reasons that you're probably all aware of um
+so hindi um it's spoken in northern india there's about 320 million native
+speakers um but there's also a substantial number of l2 speakers non-native speakers because lots of
+people in northern india get taught hindi as a second language and they're quite fluent at it and they will use it
+often so there's probably almost the same again uh l2 speakers and depending
+how you count um it's somewhere like the third or fourth most commonly spoken
+language um on the planet after mandarin english spanish depending how you draw the boundary there so it is a very very
+common language on the planet even though its language technologies is significantly behind it is a lingua
+franca of northern india so most of the northern indians even though it might not be their um native language get
+taught it to school and are quite fluent in it it also gets taught in southern india but people are not as fluent in
+southern india and in some areas they might not want to speak it as much because they see it as the northern
+language not the southern language india in case you didn't know it's full of lots of languages there are about 20
+standard languages for your country there are hundreds over the whole country and so each region basically has
+its own language in it they're really quite distinct in many cases it's also worth talking about the
+distinction between hindi and urdu urdu is mostly it's the it's the national
+language of pakistan and but it's also spoken throughout um india as well
+um it is mutually intelligible so people who speak hindi and urdu can talk to
+each other they have to be a little careful in choosing their words but probably no more different in maybe
+americans and brits choosing it although if you have two speakers speaking together maybe a hindi
+person would not understand what they're saying because they would drift away from what might be considered to be
+standard hindi the writing of these languages urdu and hindi is completely different urdu uses an arabic script
+while hindu uses dead nagari script and although maybe the uru speakers can read
+dev nagari the reverse is typically not true at all hindi has a lot of sanskrit in it while
+um urdu is more likely to have persian and arabic borrowings in it and therefore it may be that the urdu
+speaker is less understood than the um a hindi speaker
+sometimes these two languages together are called hindustani definitely historically that was the case and they
+do share phonology and they do share grammar so there's some similarity in that language where you could maybe use
+for speech recognition or speech synthesis at a level that would be useful but the writing system is not
+that um hindi is indo-european um actually indo-aryan and that means
+that there are things in hindi that are actually similar with a historical um relationship with even
+english even though they really are very far away for example uh maharaja which
+you might have heard of um which was a term for a um major royal in um
+in india um actually is a direct cognate of magnus royal great king and and so
+there is relationships there and there's a number of things that you find in numbers as well where um there's some
+similarity that you can sort of guess the relationship there um the script normally uses dev nagari
+that's ceramic script um um many of the writing systems used in the indian
+subcontinent are bramiscript and therefore they're similar in the way that they write and break up the
+syllables um devnegarry itself is also used for marathi which is spoken in
+mumbai although there's some characters are different in nepali though there are some characters that are different so
+it's maybe a sort of more standard way of writing over the whole of the um
+subcontinent um urdu uses its own form of um arabic and therefore is really quite
+different okay however often in social media in hindi it's written in the latin
+script so it's romanized okay it's often said it's written in english um
+but it's not written in english even though it may have lots of borrowed english actually in it
+hindi grammar is mostly um subject object verb so it's verb final uh but
+it's often pro dropped so the subject is often not said and it's sort of understood um
+in the environment and that's just fine and normal english doesn't do that very
+often although sometimes it does um but in hindi it's very common there's gender
+in all the nouns um which is not true in english but in hindi it is and there's agreement between the verbs and um
+the um the nouns and there's quite a rich inflection morphology with agreement and therefore
+words have different forms depending on what they're agreeing actually with um rather interestingly it has what's
+called arrogative ma marking many of the european languages if they
+do have agreement they have agreement between the subject and the verb but in hindi and some other um indian
+subcontinent language the agreement is between the object and the verb and to europeans this is seemed as weird but
+it's not weird at all because it's what the hindi people actually do and there's more of them than you so you should be
+aware of that the phrenology there's quite a rich number of um
+a vowels but they're different than uh english however because english is quite
+common in india it's also a lingua franca especially over north and south and there's actually a number of english
+um vowels that have been adopted into hindi and are just quite normal now
+and most people can pronounce them not everybody but most people um can pronounce them so in other words you
+have not just the native phonology but you've also got the borrowed english phonology coming into the um the
+language okay um the phonology is very rich um
+especially with um consonants and there's much more distinction between
+consonants that for example in english we do not have so for example in um
+hindi they make distinctions between aspirated and unaspirated stops which we
+do in english but we don't actually have a phonological distinction was that is that english native speakers generate
+them but we don't really care about the distinction between them but um indian speakers do this and this often sounds
+that when they're speaking english they sound like that there's more example breath coming out when
+they're actually speaking another thing that is very common in hindi which again doesn't have any
+equivalent in um european languages is what's called retroflex where the tongue is held a
+little bit further back in the mouth and that's one of the things that distinguishes indian english and
+accented english and compared to um american or british english um but there
+are lots of phonological differences and rather interestingly some of the non-natives who speak hindi fluently
+don't always do this so many of the southerners don't do this and therefore when they're speaking hindi even though
+they're speaking it fluently all the northerners can tell that they're speaking southern hindi because they're not doing
+that in the same way and maybe you're familiar with this in um
+other things like this in china where southern um chinese are not doing voicing the same as northern chinese
+that's the same thing that's happening in india and it's worth actually talking about this other form of language that's
+appearing in um the indian subcontinent and that's what's called english it's a mixture of hindi in english and most
+educated hindi speakers are fluent in english i mean they're not just can speak english they're actually
+completely fluent and may even use it as their primary literate language because
+since attending maybe middle school onwards they've been reading and writing in english more than they've been doing
+that in hindi and so what happens when many hindi speakers are speaking hindi
+is they use a lot of borrowed english terms and they'll mix them in this term of being code switching where they'll
+basically use two languages at once and this isn't just like borrowing english words that happens in say japanese and
+it's very common this is actually mixing the languages so you'll get mixed grammar mixed morphology um and choosing
+different words now code switching is very common in multilingual environments most of the
+planet um is multilingual and it's really just um the americans and the
+brits that are not and therefore they're not used to it but code switching is very common to the extent that
+english might even have become the standard way of speaking hindi and you
+can tease a hindi speaker by asking them to give a long sentence
+which contains hindi and only hindi words and has no um english words in it
+now there's lots of borrowed words there's been english in india for over 300 years so you know
+the word for doctor in hindi is doctor the word for boss is
+boss but um there are lots of other words that um on phrases which are
+actually mixed into english and they're very common and lots of people do studies on english as a language in its
+own right because it's really becoming one of the standard ways that hindi speakers are actually speaking today
+so that's my 10 minute um hindi um presentation you can see what i'm doing
+i'm talking about the language i'm talking about technical aspects of the language historical action
+aspects of the language i didn't say much about the language technologies of hindi it's not
+very much actually despite it being the third or fourth spoken language on the planet and
+it doesn't actually have that much technology and often when it does it's all devnaggery based and not actually
+romanized while actually most people who are writing hindi are romanizing when they're
+sending text messages and writing emails so i talk about history geography social
+position because there might be social aspects of how the language fits into the particular country it might be
+spoken in many different countries for example there is um hindi is an
+official language in jamaica it's also an official language in um fiji um partly because of the british empire um
+and the hindi speakers have moved there although in those cases everything is romanized and they don't use devnegary
+at all i talked about morphology grammar and phonology which is an interesting
+thing and you'll be able to find information about that through wikipedia or elsewhere i talked about maybe
+something that's linguistically interesting about the language arguative language is something actually distinguished it code switching is
+something that distinguishes i um maybe state something about the respect to the resources how big is the wikipedia have
+people got morphology how good is the speech recognition do people actually use it um for interacting with machines
+and maybe influences social uses um of the language or influences um on it or
+things which are sort of interesting and relevant that might be important if you are going to do
+some sort of language technology for the target language now hindi is one of the big languages it might be that you're
+going to select something that's much less common and therefore harder to be able to find information about and
+that's fine too okay i know one group is probably going to try to do um standard mandarin um as
+an example but don't think that you have to take big languages we're quite interested in the smaller languages as
+well
+:::
+
+
+::: {#sup-slide-deck3 .column-margin group="slides"}
+![This week's slides](lang-in-10-hindi.pdf){width="420px" height="340px" style="@page {size: 16in 9in;  margin: 0;}" group="slides"}
+
+Hindi in 10 minutes!
+:::
+
+
+## Discussion Question:
+
+> What are some unique typological features of a language that you know, regarding phonology, morphology, syntax, semantics, pragmatics?
+
+Hebrew has unique typological features:
+
+- Etymology: 
+    - Most of the Hebrew words are are derived from the bible.
+    - Hebrew is a semitic language, and has a large number of cognates with other semitic languages like arabic and aramaic.
+    - Hebrew has a large number of loan words from other languages, including English, Arabic, and Yiddish.
+    - Hebrew is an old language, and has a large number of archaic words and constructions that are not used in modern Hebrew.
+    - Words that were introduced into Hebrew during different areas may have some differences in stress patterns, etc.
+    - Hebrew has died out as a spoken language and been revived a number of times being preserved in the intrim as a liturgical language. During the time of the new testament, Hebrew had been replaced by Aramaic as the spoken language, but was revived after the inserection of Bar Kochba. 
+    Historical israel was depopulated from hebrew speakers by the arabs in the 4th century A.D. The modern revival of Hebrew was started by Eliezer Ben Yehuda in the 19th century.
+- Orthography: 
+    - Hebrew has a unique script that is written from right to left.
+    - Hebrew orthography where the vowels are not written and final forms of the letters are used at the end of the word.
+- Phonology: 
+    - Many sounds in hebrew have effectively merged when compared to neighboring semitic languages.
+    - Hebrew also has a script for indicating vowels, but these are ommited in most written texts. Correctly annotating the full range vowels required a sophisticated understanding of the language and is not in the skill set of most writers.
+- Morphology: Hebrew has
+    - A templatic morphology, where roots are three or more consonants and template are vowels and affixes. The root are inserted into the template to form words. 
+    - Most foriegn words do not follow this pattern, but undergo a process of nativization that allow them to take some suffixes. 
+    - Hebrew has a smichut or construct state, where two nouns are combined to form a new noun and these follow a number of rules.
+    - Hebrew can combines one or more small words as prefixes to the verb.
+    - Hebrew morphology has a number of additional mechanism for word formation described in "The final word" by Uzzi Ornan.
+- Semantics
+    - Written hebrew is highly ambiguous, and the meaning of a word is frequently determined by the context. It takes about a year for readers to learn to read hebrew fluently and even professional^[today most news are not read by professionals.] news casters make mistakes when the contexts the determine the meaning of a word appears later in the sentence.
+- Syntax
+    - Hebrew has a subject verb object word order, but this is not strict and can be changed for emphasis.
+    - Hebrew has a number of particles that are used to indicate the    relationship between words in a sentence.
+    
+
+

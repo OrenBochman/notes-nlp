@@ -8,9 +8,9 @@
 
 <meta name="author" content="Oren Bochman">
 <meta name="keywords" content="Automatic extracting, Automatic abstracting, Cue words, Comparative evaluation, Content words, Document screening, Key words, Pragmatic words, Parameterization, Research methodology, Sentence location, Sentence selection, Sentence significance, Title words">
-<meta name="description" content="Concepts, slide commentaries and Lecture notes on Automatic text Summarization by Masa Nekic">
+<meta name="description" content="Thought on engineering an Automatic text Summarizer">
 
-<title>Summarization Task – NLP Specialization</title>
+<title>Summarization Task – NLP Course Notes &amp; Research</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -81,6 +81,10 @@ ul.task-list li input[type="checkbox"] {
 
 
 <link rel="stylesheet" href="../../styles.css">
+<meta property="og:title" content="Summarization Task – NLP Course Notes &amp; Research">
+<meta property="og:description" content="Thought on engineering an Automatic text Summarizer">
+<meta property="og:image" content="https://orenbochman.github.io/notes-nlp/images/nlp-brain-wordcloud.jpg">
+<meta property="og:site_name" content="NLP Course Notes &amp; Research">
 </head>
 
 <body class="nav-sidebar floating nav-fixed slimcontent">
@@ -91,7 +95,7 @@ ul.task-list li input[type="checkbox"] {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="../../index.html">
-    <span class="navbar-title">NLP Specialization</span>
+    <span class="navbar-title">NLP Course Notes &amp; Research</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -154,7 +158,7 @@ ul.task-list li input[type="checkbox"] {
       <h1 class="title">Summarization Task</h1>
                   <div>
         <div class="description">
-          Concepts, slide commentaries and Lecture notes on Automatic text Summarization by Masa Nekic
+          Thought on engineering an Automatic text Summarizer
         </div>
       </div>
                           <div class="quarto-categories">
@@ -163,7 +167,6 @@ ul.task-list li input[type="checkbox"] {
                 <div class="quarto-category">Literature review</div>
                 <div class="quarto-category">Summarization task</div>
                 <div class="quarto-category">Relevance</div>
-                <div class="quarto-category">Conference talk</div>
               </div>
                   </div>
   </div>
@@ -784,7 +787,9 @@ ul.task-list li input[type="checkbox"] {
 <p>Several ideas surfaced while working on the assignment for building a hybrid generative/abstractive summarizer based on GPT2<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Many ideas came from prior work developing search engines. I had noticed that some issues were anathema to summarization from its inception.</p>
 <div class="no-row-height column-margin column-container"><div id="fn1"><p><sup>1</sup>&nbsp;a Generative Pre-training Transformer or a decoder transformer</p></div></div><section id="coverage-ranking-content-by-importance" class="level3">
 <h3 class="anchored" data-anchor-id="coverage-ranking-content-by-importance">Coverage ranking content by importance</h3>
-<p>The first issue is <strong>coverage</strong>, which is how much of the original document to include. Coverage is a much more difficult problem than it appears. For example, technical documents, like patents, headings, academic writing cues, and even IR statistics, may serve as features that we may feed into a regression that can guide us in discarding the chuff from the grain. On the other hand, for movie scripts or novels, we can’t use all that, and we need to decide what is essential based on the narrative structure, which requires sophisticated processing and extensive domain knowledge to extract. So, When we want to create a synopsis of a book like War and Peace, specific details are part of the narrative structure that stands out as essential to us, and I can say that even in 2025, LLM is not good at picking these out of a large document. For attentive readers with a suitable background, if we double the length of the text, they might pick additional plot points and then less significant subplots. If again we double we would, they would include more details concerning characters, their motivations, etc.</p>
+<p>The first issue is <strong>coverage</strong>, which is how much of the original document to include. Coverage is a much more difficult problem than it appears.</p>
+<p>Consider summerizing a long novel a single paragraph summary may provide a good idea of the main plot points of the story. On the other hand summerising a similar sized encyclopedia might require listing all the top level headings and subheadings i.e.&nbsp;a one paragraph summary would not be able to provide a good idea of the content of the document. On the other hand it should be much easier to generate a summary for the encyclopedia than for the novel as the encyclopedia has a highly structured document with clear headings and subheadings and writing conventions that provide cues to the reader about the importance of the content. Summerizing a novel is more challanging as we would actualy want to ommit alsmost all the details and so deciding which parts to keep is a major challange with a very sparse signal.</p>
+<p>For example, technical documents, like patents, headings, academic writing cues, and even IR statistics, may serve as features that we may feed into a regression that can guide us in discarding the chuff from the grain. On the other hand, for movie scripts or novels, we can’t use all that, and we need to decide what is essential based on the narrative structure, which requires sophisticated processing and extensive domain knowledge to extract. So, When we want to create a synopsis of a book like War and Peace, specific details are part of the narrative structure that stands out as essential to us, and I can say that even in 2025, LLM is not good at picking these out of a large document. For attentive readers with a suitable background, if we double the length of the text, they might pick additional plot points and then less significant subplots. If again we double we would, they would include more details concerning characters, their motivations, etc.</p>
 <p>To conclude, different documents can have radically different structures and cues. These suggest different strategies for selecting and ranking the material to be included in a summary of a given length. More so, when we consider summaries of different lengths, one can see that we are talking about a hierarchal structure.</p>
 </section>
 </section>

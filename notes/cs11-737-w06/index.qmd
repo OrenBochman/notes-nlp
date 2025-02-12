@@ -1,0 +1,663 @@
+---
+date: 2022-02-24
+title: "Translation Models"
+subtitle: "CMU CS11-737: Multilingual NLP"
+description: "This week we will cover text classification and sequence labeling. We will start with the basics of text classification, and then move on to more advanced topics like sequence labeling."
+categories: 
+    - Attention
+    - Multilingual NLP
+    - NLP
+    - Notes
+    - seq2seq
+    - NMT
+---
+
+![course banner](/images/tiling.png){.column-margin .nolightbox width="200px"}
+
+::: {#vid-01 .column-margin}
+{{< video https://www.youtube.com/watch?v=XeDCP0newd8&list=PL8PYTP1V4I8BhCpzfdKKdd1OnTfLcyZr7&index=16&ab_channel=GrahamNeubig >}}
+
+Lesson Video
+:::
+
+::: {#sup-slide-deck .column-margin group="slides"}
+![This week's slides](slides.pdf){width="420px" height="340px" style="@page {size: 16in 9in;  margin: 0;}" group="slides"}
+:::
+
+
+
+::: {.callout-note}
+## Learning Objectives  {.unnumbered}
+
+- Sequence-to-sequence models w/ attention
+- Decoding strategies
+- Transformers
+:::
+
+
+
+::: {.callout-note collapse="true"}
+### Transcript {.unnumbered}
+<!-- Transcript here is machine generated no punctuation and I eddited it a but but it needs more work and I dont see the benefits unless I can run it through some tool. -->
+
+
+> looking forward to talking about machine translation and sequence sequence models today
+uh as always i'll welcome discussion on this uh some of this might be
+this is kind of the basic modeling stuff regarding machine translation so i think some of this might be
+uh elementary for people who have taken an nlp class before but
+there are you know some people who might not have covered this so i'd like to go through it
+after this we're going to be talking about some concrete code details so looking at code from the annotated
+transformer and also from the assignment and as always please feel free to ask
+questions on chat or like live anytime you want
+so language models are basically generative models of text
+and uh what they do is they calculate the probability of a text x
+given um you know calculate a probability of a text x
+and they allow you to sample from this probability distribution to
+generate outputs with a high probability and
+the um so
+given this uh you know if we train on a particular variety of texts like let's say we train on harry potter books
+the sampling distribution will uh generate things that look like harry potter there's also
+um conditional language models
+and conditional language models don't just generate text but they generate text according to some specifications so
+if we have our input x uh and our output y our input x could be
+structured data output y could be a natural language description uh what we're going to talk about this
+time is translation so input x could be english output y could be japanese
+um our input x could be a document output y
+could be a short description
+and our input could be an utterance output of response inputs image output text
+input speech output transcript so you can see that a lot of things a lot of different tasks you know
+data to text generation or natural language generation translation
+summarization response generation image captioning and speech recognition all
+fit within this general paradigm
+so um because of this you know these are a very uh powerful and widely used variety
+of models and so i'd like to go a little bit into exactly how we formulate this problem
+and learn these probabilistic models so when we calculate the probability of
+a sentence the way we can do that is by taking a sentence which consists of i words
+and calculating uh the probability by the product of the probabilities of the word in the
+sentence so if the next word is x i we uh calculate the probability of x i
+given all of the previous words in the sentence and this is a particular variety
+of um language model oh sorry there's a language intense
+sorry um yeah i'll find a good place to cut off this description and switch over to the
+language intent i am totally slipped my mind
+so [Music] then uh conditioned language models basically what they do is they condition on some
+added context and they calculate the probability of y given x and um
+then they do the same thing where you condition on x and all of the previous generated words
+i talked about uh calculating the probability of words in a sentence and in most cases we're taking the previous
+context uh calculating uh the probability of the next word given the previous context
+these are also called um uh by a variety of names uh one name is
+an autoregressive uh link model uh where basically that means we're predicting
+the next word uh given the previous words in some order
+specifically uh when the words that you're predicting the
+uh the word here um from all come to the left they're also
+called left to right language models um and there's also a term causal language
+models which i i don't prefer as much but you'll also see in the literature
+um and basically if you have a left to right language model uh we can use something like a recurrent neural network to feed in the previous word
+predict the next word feed in the previous word predict the next word feed in the previous word predict the next word etc etc
+and if we want to develop a conditional language model that conditions on some
+sort of context to predict the probability of the words uh the upcoming words
+we can do something like feed in the conditioning context into a recurrent
+neural network and predict the uh the outputs like this so basically
+we read the conditioning context one by one maybe it's a japanese sentence
+and then we predict the probability of the output of the english sentence one
+by one so we have the encoder
+and so this is often called an encoder and this is called the decoder so these are
+often called uh encoder decoder models and uh they're used pretty widely and
+you know all of uh nlp nowadays
+so um i'll actually skip that part
+so um now we have this model uh we can train it you know i think a lot of people
+are everybody in the class is now training uh you know models for part of speech
+tagging uh now so because of that i i assume you know
+like about the recurrent neural networks and other things like this the the place where
+these uh kind of sequence sequence models or translation models become different is that we need to do uh
+generation from the models and so instead of like taking in individual words and trying to put a tag
+on them we actually need to generate outputs and the generation problem is basically
+we form a model of p of y given x and how do we use it to generate a sentence
+and there's basically two methods the first method is sampling where we try to generate a random sentence
+according to the probability distribution and the next
+method is argmax where we try to generate a sentence with the highest probability
+and in general in translation which is the main topic of this uh lecture here
+we we use the arg max and
+actually maybe i'll explain why in a few slides after i explain each method so
+um for sampling uh the most common way to do this is called
+ancestral sampling where we randomly generate words one by one and the algorithm for doing so looks a
+little bit like this so we have uh while uh yj
+minus one is not equal to the end of sentence symbol so basically while we have not yet finished
+our sentence we calculate the probability of the next word given all the previous words in the
+conditioning context and we randomly sample a word from the next
+time step and this is a method for an exact method for sampling from p of y given x so this
+will give you you know basically samples that exactly follow the probability distribution that the
+model specifies if you had a really really good model
+where basically it only assigned probability to why that were
+you know plausible translations for x then
+probably the sampling would be fine you would get different translations every time but you know each translation that
+you sampled would be good however unfortunately our models are not all that great and very often if you
+sample kind of lower probability things according to this probability distribution they might not be very good
+translations so uh what we try to do instead is uh
+do some sort of search for the highest probability translation and one way to do this is doing
+something like greedy search so basically one by one we pick the single
+highest probability word in the output so that looks a little bit like this we
+similarly we go until we reach the end of sentence symbol but instead of sampling a random word
+according to the probability distribution each time we we take the highest probability word at
+the next time step each time so uh what this is doing is this is
+instead of uh picking you know any any old word next time it picks always fix
+the highest one which moves us closer to a very you know high scoring output
+unfortunately this is also not exact and it causes real problems so for example
+um it will often kind of regardless of what the syntax should
+look like it might try to generate uh the kind of easier words in the sentence first because
+the easier words in the sentence will have higher probabilities so uh this arg max this greedy arg max we'll try to
+choose those words first and another issue that this can
+bring up is it will prefer multiple common words to one rare word so like for example if we had a choice between
+new york and pittsburgh even if the product of new in york was
+lower than the probability of pittsburgh if the probability of new only was
+higher than pittsburgh this greedy search would kind of make that decision prematurely and not be able to back off
+and uh and reconsider the decision later so
+what we do instead is we have a method called beam search
+there are other methods as well but beam search is the most common method where instead of picking one high probability
+word at every time step we maintain several paths so this is an example of beam search
+with size two where basically we um
+uh instead of like taking the highest probability word at the first time step which would be b
+we consider two high probability words of the first time step a and b we expand all next words for each of
+those possibilities and um and then select the highest scoring sequence of length two
+based on all of these and basically beam search allows you to
+spend more time computing to look for a high scoring
+high scoring output and basically allows you to do more precise
+search and help resolve some of the issues that i talked about on the previous slide
+cool um there's also lots of other details if you want to go deep into the details of this
+like for example there are other methods for sampling that try to kind of
+alleviate the issues that you get from low probability [Music] low probability outputs by only sampling
+from the highest probability outputs things like top k sampling and nucleus sampling
+there's also um other methods for search
+that incorporate uh you know like dynamic beam sizes or
+other things like this but basically these um standard b in machine translation
+standard beam search tends to be uh the thing that most people use and you usually just pick a beam size of
+five and forget about it and hope uh you know that that's good enough and it usually is
+cool any questions about that before i move on
+okay i guess not um so actually sorry i need to check a chat
+so next i'd like to talk about attention so attention is uh very very important
+in um machine translation and uh one issue with the
+example uh like machine translation model that i talked about before
+is basically what we're asking this model to do here is read in a whole sentence
+express all of the meaning in that sentence in a single vector and then uh
+output the appropriate translation based on this and i
+because i have previously worked as a translator i like to make an analog to what that would be like if you were
+asking a translator to do something so
+this is kind of like asking a translator to read a whole sentence memorize that whole sentence put the
+book that they were looking at away and then tried to translate output the whole sentence uh
+based entirely on their memory and you know for a lot of sentences a lot of
+things have people uh you know think of they might be able to do that but
+it's a lot harder than if you can go back and reference the uh
+like original sentence when you're doing translation and so uh this was kind of eloquently
+uh stated by ray mooney uh a professor at ut austin where he said you can't
+cram the meaning of a whole bleeping sentence into a single bleeping vector and um
+so the idea of attention is basically to relax this constraint of memorizing all
+of the content of a sentence in a single vector and put it into
+multiple vectors one vector for each token in the input
+so then we have the model that goes back and references each of these vectors one at a time
+so the basic idea behind attention is that we encode each word in the sentence into a single vector
+and when decoding we kind of perform a linear combination of these vectors
+weighted by attention weights and we use this combination
+from the vectors in picking the next word and i have a graphical example of this
+here so let's say we have our encoder here and our encoder calculates a representation for each word in the
+sentence and our decoder here basically is stepping through the
+sentence word by word and it's gotten to the place where it's at like i hate and that it wants to
+generate the next word so what a translator would do at this point is they would go back and
+reference the original sentence maybe after they've read through it once and try to decide which word they want to be
+translating next think about uh what word they want to translate that into and
+that's basically what attention does so it takes this query vector down here
+and it compares that query vector to all of the key vectors
+in the original included input and it calculates a score
+or a weight based on the congruence between the query vectors and the key vectors so
+you put it through this function here that takes in the query vector and the key vector and it spits out a scalar
+weight and we do this for each pair of the query vector in one of the key vectors
+in the key matrix basically and uh then we normalize these so they
+add to one using a softmax function um and basically uh what this looks like
+is we take in these values and we output something that looks like a probability
+vector here and i'm sure you know everybody's familiar with the softmax from the homework that you're already
+working on then after we do this we take uh the
+value vectors which are the things that we want to attend to the types of information that we want to combine
+and we multiply this by the attention vector here and that gives us a single
+vector that we can then feed into any part of the model and specifically in the case of machine translation or whatever else
+we will be feeding this into the decoder in order to calculate the
+um the probability over the next word
+so if we have a attention mechanism when we're doing translation this is a picture from the paper that introduced
+the attention mechanism basically you'll see that every time it translates a next word um i believe in
+french here from english to french it will be attending to
+um it will be attending to multiple words in the original source documents
+so and you can see that these align with each other and even uh when like the order reverses then
+um the uh appropriate words are being attended to
+so i left the um the actual function that we used to take in the query and the key vector
+underspecified uh but if we assume that the query and the key
+q is a query and k is the key we can do various things like feeding the query and the key into a multi-layer
+perceptron where we concatenate them together multiply them by a weight matrix take a non-linearity like the tan
+h and multiply by another vector to get this value
+this is flexible and often very good with larger data sizes
+another thing that we can do and in fact this is maybe the most common method that we use nowadays
+we can multiply by the
+key uh we can have the key and the query and we have a weight matrix uh here that
+we multiply and this gives us uh the [Music]
+attention weight here and then we also have um
+other things like the dot product where we just take the dot product between the two vectors
+um this is very very simple and and can be effective but the problem is that this
+uh one issue with this is this definitely requires the key and the query to be the same size because otherwise you can't take the dot product
+um so the bi-linear function gives you a bit more flexibility in that you don't have to assume that the query and the
+key are in the same kind of like underlying space and it also allows you to compare things of different size
+and then finally um we can have the scaled dot product and so one problem is that the scale of
+the dot product increases as the number of dimensions gets larger and so the way of fixing this is
+basically scaling it by the size of the vector so you take the square root of the size of
+either the key vector or the query vector it doesn't really matter which one because they're both the same size here
+and this allows you to make sure that even if you have larger or smaller values the scale
+with which the attention weights varies stays approximately the same
+okay so this is a a brief overview uh we'll be going through some concrete
+examples uh a bit later in the class but are there any questions here i imagine many people will be familiar with this
+already
+okay um if not i will go ahead so uh then we have improvements to
+attention um so attention uh
+one issue with attention is basically that um neural models often tend to
+drop or repeat content when they're doing uh generation
+in particular for tasks like machine translation where in machine translation
+we can make the implicit assumption that all content in the source should be
+translated into the targets we can additionally add biases
+to that basically model how many times words in the input have been covered
+and if they have um not been covered you know approximately
+one time we can give some sort of penalty so
+basically this is making the assumption that each word should be translated about once
+or another option is to let the model to tell the model how many times each word has been covered but let it learn
+to use that information appropriately in making its next uh translation decisions
+so either way you know this is explicitly or implicitly encouraging the
+model to you know cover things once and only once or like as many times as
+necessary
+another um very common improvement used in most models nowadays
+is multi-head attention uh where the idea is that we have multiple attention heads that focus on
+different parts of the sentence so this is an example where essentially what we do
+this is an example with two attention heads and the two attention heads each have a different function
+the first attention head is like a normal attention head that is just used to calculate
+representations of the words in the sentence so kind of like
+how i explained attention before as a way to combine together information uh
+at each time step and then the second attention head is basically focusing on words
+that should be copied from the source to the target and this is used in particular
+for a summarization task where lots of copying
+needs to be done so basically it's summarizing source code into um into function
+uh names so what you can see is the first attention head because it's just pulling in information about the
+input sentence in general it's kind of spread out across the entire input sentence and the second one because it's kind of
+choosing which words to copy to generate outputs is very focused on
+individual words uh as opposed to being spread out across the whole sentence
+and uh so i like this example because it gives an example about how
+like theoretically you might want to have different attention heads with different functions
+but in standard models nowadays what we use instead is we have multiple
+attention heads but we just let the attention heads kind of learn on their own what they would like to focus on
+and here is an example of uh basically this word making attending to
+other words in the same sentence in self-attention which i'm going to talk about in a second
+and you can see that making one of the attention heads is attending to making itself
+there are other attention heads like the blue attention head orange one green red which are attending to more difficult
+which is kind of the the object of making and then you have another attention head that's pulling in information from like
+the previous word to making so you can see that each of these heads has kind of specialized in a different
+like form or like function that it should be achieving
+so that's good because you know there are things like local context like
+you know the previous word 2009 which could be very useful but there's also other varieties of
+context farther away like the object of a verb that could be important for making particular decisions as well
+so another uh common improvement to attention is supervised training
+and normally we just train the attention together with the entire model
+and however sometimes we can get like quote unquote gold standard alignments a
+priori and um gold standard alignments are basically
+mit could be manual alignments where we've asked a human
+annotator to say specifically which words
+um in the source correspond to which words in the target
+and the reason why we might want to do this is because as you can see here or no um
+as you can see here even though this is a relatively good example it's not always the case that
+attention will focus directly on the words that are being translated like for example here uh
+the period only has a very vague attention on the period in the input
+so because of this you can't necessarily like look at the attention value and immediately tell
+which words are being translated and that's even worse in the case of something like multi-headed attention
+however like as i talked about last class you know if you're a human translator using machine translation it might be
+very important or useful to you to know which words were translated which other words so you could check that they're
+correct or um something else like this and in that case um doing supervised
+training with manual alignments or something could make sure that at least you know some of the attention heads uh
+correspond with human intuition about which words were translated into which other words
+another way you can get gold standard alignments is by using a strong alignment model so you
+might have a an alignment model that was trained on
+manual alignments or something like this and you could also use that to kind of
+bootstrap the training of your model and this can also improve accuracy
+overall by making sure that the model is attending to uh like words that are actually aligned
+uh as well so um exactly how you do the supervised
+training basically the answer you can do a number of things but the simplest one is you just have another
+loss function that you incorporate into your model um where the loss is higher if the alignments are like incongruent with the
+um uh with the annotated alignments and so you can do things like take the the norm uh
+the l2 norm of the difference between the alignment vectors or something like that
+okay and uh now i'm going to go into self-attention um which is very widely used in nlp
+nowadays and self-attention basically the idea is uh up until now we talked about things like recurrent neural networks is
+a way to gather encodings for each word in the sentence um but another way you can do this is
+you can have some sort of attention that uses
+that where you attend each token in the sentence that you're
+looking at now attends to the same sentence itself so for example
+the word this would attend to this is an example the word is would also attend to this is
+an example uh etc etc and the basic idea here is that this can
+function is kind of a drop-in replacement for another type of word-level encoder like rnns um
+and uh and calculate the representation of each word so for example for this
+um the word this might attend to this a lot is a little bit and the other one's not
+very much is might attend to is and its subject and object
+and other things like this um the motivation for this
+becomes very obvious if you think about the translation of words like um
+like the word is um or maybe the word run is a better example so the word run you know
+depending on whether you're running a marathon or running a company or
+running along the road or running along the creek or something like this uh run
+might be translated differently so if uh the encoding for the word run pulled in
+the subject information about the subject and the object that would make it a lot easier to perform like lexical selection in
+translation or something like that
+um so why would you want to use self-attention instead of an rnn or something like this
+unlike rnn's it's very parallelizable which allows for fast training on gpus
+you can calculate all of the words in the sentence at the same time so this is probably the most important reason why
+people like using transformers uh sorry like using self-attention and
+the transformers that i'm going to be talking about in a second another reason why people like it is
+unlike both rnn's and other options like convolutional neural networks it can easily capture global context from the
+entire sentence so you you'll note that every time each word is attending to all other
+words in the sentence so that gives a very direct connection to you know pulling context there
+um in general uh transformers seem to yield a pretty high accuracy and a large
+number of uh nlp casks although it's not 100 clear that they're actually
+all that much better with respect to accuracy um uh like there's this study by chen uh at
+all that uh compared them with rnns and the results were uh were similar essentially
+um but the uh but the advantages uh here of like fast
+training um and being able to easily pull in global contacts are uh are widely
+appreciated one downside to this is quadratic computation time so
+essentially um because uh like you can even see this
+computation time directly from this attention graph here so you can see that if the
+length is 4 you have 4 times 4 16 attention values here
+and this can become onerous if you're using very long sequences to compute so
+there's also a lot of different methods to improve over this recently
+so um now that i've introduced a bunch of you know improvements or uh
+kind of uh elements that go into attentional models uh i'd like to introduce the
+transformer which is kind of the core element that is used in
+most state-of-the-art mt uh or nlp models nowadays and basically
+this is a self um a model that uses both self attention and regular attention between the source and the
+target um so uh we have a transformer encoder in a transformer decoder where the
+transformer encoder takes in some word embeddings it adds something called the positional
+encoding where the positional encoding basically is a another word embedding
+that tells you not the identity of the word but rather the position of the word in the sentence so instead of saying
+like this is the word summary it would say this is the first word in the sentence so you add them together and
+you get um like summary and first word uh in embedding indicating that
+um then you run this through multi-head self-attention you add in
+the original input and you do something called layer normalization which basically kind of normalizes the outputs
+uh to be average of around zero and norm of around one
+and uh then you run through a feed-forward network um and then you do the addition and
+normalization and then you do this over and over again you know six times or eight times or ten times or whatever
+um and then on the the right side over here you have the transformer decoder which is very similar output embeddings
+positional encodings self-attention but you also have additional cross attention that attends
+to the input here so that's kind of the place where you get
+the attention that i showed before between the source and the target
+here so that this is in the cross-attention part and then in the self-attention part
+um you have the encoding of the sentences like you have here so you're you're doing both in the transformer
+so um often we talk about like the transformer is kind of like a monolithic block
+uh that is used in um in translation models uh but actually you know it
+contains a lot of the tricks that i talked about before so it contains self-attention multi-headed attention
+it's using normalized dot product or actually maybe bilinear attention would be more accurate because it's
+multiplying by a a weight matrix for the key in the queries
+and it has positional encodings it also uses a whole bunch of training
+tricks such as layer normalization helping ensure that layers remain in a reasonable range
+it also has a specialized training schedule where you have the atom optimizer but
+you have a specialized learning rate that kind of gradually ramps up and then slows down
+in the transformer paper they also used a technique called label smoothing
+i'm not going to go into a lot of detail about this but basically it kind of smooth smooths out the distribution
+you're predicting so you're not predicting 100 probability on the true next word but you're giving a
+little bit of probability to all the other words uh this is pretty effective in a wide variety of neural network based tasks
+and um you also have a masking method for efficient training and so the way this masking works is
+basically um you uh
+decide when you're calculating the representation for a particular word
+um you decide which previous uh which context to attend to so when
+you're calculating the representation for the word i you only attend to the context in the
+input when you're calculating the representation for the word hate you
+calcul you attend to any of these uh things over here um and similarly throughout the entire
+uh like calculation um of the representations for the decoders so on the encoder side
+you always attend to all the other words but on the decoder side you only attend to words in the input and previous words
+in the output
+and um so this was about transformers uh taking a step back
+we can kind of take a unified view of the models that we've talked about so far in
+this class um so we have sequence labeling where uh sequence labeling um has a
+feature extractor and then given the feature extractor we have a feature for each word and
+calculate the output so this is what you know everybody is doing for assignment one
+and then we have sequence sequence modeling where we have a feature x director so these can actually be exactly the same
+thing and calculate one representation for
+each word and then we have essentially a masked feature extractor here
+um where we calculate representations that can ref uh reference any of the
+things from the input feature extractor but only things that occurred previously
+in the current output sentence and then we predict the
+the words here as well
+cool um so this is all i have in terms of the lecture content and then i'm going to
+try to go uh through the code for the transformer just a little bit and then patrick's
+going to introduce what you need to do for the assignment are there any questions about the
+lecture content that i talked about here
+okay i i guess not at the moment so um uh if you if you know about this already this
+might be a bit of review if you're not familiar with this it's very important so uh please do you know ask questions
+go to office hours other other things like this um and then the final thing i'd like to
+do is go through a brief code walk through this thing called the annotated transformer
+and this is a very good thing it's linked on the class site and basically what it does
+is it um it demonstrates how you would actually implement the transformer model together
+with all of the description um from the original paper
+and so basically [Music] if you look at the model architecture
+first um the the way it looks is uh we're talking about in encoder
+decoder architecture um we have our encoder here
+we have our decoder here and
+sorry my computer is very slow uh nowadays because my battery is broken as you heard last time but um
+i'll try to do this nonetheless we have our source embedders
+we have our target embedders and then we have some sort of generation policy so this would be you know like something
+that helps us do uh sampling or um or helps us predict the probability
+of the next token and uh we
+take in and process uh source and target sentences
+the encoder encodes the source sentence and then the decoder encodes the
+target sentence and the memory so i believe this is the
+encoded source sentence and then we have the source mask and the target mask and the generator is basically uh just
+doing a soft max like you're all familiar with um and so
+this is the kind of encoder architecture this is the decoder architecture and then we have our generator here
+and um one other feature of the uh
+of the transformer is basically we have uh n times this uh this encoder block in
+decoder block so uh this method here produces n identical layers
+uh so it it copies each module so you get n of them so
+that allows you to do the nx here the core encoder is a stack of n
+layers where we also have a layer norm after
+all of them or no sorry this is a final final layer
+moments and then we pass the uh the input and
+mask through each layer and turn so we just have a for loop over each of the the layers here
+and the layer norm what this does is this basically
+attempts to normalize so i mentioned we're trying to set the mean
+uh close to zero and the um and the variance close to uh close to
+one so you can see that that's kind of doing that here
+and we um we add dropout uh oh yes so dropout
+is uh kind of like regular um regularizing the model to prevent it from overfitting
+we have layer norm and uh then for each of these blocks you'll notice that we have the
+multi-head attention and then we have this add-in norm after this so um this sub-layer what it's doing is
+it is doing layer normalization
+and it's doing layer normalization it's
+calling the uh the sub-layer function here it's doing dropout over the output and then
+it's adding a residual connection so that's kind of the the yellow block in the transformer stack here
+and then each layer um has in the encoder has two sub-layers
+one is the self-attention layer one is the feed-forward layer and then this is cloned you know uh
+two times uh essentially there then the decoder also has a stack of uh
+n uh layers basically and uh the decoder is the same except in
+addition to having self-attention it has a source of tension in the feed forward layer so that's basically
+what you can see here in the diagram
+uh and then it talks a little bit about masking here so uh that was the masking that i talked about in the um
+in the lecture where you're basically creating this mask that gets rid of
+all of the things that are in the future for the decoder and this is applied only to
+the decoder only to the decoder
+then finally i'm going to talk about the attention how the attention is done um
+within the uh the transformer so basically the
+transformer attention is doing this sort of dot product attention
+with scaling you take the soft max and you multiply this by the value vector so that's you
+know what i talked about in class and that's all implemented here
+it's basically doing a matrix multiplication
+between the query and the key vector here query and key matrix here it's taking
+the square root uh based on the size of the query vector
+um actually this is dk but this is query so that's a little bit strange but uh you know it
+makes no difference as i mentioned before and
+then you take the soft max and you multiply the attention
+by the value vector so that's basically the multiplication here so you can see um you can make a map between the
+equations of the code and uh then there's also implementation of
+multi-head attention um this is a little bit more involved about exactly how this
+is implemented so i'm not going to go through all the equations here because i want to leave time for patrick but um if
+you want to look at exactly how the multi-head is uh implemented you can see this here um
+and yeah that that's the basic idea of uh what this looks like
+um i think it's important to know what's going on in these models but if you uh
+want to like actually use this in your
+code itself um it's also uh pytorch is also nice
+enough to just have this uh transformer class for you that you
+don't need to um like you don't need to implement yourself
+and uh basically if you look at this it's doing the same implementation that i just showed you but it's you know maybe
+more optimized or you know like you know it's right so you won't be making mistakes so if you're
+actually going to be using this i suggest just using the transformer module but i think it's important to know what's going on inside
+so you can understand the behavior and other things like that um
+great so that's all i have here are there any questions about uh the implementation or uh other things
+yes um isn't the annotated transformer i seem to remember like it's slower
+because it uses for loops for the batches instead of um converting them into like
+multi-dimensional tensors is that ringing a bell and is that accurate or
+um let me i didn't cover batches um so
+like batching is uh important uh it's a very
+uh it's a very important thing because like
+basically when you batch together multiple sentences you can get them to uh
+like all process in a single gpu call instead of in many different gpus calls i've i talked about this a little bit
+more in uh advanced nlp um i
+don't see actually i was thinking of the of the multi the multiple heads the attention
+heads um because i think i think the i think it actually matches by
+input sequence it definitely watches because he has access to a mask so if he has a mask it's definitely watching yeah yeah i
+don't like i i seem to remember this was actually implemented pretty well pretty efficiently um
+i don't um i didn't actually talk about how the multi-headed attention is implemented
+but i it's implemented in a clever way which also makes it hard to read which is why i didn't go into the
+details quite as much here but um i i do think this is actually a pretty good example of how you would implement
+it efficiently as well um although i'd have to go through uh in more detail to
+make sure for sure but that's a good question
+what i can tell you is the pytorch one is definitely implemented efficiently so if you want to um
+look and see the the best way to do that you can look there um i'll turn this over to patrick then
+who uh will i guess go through the uh assignment for assignment two
+and this is now available on the uh on the website also if you want to follow along
+and let me share the screen okay do you guys
+see the right screen yeah cool yeah so i'm going to introduce
+assignment 2 which was released today uh they're still the code still needs to be uploaded but all the instructions are
+there and yeah so let's get started because we're short on time so
+ah and this was developed by me and vijay um which will uh explain the later part of this sign
+cool so the task for this assignment is machine translation so as gram described
+given a source language sentence you want to relate to a target language to target language uh so conditional language modeling
+and the goals of this assignment are uh to understand how the standard data processing pipeline is used in empty to
+be able to train and empty models both bilingual and multilingual using an
+empty framework and to learn how these models are evaluated and finally to investigate
+methods to tackle the data scarcity problem in low resource language pairs which is what
+you're going to tackle in this assignment so for requirements you definitely need
+a machine with gpu uh unlike the previous assignments it will be very very hard to run this on a cpu as in you
+will run but no invisible amounts of time um i i didn't test it but i'm pretty sure you can run it on a call out but
+still if you have access to the credits i would probably recommend doing aws for this and in terms of packages it's mostly the
+same as the last assignment you can almost certainly reuse the the environment that you have we tested it
+and this design will also use firstec as a backbone for training models so first tech is like uh sequence
+modeling toolkits and and it automates data loading training decoding and a
+bunch of other small not boring but like you might not want to consider for this assignment
+and it also supports many other tasks other than translation for the basic requirements you will not
+need to dive deep into fair sec but if you want to modify for um the actual requirements you probably will need to
+dive into faresec and and yeah you also need to install soccer blue and combat to evaluate your
+models and but this is all automated in the instructions of the assignment you just have to follow the the
+assignment and everything should be installed automatically so the assignment is a collection of
+scripts which will pre-process you data train your data and score you're there and we'll go over them uh in a few
+slides so for that you will be using the ted talks corpus which contains parallel data
+between english and 58 languages and you will focus on two low resource language pairs
+english azerbaijani and ecospeller russian so to pre-process the data um
+there's a script that does the following steps we will read the raw parallel data you will learn about byte pairing coding
+separately for the source and target languages and in particular this assignment will use sentence piece which is a particular
+implementation of uh bypass encoding we'll apply bp to all splits there's also a very minor data cleaning
+pipeline which just filters based on the size of sentences and finally you'll binarize the data
+which makes it efficient for first to trade and crucially for this assignment we simplify the bits sometimes you also do
+some tokenization using moses prior to learning the bp but in this case we simplify then we just use center space
+which works fine by itself but sometimes people do moses organization before just as a remark
+for modeling um in training and generation uh we'll use the reform architecture as describe diagram and
+embeddings will be shared between source and targets despite the fact that they use different bps this is still possible
+uh and this will be trained to minimize cross entropy with adam and decoding will be
+done using beam search in particular it's fixed to beam search of five and is an example of what
+the scripts call and this is just like cli for fersae so you don't have to worry about too much about training
+loops or anything for evaluation uh for mt you
+traditionally don't look at perplexity because it's not a good measure of how the models um perform in terms of translation
+and in this assignment we'll use two metrics blur which is uh the de facto standard for empty evaluation which uses
+n-gram overlap between the reference in the target and because there's some concerns with the
+reliability of blue and this correlation with human judgment would also consider comet which is part of a new generation
+of neural neural model based metrics which rely on pre-trained models and are trained to
+optimize relatively human correlations again you don't have to think too much about it because there's a script that already does it
+it's just good to know that you'll evaluate your models based on both
+okay and i'll turn it over to vijay thanks patrick so the minimum requirements for this
+assignment involve first training these mt models on bilingual
+data and so here we would we you we expect you to train models from azerbaijani to english and
+vice versa and also bella russian english and vice versa next slide
+but then the more interesting bit which is also required in the minimal in the in the um our minimal expectations
+is to train multilingually using a transfer language which in the case of azerbaijani is turkish
+and we have scripts to do this already for both bilingual and multilingual but you'll have to modify these scripts
+minimally in order to support belarusian and
+we've also introduced because nowadays while multilingual training is still very effective there's a new paradigm
+that's become super popular which is fine tuning a massive multilingual model that's been trained on a large amount of
+data and to allow you to try this approach which is now pretty predominant
+uh you can also instead of doing multilingual training you can fine-tune a model that we have
+provided that has been trained on the floor s 101 data set which is like a massively multi-lingual mt data set
+and uh you can instead use this strategy and this will also get you to the um
+to the b b plus grading range next slide
+uh but uh i think where this assignment gets really exciting and what you need to do
+to get um an a minus a or a plus is to
+add extensions beyond what we provided in these scripts and uh i think graham will be talking about a
+lot of this in the next week some of it he already talked about this week but um uh data augmentation which he hasn't
+talked about yet is one uh very promising strategy you could use uh uh
+these terms will make more sense once uh his lecture is completed next slide
+you can also try to use better transfer languages we've currently suggested two basic
+transfer languages for both azerbaijani and belarusian but as you might remember from the
+lecture last week there's more of a structured way you can choose a good transfer language based on
+your knowledge of typology or based on learn models and we encourage you to try this
+and see what what results you can get and then lastly uh uh
+in terms of the data our baseline models use sentence piece for byte pair encoding which is
+basically a way of breaking up words into sub words but there's like many other ways to do this and this is a particularly
+interesting and active area of research and so we encourage you to consider different variants of this
+and lastly this is probably the most broad category um feel free to try different models
+different uh training algorithms different ways of uh doing learning or different uh and uh
+there's like a huge space here so we really encourage you to be creative and also when you when you choose something
+analyze it and try to deepen your understanding of why these things work in machine translation
+and just for reference like the assignment includes a bunch of references to different techniques that seem to work for this feel free to
+follow them or do your own literature review of course and in terms of what we
+ask from you when you submit the homework first you need to submit the code which should include
+both the minimum requirements for like the scripts that you've modified in order to support the um
+the bilingual and multilingual training for the language pairs in the assignment but also for the additional
+modifications that you make we also and this is probably the most important part uh we want to see a
+write-up that provides some solid analysis of uh of the methods describing the assignment
+and lastly uh we don't want you to submit the actual model files because these are quite very
+large and it'll take a long time to upload but we do want to see you
+submit your model outputs once you start playing with the software this will it'll make sense what this is
+but basically this way we could compare the translations that your model predicts
+with our references and um reproduce your evaluations just to make sure everyone's on the same page
+and these are all submitted on canvas as a tarball like the previous assignment
+and so i've been touching on this but uh the grading tranches are like first for the minimal
+requirements you just need to reproduce the um modify the scripts that we have for both
+azerbaijani and belarusian and that will get eub if you couple this with detailed
+analysis then you'll get a b plus
+to get an a minus you need to implement at least one pre-existing method or a new method
+to try to improve the ability to do this multilingual machine translation next slide and then um
+to get an a we expect you to do uh two or more several methods
+to improve multilingual transfer and you might find that uh some of these methods are uh more lightweight than others so uh it
+might be quite doable to try uh several and uh we we also would hope that one of
+the methods you try is actually novel something that you'd come up with and then lastly building on that a
+um if you've done something that is particularly extensive or creative or your analysis is like super compelling
+then that'll get you an a plus and just to recall that this is a group assignment unlike the first assignment
+so it's expected that it will be done in groups of two three uh i'm not exactly sure how this will be arranged but i'm
+pretty sure gram and you don't know what's the best way to do this um but just to apply for expectations
+yeah regarding groups um feel free to make groups uh you know obviously you've already talked to people about um the
+language intent uh things so that would be one option uh but you're obviously not obligated to do
+that if you don't have a group yet um but would like to form one um please i think one one good idea
+would be to email the ta mailing list or put a post on piazza
+um by around the time the first assignment is due which is you know very soon obviously
+um and so then like when you finish the first assignment if there's anybody who doesn't have a group yet we can try to
+match you up with uh somebody else so um
+yeah um are there any questions about uh these yeah just uh
+if you need anything uh feel free to come to our office hours but mine and vijay's or the other tiers can
+potentially help you as well and if you want to contact us piazza obviously or feel free to email us or the ta mailing
+list
+:::
+
+### See also 
+
+@bahdanau2016neuralmachinetranslationjointly
+
+@luong2015effectiveapproachesattentionbasedneural
+
+Reference: Self Attention (Cheng et al. 2016)
+
+@vaswani2023attentionneed
+
+
+
+
+

@@ -1,0 +1,187 @@
+---
+date: 2024-02-11
+title: 'Neural Machine Translation by Jointly Learning to Align and Translate'
+subtitle: Review
+description: 'the paper that introduced the attention for NMT'
+categories:
+  - Attention
+  - Bidirectional LSTM
+  - Deep learning
+  - Embeddings
+  - LLM
+  - NLP 
+  - NMT
+  - Paper
+  - Review
+  - Podcast
+  - Translation task
+keywords: 
+ - Encoder decoder  
+---
+
+![Litrature review](/images/literature-review-open-book.jpg){.column-margin}
+
+::: {#vid-01 .column-margin}
+{{< video https://youtu.be/o41avjKIg5o >}}
+
+Roee Aharoni's Talk covering this paper (Hebrew)
+:::
+
+::: {#sup-01 .column-margin}
+![Roee Aharoni's slides](https://roeeaharoni.com/NMT_slides_orginal.pdf)
+:::
+
+## Podcast
+
+<audio controls="1"><source src="podcast.mp3" type="audio/mpeg"></audio>
+
+## Abstract
+
+> *Neural machine translation* is a recently proposed approach to machine translation. Unlike the traditional statistical machine translation, the neural machine translation aims at building a single neural network that can be jointly tuned to maximize the translation performance. The models proposed recently for neural machine translation often belong to a family of *encoder-decoders* and consists of an encoder that encodes a source sentence into a *fixed-length vector*^[the encoded state] from which a decoder generates a translation. In this paper, we conjecture that the use of a fixed-length vector is a bottleneck in improving the performance of this basic encoder-decoder architecture, and propose to extend this by allowing a model to automatically (soft-)search for parts of a source sentence that are relevant to predicting a target word, without having to form these parts as a hard segment explicitly. With this new approach, we achieve a translation performance comparable to the existing state-of-the-art phrase-based system on the task of English-to-French translation. Furthermore, qualitative analysis reveals that the (soft-)alignments found by the model agree well with our intuition. --[@bahdanau2016neuralmachinetranslationjointly]
+
+## Outline
+
+
+*   Introduction
+    *   Positions NMT as a new approach, contrasting it with traditional phrase-based systems.
+    *   Describes encoder-decoder models that use a fixed-length vector to encode a source sentence.
+    *   Explains that these models are [trained to maximize the probability of a correct translation.]{.mark}
+    *   Discusses the [limitation of compressing all source sentence information into *a fixed-length vector*^[requiring the length to be fixed seems a mistake as sentences can sometimes get very long think hundreds of words], especially for long sentences.]{.mark}
+    *   [Introduces the extension of the encoder-decoder model that jointly learns to align and translate.]{.mark}
+    *   Emphasizes that the model searches for relevant source positions when generating a target word.
+    *   States that the new model encodes the input sentence into a sequence of vectors and adaptively chooses a subset during decoding.
+    *   Asserts that the new model performs better with long sentences and that the proposed approach performs better translation compared to the basic encoder-decoder approach.
+    *   Notes that the improvement is apparent with longer sentences and that the model achieves comparable performance to a conventional phrase-based system.
+    *   Mentions that the model finds linguistically plausible alignments.
+*   Background: *Neural Machine Translation* (NMT)
+    *   [Defines translation as *maximizing* the **conditional probability of a target sentence given a source sentence**.]{.mark} $\text{arg}\,\max_{y}\, {p}(y \mid x).$
+    *   Explains that [NMT models learn this conditional distribution using *parallel training corpora*.]{.mark}
+    *   Describes NMT models as consisting of *an encoder and a decoder*.
+    *   Notes that *Recurrent Neural Networks* (RNNs) have been used for encoding and decoding *variable-length sentences*.
+    *   Points out that NMT has shown promising results, and can achieve state-of-the-art performance.
+    *   Notes that adding *neural networks* to existing systems can boost performance levels.
+    *   RNN Encoder-Decoder
+        *   Describes the *RNN Encoder-Decoder framework*, where an encoder reads the input sentence into a vector c.
+        *   Explains that the *encoder* uses an RNN to generate *a sequence of hidden states*, from which the vector c is generated.
+        *   Notes that the *decoder* predicts the next word given the context vector and previously predicted words.
+        *   Presents a formula for the conditional probability, which is modeled with an RNN.
+*   Learning to Align and Translate
+    *   Introduces a new architecture for NMT using a bidirectional RNN encoder and a decoder that searches through the source sentence.
+    *   Decoder: General Description
+        *   Presents a new conditional probability conditioned on a distinct context vector for each target word.
+        *   Explains that the context vector depends on a sequence of annotations from the encoder.
+        *   Defines the context vector as a weighted sum of annotations.
+        *   Describes how the weights are computed, using an alignment model.
+        *   Emphasizes that the alignment model computes a soft alignment.
+        *   Explains the weighted sum of annotations as computing an expected annotation.
+        *   States that the probability of the annotation reflects its importance in deciding the next state and generating the target word.
+        *   Notes that this implements an attention mechanism in the decoder.
+    *   Encoder: Bidirectional RNN for Annotating Sequences
+        *   Introduces the use of a bidirectional RNN (BiRNN) to summarize preceding and following words.
+        *   Describes the forward and backward RNNs that comprise the BiRNN.
+        *   Explains how annotations are created by concatenating forward and backward hidden states.
+        *   Notes that the annotation will focus on words around the current word due to the nature of RNNs.
+*   Experiment Settings
+    *   States that the proposed approach is evaluated on English-to-French translation using ACL WMT '14 bilingual corpora.
+    *   Compares the approach with an RNN Encoder-Decoder.
+    *  Dataset
+        * Details the corpora used, their sizes, and the data selection method used.
+        *  Notes that no monolingual data other than the mentioned parallel corpora is used.
+        * Describes how the development and test sets were created.
+        *  Details the tokenization and word shortlist used for training the models.
+     * Models
+        *  Details the two types of models trained, RNN Encoder-Decoder (RNNencdec) and RNNsearch, and the sentence lengths used.
+        *  Describes the hidden units in the encoder and decoder for both models.
+        *  Mentions the use of a multilayer network with a maxout hidden layer.
+        *  Describes the use of minibatch stochastic gradient descent (SGD) and Adadelta for training, along with the minibatch size and training time.
+        * Explains the use of beam search to find the translation that maximizes the conditional probability.
+        *  Refers to the appendices for more details on the architectures and training procedure.
+*   Results
+    *   Quantitative Results
+        *   Presents translation performance measured in BLEU scores, showing that RNNsearch outperforms RNNencdec in all cases.
+        *   Notes that the performance of RNNsearch is comparable to that of the phrase-based system, even without using a separate monolingual corpus.
+        *   Shows that RNNencdec's performance decreases with longer sentences.
+        *   Demonstrates that RNNsearch is more robust to sentence length, with no performance drop even with sentences of length 50 or more.
+        *   Highlights the superiority of RNNsearch by noting that RNNsearch-30 outperforms RNNencdec-50.
+        *   Presents a table of BLEU scores for each model.
+    *   Qualitative Analysis
+        *   Alignment
+            *   Explains that the approach offers an intuitive way to inspect the soft alignment between words.
+            *   Describes visualizing annotation weights to see which source positions were considered important.
+            *   Notes the largely monotonic alignment of words, with strong weights along the diagonal.
+            *   Highlights examples of non-trivial alignments and how the model correctly translates phrases.
+            *   Explains the strength of soft-alignment using an example of the phrase "the man" being translated to "l' homme".
+            *   Notes that soft alignment deals naturally with phrases of different lengths.
+        *   Long Sentences
+            *   Explains that the model does not require encoding a long sentence into a fixed-length vector perfectly.
+            *   Provides examples of translations of long sentences, showing that RNNencdec deviates from the source meaning.
+            *   Demonstrates that RNNsearch translates long sentences correctly, preserving the whole meaning.
+            *   Confirms that RNNsearch enables more reliable translation of long sentences than RNNencdec.
+*   Related Work
+    *   Learning to Align
+        *   Mentions a similar alignment approach used in handwriting synthesis.
+        *   Notes the key difference: in handwriting synthesis, the modes of the weights of the annotations only move in one direction.
+        *   Explains that, in machine translation, reordering is often needed, and the proposed approach computes annotation weight of every source word for each target word.
+    *   Neural Networks for Machine Translation
+        *   Discusses the history of neural networks in machine translation, from providing single features to existing systems to reranking candidate translations.
+        *   Mentions examples of neural networks being used as a sub-component of existing translation systems.
+        *   Highlights that the paper focuses on designing a completely new translation system based on neural networks.
+*   Conclusion
+    *   States that the paper proposes a new architecture that extends the basic model by allowing the model to (soft-)search for input words when generating a target word.
+    *   Highlights the benefit of freeing the model from encoding the whole sentence into a fixed-length vector.
+    *   Notes that **all components are jointly trained towards a better log-probability of producing correct translations**.
+    *   Confirms that the proposed RNNsearch outperforms the conventional encoder-decoder model and is more robust to sentence length.
+    *   Concludes that the model aligns each target word with the relevant words in the source sentence.
+    *   Points out that the proposed approach achieved translation performance comparable to the phrase-based statistical machine translation, despite its recent development.
+    *   Suggests that the approach is a promising step toward better machine translation and a better understanding of natural languages.
+    *   Identifies better handling of unknown or rare words as a challenge for the future.
+*   Appendix A: Model Architecture
+    *   Architectural Choices
+        *   Describes that the scheme is a general framework where the activation functions of RNNs and the alignment model can be defined.
+        *  Recurrent Neural Network
+            *   Explains the use of the *gated hidden unit* for the activation function, which is similar to LSTM units.
+            *    Provides details and equations for the computation of the RNN state using gated hidden units.
+            * Explains how update and reset gates are computed.
+            * Mentions the use of a multi-layered function with a single hidden layer of maxout units for computing the output probability.
+       *  Alignment Model
+            *   Explains the use of a single-layer multilayer perceptron for the alignment model.
+            *   Provides an equation describing the model and notes that some values can be pre-computed.
+    *  Detailed Description of the Model
+        *   Encoder
+            *   Provides the equations and architecture details of the bidirectional RNN encoder.
+        *   Decoder
+            * Provides the equations and architecture details of the decoder with the attention mechanism.
+        *  Model Size
+            *   Specifies the sizes of hidden layers, word embeddings, and maxout hidden layer.
+*  Appendix B: Training Procedure
+    *   Parameter Initialization
+        *  Describes the initialization of various weight matrices, including the use of random orthogonal matrices and Gaussian distributions.
+     *   Training
+         *  Explains that the training is done with stochastic gradient descent (SGD) with Adadelta to adapt the learning rate.
+         * Describes how the L2-norm of the gradient was normalized and that minibatches of 80 sentences are used.
+         * Mentions sorting the sentence pairs and splitting them into minibatches.
+         * Presents a table of learning statistics and related information.
+* Appendix C: Translations of Long Sentences
+    * Presents sample translations generated by RNNenc-50, RNNsearch-50, and Google Translate.
+    * Compares these translations with a reference (gold-standard) translation for each long source sentence.
+
+
+## Reflections 
+
+Naively, translation is an easy task in the sense that we just need to look up each phrase in a statistically generated bi-lingual lexicon and append the translation of the phrase to the target sentence. In reality even when working with parallel text is tricky in that, the translation isn't one to one but rather is n-m mappings between the source and target words with the number of words being variable. Picking the best entry in the lexicon is not obvious as the source words may be ambiguous and need some attention to other words in the context to disambiguate, and these too may be ambiguous ad infinitum... Finaly the translation may require some reordering of the words in the source sentence to conform to the target language's grammar.
+
+To sum up:
+
+- We need to learn a bi-lingual phrase lexicon.
+- Each phrase may have multiple translations.
+- To pick the best entry the source context should be consulted.
+- The target sentence may require reordering to conform to the target language's grammar.
+- Another challenge is that the target language may require words or even grammatical constructs e.g. gender and gender agreement that are lacking in the source language. These are [floating constraints](../1997-floating-contraints/index.qmd) c.f. (@mckeown1997floating) that the model needs to propagate through the translation process.
+
+Each step of this process is probabilistic and thus prone to mistakes. Though there are two main constructs. The first is the contextual lexicon which needs to be learned using parallel text. The second is the destination grammar that can be learned as part of a language model using monolingual text. However reordering texts isn't as much of a challenge, if we have sufficient parallel texts then the NMT hidden states should be able to learn the reordering as part of its hidden state.
+
+
+## The Paper
+
+![paper](./paper.pdf){.col-page width=800px height=1000px group="slides"}
+

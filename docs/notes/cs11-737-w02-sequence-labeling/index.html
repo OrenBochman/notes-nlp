@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Oren Bochman">
+<meta name="description" content="This week we will cover text classification and sequence labeling. We will start with the basics of text classification, and then move on to more advanced topics like sequence labeling.">
+
+<title>Sequence Labeling – NLP Course Notes &amp; Research</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<style>
+
+      .quarto-title-block .quarto-title-banner {
+        background: images/banner_deep.jpg;
+      }
+</style>
+
+
+<link rel="stylesheet" href="../../styles.css">
+<meta property="og:title" content="Sequence Labeling – NLP Course Notes &amp; Research">
+<meta property="og:description" content="This week we will cover text classification and sequence labeling. We will start with the basics of text classification, and then move on to more advanced topics like sequence labeling.">
+<meta property="og:image" content="https://orenbochman.github.io/notes-nlp/images/nlp-brain-wordcloud.jpg">
+<meta property="og:site_name" content="NLP Course Notes &amp; Research">
+</head>
+
+<body class="nav-sidebar floating nav-fixed slimcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">NLP Course Notes &amp; Research</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Sequence Labeling</li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Sequence Labeling</h1>
+            <p class="subtitle lead">CMU CS11-737: Multilingual NLP</p>
+                  <div>
+        <div class="description">
+          This week we will cover text classification and sequence labeling. We will start with the basics of text classification, and then move on to more advanced topics like sequence labeling.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Multilingual NLP</div>
+                <div class="quarto-category">NLP</div>
+                <div class="quarto-category">Notes</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-body">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Oren Bochman </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">Thursday, January 20, 2022</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Classification &amp; Vector Spaces</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Logistic Regression</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Frequencies</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Visualizing tweets</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Probability &amp; Bayes Rule</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Visualizing Naive Bayes</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Vector Space Models &amp; PCA</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Linear algebra with NumPy</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Manipulating word embeddings</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">MT &amp; Document Search via KNN</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vector manipulation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Hash functions and multiplanes</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Probabilistic Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">Autocorrect &amp; Dynamic Programming</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Building the vocabulary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Candidates from String Edits</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">POS tagging &amp; HMMS</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vocabulary with unknowns</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Working with tags and Numpy</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false">
+ <span class="menu-text">Autocomplete &amp; Language Models</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - N-grams Corpus preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Building the language model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Out of vocabulary words</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false">
+ <span class="menu-text">Word embeddings with neural networks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Data preparation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Intro to CBOW</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Training the CBOW</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true">
+ <span class="menu-text">Sequence Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false">
+ <span class="menu-text">Neural Networks for Sentiment Analysis</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Introduction to Trax</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Classes and Subclasses</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Data Generators</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false">
+ <span class="menu-text">RNN for Language Modeling</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Hidden State Activation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Calculating Perplexity</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Vanilla RNNs, GRUs and the scan function</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L4 - Creating a GRU model using Trax</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="false">
+ <span class="menu-text">LSTMs and Named Entity Recognition</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vanishing Gradients</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false">
+ <span class="menu-text">Siamese Networks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Creating a Siamese Model using Trax</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Modified Triplet Loss</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Evaluate a Siamese Model</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="true">
+ <span class="menu-text">NLP with Attention Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false">
+ <span class="menu-text">Neural Machine Translation</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Stack Semantics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - BLEU Score</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="false">
+ <span class="menu-text">Text Summarization</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-18" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Attention</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - The Transformer Decoder</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" role="navigation" aria-expanded="false">
+ <span class="menu-text">Question Answering</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-19" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - SentencePiece and BPE</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - BERT Loss</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - T5</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" role="navigation" aria-expanded="false">
+ <span class="menu-text">Chat Bots</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-20" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Reformer LSH</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Revnet</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">Resources</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/cs11-737-w02-sequence-labeling/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
+
+
+
+
+
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../images/tiling.png" class="nolightbox img-fluid figure-img" width="200"></p>
+<figcaption>course banner</figcaption>
+</figure>
+</div><div id="vid-01" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-vid figure">
+<div aria-describedby="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/5CXv0KakpYo" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Video&nbsp;1: Lesson Video
+</figcaption>
+</figure>
+</div><div id="sup-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides" style="@page {size: 16in 9in;  margin: 0;}">
+<figure class="quarto-float quarto-float-sup figure">
+<div aria-describedby="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="slides.pdf" class="lightbox" data-gallery="slides" title="This week’s slides"><embed src="slides.pdf" style="@page {size: 16in 9in;  margin: 0;}" width="420" height="340"></a></p>
+<figcaption>This week’s slides</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-sup quarto-uncaptioned" id="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Supplementary Figure&nbsp;1
+</figcaption>
+</figure>
+</div></div>
+
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Example Sequence Classification/Labeling Tasks</li>
+<li>Overall Framework of Sequence Classification/Labeling</li>
+<li>Sequence Featurization Models (BiRNN, Self Attention, CNNs)</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Transcript
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<!-- Transcript here is machine generated no punctuation and I eddited it a but but it needs more work and I dont see the benefits unless I can run it through some tool. -->
+<blockquote class="blockquote">
+<p>This time we’ll be talking about text classification and sequence labeling and about half of this class will or half of the lecture portion of the class will be a review for some of the very basic things regarding building neural network models for NLP tasks in general.</p>
+<p>If you participated in cs-11-711 or a similar class this will mostly be review or stuff that you know already. But I think it’s important because there are other people who are coming from other other backgrounds too. We haven’t done that before so it’d be good to have the basics before you dive into the code. In addition to that i’m going to be talking about uh kind of text classification and sequence labeling from a multilingual perspective. So giving some pointers to data sets and tasks and other things like that so hopefully that’ll be useful even After we’ll walk through the assignment, including a look at what is required for doing assignment one, and the code etc etc. I think potentially the assignment one description on the website is like a little bit old but we’ll be uh updating that very shortly.</p>
+</blockquote>
+<section id="text-classification-and-sequence-labeling" class="level2">
+<h2 class="anchored" data-anchor-id="text-classification-and-sequence-labeling">Text classification and sequence labeling</h2>
+<blockquote class="blockquote">
+<p>So text classification uh and sequence labeling are both very broad. I like to call these task categories. They’re not tasks of themselves but they’re categories of tasks that’ll look very similar and thus can be solved in similar ways. Text classification: given, input text X, predicted output: some categorical label Y. This can be all kinds of different things like topic classification uh where we take i like peaches and pears and that gives us the topic food and i like peaches and herb and that gives you the topic music because peaches and herb is a old band basically we have language identification uh which is a particularly important task in multilingual learning and basically this is Taking in language and outputting labels. Taking in text and now putting the language that it’s written in some you know obviously the first is english and the second one is japanese here this becomes very interesting and difficult as i’ll be elaborating later in the lecture portion. Another example that’s very widely known is sentiment analysis and this can be done at the sentence level the document level or you can even do some sentiment analysis uh with respect to you know individual uh entities or things like that but from a text classification point of view uh it would be like sentences or documents so if we have i like peaches and pairs i’d be positive i hate peaches in paris i’d be negative obviously and you know there’s many many other many many other tasks that fall into this sequence labeling on the other hand is uh given an input text text predict an output label sequence y usually of equal length so this can be formulated as taking in a sequence of words and outputting one tag for each sequence of words so we have part of speech tagging is one example of this so we take in uh words and output parts of speech another one is lemmatization so what this is doing is it’s basically taking in words and outputting their base form uh this is kind of this is used sometimes in uh in english but it’s actually particularly uh useful or important in languages that have richer morphology than english because um essentially if they have lots and lots of conjugation or other things like this uh the words themselves can become very sparse so identifying the underlying base form uh helps you understand uh like what the word is referring to better another variety is morphological tagging in morphological tagging again we’re going to be talking about morphology in about two classes but basically it’s predicting various features of the word based on uh like for example here we have he saw becomes uh the past tense and a finite verb form uh two uh it’s a number and the type is a cardinal number uh this is plural uh for example so um this can become more complicated but more languages have more complicated morphologicals and there’s other ones as well there’s also span labeling tasks and sometimes these fan labeling tasks are treated in sequence labeling tasks but they’re actually a little bit different and basically the idea is given in input text x predict output spans and labels y and these include things like named entity recognition where you want to identify the spans and labels on the spans for named entities like person people or things so here we have graham newbig as a person in carnegie mellon university as an organization another example is something called syntactic chunking or shallow syntactic parsing where basically you want to split up the sentence into like noun phrases and verb phrases like this um and uh that’s another example and there’s also uh semantic role labeling where semantic role labeling basically identifies fans and tries to identify like uh this is an actor this is a predicate and this is a location so what role each of these arguments is playing with respect to the predicate but as you can see all of these basically have to do with like identifying spans and labeling them in some way so span labeling can also be treated as a sequence labeling task so you predict the beginning in and out tags bio tags for each word in the span so if we take our span labeling task like this where we want to identify a person or organization we convert this into a thing where we basically have one task or one tag for each word so we have beginning of person inside a person out out out which means no no span is identified beginning organization in organization in an organization like this so the good news is then um you know if you want to do this span identification task you can just solve it with a sequence labeling model so sequence labeling is nice in that way there might be better ways to handle span identification but this is this is one way to do it so another another task that is slightly different but also can be handled as uh sequence labeling is text segmentation so given in input text x split it into segmented text y so a very uh common uh example of this in many languages is tokenization where you want to take uh something like a well a well-conceived thought exercise that has like lots of punctuation and intervening hyphens and stuff like this and split it up into things that look a little bit more like just kind of natural word boundaries like like this adding spaces between each of uh the punctuation etc another variety of this which is necessary for some languages uh not not so many languages in the world but uh but some languages is word segmentation and um this is a example from japanese uh because japanese is written with no spaces between words so you can’t just split on white space using your python uh like split function you have to actually find the locations of the word boundaries and this is a non-trivial task um so this is one segmentation that you could have here this is the kind of like quote-unquote correct segmentation um but you could also make a mistake and segment like this and uh this phrase itself if you split it this way means uh foreign people voting rights or like suffrage for uh uh whereas this means uh the foreign government so um basically uh if you split the correct way you get one meaning if you split the wrong way you get another meeting and this can you know mess up information retrieval systems any translation systems anything that you would think of um and then there’s also morphological segmentation which again we’re going to talk about a bit more which is for example uh we might have something that looks a little bit like this um which can be uh split into different ways i i believe this is turkish i think someone can correct me if i’m wrong here i i actually forgot uh where i got the example but i believe it’s turkish um and uh so then we have uh dog and plural uh or dog paddle and uh attempts so basically whether you split it one way or the other also affects whether this is like a plural noun or a verb and thank you for confirming that this is a determination so um this is another uh another issue that you could have cool um are there any questions about this so far oh is the word segmentation solved with additional context in japanese yeah that’s a really good question um and morphological analysis also um uh is similar you know having context um so basically yes having context is very important because both of these are um both of these are reasonable morphological segmentations in different contexts you know they’re both uh things that could happen sure this might be a lot more frequent but there certainly are examples uh where this would occur um it’s also the case in japanese although that’s a little bit um uh more rare like one one example is um uh that i can put in the zoom uh chat um this means uh if you split off the first character that means american nuclear reactor if you split off the second character it means a train that’s departing from maihara which is a place in japan and uh so depending on whether you’re whether you’re in a news newspaper article um or a train schedule uh either of those would be correct so it’s um yeah it is based on context then i had another question explaining the distinction between b and um i here so b basically is the first tag in a sequence in a span so it would be applied to the first word in the span i would be applied to every subsequent word at the span so you you um if you had a single word span it would just have a b but if you have the multi word span it will be b i i i tell the span finishes and having these two different tags is necessary to distinguish cases where you have two spans in a row so if you have like person and then another person later how do we constrain the model so that b is predicted before i for a particular entity that’s a another really good question um so if you i maybe maybe i’ll talk about um how we actually do this prediction first and then get back to that question great okay so um i’d like to talk a little bit about modeling for sequence labeling and classification so um the first question is how do we make predictions so given an input x input text x extract features h and predict labels y and the way this works is basically we have text classification and sequence labeling um so we have like i like peaches we have some sort of feature extractor um that extracts a whole bunch of features from the whole sequence into like a single vector here and then given that single vector we make a prediction we have for sequence labeling we have a feature extractor that extracts one feature or one vector of features for each word in the input and then we make a prediction from this like that um and so either way we need a feature extractor it’s just a matter of whether we are extracting a single vector of features for the whole sequence or one vector for each word so a very simple feature extractor that we might use for text classification for example is bag of words where what we do is we look up a um a single feature for each of the words and then we add them together to get a vector um a vector representing the number of times a particular word occurred in the sentence and then we feed this into a predictor maybe we have a a matrix multiply that turns this into label label values and then we use this to calculate label probabilities um so just to clarify uh when i say bag of words um this uh we have a one hot vector which means a single uh value in this vector here is one and all the other values are zeros so this is essentially a um a vector that represents the identity of the word and nothing else so as our simple predictor we can have something like a linear transform and a softmax function so what that looks like is we take um we take the extracted features we multiply them by a weight matrix we add a bias here which tells you essentially how um how likely each of the labels is a priori and then the softmax converts arbitrary scores into probabilities so we exponentiate the score at each of the elements in the resulting vector divided by a normalizer to make sure that all of them add up to one add up to one and uh then that gives us a probability of our final output so it might look a little bit like this after the um after the linear transform and bias addition we might have a score vector that looks like this and we turn it into a probability so i think this should be pretty familiar to a lot of people um [Music] no questions about this any questions uh if not i have i have a little bit of a quiz uh so like we talked about text classification sorry every time i touch my mouse it moves my my slides it’s a little bit annoying but uh um so we talked about text classification where we extract features for the whole sequence and then we use that to predict the uh the label probabilities for the whole sequence by adding all of these together what do you think of a bag of words uh of a similar feature extractor used for sequence labeling does that make any sense uh whatsoever so we extract one uh one vector using this kind of bag of words lookup function and then make predictions based on this vector would that would that do anything would there be a reasonable way of solving this problem maybe not so reasonable because it’s neglecting the word order yeah maybe not so reasonable because it’s neglecting the word order yeah that’s a a pretty good uh idea but it’s actually maybe not that bad right what it what it would end up doing is it would basically look up i and then it would make a prediction of what part of speech tag i would be based on what the most frequent part of speech tag for i is and it would make the um prediction of like and it would make the prediction of the most frequent uh thing for likes so um yeah it’s a frequency-based model it would be looking up the majority class for each word and actually for part of speech tagging in english and even more so for other languages this actually isn’t that bad at part of speech tagging it gets like high 80s accuracy just because uh there’s relatively little like peaches is always a plural noun i i can’t i can’t think of any case where it wouldn’t be a plural so um even that would be you know a moderately okay feature extractor both for classification and uh um and sequence labeling um however uh you know it does neglect the word order so uh if you want to do like even better than just majority class you have to come up with something that way so another issue um language is not just a bag of words uh for classification or labeling so to have some examples we have i don’t love pairs um there’s nothing i don’t love about pears um if you just look at the words in the sentence like love is the positive word and then you have a negation but negation in itself is not you know very indicative of positive or negative sentiment um so both of these would be relatively hard to tackle with a bag of words model so what we want to do is we want to come up with a better futurizer to better pull out features for our sequences for each word in our sequences so one example of a better futurizer might be a bag of engrams model so basically instead of looking up each word we would look up each engram so here for example then don’t love would also become a feature in our model and if don’t love is a feature in our model that’s kind of like a negative feature right it would um maybe overpower the the love feature and make move that more negative uh you could also come up with syntax-based features like subject object pairs um or neural networks like recurrent neural networks convolutional neural networks self-attention and uh so until you know 20 or so it was very common to use these um kind of handcrafted features or at least handcrafted feature templates and throw them into a support vector machine model or something like this to do text classification um now it’s much more common to use uh neural networks and they also have some really nice properties like allowing transfer across languages which is a very big you know part of this class so we’re going to mainly be focusing on these models in this class this time i’ll talk about recurrent neural networks just because they’re conceptually easy but we’re also going to be talking about things like self-attention so a neural network um which a lot of people know is uh basically um a computation graph that is parameterized in a certain way in order to allow it to make predictions um the name neural networks comes from neurons in the brain uh where basically uh you know they take an information across synapses and then they fire and they give output over the uh the outputs and the absolutes um but the current conception of uh how we use them it’s basically a mathematical object that allows us to calculate something take in an input generate an output and in particular in this case it’s going to be our featurizer and our predictor so it’s going to take in an output input output some features for each word or each class or it’s going to take in an input and output a score for each for each class um so if we define an expression the way we represent it as a computation graph is through nodes and edges between the nodes and so here uh we have a single variable maybe a vector and uh that’s represented as a single node um the node can be like a scalar value of vector value matrix value tensor value and we can also have operations over all of these values so like let’s say we transpose the vector um that operation would be demonstrated as an edge to another node that implements the transpose so an edge represents a function argument and a node with an incoming edge is a function of that edge’s tail node and a node knows how to compute its value and the value of its derivative with respect to each argument and then functions can be uh nullary like input values here or unary unity or binary so here’s a something representing a matrix multiply so basically now we have x transpose uh times uh times a here and uh these are directed in the cyclic graphs that allow us to calculate more and more complicated expressions so they allow us to you know do things like calculate features um make predictions et cetera and we can also name individual parts of the graph and uh this allows us to um uh you know calculate uh values that we would like to be calculating like the score of the the probability of prediction and so some algorithms are graph construction and forward propagation that allow us to calculate values so forward propagation basically we we start out with the input values of the graph and we gradually uh move through the graph to calculate the final result here and um we also have uh back propagation and back propagation basically what it does is it processes examples in reverse topological order uh calculating the derivatives of the parameters with respect to the final value and uh this is usually uh the loss function the value we want to minimize so uh in many cases this is the negative log likelihood of the predictions over the true values and by minimizing this negative log likelihood that allows us to maximize the probability of getting the correct answer and then we take the derivatives calculated through back propagation to update the parameters of the model uh so back propagation basically works like this um we start from the end of the graph and gradually move back until we back propagate into parameters so let’s say a was a parameter a b was a parameter and c was a parameter we would back propagate into these values and um once we have the derivatives that we calculate through this process of back propagation we can use them to update the parameters to kind of improve the likelihood of getting the correct answer so this is a kind of five-minute intro to uh neural networks if you’re not very familiar with them there’s lots of good tutorials online in particular we’re going to be using a neural network framework pytorch for examples in this class that i think you know a lot of people are familiar with already um and our first assignment this time is aimed to kind of have the dual purpose of allowing you to get familiar with um you know building models in high torch and stuff like this and also learn more about kind of the interesting uh difficulties that you have to deal with when you apply these multilingually so if you’ve already taken a class or already used neural networks pretty widely in your in your work then you know all of this will be old to you and you’ll more or less know this already um if you haven’t then uh definitely take advantage of the ta office hours look at the examples ask lots of questions we can forward you some tutorials online to help you out as well so this will be your chance to catch up before we get into the more involved assignments that happen later so um yeah actually maybe i’ll skip that part um so to give an example of a type of neural network that can be used for featurizing a text classifier or a sequence labeler um we are going to talk briefly about recurrent neural networks and recurrent neural networks are models that allow us to do precisely what was mentioned before as being the [Music] issue with a bag of words model which is handling either short or long distance dependencies in language handling word order handling other things like this and um so in language there’s many dependencies that span across whole sentences so for example agreement is one example there’s not a whole lot of agreement in english um like for example there’s gender agreement and there’s a plural uh there’s like um uh number agreement between subjects and verbs so here we can see he and himself need to agree she and herself need to agree also um he does needs to agree here uh so if this were i would be i do he does so that’s an example um also word order in general um we talked about that last class so we need to have some sort of model that’s able to handle these things um these are syntactic characteristics that we need to be able to handle and there’s also semantic characteristics so um uh for example we need to have semantic congruency between uh rain and queen and rain and clouds here um you know they’re they’re just things that um make sense uh make sense semantically and don’t make sense mentally based on our knowledge of the world and we also need to handle these as well so recurrent neural networks basically are are one of the tools that we can use to encode sequences um either to get representations for each word or representations for other words so basically what recurrent neural networks do is they look up um they look up the context or the input at the current time step do a transformation of this into features and then they feed in the features from the previous time step for the next time steps so to give an example if we have i we would feed it through an rnn and get the next vector here um like we would feed um this through another rnn function we would calculate a vector corresponding to light this is a parameter of the model and then we feed in the result of running i through the rnn to get the um and this input here to get the representation for i like and then we have these and we calculate the representation of these uh i like these and then we have pairs and we calculate the representation of uh i like these pairs and uh basically um this is a recursive function so each time you’re using the result of the previous function to calculate the result of the next function so uh when we represent the sentence for text classification um basically it would look a bit like this so we would take the last vector in the sequence to make a prediction and that would be useful for things like text classification condition generation um retrieval uh we’ll be talking about the latter queue later in the class but text classification is the one we’re talking about this time and it can also be used to represent words so um if we wanted to predict a part of speech label for i and like and these and pairs we could use the immediate output after inputting that word to try to make that prediction as well and this would allow us to do things like pull in contacts from the left side to make this part of speech prediction for things like sequence labeling language modeling calculating representations for for parsing etc so the way we train the rnns is like let’s say we’re training one for sequence labeling um we have the predictions here um from these we could calculate a negative log likelihood or a loss function uh something like this we have the label we use the true label of the output to calculate the loss function and we add them together to get the sequence level uh total loss so this is one big computation graph for the whole sentence and then um we take the total loss and we do back propagation from this total loss into the whole uh the representations for the whole sentence so um the parameters of the model are all tied across time the derivatives are aggregated across all time steps and this gives us uh something called back propagation through time uh so you can back propagate through the whole sentence and uh basically optimize the probability of making the correct predictions for the whole science so what did i mean by parameter tying basically um the parameters are shared between this rnn function over the entire sentence and because of this this allows you to apply this to sentences of arbitrary length so if you have a sentence of length 50 or a sentence of length 20 or something like this then um this would essentially allow you to um uh represent all of them within the same recurrent neural network by just applying this rnn function 50 times or 20 times or three times for a three word sentence and when doing um when doing representation for things like sequence labeling it’s very common to use bi-directional rnns and what i mean by this is basically you take the left side and you run a recurrent neural network that steps from time to step zero to time step one to two to three to four um from left to right and then you have another recurrent neural network that steps from right to left in this way and aggregates information from both of the directions congratulates that together and makes a prediction and the reason why this is useful is you never know whether the context to disambiguate a particular word would be available on the left side or the right side so this allows you to pull in information from both sides okay so um that’s basically the overview of uh you know a simple method for um doing calculation of either uh representations for the whole sentence so for example uh if we’re representing the whole sentence we might take this vector we might concatenate uh the right side of the left rnn and the left side of the right the right side of the back forward rnn and the left side of the backward arm or if we want to represent individual words we might concatenate together the things in each time step uh to make predictions so this would allow us to do text classification or sequence labels okay um are there any questions about this before i jump into the multilingual part okay i guess not so uh we can jump into the multi-uh multilingual uh thing that is part of the name of the class of course so um i’m gonna be talking about some text uh some text classification and sequence labeling tasks most of these are tasks that are applicable to any language so they’re explored quite widely on english as well but some of them are inherently multilingual so for example language identification is one that’s inherently multiple so language identification as i mentioned before is the task of identifying the language that a particular text comes in and this is uh really important for a very broad number of reasons um the first reason might be if you want to create um like let’s say you want to show people content in only a language that they speak uh so you know people when they’re doing search online they’ll probably more appreciate results in the language they speak than in another language another example could be for creating data sets for something like machine translation or language modeling or something like this uh where you only want data in a particular language and uh and other things like this so actually um uh one of the largest language identification uh corporal was created by ralph brown here at uh at lti um it’s a benchmark on uh 1152 languages from a variety of free sources so this is kind of a widely known data set here if you want off the shelf tools for doing language identification one example of a relatively easy one to use is slang id.pai so you can just download this use it for 90 plus languages um another example is um there’s the chrome uh language identifier from the chrome browser i actually don’t have a link here but that’s also pretty widely used by people if you want uh an off-the-shelf uh method that you can use there’s also a nice survey it’s a little bit old by now but um automatic language identification and texts uh which i can recommend you can take a look at if you’re interested in this and oh um missing a slide that i thought i had added here weird okay so i i will just discuss um i’ll just discuss this paper um so this is a recent paper from 2020 by people at google working on kind of low resource languages it’s quite interesting it’s called language id in the wild unexpected challenges on the path to a thousand language web text corpus and this is not the only paper that has it has pointed out this problem that language identification doesn’t work well um but they have some uh very interesting insights and they also have a very nice kind of example of a of the issues that you encounter when trying to do language identification on uh web text and so um here here are some mind sentences from the web that were supposedly in one language according to google’s uh text uh like language identification model so like a whole bunch of people raising their hand and emojis got classified as amani beri um the in uh this was in twee uh which is why you lie in why you always lie in uh written in kind of like strange characters um a misrendered pdf uh was for hadi um the non-unicode font i’m not sure what this was um uh yeah it’s a non-non-unicode font i guess was uh written in this way um here uh this was as balinese it was just like boilerplate um this was also english but it was written in like the cherokee script for stabilization um he just wrote me ow that became cooler so you can see basically here um when people write in like slightly non-standard language um uh it gets identified as other things like even this is like clearly standard english but um there were hints of uh words that often occur in remote so um it got recognized as a remote so this kind of just demonstrates how difficult um this uh this task is when you start applying it to uh web text and i actually have had a similar experience when i was trying to do twitter um there was a certain uh like uh face uh like not emoji but like the um the faces written with regular characters it was written in canada characters and uh so many many things were recognized as commonly just because they use that like popular face um so there are lots of um large corpora like while i’m at it here i can also introduce the oscar purpose this is a very large corpus huge and multilingual obtained by language classification and filtering of the common crawl corpus it’s gotten a bit better since uh they first released it in terms of the noisiness but when it was first released it was like extremely noisy just because language id didn’t didn’t work so well so um this is actually like a really big problem that you need to be aware of if you’re if you’re starting out um are there any questions about language id before i move on to the next okay um so also kind of standard text classification like yes i said text classifications were like a class uh class of tasks that make tasks in itself um here are some representative ones that people have used uh these are mostly used for benchmarking multilingual models as opposed to like actually building anything useful um so uh but still you know sometimes you want to know how good your multilingual representations are so they could be good test beds uh one example is ml doc corpus um which is a corpus of a multilingual document classification there’s also the pos x corpus um so the this is a paraphrase detection between languages it’s sentence pair classification where you feed in two sentences um also cross-lingual natural language inference so this is textual entailment prediction or natural language inference which is also a sentence pair classification task there’s also cross-lingual sentiment classification um in chinese in english so this could be used for facing another thing is part of speech and morphological tagging i’m not going to go into a whole lot of about this because i know it’s going to be covered more when we talk about like words parts of speech and morphology um but basically there’s the universal dependencies treebank and the universal dependencies treebank um basically it contains uh syntactic parses like dependency forces but it also contains parts of speech and morphological features for 90 languages um and it has a standardized universal part of speech set in universal morphology headset to make things consistent across the languages so this is one of the highest quality like multilingual corpora that i’m aware of it’s you know well controlled well conceived um and there are some pre-trained models that can use uh that can do like syntactic analysis on many languages trained on these datasets like unify and stanza if you’re interested in doing uh multilingual like syntactic analysis named entity recognition this is going to be what we’re going to be doing for the assignment and um there’s different types of named entity recognition data sets um there’s a gold standard data set from connell 2002 2003 on language independent named entity recognition this is an english german spanish and dutch with human annotated data i actually uh forgot to add um one that i just remembered now uh that just came out i actually i helped out with this a little bit but it’s a uh an identity recognition data set for african languages i called uh masakonner and this is um this is nice because it’s also manually labeled but it’s in african languages that have like a lot fewer resources than um english german spanish and dutch so it gives kind of a better idea of um [Music] like you know how well we’ll be doing a lower resource languages there’s also this wiki and data set for entity recognition and linking in 282 languages um this was extracted from wikipedia using inter page links so in wikipedia of course if we go to um carnegie mellon university on wikipedia there are many uh there are many links um so there’s no link here but here’s pittsburgh pennsylvania um the melon institute of industrial research andrew carnegie so all of these links link to other pages and then if you look up the type of the page according to uh some annotations that come on wikipedia you can tell that pittsburgh is a city uh mellon institute of industrial researchers and organization and andrew carnegie is a is a person and then of course you know this is available in lots of languages so we can go to chinese and um find the chinese equivalent of andrew carnegie or the chinese equivalent of pittsburgh and uh and do the same thing so basically this data creates that in many different languages there’s also several composite benchmarks for multilingual learning so they aggregate many different sequence labeling or classification tasks for testing multilingual models um one popular one is extreme uh it’s a massively multilingual benchmark for 10 different tasks 40 different languages another one that came out at a similar time is exclu with 11 tasks over 19 languages um so there’s also a new version of extreme cold extreme r that just came out i had been a little bit involved in both of these and um extreme r is uh they swapped out some easy tasks added some harder tasks and added better analysis so you might also consider looking at that um for your class project i would warn you that these uh these benchmarks are very popular uh and there’s people with like lots of compute that are competing on these benchmarks so um you might not uh it might be a bit of a challenge to keep up with the state of the art there but i think you could work on individual tasks and still do a very good job like some of the tasks where kind of generic models are not working as well so you can definitely take a look to get inspiration for ideas okay um great so uh that’s all i have are there any questions before we move on to the um the like discussion period which in this case we’re not doing discussion we’re having a presentation of the assignment but uh any question about data sets or tasks or oh sorry the homework was on ner i said it beyond that in er but the top part of speech tagging i apologize um cool yeah but we’ll have the description of the uh the task um for assignment one um before i go into that i just like to point out that starting next time we will indeed be having discussion and reading assignments um so the reading assignment for next time is uh this uh modeling language variation in universals a survey on typological linguistics for natural language processing um the reading is actually uh it’s only required for suggested that you do uh sections one through three um but the whole survey is good so if you don’t mind reading 30 pages or so um it would be worth taking a look at that uh as well so um required is one through three um and then based on what you learned in that reading you can try to think of what are some unique typological features of a language that you know regarding phonology morphologies and dex pragmatics um doesn’t you don’t need to cover all of them but you can cover like one or two of these and uh we’ll have a discussion where everybody will share what they came up with cool and uh today is uh assignment one introduction uh tr vijay or who’s going to be presenting this thing um are you speaking if you’re speaking around me do i need to unmute me i don’t think he’s on mute okay there we go now we can uh take gray i think you are talking right can you hear me now yep yes great okay so uh okay hi hi i’m think gray and ti is going to give some introduction yeah all right so this first assignment uh is to give you a practical introduction to multilingual parts of speech tagging and i think briefly was mentioned so part of speech is just lexical categories or word classes or tags so in the example sentence he saw two words we assigned the part of speech pronoun to he verb to saw and so on so you’ll get a data set of a sentence sentences in different languages and you want to output the pos tags for each of the words in the sentence yeah so as mentioned previously aside from giving you guys a practical introduction to multilingual pause tagging yeah we want to give you a sort of like an experimental approach to multilingual problems such as investigating the challenges to languages which are low resource meaning that there’s a limited availability of label data and of course just be familiarized with deep learning frameworks aws and multilingual data sets so to do this assignment you would need a machine with a gpu so you can use aws or you can use your own computer if you have a gpu and you’ll have to install some python packages for this assignment so the tricky part here i guess would be like the aws setup so shortly i’ll be posting instructions on piazza on how to request aws credit and i think the assignment will have further instructions on how to set it up and all students should have an aws account using your andrew email and just follow the instructions on how to set it up we tried doing the assignment without a gpu but it’s strongly recommended because i think the next assignments are not really doable without a gpu and i trained it on a very old macbook air and it took me around three to four hours to complete the training and you need to retrain it you know when you’re changing the parameters and so on so yeah do it with the gpu and i think one more thing to take note is that make sure that you stop the aws instance when you’re not doing it because you will be continuously billed um so i think the aws setup should be fairly straightforward i’m not sure myself tingerie has done it before without instructions but the instruction instructors and the tas of the intro to deep learning course have provided a very comprehensive um aws fundamentals playlist so it will be linked in the assignment handout page as well and you can follow the steps in case you have any difficulties yeah so for this assignment we are going to give you a deep file and uh this this this file will contain all the code and the data that is to use for this assignment and we will post a link later on psl so uh in the date file you can find the training data it is the training data for six languages and the right hand side is an example uh what what the format looks like for this training data so this is an example of one sentence so you can see uh there are the words and the pls text of that word separated by some new lines and each line contains a word and it’s text separated by a tab but actually you don’t have to worry too much about this format because uh our code will handle this for you and in this homework we are going to use this simple baseline model by rcm model it is a model with an embedding layer and also a bi-directional stem there and so the input of this model will be a sequence of words and the outputs will be a sequence of pos tags so let’s work through the files in the the file so the first file is the config.json file it is the file that contains the hyper parameters that will be used to trend the model you may have to change this ma this file in order to write a report when you are doing some analysis and this udprs.pipe file is the place where we implement how to read a data set but actually i don’t think you will have to modify this so i won’t go into detail here and uh this model.pi file is the place where we implement this bi-directional stm model and if you are familiar with pytorch then you can see it’s a very simple model it just simply applies and it’s embedding layer and then lcn there and then finally predict the text using a fully connected layer yeah but if you want to make a stronger model then you may have to modify this file and most of the complex jobs are done in this main.pi file it handles the loading of data and it also do some pre-process and uh do the thing that have simple into batch and also the part that trends the model so let’s go through this content so the first thing it does is that a load the data set with the function we define and then it build a vocabulary for the input text and also the the output pos text the reason that we want to build this vocabulary is that uh in modern deep learning framework we are uh when we are using a embedding layer what the embedding layer does is that a map the index of sound balls into some batters so that’s to say before we can use this embedding layer we need to first build a mapping they can assign each word with an index so we have to iterate through the changing data to see what to see the words that occurs in the training data and for similar reason we have to iterate through the data set to see all the possible possible pos tags in this data so these are the purpose of this device and once we have the mapping that map the tokens to the indices and the mapping then map the pos tag to the index we can define these two functions that converge they convert the train data into indices and with these two functions we can define this collet batch function the purpose of this function is that it pack a bunch of text label pairs into a single batch and then this batch will be used to train the model so uh yeah so what this function does is that it first converts the words inside the the samples to a tensor by coding the function with the file above and you also can convert the tag into indexes by code by cleaning the function and then the most important thing it does is that it paid those sequence of tokens into the sentence so those tensors can be stacked into a single tensor and that single tensor can be later used to train the model and once we have this correct batch function we can define a data loader a data network is an iterator we can uh get some batches from it by iterate through this data loader so here we define three data loaders for the training set the validation set and testing set respectively and then we can use the data loader to change our model the way we train our model is that we repeat this process for a certain number of times defined in this hyper-parameter mesh epoch and the process is that we first train the model by using the training data and then evaluate the model using the validation set and if after this epoch the model get a better validation loss then this grip will set the model to some place so at the end of this training process you will have the model that has the minimum validation loss as for what this trend function does it is also very simple it just iterates through the data order the chain data loader and then makes prediction over the text and then compute the laws by comparing its prediction and the quantum tags and then use these those to do backward propagation and then code atomizer to update the parameters in the model yeah so it’s basically what our codes do so what you need to submit for this assignment is code and a write-up so part of the you know how to obtain points for this assignment is you need to run the code you need to make notifications to the model and so on um but it’s also equally important to give a detailed explanation on the results that you see or what you do and why do you think your changes have made an effect on the results and you can submit this on campus and i think this is um the part that everyone really wants to see is how do i get a good grade in this assignment so there’s a lot of ways um there’s a lot of tiers as well so if you just want to get you can get a b by just running the code on the existing english model and just running that uh running the model on the test set you’ll get a b but if you train the model on the different multilingual data sets and you evaluate them using their respective test sets you’ll get a b plus to get anywhere of an a you need to write a report with detailed analysis so there’s a lot of ways you can comment on the results you can see how the performance varies across different languages you can also see you know which tags are most often um misplaced for other tags so you know our pronouns and nouns more easily mistaken for each other and so on so that’s what we want to see and if you have a report you know detailing all these explanation you’ll probably get an a minus to get an a or above you will need to get to create a non-trivial extension to improve the existing scores and there’s really a lot of ways you can do this you can add like cnn input layer to capture character level features you can use pre-trained embeddings and so on so there’s really um it’s kind of like an experiment that you need to run on your own and we’re excited to see your results</p>
+</blockquote>
+</section>
+</div>
+</div>
+</div>
+<section id="resources" class="level2">
+<h2 class="anchored" data-anchor-id="resources">Resources</h2>
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2022,
+  author = {Bochman, Oren},
+  title = {Sequence {Labeling}},
+  date = {2022-01-20},
+  url = {https://orenbochman.github.io/notes-nlp/notes/cs11-737-w02-sequence-labeling/},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2022" class="csl-entry quarto-appendix-citeas" role="listitem">
+Bochman, Oren. 2022. <span>“Sequence Labeling.”</span> January 20, 2022.
+<a href="https://orenbochman.github.io/notes-nlp/notes/cs11-737-w02-sequence-labeling/">https://orenbochman.github.io/notes-nlp/notes/cs11-737-w02-sequence-labeling/</a>.
+</div></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("^(?:http:|https:)\/\/www\.quarto\.org\/custom");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+          // default icon
+          link.classList.add("external");
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© Copyright 2023-2025, Oren Bochman</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/cs11-737-w02-sequence-labeling/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This page is built with 💛 and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"fade","descPosition":"right","loop":true,"openEffect":"fade","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

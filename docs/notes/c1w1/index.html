@@ -10,7 +10,7 @@
 <meta name="keywords" content="Logistic regression, Classification Algorithms">
 <meta name="description" content="Extract features from text into numerical vectors, then build a binary classifier for tweets using logistic regression!">
 
-<title>Sentiment Analysis with Logistic Regression – NLP Specialization</title>
+<title>Sentiment Analysis with Logistic Regression – NLP Course Notes &amp; Research</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -147,6 +147,10 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="../../styles.css">
+<meta property="og:title" content="Sentiment Analysis with Logistic Regression – NLP Course Notes &amp; Research">
+<meta property="og:description" content="Extract features from text into numerical vectors, then build a binary classifier for tweets using logistic regression!">
+<meta property="og:image" content="https://orenbochman.github.io/notes-nlp/images/nlp-brain-wordcloud.jpg">
+<meta property="og:site_name" content="NLP Course Notes &amp; Research">
 </head>
 
 <body class="nav-sidebar floating nav-fixed slimcontent">
@@ -157,7 +161,7 @@ window.Quarto = {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="../../index.html">
-    <span class="navbar-title">NLP Specialization</span>
+    <span class="navbar-title">NLP Course Notes &amp; Research</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -858,9 +862,9 @@ window.Quarto = {
 <p><img src="../../images/Course-Logo-1-3.webp" class="nolightbox img-fluid figure-img"></p>
 <figcaption>course banner</figcaption>
 </figure>
-</div><div id="fig-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides" style="@page {size: 16in 9in;  margin: 0;}">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+</div><div id="sup-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides" style="@page {size: 16in 9in;  margin: 0;}">
+<figure class="quarto-float quarto-float-sup figure">
+<div aria-describedby="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><a href="slides.pdf" class="lightbox" data-gallery="slides" title="This week’s slides"><embed src="slides.pdf" style="@page {size: 16in 9in;  margin: 0;}" width="420" height="340"></a></p>
@@ -868,8 +872,8 @@ window.Quarto = {
 </figure>
 </div>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-sup quarto-uncaptioned" id="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Supplementary Figure&nbsp;1
 </figcaption>
 </figure>
 </div></div>
@@ -897,10 +901,10 @@ Learning Objectives
 <div class="no-row-height column-margin column-container"><div id="fig-logistic-regression-meme" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-logistic-regression-meme-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/blake_sgd_vs_mle.jpg" class="lightbox" data-gallery="slides" title="Figure&nbsp;2: SGD is overkill when MLE is a perfectly good closed form solution. 😱 🤭"><img src="img/blake_sgd_vs_mle.jpg" class="img-fluid figure-img"></a>
+<a href="img/blake_sgd_vs_mle.jpg" class="lightbox" data-gallery="slides" title="Figure&nbsp;1: SGD is overkill when MLE is a perfectly good closed form solution. 😱 🤭"><img src="img/blake_sgd_vs_mle.jpg" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-logistic-regression-meme-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: SGD is overkill when MLE is a perfectly good closed form solution. <span class="emoji" data-emoji="scream">😱</span> <span class="emoji" data-emoji="hand_over_mouth">🤭</span>
+Figure&nbsp;1: SGD is overkill when MLE is a perfectly good closed form solution. <span class="emoji" data-emoji="scream">😱</span> <span class="emoji" data-emoji="hand_over_mouth">🤭</span>
 </figcaption>
 </figure>
 </div></div><div class="callout callout-style-default callout-warning callout-titled">
@@ -940,10 +944,10 @@ TL;DR Low down and dirty <span class="emoji" data-emoji="poop">💩</span> on Lo
 <div class="no-row-height column-margin column-container"><div id="fig-slide1" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-slide1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide_001.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;3: classification overview"><img src="img/slide_001.png" class="img-fluid figure-img"></a>
+<a href="img/slide_001.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;2: classification overview"><img src="img/slide_001.png" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3: classification overview
+Figure&nbsp;2: classification overview
 </figcaption>
 </figure>
 </div></div><ul>
@@ -959,10 +963,10 @@ Figure&nbsp;3: classification overview
 <div class="no-row-height column-margin column-container"><div id="fig-slide2" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-slide2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide_002.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;4: the Sigmoid cost function"><img src="img/slide_002.png" class="img-fluid figure-img"></a>
+<a href="img/slide_002.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;3: the Sigmoid cost function"><img src="img/slide_002.png" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4: the Sigmoid cost function
+Figure&nbsp;3: the Sigmoid cost function
 </figcaption>
 </figure>
 </div></div></section>
@@ -972,10 +976,10 @@ Figure&nbsp;4: the Sigmoid cost function
 <div class="no-row-height column-margin column-container"><div id="fig-slide3" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-slide3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide_003.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;5: Sentiment Analysis"><img src="img/slide_003.png" class="img-fluid figure-img"></a>
+<a href="img/slide_003.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;4: Sentiment Analysis"><img src="img/slide_003.png" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5: Sentiment Analysis
+Figure&nbsp;4: Sentiment Analysis
 </figcaption>
 </figure>
 </div></div><div class="callout callout-style-default callout-tip callout-titled">
@@ -1026,10 +1030,10 @@ Video&nbsp;3: LIWC-22 2022 Tutorial 1: Getting started with LIWC-22
 </div><div id="fig-slide4" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-slide4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide_005.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;6: classification overview"><img src="img/slide_005.png" class="img-fluid figure-img"></a>
+<a href="img/slide_005.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;5: classification overview"><img src="img/slide_005.png" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6: classification overview
+Figure&nbsp;5: classification overview
 </figcaption>
 </figure>
 </div></div>
@@ -1067,10 +1071,10 @@ Figure&nbsp;6: classification overview
 <div class="no-row-height column-margin column-container"><div id="fig-slide5" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-slide5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide_005.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;7: A sparse representation"><img src="img/slide_005.png" class="img-fluid figure-img"></a>
+<a href="img/slide_005.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;6: A sparse representation"><img src="img/slide_005.png" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7: A sparse representation
+Figure&nbsp;6: A sparse representation
 </figcaption>
 </figure>
 </div></div><p>As <span class="math inline">V</span> gets larger, the vector becomes more sparse. Furthermore, we end up having many more features and end up training  <span class="math inline">\theta_0 \ldots \theta_n</span>  parameters. This results in a larger training time. And the inference time increases as well.</p>
@@ -1184,19 +1188,19 @@ Table&nbsp;2: Word class table
 <div class="no-row-height column-margin column-container"><div id="fig-slide6" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-slide6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide_006.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;8: preprocessing - feature extraction"><img src="img/slide_006.png" class="img-fluid figure-img"></a>
+<a href="img/slide_006.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;7: preprocessing - feature extraction"><img src="img/slide_006.png" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8: preprocessing - feature extraction
+Figure&nbsp;7: preprocessing - feature extraction
 </figcaption>
 </figure>
 </div><div id="fig-slide7" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-slide7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide_007.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;9: preprocessing - stemming"><img src="img/slide_007.png" class="img-fluid figure-img"></a>
+<a href="img/slide_007.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;8: preprocessing - stemming"><img src="img/slide_007.png" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9: preprocessing - stemming
+Figure&nbsp;8: preprocessing - stemming
 </figcaption>
 </figure>
 </div></div>
@@ -1269,10 +1273,10 @@ Video&nbsp;6: StatQuest: Logistic Regression Details Pt 2: Maximum Likelihood
 <div class="no-row-height column-margin column-container"><div id="fig-slide8" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-slide8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide_008.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;10: Training algorithm - flow chart"><img src="img/slide_008.png" class="img-fluid figure-img"></a>
+<a href="img/slide_008.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;9: Training algorithm - flow chart"><img src="img/slide_008.png" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;10: Training algorithm - flow chart
+Figure&nbsp;9: Training algorithm - flow chart
 </figcaption>
 </figure>
 </div></div><p>To train our logistic regression function, we’ll do the following: we initialize our parameter  <span class="math inline">\theta</span> , that we can use in we <strong>Sigmoid</strong>, we then compute the gradient that we’ll use to update <span class="math inline">\theta</span>, and then calculate the cost. we keep doing so until good enough</p>
@@ -1280,10 +1284,10 @@ Figure&nbsp;10: Training algorithm - flow chart
 <div class="no-row-height column-margin column-container"><div id="fig-slide9" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-slide9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide_009.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;11: Training"><img src="img/slide_009.png" class="img-fluid figure-img"></a>
+<a href="img/slide_009.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;10: Training"><img src="img/slide_009.png" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;11: Training
+Figure&nbsp;10: Training
 </figcaption>
 </figure>
 </div></div><p>Usually we keep training until the cost converges. If we were to plot the number of iterations versus the cost, we should see something like this:</p>
@@ -1294,10 +1298,10 @@ Figure&nbsp;11: Training
 <div class="no-row-height column-margin column-container"><div id="fig-slide10" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-slide10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide_010.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;12: Testing logistic regression"><img src="img/slide_010.png" class="img-fluid figure-img"></a>
+<a href="img/slide_010.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;11: Testing logistic regression"><img src="img/slide_010.png" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;12: Testing logistic regression
+Figure&nbsp;11: Testing logistic regression
 </figcaption>
 </figure>
 </div></div><p>To test our model, we would run a subset of our data, known as the validation set, on our model to get predictions. The predictions are the outputs of the <strong>Sigmoid function</strong>.</p>
@@ -1320,10 +1324,10 @@ Figure&nbsp;12: Testing logistic regression
 <div class="no-row-height column-margin column-container"><div id="fig-slide11" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-slide11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="img/slide_011.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;13: Cost function for logistic regression"><img src="img/slide_011.png" class="img-fluid figure-img"></a>
+<a href="img/slide_011.png" class="lightbox" data-gallery="slides" title="Figure&nbsp;12: Cost function for logistic regression"><img src="img/slide_011.png" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slide11-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;13: Cost function for logistic regression
+Figure&nbsp;12: Cost function for logistic regression
 </figcaption>
 </figure>
 </div></div><div class="callout callout-style-simple callout-important callout-titled">
