@@ -1,0 +1,155 @@
+---
+date: 2021-05-09
+title: 'BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding'
+subtitle: Review
+description: 'review of the paper 2018 paper introducing BERT, a pre-trained language model'
+categories:
+  - Attention
+  - Bidirectional LSTM
+  - Deep learning
+  - Embeddings
+  - LLM
+  - NLP 
+  - Paper
+  - Review  
+  - Transformer
+  - Podcast
+keywords: 
+  - GLUE tasks
+  - SQuAD
+  - SWAG
+  - MultiNLI 
+  - NSP
+  - MLM
+  - Contextual embeddings
+draft: false
+---
+
+![Litrature review](/images/literature-review-open-book.jpg){.column-margin}
+
+
+::: {#fig-01 .column-margin}
+![Pre Training v.s. Fine Tuning](fig01.png)
+
+Overall pre-training and fine-tuning procedures for BERT. Apart from output layers, the same architectures are used in both pre-training and fine-tuning. The same pre-trained model parameters are used to initialize models for different down-stream tasks. During fine-tuning, all parameters are ine-tuned. [CLS] is a special symbol added in front of every input example, and [SEP] is a special separator token (e.g. separating questions/answers)
+:::
+
+::: {#fig-02 .column-margin}
+![Pre Training v.s. Fine Tuning](fig02.png)
+
+BERT input representation. The input embeddings are the sum of the token embeddings, the segmentation embeddings and the position embeddings.
+:::
+
+::: {#fig-03 .column-margin}
+![Pre Training v.s. Fine Tuning](fig03.png)
+
+Differences in pre-training model architectures. BERT uses a bidirectional Transformer. OpenAI GPT uses a left-to-right Transformer. ELMo uses the concatenation of independently trained left-to-right and right-toleft LSTMs to generate features for downstream tasks. Among the three, only BERT representations are jointly conditioned on both left and right context in all layers. In addition to the architecture differences, BERT and OpenAI GPT are fine-tuning approaches, while ELMo is a feature-based approach.
+:::
+
+::: {#fig-04 .column-margin}
+![Pre Training v.s. Fine Tuning](fig04.png)
+
+Illustrations of Fine-tuning BERT on Different Tasks.
+:::
+
+::: {#fig-05 .column-margin}
+![Pre Training v.s. Fine Tuning](fig05.png)
+
+Ablation over number of training steps. This shows the MNLI accuracy after fine-tuning, starting from model parameters that have been pre-trained for k steps. The x-axis is the value of k.
+:::
+
+BERT is one of the Transformer papers we discussed in the NLP with Attention models. In fact it was the main example of how the attention mechanism can be used to build a powerful model for NLP tasks. But here is a deeper look at the paper and at the model than we could do in the course.
+
+
+::: {.callout-note}
+## TL;DR BERT
+
+![BERT in a Nutshell](/images/in_a_nutshell.jpg)
+
+- This paper introduces BERT, a pre-trained language model that uses bidirectional representations from Transformers.
+- BERT is pre-trained on unlabeled text data using two unsupervised tasks: Masked Language Model (MLM) and Next Sentence Prediction (NSP).
+- The model can be fine-tuned with just one additional output layer to achieve state-of-the-art results on various NLP tasks.
+- BERT achieves significant improvements on tasks like GLUE, MultiNLI, SQuAD, and SWAG, outperforming previous models.
+
+:::
+
+## Podcast
+
+<audio controls="1"><source src="podcast.mp3" type="audio/mpeg"></audio>
+
+## Abstract
+
+> We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers. Unlike recent language representation models, BERT is designed to pre-train deep bidirectional representations from unlabeled text by jointly conditioning on both left and right context in all layers. As a result, the pre-trained BERT model can be fine-tuned with just one additional output layer to create state-of-the-art models for a wide range of tasks, such as question answering and language inference, without substantial task-specific architecture modifications.
+> BERT is conceptually simple and empirically powerful. It obtains new state-of-the-art results on eleven natural language processing tasks, including pushing the GLUE score to 80.5% (7.7% point absolute improvement), MultiNLI accuracy to 86.7% (4.6% absolute improvement), SQuAD v1.1 question answering Test F1 to 93.2 (1.5 point absolute improvement) and SQuAD v2.0 Test F1 to 83.1 (5.1 point absolute improvement). -- [@devlin2019bertpretrainingdeepbidirectional]
+
+
+## Outline
+
+1.  **Introduction**
+    *   Introduce the concept of language model pre-training and its effectiveness in improving NLP tasks.
+    *   Discuss the two main approaches to applying pre-trained language representations: feature-based and fine-tuning.
+    *   Highlight the limitations of current techniques, particularly the unidirectionality of standard language models.
+    *   Introduce BERT as a solution that uses bidirectional representations through a masked language model (MLM) pre-training objective.
+    *   Mention the use of a "next sentence prediction" (NSP) task for jointly pre-training text-pair representations.
+    *   State the contributions of the paper:
+        *   Importance of bidirectional pre-training.
+        *   Reduction in need for task-specific architectures.
+        *   Advancement of state-of-the-art for eleven NLP tasks.
+2.  **Related Work**
+    *   Briefly review the history of pre-training general language representations, including non-neural and neural methods.
+    *   Discuss pre-trained word embeddings and their improvements over embeddings learned from scratch.
+    *   Mention generalization to coarser granularities such as sentence and paragraph embeddings.
+    *   Explain the feature-based approach of ELMo, which extracts context-sensitive features from left-to-right and right-to-left language models.
+    *   Describe unsupervised fine-tuning approaches that pre-train contextual token representations.
+    *   Mention transfer learning from supervised tasks with large datasets.
+3.  **BERT Model**
+    *   Describe the two-step framework of BERT: pre-training and fine-tuning.
+    *   Explain that the model is trained on unlabeled data during pre-training and fine-tuned using labeled data from downstream tasks.
+    *   Highlight the unified architecture of BERT across different tasks.
+    *   Detail BERT's model architecture as a multi-layer bidirectional Transformer encoder.
+    *   Mention the two model sizes: BERTBASE and BERTLARGE, including their number of layers, hidden size, and attention heads.
+    *   Explain that BERT uses bidirectional self-attention, unlike the constrained self-attention of OpenAI GPT.
+    *   Describe how the input representation can represent both single sentences and sentence pairs.
+    *   Detail the use of WordPiece embeddings and special tokens like [CLS] and [SEP].
+    *   Explain how input representation is constructed by summing token, segment, and position embeddings.
+4.  **BERT Pre-training**
+    *   Explain that BERT does not use traditional left-to-right or right-to-left language models for pre-training.
+    *   Describe the first unsupervised task: Masked LM (MLM), where some input tokens are randomly masked and the model predicts the original word.
+    *   Explain the masking procedure: 80% [MASK], 10% random token, 10% unchanged token.
+    *   Describe the second unsupervised task: Next Sentence Prediction (NSP), where the model predicts if sentence B is the actual next sentence following A.
+    *   Mention the use of BooksCorpus and English Wikipedia as the pre-training corpus.
+5.  **BERT Fine-tuning**
+    *   Explain the straightforward fine-tuning process due to the self-attention mechanism.
+    *   Describe how task-specific inputs and outputs are plugged into BERT for fine-tuning.
+    *   Mention that fine-tuning is relatively inexpensive.
+6.  **Experiments**
+    *   Present the results of fine-tuning BERT on 11 NLP tasks.
+    *   Discuss the results on the GLUE benchmark and the substantial improvements over prior state-of-the-art models.
+        *   Detail the fine-tuning procedure including batch size and epochs.
+        *   Highlight the performance of both BERTBASE and BERTLARGE.
+    *   Present results on the SQuAD v1.1 question answering task, showing how the input question and passage are represented.
+        *   Discuss the addition of start and end vectors during fine tuning.
+        *   Show the improvement of BERT on this task compared to other systems.
+    *   Present the SQuAD v2.0 results, including how the model handles unanswerable questions.
+    *   Discuss the results on the SWAG dataset for grounded commonsense inference.
+        *   Explain how the input is structured for this task.
+7.  **Ablation Studies**
+    *   Discuss the importance of the deep bidirectionality of BERT and evaluate the impact of the pre-training objectives.
+        *   Present results comparing BERT to models trained without NSP or with a left-to-right model.
+    *   Explore the effect of model size on fine-tuning accuracy.
+        *   Show how larger models lead to accuracy improvements.
+    *   Compare fine-tuning with a feature-based approach using the CoNLL-2003 Named Entity Recognition (NER) task.
+        *   Detail the use of contextual embeddings as input to a BiLSTM.
+        *   Show the effectiveness of both approaches with BERT.
+8.  **Conclusion**
+    *   Summarize the key findings of the paper, emphasizing the importance of rich, unsupervised pre-training for language understanding.
+    *   Highlight the major contribution of generalizing these findings to deep bidirectional architectures.
+    *   Reiterate that the same pre-trained model can tackle a broad set of NLP tasks.
+
+This outline covers the main points of the BERT paper and provides a structure you can use for your paper. Let me know if you'd like any modifications or more details on specific sections!
+
+
+## The Paper
+
+![paper](./paper.pdf){.col-page width=800px height=1000px group="slides"}
+
