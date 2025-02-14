@@ -1,0 +1,115 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "date: 2020-10-06\n",
+        "title: Probability and Bayes Rule\n",
+        "subtitle: Classification & Vector Spaces\n",
+        "description: \"Concepts, code snippets, and slide commentaries for this week's lesson of the  Course notes from the deeplearning.ai natural language programming specialization.\"\n",
+        "categories: \n",
+        "  - NLP \n",
+        "  - Coursera \n",
+        "  - Code\n",
+        "  - Conditional Probability\n",
+        "  - Bayes rule\n",
+        "  - Naïve Bayes\n",
+        "  - Laplace smoothing\n",
+        "  - Log-likelihood\n",
+        "  - Classification \n",
+        "  - Sentiment analysis task\n",
+        "---\n",
+        "\n",
+        "\n",
+        "![course banner](/images/Course-Logo-1-3.webp){ .column-margin .nolightbox}\n"
+      ],
+      "id": "4d47a3a8"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import pandas as pd\n",
+        "import string \n",
+        "raw_tweets=[\n",
+        "  \"I am happy because I am learning NLP\",\n",
+        "  \"I am sad, I am not learning NLP\",\n",
+        "  \"I am happy, not sad\",\n",
+        "  \"I am sad, not happy\",\n",
+        "]\n",
+        "def clean(tweet:str):\n",
+        "  return  tweet.translate(str.maketrans('', '', string.punctuation)).lower()\n",
+        "tweets = [clean(tweet) for tweet in raw_tweets]\n",
+        "labels=['+','-','+','-']\n",
+        "df = pd.DataFrame({'tweets': tweets, 'labels': labels})\n",
+        "df"
+      ],
+      "id": "c8834e29",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import numpy as np\n",
+        "from collections import Counter\n",
+        "p_freq,n_freq = Counter(), Counter()\n",
+        "#print( df[df.labels == '+']['tweets'].to_list())\n",
+        "[p_freq.update(tweet.split()) for tweet in df[df.labels == '+']['tweets'].to_list()]\n",
+        "[n_freq.update(tweet.split()) for tweet in df[df.labels == '-']['tweets'].to_list()]\n",
+        "print(p_freq)\n",
+        "print(n_freq)\n",
+        "vocab = list(set(p_freq.keys()).union(set(n_freq.keys())))\n",
+        "pos_freq = [p_freq[word] for word in vocab ]\n",
+        "neg_freq = [n_freq[word] for word in vocab ]\n",
+        "vocab_df=pd.DataFrame({'vocab':vocab,'pos_freq':pos_freq,'neg_freq':neg_freq})\n",
+        "vocab_df['p_pos']=vocab_df.pos_freq/vocab_df.pos_freq.sum()\n",
+        "vocab_df['p_neg']=vocab_df.neg_freq/vocab_df.neg_freq.sum()\n",
+        "vocab_df['p_pos_sm']=(vocab_df.pos_freq+1)/(vocab_df.pos_freq.sum()+vocab_df.shape[1])\n",
+        "vocab_df['p_neg_sm']=(vocab_df.neg_freq+1)/(vocab_df.neg_freq.sum()+vocab_df.shape[1])\n",
+        "vocab_df['ratio']= vocab_df.p_pos_sm/vocab_df.p_neg_sm\n",
+        "vocab_df['lambda']= np.log(vocab_df.p_pos_sm/vocab_df.p_neg_sm)\n",
+        "pd.set_option('display.float_format', '{:.2f}'.format)\n",
+        "vocab_df\n",
+        "print(vocab_df.shape)"
+      ],
+      "id": "383f7b90",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| label: tbl-planet-measures\n",
+        "#| tbl-cap: Planets\n",
+        "from IPython.display import Markdown\n",
+        "from tabulate import tabulate\n",
+        "table = [[\"Sun\",696000,1989100000],\n",
+        "         [\"Earth\",6371,5973.6],\n",
+        "         [\"Moon\",1737,73.5],\n",
+        "         [\"Mars\",3390,641.85]]\n",
+        "Markdown(tabulate(\n",
+        "  table, \n",
+        "  headers=[\"Planet\",\"R (km)\", \"mass (x 10^29 kg)\"]\n",
+        "))"
+      ],
+      "id": "tbl-planet-measures",
+      "execution_count": null,
+      "outputs": []
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/home/oren/.local/share/jupyter/kernels/python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

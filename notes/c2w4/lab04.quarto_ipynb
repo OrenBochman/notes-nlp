@@ -1,0 +1,2136 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "date: 2020-11-03\n",
+        "title: 'Word Embeddings: Ungraded Practice Notebook'\n",
+        "categories: \n",
+        "  - NLP \n",
+        "  - Coursera \n",
+        "  - Lab\n",
+        "  - Probabilistic Models\n",
+        "jupyter: python3\n",
+        "# execute: \n",
+        "#     error: true\n",
+        "---\n",
+        "\n",
+        "::: {.column-margin .nolightbox}\n",
+        "![course banner](/images/Course-Logo-2-3.webp)\n",
+        ":::\n",
+        "\n",
+        "\n",
+        "\n",
+        "In this ungraded notebook, you'll try out all the individual techniques that we learned about in the lecture. Practicing on small examples will prepare we for the graded assignment, where we will combine the techniques in more advanced ways to create word embeddings from a real-life corpus.\n",
+        "\n",
+        "This notebook is made of two main parts: \n",
+        "\n",
+        "- data preparation, and \n",
+        "- the continuous bag-of-words (CBOW) model.\n",
+        "\n",
+        "To get started, import and initialize all the libraries we will need.\n"
+      ],
+      "id": "b9488c8f"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import sys\n",
+        "!{sys.executable} -m pip install emoji"
+      ],
+      "id": "00eea8b8",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import re\n",
+        "import nltk\n",
+        "from nltk.tokenize import word_tokenize\n",
+        "import emoji\n",
+        "import numpy as np\n",
+        "\n",
+        "from utils2 import get_dict\n",
+        "\n",
+        "nltk.download('punkt')  # download pre-trained Punkt tokenizer for English"
+      ],
+      "id": "d7e42355",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Data preparation\n",
+        "\n",
+        "In the data preparation phase, starting with a corpus of text, we will:\n",
+        "\n",
+        "- Clean and tokenize the corpus.\n",
+        "\n",
+        "- Extract the pairs of context words and center word that will make up the training data set for the CBOW model. The context words are the features that will be fed into the model, and the center words are the target values that the model will learn to predict.\n",
+        "\n",
+        "- Create simple vector representations of the context words (features) and center words (targets) that can be used by the neural network of the CBOW model.\n",
+        "\n",
+        "## Cleaning and tokenization\n",
+        "\n",
+        "To demonstrate the cleaning and tokenization process, consider a corpus that contains emojis and various punctuation signs.\n"
+      ],
+      "id": "4b57d35c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "corpus = 'Who ❤️ \"word embeddings\" in 2020? I do!!!'"
+      ],
+      "id": "69d3a6a8",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "First, replace all interrupting punctuation signs — such as commas and exclamation marks — with periods.\n"
+      ],
+      "id": "7b427f7c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "print(f'Corpus:  {corpus}')\n",
+        "data = re.sub(r'[,!?;-]+', '.', corpus)\n",
+        "print(f'After cleaning punctuation:  {data}')"
+      ],
+      "id": "fa707d06",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Next, use NLTK's tokenization engine to split the corpus into individual tokens.\n"
+      ],
+      "id": "b178692a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "print(f'Initial string:  {data}')\n",
+        "data = nltk.word_tokenize(data)\n",
+        "print(f'After tokenization:  {data}')"
+      ],
+      "id": "764e8418",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Finally, as we saw in the lecture, get rid of numbers and punctuation other than periods, and convert all the remaining tokens to lowercase.\n"
+      ],
+      "id": "59ca382f"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "print(f'Initial list of tokens:  {data}')\n",
+        "data = [ ch.lower() for ch in data\n",
+        "         if ch.isalpha()\n",
+        "         or ch == '.'\n",
+        "         or emoji.get_emoji_regexp().search(ch)\n",
+        "       ]\n",
+        "print(f'After cleaning:  {data}')"
+      ],
+      "id": "d97630fe",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Note that the heart emoji is considered as a token just like any normal word.\n",
+        "\n",
+        "Now let's streamline the cleaning and tokenization process by wrapping the previous steps in a function.\n"
+      ],
+      "id": "c8ddfd31"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "def tokenize(corpus):\n",
+        "    data = re.sub(r'[,!?;-]+', '.', corpus)\n",
+        "    data = nltk.word_tokenize(data)  # tokenize string to words\n",
+        "    data = [ ch.lower() for ch in data\n",
+        "             if ch.isalpha()\n",
+        "             or ch == '.'\n",
+        "             or emoji.get_emoji_regexp().search(ch)\n",
+        "           ]\n",
+        "    return data"
+      ],
+      "id": "64f363e1",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Apply this function to the corpus that you'll be working on in the rest of this notebook: \"I am happy because I am learning\"\n"
+      ],
+      "id": "c33f7db6"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "corpus = 'I am happy because I am learning'\n",
+        "print(f'Corpus:  {corpus}')\n",
+        "words = tokenize(corpus)\n",
+        "print(f'Words (tokens):  {words}')"
+      ],
+      "id": "3dfa3a49",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "**Now try it out yourself with your own sentence.**\n"
+      ],
+      "id": "2aed12fc"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "tokenize(\"Now it's your turn: try with your own sentence!\")"
+      ],
+      "id": "7ff180fc",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Sliding window of words\n",
+        "\n",
+        "Now that we have transformed the corpus into a list of clean tokens, we can slide a window of words across this list. For each window we can extract a center word and the context words.\n",
+        "\n",
+        "The `get_windows` function in the next cell was introduced in the lecture.\n"
+      ],
+      "id": "afb17b05"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "def get_windows(words, C):\n",
+        "    i = C\n",
+        "    while i < len(words) - C:\n",
+        "        center_word = words[i]\n",
+        "        context_words = words[(i - C):i] + words[(i+1):(i+C+1)]\n",
+        "        yield context_words, center_word\n",
+        "        i += 1"
+      ],
+      "id": "f18c2615",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "The first argument of this function is a list of words (or tokens). The second argument, `C`, is the context half-size. Recall that for a given center word, the context words are made of `C` words to the left and `C` words to the right of the center word.\n",
+        "\n",
+        "Here is how we can use this function to extract context words and center words from a list of tokens. These context and center words will make up the training set that we will use to train the CBOW model.\n"
+      ],
+      "id": "27579dea"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "for x, y in get_windows(\n",
+        "            ['i', 'am', 'happy', 'because', 'i', 'am', 'learning'],\n",
+        "            2\n",
+        "        ):\n",
+        "    print(f'{x}\\t{y}')"
+      ],
+      "id": "21a891ff",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "The first example of the training set is made of:\n",
+        "\n",
+        "- the context words \"i\", \"am\", \"because\", \"i\",\n",
+        "\n",
+        "- and the center word to be predicted: \"happy\".\n",
+        "\n",
+        "**Now try it out yourself. In the next cell, we can change both the sentence and the context half-size.**\n"
+      ],
+      "id": "a4705e30"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "for x, y in get_windows(tokenize(\"Now it's your turn: try with your own sentence!\"), 1):\n",
+        "    print(f'{x}\\t{y}')"
+      ],
+      "id": "775c222f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Transforming words into vectors for the training set\n",
+        "\n",
+        "To finish preparing the training set, we need to transform the context words and center words into vectors.\n",
+        "\n",
+        "### Mapping words to indices and indices to words\n",
+        "\n",
+        "The center words will be represented as one-hot vectors, and the vectors that represent context words are also based on one-hot vectors.\n",
+        "\n",
+        "To create one-hot word vectors, we can start by mapping each unique word to a unique integer (or index). We have provided a helper function, `get_dict`, that creates a Python dictionary that maps words to integers and back.\n"
+      ],
+      "id": "77d7cfd4"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "word2Ind, Ind2word = get_dict(words)"
+      ],
+      "id": "6cc70389",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Here's the dictionary that maps words to numeric indices.\n"
+      ],
+      "id": "c85e9b63"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "scrolled": true
+      },
+      "source": [
+        "word2Ind"
+      ],
+      "id": "d3e52a88",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "We can use this dictionary to get the index of a word.\n"
+      ],
+      "id": "023c11bc"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "print(\"Index of the word 'i':  \",word2Ind['i'])"
+      ],
+      "id": "61563201",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "And conversely, here's the dictionary that maps indices to words.\n"
+      ],
+      "id": "f7fb96b7"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "Ind2word"
+      ],
+      "id": "629fb6f4",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "scrolled": true
+      },
+      "source": [
+        "print(\"Word which has index 2:  \",Ind2word[2] )"
+      ],
+      "id": "8573c62d",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Finally, get the length of either of these dictionaries to get the size of the vocabulary of your corpus, in other words the number of different words making up the corpus.\n"
+      ],
+      "id": "99ae11b9"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "V = len(word2Ind)\n",
+        "print(\"Size of vocabulary: \", V)"
+      ],
+      "id": "6b54bea6",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Getting one-hot word vectors\n",
+        "\n",
+        "Recall from the lecture that we can easily convert an integer, $n$, into a one-hot vector.\n",
+        "\n",
+        "Consider the word \"happy\". First, retrieve its numeric index.\n"
+      ],
+      "id": "51526e41"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "n = word2Ind['happy']\n",
+        "n"
+      ],
+      "id": "48169bb2",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Now create a vector with the size of the vocabulary, and fill it with zeros.\n"
+      ],
+      "id": "c3c59919"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "center_word_vector = np.zeros(V)\n",
+        "center_word_vector"
+      ],
+      "id": "9edaa82b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "We can confirm that the vector has the right size.\n"
+      ],
+      "id": "ecd8efe7"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "len(center_word_vector) == V"
+      ],
+      "id": "fb388816",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Next, replace the 0 of the $n$-th element with a 1.\n"
+      ],
+      "id": "3265abdd"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "center_word_vector[n] = 1"
+      ],
+      "id": "6c2239ac",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "And we have your one-hot word vector.\n"
+      ],
+      "id": "80c1f1d5"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "center_word_vector"
+      ],
+      "id": "73242b36",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "**We can now group all of these steps in a convenient function, which takes as parameters: a word to be encoded, a dictionary that maps words to indices, and the size of the vocabulary.**\n"
+      ],
+      "id": "c967b06b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "def word_to_one_hot_vector(word, word2Ind, V):\n",
+        "    # BEGIN your code here\n",
+        "    one_hot_vector = np.zeros(V)\n",
+        "    one_hot_vector[word2Ind[word]] = 1\n",
+        "    # END your code here\n",
+        "    return one_hot_vector"
+      ],
+      "id": "e2f24e23",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Check that it works as intended.\n"
+      ],
+      "id": "bffc1631"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "word_to_one_hot_vector('happy', word2Ind, V)"
+      ],
+      "id": "c15835c9",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "**What is the word vector for \"learning\"?**\n"
+      ],
+      "id": "6f91eee5"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# BEGIN your code here\n",
+        "word_to_one_hot_vector('learning', word2Ind, V)\n",
+        "# END your code here"
+      ],
+      "id": "c1a859e4",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Expected output:\n",
+        "\n",
+        "    array([0., 0., 0., 0., 1.])\n",
+        "\n",
+        "### Getting context word vectors\n",
+        "\n",
+        "To create the vectors that represent context words, we will calculate the average of the one-hot vectors representing the individual words.\n",
+        "\n",
+        "Let's start with a list of context words.\n"
+      ],
+      "id": "0d7bcdb3"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "context_words = ['i', 'am', 'because', 'i']"
+      ],
+      "id": "87d01782",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Using Python's list comprehension construct and the `word_to_one_hot_vector` function that we created in the previous section, we can create a list of one-hot vectors representing each of the context words.\n"
+      ],
+      "id": "e0779734"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "context_words_vectors = [word_to_one_hot_vector(w, word2Ind, V) for w in context_words]\n",
+        "context_words_vectors"
+      ],
+      "id": "65bddb75",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "And we can now simply get the average of these vectors using numpy's `mean` function, to get the vector representation of the context words.\n"
+      ],
+      "id": "2c19ea8f"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "np.mean(context_words_vectors, axis=0)"
+      ],
+      "id": "b76c06d0",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Note the `axis=0` parameter that tells `mean` to calculate the average of the rows (if we had wanted the average of the columns, we would have used `axis=1`).\n",
+        "\n",
+        "**Now create the `context_words_to_vector` function that takes in a list of context words, a word-to-index dictionary, and a vocabulary size, and outputs the vector representation of the context words.**\n"
+      ],
+      "id": "48d4b79b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "def context_words_to_vector(context_words, word2Ind, V):\n",
+        "    # BEGIN your code here\n",
+        "    context_words_vectors = [word_to_one_hot_vector(w, word2Ind, V) for w in context_words]\n",
+        "    context_words_vectors = np.mean(context_words_vectors, axis=0)\n",
+        "    # END your code here\n",
+        "    return context_words_vectors"
+      ],
+      "id": "c846a398",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "And check that we obtain the same output as the manual approach above.\n"
+      ],
+      "id": "d8524c61"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "context_words_to_vector(['i', 'am', 'because', 'i'], word2Ind, V)"
+      ],
+      "id": "02ad58aa",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "**What is the vector representation of the context words \"am happy i am\"?**\n"
+      ],
+      "id": "e038152f"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# BEGIN your code here\n",
+        "context_words_to_vector(['am', 'happy', 'i', 'am'], word2Ind, V)\n",
+        "# END your code here"
+      ],
+      "id": "2801d021",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Expected output:\n",
+        "\n",
+        "    array([0.5 , 0.  , 0.25, 0.25, 0.  ])\n",
+        "\n",
+        "\n",
+        "## Building the training set\n",
+        "\n",
+        "We can now combine the functions that we created in the previous sections, to build a training set for the CBOW model, starting from the following tokenized corpus.\n"
+      ],
+      "id": "e3866029"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "words"
+      ],
+      "id": "e5259c35",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "To do this we need to use the sliding window function (`get_windows`) to extract the context words and center words, and we then convert these sets of words into a basic vector representation using `word_to_one_hot_vector` and `context_words_to_vector`.\n"
+      ],
+      "id": "01f71bde"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "for context_words, center_word in get_windows(words, 2):  # reminder: 2 is the context half-size\n",
+        "    print(f'Context words:  {context_words} -> {context_words_to_vector(context_words, word2Ind, V)}')\n",
+        "    print(f'Center word:  {center_word} -> {word_to_one_hot_vector(center_word, word2Ind, V)}')\n",
+        "    print()"
+      ],
+      "id": "9d8c3211",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "In this practice notebook you'll be performing a single iteration of training using a single example, but in this week's assignment you'll train the CBOW model using several iterations and batches of example.\n",
+        "Here is how we would use a Python generator function (remember the `yield` keyword from the lecture?) to make it easier to iterate over a set of examples.\n"
+      ],
+      "id": "2a9f3732"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "def get_training_example(words, C, word2Ind, V):\n",
+        "    for context_words, center_word in get_windows(words, C):\n",
+        "        yield context_words_to_vector(context_words, word2Ind, V), word_to_one_hot_vector(center_word, word2Ind, V)"
+      ],
+      "id": "a162873b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "The output of this function can be iterated on to get successive context word vectors and center word vectors, as demonstrated in the next cell.\n"
+      ],
+      "id": "8bb62b1a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "for context_words_vector, center_word_vector in get_training_example(words, 2, word2Ind, V):\n",
+        "    print(f'Context words vector:  {context_words_vector}')\n",
+        "    print(f'Center word vector:  {center_word_vector}')\n",
+        "    print()"
+      ],
+      "id": "5fe0bcac",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Your training set is ready, we can now move on to the CBOW model itself.\n",
+        "\n",
+        "# The continuous bag-of-words model\n",
+        "\n",
+        "The CBOW model is based on a neural network, the architecture of which looks like the figure below, as you'll recall from the lecture.\n",
+        "\n",
+        "<div style=\"width:image width px; font-size:100%; text-align:center;\"><img src='cbow_model_architecture.png?1' alt=\"alternate text\" width=\"width\" height=\"height\" style=\"width:917;height:337;\" /> Figure 1 </div>\n",
+        "\n",
+        "This part of the notebook will walk we through:\n",
+        "\n",
+        "- The two activation functions used in the neural network.\n",
+        "\n",
+        "- Forward propagation.\n",
+        "\n",
+        "- Cross-entropy loss.\n",
+        "\n",
+        "- Backpropagation.\n",
+        "\n",
+        "- Gradient descent.\n",
+        "\n",
+        "- Extracting the word embedding vectors from the weight matrices once the neural network has been trained.\n",
+        "\n",
+        "## Activation functions\n",
+        "\n",
+        "Let's start by implementing the activation functions, ReLU and softmax.\n",
+        "\n",
+        "### ReLU\n",
+        "\n",
+        "ReLU is used to calculate the values of the hidden layer, in the following formulas:\n",
+        "\n",
+        "\\begin{align}\n",
+        " \\mathbf{z_1} &= \\mathbf{W_1}\\mathbf{x} + \\mathbf{b_1}  \\tag{1} \\\\\n",
+        " \\mathbf{h} &= \\mathrm{ReLU}(\\mathbf{z_1})  \\tag{2} \\\\\n",
+        "\\end{align}\n",
+        "\n",
+        "Let's fix a value for $\\mathbf{z_1}$ as a working example.\n"
+      ],
+      "id": "2c8edc6c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "np.random.seed(10)\n",
+        "z_1 = 10*np.random.rand(5, 1)-5\n",
+        "z_1"
+      ],
+      "id": "9a30221a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "To get the ReLU of this vector, we want all the negative values to become zeros.\n",
+        "\n",
+        "First create a copy of this vector.\n"
+      ],
+      "id": "7e3f74dc"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "h = z_1.copy()"
+      ],
+      "id": "bf02c51c",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Now determine which of its values are negative.\n"
+      ],
+      "id": "cd964694"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "h < 0"
+      ],
+      "id": "671ad64b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "We can now simply set all of the values which are negative to 0.\n"
+      ],
+      "id": "a79019ce"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "h[h < 0] = 0"
+      ],
+      "id": "7c794f1a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "And that's it: we have the ReLU of $\\mathbf{z_1}$!\n"
+      ],
+      "id": "a3343c2f"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "h"
+      ],
+      "id": "b5aa5dce",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "**Now implement ReLU as a function.**\n"
+      ],
+      "id": "09761ff5"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "def relu(z):\n",
+        "    # BEGIN your code here\n",
+        "    result = z.copy()\n",
+        "    result[result < 0] = 0\n",
+        "    # END your code here\n",
+        "    \n",
+        "    return result"
+      ],
+      "id": "d4961629",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "**And check that it's working.**\n"
+      ],
+      "id": "25364464"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "z = np.array([[-1.25459881], [ 4.50714306], [ 2.31993942], [ 0.98658484], [-3.4398136 ]])\n",
+        "relu(z)"
+      ],
+      "id": "4922cee3",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Expected output:\n",
+        "\n",
+        "    array([[0.        ],\n",
+        "           [4.50714306],\n",
+        "           [2.31993942],\n",
+        "           [0.98658484],\n",
+        "           [0.        ]])\n",
+        "\n",
+        "### Softmax\n",
+        "\n",
+        "The second activation function that we need is softmax. This function is used to calculate the values of the output layer of the neural network, using the following formulas:\n",
+        "\n",
+        "\\begin{align}\n",
+        " \\mathbf{z_2} &= \\mathbf{W_2}\\mathbf{h} + \\mathbf{b_2}   \\tag{3} \\\\\n",
+        " \\mathbf{\\hat y} &= \\mathrm{softmax}(\\mathbf{z_2})   \\tag{4} \\\\\n",
+        "\\end{align}\n",
+        "\n",
+        "To calculate softmax of a vector $\\mathbf{z}$, the $i$-th component of the resulting vector is given by:\n",
+        "\n",
+        "$$ \\textrm{softmax}(\\textbf{z})_i = \\frac{e^{z_i} }{\\sum\\limits_{j=1}^{V} e^{z_j} }  \\tag{5} $$\n",
+        "\n",
+        "Let's work through an example.\n"
+      ],
+      "id": "2e5c72a4"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "z = np.array([9, 8, 11, 10, 8.5])\n",
+        "z"
+      ],
+      "id": "cc9e9742",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "You'll need to calculate the exponentials of each element, both for the numerator and for the denominator.\n"
+      ],
+      "id": "3edaab44"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "e_z = np.exp(z)\n",
+        "e_z"
+      ],
+      "id": "ffea440a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "The denominator is equal to the sum of these exponentials.\n"
+      ],
+      "id": "25f77756"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "sum_e_z = np.sum(e_z)\n",
+        "sum_e_z"
+      ],
+      "id": "4679e28a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "And the value of the first element of $\\textrm{softmax}(\\textbf{z})$ is given by:\n"
+      ],
+      "id": "b4064f2a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "e_z[0]/sum_e_z"
+      ],
+      "id": "8083988c",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "This is for one element. We can use numpy's vectorized operations to calculate the values of all the elements of the $\\textrm{softmax}(\\textbf{z})$ vector in one go.\n",
+        "\n",
+        "**Implement the softmax function.**\n"
+      ],
+      "id": "a8d5ce77"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "def softmax(z):\n",
+        "    # BEGIN your code here\n",
+        "    e_z = np.exp(z)\n",
+        "    sum_e_z = np.sum(e_z)\n",
+        "    return e_z / sum_e_z\n",
+        "    # END your code here"
+      ],
+      "id": "03573611",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "**Now check that it works.**\n"
+      ],
+      "id": "2bf62e18"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "softmax([9, 8, 11, 10, 8.5])"
+      ],
+      "id": "d92b978b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Expected output:\n",
+        "\n",
+        "    array([0.08276948, 0.03044919, 0.61158833, 0.22499077, 0.05020223])\n",
+        "\n",
+        "## Dimensions: 1-D arrays vs 2-D column vectors\n",
+        "\n",
+        "Before moving on to implement forward propagation, backpropagation, and gradient descent, let's have a look at the dimensions of the vectors you've been handling until now.\n",
+        "\n",
+        "Create a vector of length $V$ filled with zeros.\n"
+      ],
+      "id": "11e2e079"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "scrolled": true
+      },
+      "source": [
+        "x_array = np.zeros(V)\n",
+        "x_array"
+      ],
+      "id": "6287141c",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "This is a 1-dimensional array, as revealed by the `.shape` property of the array.\n"
+      ],
+      "id": "5d15d250"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "x_array.shape"
+      ],
+      "id": "28cbb1f6",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "To perform matrix multiplication in the next steps, we actually need your column vectors to be represented as a matrix with one column. In numpy, this matrix is represented as a 2-dimensional array.\n",
+        "\n",
+        "The easiest way to convert a 1D vector to a 2D column matrix is to set its `.shape` property to the number of rows and one column, as shown in the next cell.\n"
+      ],
+      "id": "32c43a69"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "x_column_vector = x_array.copy()\n",
+        "x_column_vector.shape = (V, 1)  # alternatively ... = (x_array.shape[0], 1)\n",
+        "x_column_vector"
+      ],
+      "id": "7ec1202f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "The shape of the resulting \"vector\" is:\n"
+      ],
+      "id": "b06dfc05"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "x_column_vector.shape"
+      ],
+      "id": "0fdd9ead",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "So we now have a 5x1 matrix that we can use to perform standard matrix multiplication.\n",
+        "\n",
+        "## Forward propagation\n",
+        "\n",
+        "Let's dive into the neural network itself, which is shown below with all the dimensions and formulas you'll need.\n",
+        "\n",
+        "<div style=\"width:image width px; font-size:100%; text-align:center;\"><img src='cbow_model_dimensions_single_input.png?2' alt=\"alternate text\" width=\"width\" height=\"height\" style=\"width:839;height:349;\" /> Figure 2 </div>\n",
+        "\n",
+        "Set $N$ equal to 3. Remember that $N$ is a hyperparameter of the CBOW model that represents the size of the word embedding vectors, as well as the size of the hidden layer.\n"
+      ],
+      "id": "77881720"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "N = 3"
+      ],
+      "id": "3f111edb",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Initialization of the weights and biases\n",
+        "\n",
+        "Before we start training the neural network, we need to initialize the weight matrices and bias vectors with random values.\n",
+        "\n",
+        "In the assignment we will implement a function to do this yourself using `numpy.random.rand`. In this notebook, we've pre-populated these matrices and vectors for you.\n"
+      ],
+      "id": "74aaa8ee"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "W1 = np.array([[ 0.41687358,  0.08854191, -0.23495225,  0.28320538,  0.41800106],\n",
+        "               [ 0.32735501,  0.22795148, -0.23951958,  0.4117634 , -0.23924344],\n",
+        "               [ 0.26637602, -0.23846886, -0.37770863, -0.11399446,  0.34008124]])\n",
+        "\n",
+        "W2 = np.array([[-0.22182064, -0.43008631,  0.13310965],\n",
+        "               [ 0.08476603,  0.08123194,  0.1772054 ],\n",
+        "               [ 0.1871551 , -0.06107263, -0.1790735 ],\n",
+        "               [ 0.07055222, -0.02015138,  0.36107434],\n",
+        "               [ 0.33480474, -0.39423389, -0.43959196]])\n",
+        "\n",
+        "b1 = np.array([[ 0.09688219],\n",
+        "               [ 0.29239497],\n",
+        "               [-0.27364426]])\n",
+        "\n",
+        "b2 = np.array([[ 0.0352008 ],\n",
+        "               [-0.36393384],\n",
+        "               [-0.12775555],\n",
+        "               [-0.34802326],\n",
+        "               [-0.07017815]])"
+      ],
+      "id": "bb085114",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "**Check that the dimensions of these matrices match those shown in the figure above.**\n"
+      ],
+      "id": "1b3584ee"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# BEGIN your code here\n",
+        "print(f'V (vocabulary size): {V}')\n",
+        "print(f'N (embedding size / size of the hidden layer): {N}')\n",
+        "print(f'size of W1: {W1.shape} (NxV)')\n",
+        "print(f'size of b1: {b1.shape} (Nx1)')\n",
+        "print(f'size of W2: {W1.shape} (VxN)')\n",
+        "print(f'size of b2: {b2.shape} (Vx1)')\n",
+        "# END your code here"
+      ],
+      "id": "a8b4aa83",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Training example\n",
+        "\n",
+        "Run the next cells to get the first training example, made of the vector representing the context words \"i am because i\", and the target which is the one-hot vector representing the center word \"happy\".\n",
+        "\n",
+        "> We don't need to worry about the Python syntax, but there are some explanations below if we want to know what's happening behind the scenes.\n"
+      ],
+      "id": "c18564a1"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "training_examples = get_training_example(words, 2, word2Ind, V)"
+      ],
+      "id": "9a0fafc2",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "> `get_training_examples`, which uses the `yield` keyword, is known as a generator. When run, it builds an iterator, which is a special type of object that... we can iterate on (using a `for` loop for instance), to retrieve the successive values that the function generates.\n",
+        ">\n",
+        "> In this case `get_training_examples` `yield`s training examples, and iterating on `training_examples` will return the successive training examples.\n"
+      ],
+      "id": "53095e88"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "x_array, y_array = next(training_examples)"
+      ],
+      "id": "39b52247",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "> `next` is another special keyword, which gets the next available value from an iterator. Here, you'll get the very first value, which is the first training example. If we run this cell again, you'll get the next value, and so on until the iterator runs out of values to return.\n",
+        ">\n",
+        "> In this notebook `next` is used because we will only be performing one iteration of training. In this week's assignment with the full training over several iterations you'll use regular `for` loops with the iterator that supplies the training examples.\n",
+        "\n",
+        "The vector representing the context words, which will be fed into the neural network, is:\n"
+      ],
+      "id": "b5da3fa9"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "x_array"
+      ],
+      "id": "cd4ff76f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "The one-hot vector representing the center word to be predicted is:\n"
+      ],
+      "id": "0af0b44c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "y_array"
+      ],
+      "id": "301901c5",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Now convert these vectors into matrices (or 2D arrays) to be able to perform matrix multiplication on the right types of objects, as explained above.\n"
+      ],
+      "id": "b106fea2"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "x = x_array.copy()\n",
+        "x.shape = (V, 1)\n",
+        "print('x')\n",
+        "print(x)\n",
+        "print()\n",
+        "\n",
+        "y = y_array.copy()\n",
+        "y.shape = (V, 1)\n",
+        "print('y')\n",
+        "print(y)"
+      ],
+      "id": "84c93026",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Values of the hidden layer\n",
+        "\n",
+        "Now that we have initialized all the variables that we need for forward propagation, we can calculate the values of the hidden layer using the following formulas:\n",
+        "\n",
+        "\\begin{align}\n",
+        " \\mathbf{z_1} = \\mathbf{W_1}\\mathbf{x} + \\mathbf{b_1}  \\tag{1} \\\\\n",
+        " \\mathbf{h} = \\mathrm{ReLU}(\\mathbf{z_1})  \\tag{2} \\\\\n",
+        "\\end{align}\n",
+        "\n",
+        "First, we can calculate the value of $\\mathbf{z_1}$.\n"
+      ],
+      "id": "b0ea4665"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "z1 = np.dot(W1, x) + b1"
+      ],
+      "id": "f8683d67",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "> `np.dot` is numpy's function for matrix multiplication.\n",
+        "\n",
+        "As expected we get an $N$ by 1 matrix, or column vector with $N$ elements, where $N$ is equal to the embedding size, which is 3 in this example.\n"
+      ],
+      "id": "08c69b72"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "z1"
+      ],
+      "id": "330acf06",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "We can now take the ReLU of $\\mathbf{z_1}$ to get $\\mathbf{h}$, the vector with the values of the hidden layer.\n"
+      ],
+      "id": "0b6e25b8"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "h = relu(z1)\n",
+        "h"
+      ],
+      "id": "8ac6497b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Applying ReLU means that the negative element of $\\mathbf{z_1}$ has been replaced with a zero.\n",
+        "\n",
+        "### Values of the output layer\n",
+        "\n",
+        "Here are the formulas we need to calculate the values of the output layer, represented by the vector $\\mathbf{\\hat y}$:\n",
+        "\n",
+        "\\begin{align}\n",
+        " \\mathbf{z_2} &= \\mathbf{W_2}\\mathbf{h} + \\mathbf{b_2}   \\tag{3} \\\\\n",
+        " \\mathbf{\\hat y} &= \\mathrm{softmax}(\\mathbf{z_2})   \\tag{4} \\\\\n",
+        "\\end{align}\n",
+        "\n",
+        "**First, calculate $\\mathbf{z_2}$.**\n"
+      ],
+      "id": "2642e354"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# BEGIN your code here\n",
+        "z2 = np.dot(W2, h) + b2\n",
+        "# END your code here\n",
+        "\n",
+        "z2"
+      ],
+      "id": "17614d51",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Expected output:\n",
+        "\n",
+        "    array([[-0.31973737],\n",
+        "           [-0.28125477],\n",
+        "           [-0.09838369],\n",
+        "           [-0.33512159],\n",
+        "           [-0.19919612]])\n",
+        "\n",
+        "This is a $V$ by 1 matrix, where $V$ is the size of the vocabulary, which is 5 in this example.\n",
+        "\n",
+        "**Now calculate the value of $\\mathbf{\\hat y}$.**\n"
+      ],
+      "id": "40924714"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# BEGIN your code here\n",
+        "y_hat = softmax(z2)\n",
+        "# END your code here\n",
+        "\n",
+        "y_hat"
+      ],
+      "id": "74c4485b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Expected output:\n",
+        "\n",
+        "    array([[0.18519074],\n",
+        "           [0.19245626],\n",
+        "           [0.23107446],\n",
+        "           [0.18236353],\n",
+        "           [0.20891502]])\n",
+        "\n",
+        "As you've performed the calculations with random matrices and vectors (apart from the input vector), the output of the neural network is essentially random at this point. The learning process will adjust the weights and biases to match the actual targets better.\n",
+        "\n",
+        "**That being said, what word did the neural network predict?**\n",
+        "\n",
+        "<details>    \n",
+        "<summary>\n",
+        "    <font size=\"3\" color=\"darkgreen\"><b>Solution</b></font>\n",
+        "</summary>\n",
+        "<p>The neural network predicted the word \"happy\": the largest element of $\\mathbf{\\hat y}$ is the third one, and the third word of the vocabulary is \"happy\".</p>\n",
+        "<p>Here's how we could implement this in Python:</p>\n",
+        "<p><code>print(Ind2word[np.argmax(y_hat)])</code></p>\n",
+        "</details>\n",
+        "\n",
+        "Well done, you've completed the forward propagation phase!\n",
+        "\n",
+        "## Cross-entropy loss\n",
+        "\n",
+        "Now that we have the network's prediction, we can calculate the cross-entropy loss to determine how accurate the prediction was compared to the actual target.\n",
+        "\n",
+        "> Remember that we are working on a single training example, not on a batch of examples, which is why we are using *loss* and not *cost*, which is the generalized form of loss.\n",
+        "\n",
+        "First let's recall what the prediction was.\n"
+      ],
+      "id": "cf394e02"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "y_hat"
+      ],
+      "id": "d5508048",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "And the actual target value is:\n"
+      ],
+      "id": "8af5075c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "y"
+      ],
+      "id": "e69fbdec",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "The formula for cross-entropy loss is:\n",
+        "\n",
+        "$$ J=-\\sum\\limits_{k=1}^{V}y_k\\log{\\hat{y}_k} \\tag{6}$$\n",
+        "\n",
+        "**Implement the cross-entropy loss function.**\n",
+        "\n",
+        "Here are a some hints if you're stuck.\n",
+        "\n",
+        "<details>    \n",
+        "<summary>\n",
+        "    <font size=\"3\" color=\"darkgreen\"><b>Hint 1</b></font>\n",
+        "</summary>\n",
+        "    <p>To multiply two numpy matrices (such as <code>y</code> and <code>y_hat</code>) element-wise, we can simply use the <code>*</code> operator.</p>\n",
+        "</details>\n",
+        "\n",
+        "<details>    \n",
+        "<summary>\n",
+        "    <font size=\"3\" color=\"darkgreen\"><b>Hint 2</b></font>\n",
+        "</summary>\n",
+        "<p>Once we have a vector equal to the element-wise multiplication of <code>y</code> and <code>y_hat</code>, we can use <code>np.sum</code> to calculate the sum of the elements of this vector.</p>\n",
+        "</details>\n"
+      ],
+      "id": "af1c266b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "def cross_entropy_loss(y_predicted, y_actual):\n",
+        "    # BEGIN your code here\n",
+        "    loss = np.sum(-np.log(y_hat)*y)\n",
+        "    # END your code here\n",
+        "    return loss"
+      ],
+      "id": "704388f0",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "**Now use this function to calculate the loss with the actual values of $\\mathbf{y}$ and $\\mathbf{\\hat y}$.**\n"
+      ],
+      "id": "f02e7062"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "cross_entropy_loss(y_hat, y)"
+      ],
+      "id": "0ab90a07",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Expected output:\n",
+        "\n",
+        "    1.4650152923611106\n",
+        "\n",
+        "This value is neither good nor bad, which is expected as the neural network hasn't learned anything yet.\n",
+        "\n",
+        "The actual learning will start during the next phase: backpropagation.\n",
+        "\n",
+        "## Backpropagation\n",
+        "\n",
+        "The formulas that we will implement for backpropagation are the following.\n",
+        "\n",
+        "\\begin{align}\n",
+        " \\frac{\\partial J}{\\partial \\mathbf{W_1}} &= \\rm{ReLU}\\left ( \\mathbf{W_2^\\top} (\\mathbf{\\hat{y}} - \\mathbf{y})\\right )\\mathbf{x}^\\top \\tag{7}\\\\\n",
+        " \\frac{\\partial J}{\\partial \\mathbf{W_2}} &= (\\mathbf{\\hat{y}} - \\mathbf{y})\\mathbf{h^\\top} \\tag{8}\\\\\n",
+        " \\frac{\\partial J}{\\partial \\mathbf{b_1}} &= \\rm{ReLU}\\left ( \\mathbf{W_2^\\top} (\\mathbf{\\hat{y}} - \\mathbf{y})\\right ) \\tag{9}\\\\\n",
+        " \\frac{\\partial J}{\\partial \\mathbf{b_2}} &= \\mathbf{\\hat{y}} - \\mathbf{y} \\tag{10}\n",
+        "\\end{align}\n",
+        "\n",
+        "> Note: these formulas are slightly simplified compared to the ones in the lecture as you're working on a single training example, whereas the lecture provided the formulas for a batch of examples. In the assignment you'll be implementing the latter.\n",
+        "\n",
+        "Let's start with an easy one.\n",
+        "\n",
+        "**Calculate the partial derivative of the loss function with respect to $\\mathbf{b_2}$, and store the result in `grad_b2`.**\n",
+        "\n",
+        "$$\\frac{\\partial J}{\\partial \\mathbf{b_2}} = \\mathbf{\\hat{y}} - \\mathbf{y} \\tag{10}$$\n"
+      ],
+      "id": "d496542a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# BEGIN your code here\n",
+        "grad_b2 = y_hat - y\n",
+        "# END your code here\n",
+        "\n",
+        "grad_b2"
+      ],
+      "id": "078fcab8",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Expected output:\n",
+        "\n",
+        "    array([[ 0.18519074],\n",
+        "           [ 0.19245626],\n",
+        "           [-0.76892554],\n",
+        "           [ 0.18236353],\n",
+        "           [ 0.20891502]])\n",
+        "\n",
+        "**Next, calculate the partial derivative of the loss function with respect to $\\mathbf{W_2}$, and store the result in `grad_W2`.**\n",
+        "\n",
+        "$$\\frac{\\partial J}{\\partial \\mathbf{W_2}} = (\\mathbf{\\hat{y}} - \\mathbf{y})\\mathbf{h^\\top} \\tag{8}$$\n",
+        "\n",
+        "> Hint: use `.T` to get a transposed matrix, e.g. `h.T` returns $\\mathbf{h^\\top}$.\n"
+      ],
+      "id": "25cc6b19"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# BEGIN your code here\n",
+        "grad_W2 = np.dot(y_hat - y, h.T)\n",
+        "# END your code here\n",
+        "\n",
+        "grad_W2"
+      ],
+      "id": "c6ba77e1",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Expected output:\n",
+        "\n",
+        "    array([[ 0.06756476,  0.11798563,  0.        ],\n",
+        "           [ 0.0702155 ,  0.12261452,  0.        ],\n",
+        "           [-0.28053384, -0.48988499,  0.        ],\n",
+        "           [ 0.06653328,  0.1161844 ,  0.        ],\n",
+        "           [ 0.07622029,  0.13310045,  0.        ]])\n",
+        "\n",
+        "**Now calculate the partial derivative with respect to $\\mathbf{b_1}$ and store the result in `grad_b1`.**\n",
+        "\n",
+        "$$\\frac{\\partial J}{\\partial \\mathbf{b_1}} = \\rm{ReLU}\\left ( \\mathbf{W_2^\\top} (\\mathbf{\\hat{y}} - \\mathbf{y})\\right ) \\tag{9}$$\n"
+      ],
+      "id": "d313a8f8"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# BEGIN your code here\n",
+        "grad_b1 = relu(np.dot(W2.T, y_hat - y))\n",
+        "# END your code here\n",
+        "\n",
+        "grad_b1"
+      ],
+      "id": "37bf5c03",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Expected output:\n",
+        "\n",
+        "    array([[0.        ],\n",
+        "           [0.        ],\n",
+        "           [0.17045858]])\n",
+        "\n",
+        "**Finally, calculate the partial derivative of the loss with respect to $\\mathbf{W_1}$, and store it in `grad_W1`.**\n",
+        "\n",
+        "$$\\frac{\\partial J}{\\partial \\mathbf{W_1}} = \\rm{ReLU}\\left ( \\mathbf{W_2^\\top} (\\mathbf{\\hat{y}} - \\mathbf{y})\\right )\\mathbf{x}^\\top \\tag{7}$$\n"
+      ],
+      "id": "01ac5c55"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# BEGIN your code here\n",
+        "grad_W1 = np.dot(relu(np.dot(W2.T, y_hat - y)), x.T)\n",
+        "# END your code here\n",
+        "\n",
+        "grad_W1"
+      ],
+      "id": "1411731b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Expected output:\n",
+        "\n",
+        "    array([[0.        , 0.        , 0.        , 0.        , 0.        ],\n",
+        "           [0.        , 0.        , 0.        , 0.        , 0.        ],\n",
+        "           [0.04261464, 0.04261464, 0.        , 0.08522929, 0.        ]])\n",
+        "\n",
+        "Before moving on to gradient descent, double-check that all the matrices have the expected dimensions.\n"
+      ],
+      "id": "50bd8eda"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# BEGIN your code here\n",
+        "print(f'V (vocabulary size): {V}')\n",
+        "print(f'N (embedding size / size of the hidden layer): {N}')\n",
+        "print(f'size of grad_W1: {grad_W1.shape} (NxV)')\n",
+        "print(f'size of grad_b1: {grad_b1.shape} (Nx1)')\n",
+        "print(f'size of grad_W2: {grad_W1.shape} (VxN)')\n",
+        "print(f'size of grad_b2: {grad_b2.shape} (Vx1)')\n",
+        "# END your code here"
+      ],
+      "id": "9e3b7241",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Gradient descent\n",
+        "\n",
+        "During the gradient descent phase, we will update the weights and biases by subtracting $\\alpha$ times the gradient from the original matrices and vectors, using the following formulas.\n",
+        "\n",
+        "\\begin{align}\n",
+        " \\mathbf{W_1} &:= \\mathbf{W_1} - \\alpha \\frac{\\partial J}{\\partial \\mathbf{W_1}} \\tag{11}\\\\\n",
+        " \\mathbf{W_2} &:= \\mathbf{W_2} - \\alpha \\frac{\\partial J}{\\partial \\mathbf{W_2}} \\tag{12}\\\\\n",
+        " \\mathbf{b_1} &:= \\mathbf{b_1} - \\alpha \\frac{\\partial J}{\\partial \\mathbf{b_1}} \\tag{13}\\\\\n",
+        " \\mathbf{b_2} &:= \\mathbf{b_2} - \\alpha \\frac{\\partial J}{\\partial \\mathbf{b_2}} \\tag{14}\\\\\n",
+        "\\end{align}\n",
+        "\n",
+        "First, let set a value for $\\alpha$.\n"
+      ],
+      "id": "67c6f6ba"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "alpha = 0.03"
+      ],
+      "id": "e940cc53",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "The updated weight matrix $\\mathbf{W_1}$ will be:\n"
+      ],
+      "id": "e6da9325"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "W1_new = W1 - alpha * grad_W1"
+      ],
+      "id": "4dd9a43c",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Let's compare the previous and new values of $\\mathbf{W_1}$:\n"
+      ],
+      "id": "23c65a9b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "print('old value of W1:')\n",
+        "print(W1)\n",
+        "print()\n",
+        "print('new value of W1:')\n",
+        "print(W1_new)"
+      ],
+      "id": "76c909b6",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "The difference is very subtle (hint: take a closer look at the last row), which is why it takes a fair amount of iterations to train the neural network until it reaches optimal weights and biases starting from random values.\n",
+        "\n",
+        "**Now calculate the new values of $\\mathbf{W_2}$ (to be stored in `W2_new`), $\\mathbf{b_1}$ (in `b1_new`), and $\\mathbf{b_2}$ (in `b2_new`).**\n",
+        "\n",
+        "\\begin{align}\n",
+        " \\mathbf{W_2} &:= \\mathbf{W_2} - \\alpha \\frac{\\partial J}{\\partial \\mathbf{W_2}} \\tag{12}\\\\\n",
+        " \\mathbf{b_1} &:= \\mathbf{b_1} - \\alpha \\frac{\\partial J}{\\partial \\mathbf{b_1}} \\tag{13}\\\\\n",
+        " \\mathbf{b_2} &:= \\mathbf{b_2} - \\alpha \\frac{\\partial J}{\\partial \\mathbf{b_2}} \\tag{14}\\\\\n",
+        "\\end{align}\n"
+      ],
+      "id": "7b8b5198"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# BEGIN your code here\n",
+        "W2_new = W2 - alpha * grad_W2\n",
+        "b1_new = b1 - alpha * grad_b1\n",
+        "b2_new = b2 - alpha * grad_b2\n",
+        "# END your code here\n",
+        "\n",
+        "print('W2_new')\n",
+        "print(W2_new)\n",
+        "print()\n",
+        "print('b1_new')\n",
+        "print(b1_new)\n",
+        "print()\n",
+        "print('b2_new')\n",
+        "print(b2_new)"
+      ],
+      "id": "ad172485",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Expected output:\n",
+        "\n",
+        "    W2_new\n",
+        "    [[-0.22384758 -0.43362588  0.13310965]\n",
+        "     [ 0.08265956  0.0775535   0.1772054 ]\n",
+        "     [ 0.19557112 -0.04637608 -0.1790735 ]\n",
+        "     [ 0.06855622 -0.02363691  0.36107434]\n",
+        "     [ 0.33251813 -0.3982269  -0.43959196]]\n",
+        "\n",
+        "    b1_new\n",
+        "    [[ 0.09688219]\n",
+        "     [ 0.29239497]\n",
+        "     [-0.27875802]]\n",
+        "\n",
+        "    b2_new\n",
+        "    [[ 0.02964508]\n",
+        "     [-0.36970753]\n",
+        "     [-0.10468778]\n",
+        "     [-0.35349417]\n",
+        "     [-0.0764456 ]]\n",
+        "\n",
+        "Congratulations, we have completed one iteration of training using one training example!\n",
+        "\n",
+        "You'll need many more iterations to fully train the neural network, and we can optimize the learning process by training on batches of examples, as described in the lecture. We will get to do this during this week's assignment.\n",
+        "\n",
+        "## Extracting word embedding vectors\n",
+        "\n",
+        "Once we have finished training the neural network, we have three options to get word embedding vectors for the words of your vocabulary, based on the weight matrices $\\mathbf{W_1}$ and/or $\\mathbf{W_2}$.\n",
+        "\n",
+        "### Option 1: extract embedding vectors from $\\mathbf{W_1}$\n",
+        "\n",
+        "The first option is to take the columns of $\\mathbf{W_1}$ as the embedding vectors of the words of the vocabulary, using the same order of the words as for the input and output vectors.\n",
+        "\n",
+        "> Note: in this practice notebook the values of the word embedding vectors are meaningless after a single iteration with just one training example, but here's how we would proceed after the training process is complete.\n",
+        "\n",
+        "For example $\\mathbf{W_1}$ is this matrix:\n"
+      ],
+      "id": "5e4d1888"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "W1"
+      ],
+      "id": "f2599396",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "The first column, which is a 3-element vector, is the embedding vector of the first word of your vocabulary. The second column is the word embedding vector for the second word, and so on.\n",
+        "\n",
+        "The first, second, etc. words are ordered as follows.\n"
+      ],
+      "id": "9ef05ef6"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "for i in range(V):\n",
+        "    print(Ind2word[i])"
+      ],
+      "id": "00158024",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "So the word embedding vectors corresponding to each word are:\n"
+      ],
+      "id": "440f8ab6"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# loop through each word of the vocabulary\n",
+        "for word in word2Ind:\n",
+        "    # extract the column corresponding to the index of the word in the vocabulary\n",
+        "    word_embedding_vector = W1[:, word2Ind[word]]\n",
+        "    \n",
+        "    print(f'{word}: {word_embedding_vector}')"
+      ],
+      "id": "2dc9f4a3",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Option 2: extract embedding vectors from $\\mathbf{W_2}$\n",
+        "\n",
+        "The second option is to take $\\mathbf{W_2}$ transposed, and take its columns as the word embedding vectors just like we did for $\\mathbf{W_1}$.\n"
+      ],
+      "id": "6c640b61"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "W2.T"
+      ],
+      "id": "0a67f56b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# loop through each word of the vocabulary\n",
+        "for word in word2Ind:\n",
+        "    # extract the column corresponding to the index of the word in the vocabulary\n",
+        "    word_embedding_vector = W2.T[:, word2Ind[word]]\n",
+        "    \n",
+        "    print(f'{word}: {word_embedding_vector}')"
+      ],
+      "id": "dd505311",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Option 3: extract embedding vectors from $\\mathbf{W_1}$ and $\\mathbf{W_2}$\n",
+        "\n",
+        "The third option, which is the one we will use in this week's assignment, uses the average of $\\mathbf{W_1}$ and $\\mathbf{W_2^\\top}$.\n",
+        "\n",
+        "**Calculate the average of $\\mathbf{W_1}$ and $\\mathbf{W_2^\\top}$, and store the result in `W3`.**\n"
+      ],
+      "id": "6a0b6f3f"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# BEGIN your code here\n",
+        "W3 = (W1+W2.T)/2\n",
+        "# END your code here\n",
+        "\n",
+        "W3"
+      ],
+      "id": "be52fa05",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Expected output:\n",
+        "\n",
+        "    array([[ 0.09752647,  0.08665397, -0.02389858,  0.1768788 ,  0.3764029 ],\n",
+        "           [-0.05136565,  0.15459171, -0.15029611,  0.19580601, -0.31673866],\n",
+        "           [ 0.19974284, -0.03063173, -0.27839106,  0.12353994, -0.04975536]])\n",
+        "\n",
+        "Extracting the word embedding vectors works just like the two previous options, by taking the columns of the matrix you've just created.\n"
+      ],
+      "id": "92ec3974"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# loop through each word of the vocabulary\n",
+        "for word in word2Ind:\n",
+        "    # extract the column corresponding to the index of the word in the vocabulary\n",
+        "    word_embedding_vector = W3[:, word2Ind[word]]\n",
+        "    \n",
+        "    print(f'{word}: {word_embedding_vector}')"
+      ],
+      "id": "94163c80",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "You're now ready to take on this week's assignment!\n",
+        "\n",
+        "### How this practice relates to and differs from the upcoming graded assignment\n",
+        "\n",
+        "- In the assignment, for each iteration of training we will use batches of examples instead of a single example. The formulas for forward propagation and backpropagation will be modified accordingly, and we will use cross-entropy cost instead of cross-entropy loss.\n",
+        "- We will also complete several iterations of training, until we reach an acceptably low cross-entropy cost, at which point we can extract good word embeddings from the weight matrices.\n",
+        "- After extracting the word embedding vectors, we will use principal component analysis (PCA) to visualize the vectors, which will enable we to perform an intrinsic evaluation of the quality of the vectors, as explained in the lecture.\n"
+      ],
+      "id": "4b8988ce"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/home/oren/.local/share/jupyter/kernels/python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
