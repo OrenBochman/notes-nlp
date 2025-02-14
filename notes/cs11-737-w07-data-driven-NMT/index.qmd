@@ -21,430 +21,479 @@ keywords:
 Lesson Video
 :::
 
+::: {#vid-02 .column-margin}
+{{< video https://aclanthology.org/P19-1579.mp4 >}}
+
+Generalized Data Augmentation for Low-Resource Translation (@xia-etal-2019-generalized)
+:::
+
+::: {#vid-03 .column-margin}
+{{< video https://aclanthology.org/Q17-1024.mp4 >}}
+
+Google’s Multilingual Neural Machine Translation System: Enabling Zero-Shot Translation (@johnson-etal-2017-googles)
+:::
+
+::: {#vid-04 .column-margin}
+{{< video https://aclanthology.org/D18-1103.mp4 >}}
+
+Rapid Adaptation of Neural Machine Translation to New Languages (@neubig-hu-2018-rapid)
+:::
+
+
 ::: {#sup-slide-deck .column-margin group="slides"}
 ![This week's slides](slides.pdf){width="420px" height="340px" style="@page {size: 16in 9in;  margin: 0;}" group="slides"}
 :::
 
-
-::: {.callout-tip}
+::: {.callout-tip collapse="true"}
 ## Transcript {.unnumbered}
 
 ### Introduction
 
-> This time i'll be talking about uh machine translation uh one more time
-uh i didn't get a chance to talk about evaluation of translation two times ago
-so i'd like to start out with that because that's pretty important and um then we
-can talk about uh the data augmentation strategies is this a
-little bit bright like and hard to see for people yeah okay
-did anything change okay cool um
-great so let me skip to the evaluation part since uh we're going to be catching up on that
-so
-Machine Translation Evaluation
-so machine translation evaluation is a very important and difficult topic in
-doing machine translation research and in fact i think we've gotten to the
-point where almost evaluating how well we're doing is maybe as difficult as like actually
-doing the translation itself and the reason for this is um
-if we output a translation there are many different correct
-translations right so if i say um like we could have paraphrases where
-the output is this is a dog i see a dog um there is a dog here other things like
-this and all of those would be appropriate for uh you know an equivalent sentence in another language
-Manual Evaluation
-so um the basic evaluation paradigm uh in machine translation there's two
-different types um there's human evaluation or manual evaluation in automatic evaluation
-and in the this is the basic evaluation paradigm for uh automatic evaluation
-where basically what we do is we have a parallel test set where we have an input and an output in
-the language fair that we're interested in we use a system to generate translations and we compare the target translations
-with references um before i talk a little bit more detail about that i'd like to talk about
-kind of uh manual evaluation and this is the gold standard of doing evaluation of
-translation systems where basically we ask human evaluators to go in and check whether uh the answer is correct or not
-and to give an example um we've taken a
-source side sentence we generate some outputs and you can either evaluate by having a
-human evaluator look at the source in the output or look at a reference and um
-in the output and the reference would be like the so-called correct translation
-looking at the source and the output only works if you're bilingual in both languages and it's somewhat difficult to get
-bilingual speakers or at least more expensive however given the quality of machine translation
-systems nowadays very often you don't know if the output of a human translator like
-your reference is better than the machine translation
-system uh so like very often if you hire a person to do evaluation you know they
-might not try super hard um and uh like i mentioned before so
-kind of the gold standard is to get somebody who knows the source and the target to do the evaluation
-um there's a number of different axes along which you can do evaluation i just listed um a couple of them here
-one is adequacy and adequacy is basically whether the meaning of the translation is conveyed properly
-and the uh in this case this is the correct answer here you would know this if you knew japanese um
-which you know most people don't but um if you knew japanese you would know the first one is correct so this is
-perfectly uh adequate it conveys the target message the middle one
-is um conveys the target message but is this fluent so it would score high on an
+> This time I'll be talking about Machine Translation one more time
+>
+> I didn't get a chance to talk about **evaluation of translation** two times ago. 
+> I'd like to start out with that because that's pretty important and then we can talk about **the data augmentation strategies**.
+
+## Machine Translation Evaluation
+
+> MT evaluation is a very important and difficult topic in doing machine translation research. 
+> [I think we've gotten to the point where almost evaluating how well we're doing is maybe as difficult as like actually doing the translation itself]{.mark}
+> The reason for this is: if we output a translation there are many different correct translations.
+> We could have paraphrases where the output is "this is a dog", "I see a dog", "there is a dog" here other things like this and all of those would be appropriate for an equivalent sentence in another language.
+
+## Manual Evaluation
+
+> The basic evaluation paradigm in MT.
+> There's two different types.
+> There's human evaluation or manual evaluation and automatic evaluation.
+> This is the basic evaluation paradigm for automatic evaluation.
+> Where basically what we do is we have a parallel test set where we have an input and an output in the language pair that we're interested in.
+> We use a system to generate translations and we compare the target translations with references.
+> Before I talk a little bit more detail about that I'd like to talk about kind of manual evaluation.
+> This is the gold standard of doing evaluation of translation systems.
+> Where basically we ask human evaluators to check whether the answer is correct or not.
+> To give an example we've taken a source side sentence we generate some outputs and you can either evaluate by having a human evaluator look at the source in the output or look at a reference and in the output and the reference would be like the so-called correct translation looking at the source and the output only works if you're bilingual in both languages and it's somewhat difficult to get bilingual speakers or at least more expensive however given the quality of machine translation systems nowadays very often you don't know if the output of a human translator like your reference is better than the machine translation system so like very often if you hire a person to do evaluation you know they might not try super hard and like I mentioned before so kind of the gold standard is to get somebody who knows the source and the target to do the evaluation there's a number of different axes along which you can do evaluation I just listed a couple of them here one is adequacy and adequacy is basically whether the meaning of the translation is conveyed properly and the in this case this is the correct answer here you would know this if you knew japanese  which you know most people don't but if you knew japanese you would know the first one is correct so this is perfectly adequate it conveys the target message the middle one
+is conveys the target message but is this fluent so it would score high on an
 adequacy scale but on a fluency scale it would score low
-the one over here is fluent um but not adequate so basically it
-switched the subject to that object for uh order so it would be wrong um
-and uh one notable thing about fluency is you don't need to know the source language to evaluate fluency all you
+the one over here is fluent but not adequate so basically it
+switched the subject to that object for order so it would be wrong 
+and one notable thing about fluency is you don't need to know the source language to evaluate fluency all you
 need to know is the target language because it only has to do with whether the output is fluent or not
-you can also do pairwise evaluation which just says which one of these is better um one of the good things about pairwise
-evaluation is it's very simple uh because you just ask question which do you like better which do you think is a
+you can also do pairwise evaluation which just says which one of these is better one of the good things about pairwise
+evaluation is it's very simple because you just ask question which do you like better which do you think is a
 better translation the problem with it is it doesn't give you an absolute idea of how well you're doing so if you have two really bad
 systems and say which is better one might be better but they're both really bad if you have two really good systems
-and say which is better one might be better but they're both really good so um kind of absolute scales have that
-advantage um another thing is uh just like you might
-get bad translators you might get lazy evaluators uh you know if you hire people on mechanical turks uh and
-they're not very motivated for example so um you need to be careful about quality control as well
-Human Evaluation Shared Tasks
-there's human evaluation shared tasks so the most famous one is the conference
-on machine translation shared tasks
-so i can show you a little bit what this looks like they basically have
-um a whole bunch whoops
-they have a whole bunch of tasks uh that you can participate in most of these are tasks for actual uh
-translation but they also have evaluation tasks on metrics and quality estimation
-so basically what you try to do here is you try to create a metric that has the highest um
-correlation with uh with human evaluation and um for quality estimation what this
-is is this is essentially evaluation without a gold standard reference so you're just given the input
-and the output and you want to guess how good the system output is and this is harder
-obviously because you don't have an example of what a good translation looks like but it's also very useful in
-practical situations where like let's say you're a machine translation company and you want to decide whether
-um you need to get a human translator to go in and check the output and correct it or something like that so if that's
-the case if you can estimate very accurately whether the input and output are correct
-or not then that would save you money save you time uh give you confidence in the results
-Blue Scores
-there's also other leaderboards and stuff for other sequence sequence
-models but that's a little bit less important for uh this multilingual class
-um so there are other metrics uh like blue scores so blue score is very famous you
-know if you've done any research on machine translation or even heard of it you probably encountered blue
-the exact details of how blue is calculated are um what you do is you take the precision
-of engrams output by the system so for example if you look at the unigram precision that's
-out of all the unigrams that the system output how many of them exist in a
-reference or one of the references that you're provided um if in the case that you're using
-multiple references and this gives you a position of like three out of five and then you take the geometric mean of
-uh engrams usually one to four um and then you also have a penalty for outputting two short sentences because
-one way to improve your precision is to not output very many things um so this is basically to prevent you
-from gaming system but the important thing is now the details of how blue is calculated
-probably the important thing is that this is a lexical metric which means that you're just doing exact match with
-the references um and this has a few uh issues
-um one of the issues is essentially that um
-you so there's there's two major issues um that cause blue to either
-underestimate how good a translation is or overestimate how good a translation is
-blue tends to underestimate how good translations are when the translations are uh paraphrases
-of the true reference so um if you uh
-for example had um i have uh like
-i went uh i went to the store and bought a book yesterday and
-you compare that with uh yesterday i bought a book at the store those are almost identical in meaning
-but they would get a low blue square because i've just rearranged the phrases a little bit um
-so that's when blue tends to underestimate scores blue tends to overestimate scores when you get very
-critical words in the sentence wrong but get everything else right so for example
-um could you please send this big package to uh philadelphia
-turns into could you please send this big package to japan um that would get a very good blue score
-because most of the words are the same but your package would go to japan and
-that's probably not what you intended by that otherwise right so um
-Shortness Penalty
-uh that's uh the the downside of blue it's basically not smart enough with respect to these so recently
-um yeah so the brevity the brevity penalty
-basically gives you a penalty if your output is shorter than the intended output so if the reference is like 20
-words then you're um and your sentence is uh 15 words you
-would get a penalty of about 0.75 it's not exactly like just the ratio it actually drops off faster
-and stuff like that but that's a basic idea
-that's a really good question so you pay a penalty in your precision your precision goes down by a lot because
-there's no way to get good precision if you output too many things um one thing you should know about blue
-if you're using it in your research which you might is that it's very very sensitive to the length
-so if your length is a little bit too short or a little bit too long it hurts your blue really badly so
-that's another problem with blue essentially is that it's not sensitive to like paraphrases that are too long or
-too short as well um so recently in the past three years or
-Bert Score
-so there's been a huge um improvement in embedding based
-metrics which are basically metrics that you know take advantage of um recent nlp techniques
-and one of the first ones was bert score
-and these can be separated into unsupervised metrics and supervised metrics unsupervised metrics require no
-annotated data of um whether a [Music]
-translation is a good translation or a bad translation supervised metrics are trained to basically regress to an
-estimation of how good a transplantation is or not so a birth score
-is an unsupervised metric that's based essentially on the similarity between
-burton betting so it has this matching algorithm where you basically uh for each word in the output you try
-to find um you know how good uh it matches with one of the words in the input
-and this is good because it can do things like handle paraphrases as long as the paraphrases have similar bert
-embeddings um another famous one is bluert
-BlueRT
-and what they did essentially was they trained bert to predict uh human evaluation scores
-um so they essentially solve a regression problem from the uh sentences
-uh like the reference in this uh system output to an evaluation score so they're
-just going in directly predicting uh evaluation and they have a bunch of other tricks like unsupervised training
-where they try to predict blue or rouge or other lexical metrics beforehand and
-that makes it more robust um the uh favorite one that uh we use in our
-Comet
-research on mt now is a comet and comet is also similarly it trains
-the model to predict human evaluation uh but in addition to using the uh just
+and say which is better one might be better but they're both really good so kind of absolute scales have that
+advantage another thing is just like you might
+get bad translators you might get lazy evaluators you know if you hire people on mechanical turks and
+they're not very motivated for example so you need to be careful about quality control as well
+
+## Human Evaluation Shared Tasks
+
+> There's a **human evaluation shared tasks** so the most famous one is *the conference on machine translation shared tasks*. 
+> I can show you a little bit what this looks like.
+> They basically have a whole bunch of tasks that you can participate in most of these are tasks for actual translation, but they also have evaluation tasks on metrics and quality estimation so basically what you try to do here is you try to create a metric that has the highest correlation with with human evaluation and for quality estimation what this is is this is essentially evaluation without a gold standard reference so you're just given the input and the output and you want to guess how good the system output is and this is harder obviously because you don't have an example of what a good translation looks like but it's also very useful in practical situations where like let's say you're a machine translation company and you want to decide whether you need to get a human translator to go in and check the output and correct it or something like that so if that's the case if you can estimate very accurately whether the input and output are correct or not then that would save you money save you time give you confidence in the results
+
+## BLEU Scores (BiLingual Evaluation Understudy)
+
+> There's also other leaderboards and stuff for other seq2seq models but that's a little bit less important for this multilingual class. 
+> There are other metrics like BLEU scores so BLEU score is very famous. 
+> You know if you've done any research on machine translation or even heard of it you probably encountered BLEU. 
+> The exact details of how BLEU is calculated are:
+> What you do is you take the precision of N-grams output by the system.
+> So for example if you look at the unigram precision that's out of all the unigrams that the system output how many of them exist in a reference or one of the references that you're provided.
+> If in the case that you're using multiple references and this gives you a position of like three out of five and then you take the geometric mean of N-grams, usually one to four and then you also have a penalty for outputting two short sentences. 
+> Because one way to improve your precision is to not output very many things > This is basically to prevent you from gaming system.
+> But the important thing is now the details of how BLEU is calculated probably the important thing is that this is a **lexical metric** which means that you're just doing exact match with the references and this has a few issues.
+> One of the issues is essentially that you 
+> So there's there's two major issues that cause BLEU to either underestimate how good a translation is or overestimate how good a translation is.
+
+> BLEU tends to underestimate how good translations are when the translations are paraphrases of the true reference.
+> So for example had I have like
+> "I went I went to the store and bought a book yesterday" and
+> you compare that with
+> "yesterday I bought a book at the store"
+> Those are almost identical in meaning
+> But they would get a low BLEU square because I've just rearranged the phrases a little bit. 
+> So that's when BLEU tends to underestimate scores.
+
+> BLEU tends to overestimate scores when you get very critical words in the sentence wrong but get everything else right 
+
+for example 
+
+"could you please send this big package to philadelphia"
+
+turns into:
+
+"could you please send this big package to japan"
+
+> That would get a very good BLEU score because most of the words are the same but your package would go to Japan and that's probably not what you intended by that, otherwise right. 
+
+> That's the the downside of BLEU. It's basically not smart enough with respect to these.
+
+## Shortness Penalty
+
+> Yhe brevity the brevity penalty basically gives you a penalty if your output is shorter than the intended output. 
+> If the reference is like 20 words then you're and your sentence is 15 words you would get a penalty of about 0.75
+> It's not exactly like just the ratio it actually drops off faster and stuff like that but that's a basic idea.
+> That's a really good question so you pay a penalty in your precision your precision goes down by a lot because there's no way to get good precision if you output too many things.
+> One thing you should know about BLEU if you're using it in your research which you might is that it's very very sensitive to the length.
+> So if your length is a little bit too short or a little bit too long it hurts your BLEU really badly.
+> That's another problem with BLEU essentially is that it's not sensitive to paraphrases that are too long or too short as well.
+
+## Bert Score
+
+>Recently in the past three years or so, there's been a huge improvement in embedding based metrics which are basically metrics that you know take advantage of recent  NLP techniques and one of the first ones was bert score
+and these can be separated into unsupervised metrics and supervised metrics unsupervised metrics require no annotated data of whether a translation is a good translation or a bad translation supervised metrics are trained to basically regress to an estimation of how good a transplantation is or not so a Bert score is an unsupervised metric that's based essentially on the similarity between burton betting so it has this matching algorithm where you basically for each word in the output you try
+to find you know how good it matches with one of the words in the input
+and this is good because it can do things like handle paraphrases as long as the paraphrases have similar bert embeddings another famous one is BLEUrt
+
+## BlueRT
+
+What they did essentially was they trained bert to predict human evaluation scores   so they essentially solve a regression problem from the sentences like the reference in this system output to an evaluation score so they're
+just going in directly predicting evaluation and they have a bunch of other tricks like unsupervised training where they try to predict BLEU or rouge or other lexical metrics beforehand and that makes it more robust the favorite one that we use in our Comet research on mt now is a comet and comet is also similarly it trains
+the model to predict human evaluation but in addition to using the just
 the system output in reference it also uses a source sentence which means that
-essentially uh i talked about human evaluation right uh where you can either ask a human
-evaluator to look only at the the reference or also look at the source and um for a similar reason to why we
-would like a speaker human speaker to do that um it's also useful to have the model do that because the model can look
+essentially I talked about human evaluation right where you can either ask a human
+evaluator to look only at the the reference or also look at the source and for a similar reason to why we
+would like a speaker human speaker to do that it's also useful to have the model do that because the model can look
 at the source and see if the information is reflected in the target
-Bart Score
-and the final one um uh prism's another one based on
+
+## Bart Score
+
+and the final one prism's another one based on
 paraphrasing a final one is a bart score environment score is
-one that i'm a co-author on this is a unsupervised metric
-uh that is based on basically a generative model that tries to generate the uh the system output using the reference
+one that I'm a co-author on this is a unsupervised metric
+  that is based on basically a generative model that tries to generate the the system output using the reference
 or the reference using the system output or the source using the system output et cetera et cetera
-and um bart score i think is good because it's unsupervised like birth score but it's
+and bart score I think is good because it's unsupervised like birth score but it's
 essentially more accurate and more controllable so you can do things like calculate recall
 calculate a precision and other things like that so if that sounds interesting you can take a look at the paper as well
-but basically if you're doing empty i would suggest using comment now because uh it's well supported it has a nice uh
+but basically if you're doing empty I would suggest using comment now because it's well supported it has a nice 
 package it's pretty widely tested and follow-up reports have suggested that it has very good correlation with human
-evaluation um so that's my suggestion uh you can
-Meta Evaluation
-trust me but you don't also you don't don't necessarily need to trust me so like as i mentioned um meta evaluation
-basically what it does is it runs human evaluation and automatic evaluation on the same outputs
-and calculates the correlation this is what they do in the wmt shared tasks
-like the wmt metrics task for mt other things for summarization etc
-and one interesting thing is that evaluation as i mentioned at the beginning is pretty hard especially with
-good systems so most metrics actually had no correlation with human eval uh
+evaluation so that's my suggestion you can
+
+## Meta Evaluation
+
+Meta evaluation runs human evaluation and automatic evaluation on the same outputs and calculates the correlation this is what they do in the wmt shared tasks like the wmt metrics task for mt other things for summarization etc
+and one interesting thing is that evaluation as I mentioned at the beginning is pretty hard especially with
+good systems so most metrics actually had no correlation with human eval 
 over a subset of the best systems at some of the wmt 2019 tasks which means that basically all of the evaluation
-metrics we had were kind of broken on uh like evaluating really good mt systems
+metrics we had were kind of broken on like evaluating really good mt systems
 so fortunately now we have comment we have other things like this that actually seemed to be a lot more robust
-but um it was a major problem
+but it was a major problem
 so you basically calculate the correlation you calculate pearson's correlation there's experiments correlation
-and um the way you do that is you human you do human eval of a whole bunch of sentences or humans develop a whole
+and the way you do that is you human you do human eval of a whole bunch of sentences or humans develop a whole
 bunch of systems and you try to find the metric that has the highest correlation between the evaluation scores of the systems and the
 evaluations given by the humans yep
 all right they often don't support that many
 languages well so that's a good that's a really
-good question um i many of them do uh use something like embert or xlmr
+good question I many of them do use something like embert or xlmr
 which support a lot of languages xlmr actually envert's a little bit more biased xlmr
 has pretty good coverage of the most common languages in the world but of course as you go down to
 less well resource languages that's going to continue to be a problem
-um there you might be stuck with blue for now but honestly if you have really bad systems really
-bad empty systems i still think blue is probably good enough in many cases oh another option is carefu chrf and that's
+  there you might be stuck with BLEU for now but honestly if you have really bad systems really
+bad empty systems I still think BLEU is probably good enough in many cases oh another option is carefu chrf and that's
 a character-based evaluation metric for mt that's particularly good for languages with like rich morphology or
-something like that so i think when you're working with low resource languages your mnt systems are
+something like that so I think when you're working with low resource languages your mnt systems are
 also going to be really bad so any metric you have is still going to be like reasonably good at measuring progress so
-um cool yeah so um the next thing i'd like to
-Database Strategies
-talk about is the database strategies uh to low resource mt um there's not a whole lot of content
-here so i'll try to go through it rather quickly to leave time for the discussion um
-but basically we have data challenges in the resource mt um so mt of high resource languages with
-large parallel corpora gives us you know very good uh translations
+
+## Database Strategies
+  
+The next thing I'd like to talk about is the database strategies to low resource mt there's not a whole lot of content
+here so I'll try to go through it rather quickly to leave time for the discussion 
+but basically we have data challenges in the resource mt so mt of high resource languages with
+large parallel corpora gives us you know very good translations
 but low resource languages with small parallel corporate you just train there you can end up with nonsense so
 this is an example of a system trained on 5 000 languages and the most frequent failure state is
 basically that a neural nt system will just spit out something that has nothing to do with the original
 inputs there's a famous example of this
-um so uh that says why is google translate uh spitting out sinister religious
-prophecies um and basically if you put in a dog dog dog dog dog
+  so that says why is google translate spitting out sinister religious
+prophecies and basically if you put in a dog dog dog dog dog
 in maori it outputs doomsday clock is three minutes at 12 we are experiencing
-characters in a dramatic development uh in which jesus returns um [Music]
+characters in a dramatic development in which jesus returns [Music]
 can you guess why this happened
 exactly they use bible data in training their system and when you use bible data and training your system and your system
 doesn't know what to do because it has so few resources or it sees something it doesn't know it just reverts to using
-the language model and basically outputs whatever the language model thinks and
-uh thinks it looks likely and so you know if your system is trained on
+the language model and basically outputs whatever the language model thinks and thinks it looks likely and so you know if your system is trained on
 bible data that looks like the bible if your system's trained on something else it looks like something else
 High and Low Resource Languages
-um so you know that's basically what happened here as well
-um so some ways to fix this
-um we can transfer from high resource languages to low resource languages so basically what you do is you
+  so you know that's basically what happened here as well
+  so some ways to fix this
+  we can transfer from high resource languages to low resource languages so basically what you do is you
 train on a high resource language or multiple high resource languages and then you adapt to the low resource
 language one the simplest way to do that is just to continue fine tuning on the low resource language
-um you can also do joint training with the low resource language in the high resource language so just concatenate
-all the data together um and uh in training
-so um this is okay but there are some problems with this as well one problem is a sub-optimal
+  you can also do joint training with the low resource language in the high resource language so just concatenate
+all the data together and in training
+so this is okay but there are some problems with this as well one problem is a sub-optimal
 lexical or syntactic sharing and another problem is it's not possible
-to leverage monolingual data because you still require a parallel data here and um i'm going to be talking more
-about like lexical overlap and loanwords and stuff in uh in the next class so i'll cover
-that more there but basically suffice to say the high resource language and the lower resource language are different so
-training on different data is sub-optimal for uh information sure
-Data Augmentation
+to leverage monolingual data because you still require a parallel data here and I'm going to be talking more about like lexical overlap and loanwords and stuff in in the next class so I'll cover that more there but basically suffice to say the high resource language and the lower resource language are different so
+training on different data is sub-optimal for information sure
+
+## Data Augmentation
+
 so if we think about data augmentation data augmentation is basically generating other data that looks like
-the data that you want to have the very convenient thing about this is um generating more training data and
-feeding it into your existing system is uh easy but effective in uh in improving
+the data that you want to have the very convenient thing about this is generating more training data and
+feeding it into your existing system is easy but effective in in improving
 mt performance so it's actually a pretty widely used technique now so if we look at the available resources
-um we might have a low resource language parallel data a
+  we might have a low resource language parallel data a
 high resource language parallel data and also for example target data
-which is monolingual hence the m here and uh what we do is we would like to
+which is monolingual hence the m here and what we do is we would like to
 create augmented data where we have target data and like pseudo low resource
-language data and uh train our model on this with the
-idea being that if we can create this uh this will be closer to our final evaluation scenario where we uh where we
+language data and train our model on this with the
+idea being that if we can create this this will be closer to our final evaluation scenario where we where we
 want to generate the target given a low resource language
-Back Translation
+
+## Back Translation
+
 so the first example is a back translation and the way back translation works is
 basically we train a target two low resource language system
-and we take our monolingual target data and we generate uh fake low resource
+and we take our monolingual target data and we generate fake low resource
 language data by translating the target data into the low resource language data
-so um this is how it works uh we take our target to low resource language system
-um we back translate using the system and then we train a low resource
+so this is how it works we take our target to low resource language system
+  we back translate using the system and then we train a low resource
 language to target language system using the concatenation of this augmented data in the original data
-and the key point here is that when we are um when we're training like a sequence
-sequence model or a machine translation model um we're we're training it to do two things
+and the key point here is that when we are when we're training like a sequence
+sequence model or a machine translation model we're we're training it to do two things
 we're training it to do language modeling on the target side only
-um and we're trying to do mapping between the source side and the target side
+  and we're trying to do mapping between the source side and the target side
 and in order to do language modeling we only really need good target site data so
-even if there's some degree of error in this uh like low resource language here
-we'll still be able to learn uh target site data and we'll be able to learn a
+even if there's some degree of error in this like low resource language here
+we'll still be able to learn target site data and we'll be able to learn a
 the language model from target side data and we'll be able to learn a mapping you know even if it's imperfect from the low
 resource language to the target language
-Training Schedule
-so there's a couple ways to generate translations uh when doing back translation
-um the first one is using beam search oh sorry yeah uh
+
+## Training Schedule
+
+so there's a couple ways to generate translations when doing back translation
+  the first one is using beam search oh sorry yeah 
 yeah that's a really that's a really good question so the question was is there any sort of training schedule that you use when you do this
-um so the the kind of quote-unquote obvious training schedule that you might do is you might train jointly on both of
-them at first and then fine-tune on this data over here um
-and uh that would make sense because you know this is good data this is like actually translated data however there's
-another issue um which actually is not super obvious at first but it's
+  so the the kind of quote-unquote obvious training schedule that you might do is you might train jointly on both of
+them at first and then fine-tune on this data over here 
+and that would make sense because you know this is good data this is like actually translated data however there's
+another issue which actually is not super obvious at first but it's
 maybe obvious in hindsight which is that if this data is all from the bible and then you want to translate news then
-actually fine tuning on bible data will be really out of domain and cause issues for you um so
+actually fine tuning on bible data will be really out of domain and cause issues for you so
 in fact in the original black translation paper they threw away this data and only trained on this because it
 was more in domain and that ended up giving better results but that was predicated on the fact that they have a
-good you know batch translation system in the first place so um it's not necessarily clear what the
+good you know batch translation system in the first place so it's not necessarily clear what the
 ideal schedule is but you would almost certainly benefit from some sort of schedule or balancing or something
-um but that's a complicated hyper parameter so because it's a complicated hyper parameter it's also very common to
+  but that's a complicated hyper parameter so because it's a complicated hyper parameter it's also very common to
 just concatenate the two and these are good details to know for
 assignment too by the way because they might make a difference in your final scores
-Generating Translations
-um how to generate translations so beam search is one way uh and basically what this is doing is
-selecting the highest scoring output uh this was done in the original paper um this has the advantage of having
-higher quality but also lower diversity in the outputs and the potential for bias um so you might uh
-like for example uh one result is beam search tends to mostly output um
-pronouns from the majority gender because they're over represented so you might get only get mail inflections
-uh if you do beam search so that's the type of data bias that could result from here and so the other option
-is sampling and what you do is you randomly sample from the back translation model
-which gives a lower overall quality but higher diversity and most
-reports say this works better at the moment simply and uh also we had a recent paper uh
-which i'm going to introduce in a second but this has kind of a theoretical explanation for why we think sampling
-should be better which is that it's a better model of the underlying data distribution that we're trying to model
-so um i i think i'm pretty firmly a believer that
-sampling is the way to go there's also a method of iterative back
-In iterative back translation
-translation this is particularly useful when you have a large monolingual data
-in both languages and again the idea is simple you train a low resource language to target system
-first so this is going in the direction you originally want to translate you generate pseudo data
-um with the target language you use that to train your target to low
-resource language system you back translate and then you use this to train your final system
-so this is uh now you have three systems your forward translation data
-augmentation system your back translation data augmentation system and your forward translation final system
-um you can do this as many times as you want obviously um you could also do it on the fly in the process of training
-the system so uh this can become arbitrarily complicated if you want
-Metaback translation
-um just one example of this um this is a paper that i just talked about
-but we have a paper called meta back translation which i think is kind of a an interesting idea
-um so normally uh when we're training this system uh to train the uh the low resource language
-to uh the target language system we're back propping the gradient
-uh from the slow resource language data um but uh we can also uh do a back
-propagation step where we uh um basically
-train oh sorry that arrow is thrown i apologize so the arrow actually should be going
-from here around this to here so the basic idea i'll fix this later in
-the slides but the basic idea is we use the signal that we get from um
+
+## Generating Translations
+
+> How to generate translations? 
+>
+> Beam search is one way and basically what this is doing is selecting the highest scoring output.
+> This was done in the original paper.
+> This has the advantage of having higher quality but also lower diversity in the outputs and the potential for bias. 
+> You might like for example one result is beam search tends to mostly output pronouns from the majority gender because they're over-represented. 
+> You might get only get male inflections if you do beam search. 
+> That's the type of data bias that could result from here. 
+> The other option is sampling.
+> What you do is you randomly sample from the back translation model which gives a lower overall quality but higher diversity. 
+> Most reports say this works better at the moment.
+> We had a recent paper which I'm going to introduce in a second but this has kind of a theoretical explanation for why we think sampling should be better which is that it's a better model of the underlying data distribution that we're trying to model.
+> I think I'm pretty firmly a believer that sampling is the way to go there's also a method of iterative back translation.
+
+## Iterative back translation.
+
+> Iterative back translation is particularly useful when you have a large monolingual data in both languages.
+> Again the idea is simple you train a low resource language to target system first. 
+> This is going in the direction you originally want to translate. 
+> You generate pseudo data with the target language. 
+> You use that to train your target to low resource language system.
+> You back translate and then you use this to train your final system so this is now you have three systems your forward translation data augmentation system your back translation data augmentation system and your forward translation final system
+  you can do this as many times as you want obviously you could also do it on the fly in the process of training
+the system so this can become arbitrarily complicated if you want
+
+## Metaback translation
+
+  just one example of this this is a paper that I just talked about
+but we have a paper called meta back translation which I think is kind of a an interesting idea
+  so normally when we're training this system to train the the low resource language
+to the target language system we're back propping the gradient
+  from the slow resource language data but we can also do a back
+propagation step where we basically
+train oh sorry that arrow is thrown I apologize so the arrow actually should be going
+from here around this to here so the basic idea I'll fix this later in
+the slides but the basic idea is we use the signal that we get from 
 from training the final system that we want to train to update the parameters of the back translation system so we're
 essentially training the ideal back translation system to train a good forward translation system so
-um this is a uh i like the idea behind here uh
+  this is a I like the idea behind here 
 which is basically the final goal of the back translation system is to improve the forward translation system so we can
 directly optimize it to do this
-Metaback translation issues
-um so there are a couple issues here um the first issue is that back translation
-often fails in low resource languages or domains and um as a solution uh one thing that
+
+## Metaback translation issues
+
+  so there are a couple issues here the first issue is that back translation
+often fails in low resource languages or domains and as a solution one thing that
 we can do is we can use other high resource languages or
 we can combine them with monolingual data maybe with denoising objectives which
-we're covering in a following class and we can perform other uh varieties of
-rule-based uh augmentation so i'm gonna go through these uh in a little bit uh
-in maybe uh in a few minutes so um
-also actually we'll have discussion about uh about these two so maybe i'll just briefly explain the idea and we can
-discuss more in the discussion for people who read those papers so um using uh high resource languages
+we're covering in a following class and we can perform other varieties of
+rule-based augmentation so I'm gonna go through these in a little bit 
+in maybe in a few minutes so 
+also actually we'll have discussion about about these two so maybe I'll just briefly explain the idea and we can
+discuss more in the discussion for people who read those papers so using high resource languages
 High resource languages augmentation
-and augmentation um the problem is uh target to low resource language back translation might
+and augmentation the problem is target to low resource language back translation might
 be very low quality so the idea is we can also use a high resource language
 that's similar to the low resource language and basically
-for example if we have um something like azerbaijani in turkish
-azerbaijani and turkish are very highly related so maybe we could uh use information from
+for example if we have something like azerbaijani in turkish
+azerbaijani and turkish are very highly related so maybe we could use information from
 azerbaijani to english translation back translate into az into turkish
 which is certainly going to give us higher quality data and use that to augment our data for azerbaijani english
 system and then we can just throw away this azerbaijani data that we know is not
-going to be very useful um so that would
+going to be very useful so that would
 High resource languages pivoting
 give us additional high resource language to target language data
 and another thing we can do is we can augment via pivoting and so basically what that does is that
 gives us data where we take the high resource language data
 and we translate that into the low resource language and presumably translation from the high resource
 language to low resource language is easier because these languages are more related
-so basically what this does is that gives us a better uh like low resource language pseudo
-data here and um we can also do a similar thing
-where we generate more high resource language data and uh this basically gives us um
+so basically what this does is that gives us a better like low resource language pseudo
+data here and we can also do a similar thing
+where we generate more high resource language data and this basically gives us 
 three different ways to create this pseudo-parallel data between the low resource language and target
-language another simple trick uh this is kind of
-Monolingual data copying
+language another simple trick this is kind of
+
+## Monolingual data copying
+
 like frustratingly effective at improving your models is monolingual data copying
-and um the issue is that um back translation uh
+and the issue is that back translation 
 may help with structure but one of the issues with the resource language systems is that they tend to fail really
-badly on um unusual vocabulary so like for example
+badly on unusual vocabulary so like for example
 proper names or something like this so you might get a back translation system that's very good at getting the structure right but get it gets you know
-all of your proper names and entities incorrect so uh basically one thing that you can
-do here is you just copy the target data into the source data and then you're done um and uh
-this uh kind of guarantees to maintain the entities so um or the the rare words
-so uh that will help uh mitigate these issues of like vocabulary being dropped
-yeah something to point out with copying is that even in languages with different scripts it seems to work really well
-maybe because of auto and clutter objective stuff yeah even in languages with different scripts and there's actually a nice paper by the same
-authors who wrote this paper um
-Transfer learning
-where they examine this and basically the um the idea here
-is they are trying to figure out like what transfer learning
-why does transfer learning have this um uh positive effect and basically
-one of the things that they show is that even just you know making sure that the length is the same
-is approximately the same or making sure that the words are output in approximately the same order as the
-input is uh is effective for improving translation accuracy so if
-you have a low resource language um the translation system might drop half the content or
-it might uh like totally mess up the order or something like this so this uh this paper is demonstrating that
-kind of just like a monotonic bias and a bias towards outputting approximately the same number of words gets you a long
-way in improving the results um which of course monolingual data copying
-would also do um and so for the um
-Dictionarybased augmentation
-for the final things uh which we're also reading so we can talk more about them in the discussion um
-we had dictionary based augmentation and dictionary based augmentation um basically finds rare words in the
-source sentences um it could also be in the target sentence
-and uh tries to replace uh the words with other words that are kind of in the
-same semantic class so it replaces car with motorbike um and then using a lexicon it uh
-replaces the words in the targeted sentence as well so it's basically creating more uh sentences to augment uh augmented
-data uh with uh like words that are less frequent uh in the
-original purpose and in order to do this they need to use a tool called word alignment and what
-Word alignment
-word alignment does is it essentially takes in two parallel corpora and um
-the parallel corpora you want to find which words align to each other in the uh source and target
-sentences and this is useful for a number of reasons it's useful for
-analysis it's useful for cross-lingual transfer learning i talked about supervised alignment
-as a training method uh last time i believe um and there's a couple uh
-methods to do so um there's again traditional symbolic methods uh which
-like blue are based on exact lexical match or um you know some variety of clustering
-uh giza plus plus has some clustering involved in it but recently uh neural methods have been
-largely um uh outperforming these and i can recommend
-a highly our aligner called awesome lion i i didn't name it um i'm far too humble
-to name my alignment or awesome line but um uh but it's pretty awesome i have to say um
+all of your proper names and entities incorrect so basically one thing that you can
+do here is you just copy the target data into the source data and then you're done and 
+this kind of guarantees to maintain the entities so or the the rare words
+so that will help mitigate these issues of like vocabulary being dropped
+yeah something to point out with copying is that even in languages with different scripts it seems to work really well.
+> Maybe because of auto and clutter objective stuff yeah even in languages with different scripts
+
+## Transfer learning
+
+> There's actually a nice paper by the same authors who wrote this paper  where they examine this.
+> Basically they are trying to figure out **transfer learning**.
+> Why does transfer learning have this positive effect?
+> One of the things that they [show is that even making sure the length is the same or approximately the same or making sure that the words are output in approximately the same order as the input is is effective for improving translation accuracy.]{.mark}
+> If you have a low resource language the translation system might drop half the content or it might like totally mess up the order or something like this 
+> This paper is demonstrating that kind of just like a monotonic bias and a bias towards outputting approximately the same number of words gets you a long
+way in improving the results
+> which of course monolingual data copying would also do 
+
+## Dictionary based augmentation
+
+> So for the final things which we're also reading so we can talk more about them in the discussion.
+> We had dictionary based augmentation and dictionary based augmentation basically finds rare words in the source sentences it could also be in the target sentence and tries to replace the words with other words that are kind of in the same semantic class.
+It replaces car with motorbike and then using a lexicon.
+It replaces the words in the targeted sentence as well.
+It's basically creating more sentences to augment augmented data with like words that are less frequent in the original 
+
+## Word alignment
+
+> In order to do this they need to use a tool called word alignment 
+> What Word alignment does is, it essentially takes in two parallel corpora.
+> The parallel corpora you want to find which words align to each other in the source and target sentences.
+> This is useful for a number of reasons it's useful for
+analysis it's useful for cross-lingual transfer learning I talked about supervised alignment
+as a training method last time I believe and there's a couple 
+methods to do so there's again traditional symbolic methods which
+like BLEU are based on exact lexical match or you know some variety of clustering
+
+giza ++ has some clustering involved in it
+ but recently neural methods have been
+largely outperforming these and I can recommend
+a highly our aligner called awesome lion I i didn't name it I'm far too humble
+to name my alignment or awesome line but but it's pretty awesome I have to say 
 and basically it uses multilingual perks and it tries to find things that are similar but it's also
 fine-tuned multilingually on supervised data so basically there's some supervision that goes into it
-to try to uh inform the aligner about the outputs and it works on any language that's included in mvert again
-uh like the question before uh it won't work on very low resource languages of course so
-then you might be stuck with keystone plus plus and faster um
+to try to inform the aligner about the outputs and it works on any language that's included in mvert again
+  like the question before it won't work on very low resource languages of course so
+then you might be stuck with keystone plus plus and faster 
 Word by word data augmentation
 so you can also do things like word by word data augmentation where you simply
-translate sentences word by word into the target sentence using a dictionary uh this is another frustratingly you
-know effective method like monolingual data copying um
-however there are problems like word order and syntactic divergence so if you get like i the new car bought
-number one the order is strange number two uh these words don't actually align with
-each other so that's a problem uh so um
+translate sentences word by word into the target sentence using a dictionary this is another frustratingly you
+know effective method like monolingual data copying 
+however there are problems like word order and syntactic divergence so if you get like I the new car bought
+number one the order is strange number two these words don't actually align with
+each other so that's a problem so 
 Reordering
-other things you can do or you can try to decrease this divergence with uh reordering or rules
+other things you can do or you can try to decrease this divergence with reordering or rules
 so this was also another paper in the potential reading and basically what the idea is that you
-a priori do some reordering from one language uh from english into like reordered
+a priori do some reordering from one language from english into like reordered
 english and then do data augmentation on top of that and the good thing about this is like
 english has a lot of analysis tools you could like do syntactic parsing of english get
-the syntactic structure build reordering rules on top of that and then uh just apply dictionary-based
+the syntactic structure build reordering rules on top of that and then just apply dictionary-based
 translation and then the hope would be that you would get something that looks a lot more like japanese than if you
 just translated english word by word and one interesting thing we showed here was we demonstrated that this was useful
 for japanese translation but then we applied the exact same reordering rules and also applied it to wigger which is
-another language that's completely different different language family but it's um
+another language that's completely different different language family but it's 
 it has a very similar syntax to japanese so because of that
 the exact same reordering rules for english were still effective in improving the results for weaker english translations so
-um because of that you know it's not language dependent it's rather syntax dependent and because there's syntactic
-similarities between the language it helps so um yeah given that we now have um the
-Assignment
-assignment uh actually this is this slide is missing one of the uh one of the papers that was a
-potential paper to read um so first before we go to the discussion
-are there any questions so i kind of breezed through it the last part quickly but hopefully we can also talk about them in the discussion
-um okay if not this time we're going to try a new experiment we're going to try
-to make six groups um so the groups are going to be half the size and they're going to be front
+  because of that you know it's not language dependent it's rather syntax dependent and because there's syntactic
+similarities between the language it helps so yeah given that we now have the
+
+## Assignment
+
+assignment actually this is this slide is missing one of the one of the papers that was a
+potential paper to read so first before we go to the discussion
+are there any questions so I kind of breezed through it the last part quickly but hopefully we can also talk about them in the discussion
+  okay if not this time we're going to try a new experiment we're going to try
+to make six groups so the groups are going to be half the size and they're going to be front
 middle front right front left back middle back left back middle in that
 right so we're gonna ask everybody to talk a little bit more quietly
-uh but also you'll be in a smaller circle so hopefully that'll be easier um
+  but also you'll be in a smaller circle so hopefully that'll be easier 
 and yeah let's go ahead
-and actually guys uh since we're running a little bit late i think maybe we'll skip the reporting part this time is
+and actually guys since we're running a little bit late I think maybe we'll skip the reporting part this time is
 that okay and we'll just you know be within our groups and if there's anything really interesting we can share on piazza or something okay
 :::
+
+## Papers:
+
+- @xia-etal-2019-generalized [Generalized data augmentation for low-resource translation](https://aclanthology.org/P19-1579/). 
+- Transfer HRL to LRL 
+  - @zoph-etal-2016-transfer  [Transfer Learning for Low-Resource Neural Machine Translation](https://aclanthology.org/D16-1163/)  
+  - @nguyen-chiang-2017-transfer [Transfer Learning across Low-Resource, Related Languages for Neural Machine Translation](https://aclanthology.org/I17-2050/) 
+- Joint training with LRL and HRL parallel data
+  - @johnson-etal-2017-googles [Google’s Multilingual Neural Machine Translation System: Enabling Zero-Shot Translation](https://aclanthology.org/Q17-1024/)
+  - @neubig-hu-2018-rapid [Rapid Adaptation of Neural Machine Translation to New Languages](https://aclanthology.org/D18-1103/)
+- Back Translation 
+  - @sennrich-etal-2016-improving [Improving neural machine translation models with monolingual data](https://aclanthology.org/P16-1009.pdf). 
+  - @edunov-etal-2018-understanding [Understanding Back-Translation at Scale](https://aclanthology.org/D18-1045.pdf) 
+  - @pham2021metabacktranslation [Meta Back-translation](https://arxiv.org/abs/2102.07847)
+- @currey-etal-2017-copied [Copied Monolingual Data Improves Low-Resource Neural Machine Translation](https://aclanthology.org/W17-4715/)
+- @fadaee-etal-2017-data [Data Augmentation for Low-Resource Neural Machine Translation](https://aclanthology.org/P17-2090/)
+- Word-by-word Data Augmentation
+  - @lample2018unsupervisedmachinetranslationusing [Unsupervised Machine Translation Using Monolingual Corpora Only](https://arxiv.org/abs/1711.00043)
+- Word-by-word Augmentation w/ Reordering
+  - @zhou2019handlingsyntacticdivergencelowresource [Handling Syntactic Divergence in Low-resource Machine Translation](https://arxiv.org/abs/1909.00040)
+
+## In-class Assignment
+
+Read one of the cited papers on heuristic data augmentation
+- @fadaee-etal-2017-data or
+- @zhou2019handlingsyntacticdivergencelowresource
+
+- Try to think of how it would work for one of the languages you're familiar with 
+- Are there any potential hurdles to applying such a method? Are there any improvements you can think of?
+
+## Resources
+
+- [GizA++](https://github.com/moses-smt/giza-pp)
+- [mgiza](https://github.com/moses-smt/mgiza)
+- [Fast Align](https://github.com/clab/fast_align)
+- [awesome-align](https://github.com/neulab/awesome-align) (@dou2021wordalignmentfinetuningembeddings)
+```
+doch jetzt ist der Held gefallen . ||| but now the hero has fallen .
+neue Modelle werden erprobt . ||| new models are being tested .
+doch fehlen uns neue Ressourcen . ||| but we lack new resources .
+```
+
+```
+0-0 1-1 2-4 3-2 4-3 5-5 6-6
+0-0 1-1 2-2 2-3 3-4 4-5
+0-0 1-2 2-1 3-3 4-4 5-5
+```

@@ -22,7 +22,27 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -43,6 +63,8 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/videojs/video.min.js"></script>
+<link href="../../site_libs/quarto-contrib/videojs/video-js.css" rel="stylesheet">
 <script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -752,7 +774,9 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">Resources</a></li>
+  <li><a href="#outline" id="toc-outline" class="nav-link active" data-scroll-target="#outline">Outline</a></li>
+  <li><a href="#papers" id="toc-papers" class="nav-link" data-scroll-target="#papers">Papers</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">Resources</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/cs11-737-w02-sequence-labeling/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -778,6 +802,15 @@ ul.task-list li input[type="checkbox"] {
 Video&nbsp;1: Lesson Video
 </figcaption>
 </figure>
+</div><div id="vid-01" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-vid figure">
+<div aria-describedby="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-video"><video id="video_shortcode_videojs_video1" class="video-js vjs-default-skin vjs-fluid" controls="" preload="auto" data-setup="{}" title=""><source src="https://slideslive.com/38938792"></video></div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Video&nbsp;2: XGLUE: A New Benchmark Dataset for Cross-lingual Pre-training, Understanding and Generation
+</figcaption>
+</figure>
 </div><div id="sup-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides" style="@page {size: 16in 9in;  margin: 0;}">
 <figure class="quarto-float quarto-float-sup figure">
 <div aria-describedby="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -793,6 +826,7 @@ Supplementary Figure&nbsp;1
 </figcaption>
 </figure>
 </div></div>
+
 
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -837,13 +871,173 @@ Transcript
 </div>
 </div>
 </div>
+<section id="outline" class="level2">
+<h2 class="anchored" data-anchor-id="outline">Outline</h2>
+<ul>
+<li><strong>Introduction to Text Classification and Sequence Labeling</strong>
+<ul>
+<li>These are broad task categories, not tasks in themselves, that can be solved in similar ways.</li>
+<li>Text classification involves predicting a categorical label for an input text.</li>
+<li>Sequence labeling involves predicting an output label sequence of equal length to the input text.</li>
+</ul></li>
+<li><strong>Text Classification Tasks</strong>
+<ul>
+<li><strong>Topic classification</strong>: Assigning a topic to a given text. For example, “I like peaches and pears” would be classified as “food,” while “I like peaches and herb” would be classified as “music”.</li>
+<li><strong>Language identification</strong>: Identifying the language in which a text is written. This task is particularly important in multilingual learning.</li>
+<li><strong>Sentiment analysis</strong>: Determining the sentiment of a text (e.g., positive, negative, neutral) at the sentence or document level.</li>
+</ul></li>
+<li><strong>Sequence Labeling Tasks</strong>
+<ul>
+<li><strong>Part-of-speech (POS) tagging</strong>: Assigning a part of speech tag to each word in a sentence. For example, “He saw two birds” would be tagged as “PRON VERB NUM NOUN”.</li>
+<li><strong>Lemmatization</strong>: Identifying the base form of words, which is particularly useful in languages with rich morphology.</li>
+<li><strong>Morphological tagging</strong>: Predicting various features of a word, such as tense, number, and verb form.</li>
+</ul></li>
+<li><strong>Span Labeling</strong>
+<ul>
+<li>Involves predicting output spans and labels for input text.</li>
+<li><strong>Named entity recognition (NER)</strong>: Identifying and labeling named entities like person, organization, or location. For example, “Graham Neubig” would be labeled as a “person” and “Carnegie Mellon University” as an “organization”.</li>
+<li><strong>Syntactic chunking</strong>: Splitting a sentence into noun phrases and verb phrases.</li>
+<li><strong>Semantic role labeling</strong>: Identifying the roles of different parts of a sentence, such as actor, predicate, and location.</li>
+<li>Span labeling can also be treated as a sequence labeling task by predicting beginning, inside, and outside (BIO) tags for each word in the span.</li>
+</ul></li>
+<li><strong>Text Segmentation</strong> * Splitting an input text into segmented text. * <strong>Tokenization</strong>: Splitting text into tokens. * <strong>Word segmentation</strong>: Identifying word boundaries in languages without spaces between words. For example, Japanese requires word segmentation since it does not use spaces. * <strong>Morphological segmentation</strong>: Splitting words into morphemes.</li>
+<li><strong>Modeling for Sequence Labeling and Classification</strong>
+<ul>
+<li>The process involves extracting features from the input text and then predicting labels.</li>
+<li>A feature extractor can extract a single vector for the whole sequence (for text classification) or one vector for each word (for sequence labeling).</li>
+<li>A simple feature extractor is the <strong>bag-of-words model</strong>, which looks up a feature for each word and adds them together.</li>
+<li>A simple predictor is a <strong>linear transform with a softmax function</strong>, which converts scores into probabilities.</li>
+<li>More complex feature extractors include n-grams, syntax-based features, and neural networks.</li>
+<li><strong>Neural networks</strong>, which use computation graphs, are now more common because they allow for transfer across languages.</li>
+</ul></li>
+<li><strong>Neural Network Basics</strong>
+<ul>
+<li>Neural networks are computation graphs with nodes and edges.</li>
+<li>Nodes can represent values, and edges represent operations.</li>
+<li><strong>Forward propagation</strong> involves computing the value of each node in topological order, starting from the input values.</li>
+<li><strong>Backpropagation</strong> is used to calculate the derivatives of the parameters with respect to a loss function and update the parameters to improve model performance.</li>
+</ul></li>
+<li><strong>Recurrent Neural Networks (RNNs)</strong>
+<ul>
+<li>RNNs are used to handle dependencies in language, such as word order, agreement, and semantic congruency.</li>
+<li>They process sequences by taking the input at the current time step and the features from the previous time step.</li>
+<li>RNNs can be used to represent sentences for tasks like text classification or represent words for tasks like sequence labeling.</li>
+<li>Training RNNs involves calculating a loss function, summing it up over a sequence, and doing backpropagation through time to update the parameters.</li>
+<li>Parameters are tied across time, allowing the network to handle sequences of arbitrary length.</li>
+<li><strong>Bi-directional RNNs</strong> process the input sequence from both left to right and right to left.</li>
+</ul></li>
+<li><strong>Multilingual Tasks and Datasets</strong>
+<ul>
+<li><strong>Language identification</strong> is a task that is inherently multilingual.</li>
+<li>Other multilingual text classification and sequence labeling tasks can be used for benchmarking multilingual models.</li>
+<li><strong>MLDoc corpus</strong> is used for multilingual document classification.</li>
+<li><strong>POS-X</strong> is a corpus for paraphrase detection between languages.</li>
+<li><strong>Cross-lingual natural language inference (XNLI)</strong> is used for textual entailment prediction.</li>
+<li><strong>Cross-lingual sentiment classification</strong> is another benchmark task.</li>
+<li><strong>Universal Dependencies (UD) Treebank</strong> is a high-quality multilingual corpus that contains syntactic parses, POS tags, and morphological features for 90 languages.</li>
+<li><strong>CoNLL 2002/2003</strong> is a dataset for language-independent named entity recognition.</li>
+<li><strong>WikiAnn</strong> is a dataset for entity recognition and linking in 282 languages.</li>
+<li><strong>XTREME</strong> and <strong>XGLUE</strong> are composite benchmarks for multilingual learning, aggregating different sequence labeling and classification tasks.</li>
+</ul></li>
+<li><strong>Assignment 1: Multilingual Part of Speech Tagging</strong>
+<ul>
+<li>The goal is to give a practical introduction to multilingual part-of-speech tagging.</li>
+<li>Students will be given a dataset of sentences in different languages and must output the POS tags for each word.</li>
+<li>The assignment emphasizes an experimental approach to multilingual problems.</li>
+<li>The assignment requires the use of a GPU and AWS is recommended.</li>
+<li>A deep file containing code and data will be provided to students.</li>
+<li>Students need to submit code and a report detailing their analysis of results and model improvements.</li>
+<li>Grading criteria include running the code, training on multilingual datasets, and providing detailed analysis of the results.</li>
+<li>Students can improve their grade by making a non-trivial extension to improve the existing scores.</li>
+</ul></li>
+</ul>
+</section>
+<section id="papers" class="level2">
+<h2 class="anchored" data-anchor-id="papers">Papers</h2>
+<p>Here is a list of all the papers mentioned in the sources, using a markdown list:</p>
+<ul>
+<li><span class="citation" data-cites="jauhiainen2018automaticlanguageidentificationtexts">Jauhiainen et al. (<a href="#ref-jauhiainen2018automaticlanguageidentificationtexts" role="doc-biblioref">2018</a>)</span> <strong><a href="https://arxiv.org/abs/1804.08186">Automatic Language Identification in Texts: A Survey</a></strong>
+<ul>
+<li>This is a survey that provides an overview of automatic language identification methods.</li>
+</ul></li>
+<li><span class="citation" data-cites="caswell-etal-2020-language">Caswell et al. (<a href="#ref-caswell-etal-2020-language" role="doc-biblioref">2020</a>)</span> <strong><a href="https://aclanthology.org/2020.coling-main.579/">Language ID in the Wild: Unexpected Challenges on the Path to a Thousand Language Web Text Corpus</a></strong>
+<ul>
+<li>This paper discusses challenges in language identification, particularly when applied to web text.</li>
+</ul></li>
+<li><span class="citation" data-cites="schwenk-li-2018-corpus">Schwenk and Li (<a href="#ref-schwenk-li-2018-corpus" role="doc-biblioref">2018</a>)</span> <strong><a href="https://aclanthology.org/L18-1560/">MLDoc: A Corpus for Multilingual Document Classification in Eight Languages</a></strong>
+<ul>
+<li>This paper introduces a corpus for multilingual document classification.</li>
+</ul></li>
+<li><span class="citation" data-cites="qi-etal-2022-enhancing">Qi et al. (<a href="#ref-qi-etal-2022-enhancing" role="doc-biblioref">2022</a>)</span> <strong><a href="https://aclanthology.org/2022.acl-long.134/">Cross-lingual Natural Language Inference (XNLI) corpus</a></strong>
+<ul>
+<li>This paper presents a corpus for cross-lingual natural language inference, a task that involves textual entailment prediction.</li>
+</ul></li>
+<li><span class="citation" data-cites="yang-etal-2019-paws">Yang et al. (<a href="#ref-yang-etal-2019-paws" role="doc-biblioref">2019</a>)</span> <strong><a href="https://aclanthology.org/D19-1382/">PAWS-X: Paraphrase Adversaries from Word Scrambling, Cross-lingual Version</a></strong>
+<ul>
+<li>This paper describes a dataset for paraphrase detection across multiple languages.</li>
+</ul></li>
+<li><span class="citation" data-cites="ponti-etal-2019-modeling">Ponti et al. (<a href="#ref-ponti-etal-2019-modeling" role="doc-biblioref">2019</a>)</span> <strong><a href="https://aclanthology.org/J19-3005/">Modeling language variation and universals: A survey on typological linguistics for natural language processing</a></strong>
+<ul>
+<li>This is a survey on typological linguistics for natural language processing.</li>
+</ul></li>
+<li><span class="citation" data-cites="sang2003introduction">Sang and De Meulder (<a href="#ref-sang2003introduction" role="doc-biblioref">2003</a>)</span> <strong><a href="https://aclanthology.org/W03-0419.pdf">CoNLL 2002/2003 Language Independent Named Entity Recognition</a></strong>
+<ul>
+<li>These papers introduce datasets for language-independent named entity recognition.</li>
+</ul></li>
+<li><span class="citation" data-cites="pan2017cross">Pan et al. (<a href="#ref-pan2017cross" role="doc-biblioref">2017</a>)</span> <strong><a href="https://aclanthology.org/P17-1178.pdf">WikiAnn Entity Recognition/Linking in 282 Languages</a></strong>
+<ul>
+<li>This paper presents a dataset for entity recognition and linking extracted from Wikipedia.</li>
+</ul></li>
+<li><span class="citation" data-cites="hu2020xtreme">Hu et al. (<a href="#ref-hu2020xtreme" role="doc-biblioref">2020</a>)</span> <strong><a href="https://arxiv.org/pdf/2003.11080">XTREME: A Massively Multilingual Multi-task Benchmark for Evaluating Cross-lingual Generalization</a></strong>
+<ul>
+<li>This paper introduces a benchmark for evaluating cross-lingual generalization across multiple tasks and languages.</li>
+</ul></li>
+<li><span class="citation" data-cites="liang-etal-2020-xglue">Liang et al. (<a href="#ref-liang-etal-2020-xglue" role="doc-biblioref">2020</a>)</span> <strong><a href="https://aclanthology.org/2020.emnlp-main.484/">XGLUE: A New Benchmark Dataset for Cross-lingual Pre-training, Understanding and Generation</a></strong>
+<ul>
+<li>This paper presents a benchmark dataset for cross-lingual pre-training, understanding, and generation.</li>
+</ul></li>
+</ul>
+<p>These are all the papers explicitly mentioned in the sources. The lesson also refer to the Universal Dependencies Treebank, Udify, and Stanza as resources for multilingual NLP tasks</p>
+</section>
 <section id="resources" class="level2">
-<h2 class="anchored" data-anchor-id="resources">Resources</h2>
+
+
 
 
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2022,
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">Resources</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-caswell-etal-2020-language" class="csl-entry" role="listitem">
+Caswell, Isaac, Theresa Breiner, Daan van Esch, and Ankur Bapna. 2020. <span>“Language <span>ID</span> in the Wild: Unexpected Challenges on the Path to a Thousand-Language Web Text Corpus.”</span> In <em>Proceedings of the 28th International Conference on Computational Linguistics</em>, edited by Donia Scott, Nuria Bel, and Chengqing Zong, 6588–608. Barcelona, Spain (Online): International Committee on Computational Linguistics. <a href="https://doi.org/10.18653/v1/2020.coling-main.579">https://doi.org/10.18653/v1/2020.coling-main.579</a>.
+</div>
+<div id="ref-hu2020xtreme" class="csl-entry" role="listitem">
+Hu, Junjie, Sebastian Ruder, Aditya Siddhant, Graham Neubig, Orhan Firat, and Melvin Johnson. 2020. <span>“Xtreme: A Massively Multilingual Multi-Task Benchmark for Evaluating Cross-Lingual Generalisation.”</span> In <em>International Conference on Machine Learning</em>, 4411–21. PMLR.
+</div>
+<div id="ref-jauhiainen2018automaticlanguageidentificationtexts" class="csl-entry" role="listitem">
+Jauhiainen, Tommi, Marco Lui, Marcos Zampieri, Timothy Baldwin, and Krister Lindén. 2018. <span>“Automatic Language Identification in Texts: A Survey.”</span> <a href="https://arxiv.org/abs/1804.08186">https://arxiv.org/abs/1804.08186</a>.
+</div>
+<div id="ref-liang-etal-2020-xglue" class="csl-entry" role="listitem">
+Liang, Yaobo, Nan Duan, Yeyun Gong, Ning Wu, Fenfei Guo, Weizhen Qi, Ming Gong, et al. 2020. <span>“<span>XGLUE</span>: A New Benchmark Dataset for Cross-Lingual Pre-Training, Understanding and Generation.”</span> In <em>Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)</em>, edited by Bonnie Webber, Trevor Cohn, Yulan He, and Yang Liu, 6008–18. Online: Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/2020.emnlp-main.484">https://doi.org/10.18653/v1/2020.emnlp-main.484</a>.
+</div>
+<div id="ref-pan2017cross" class="csl-entry" role="listitem">
+Pan, Xiaoman, Boliang Zhang, Jonathan May, Joel Nothman, Kevin Knight, and Heng Ji. 2017. <span>“Cross-Lingual Name Tagging and Linking for 282 Languages.”</span> In <em>Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)</em>, 1946–58.
+</div>
+<div id="ref-ponti-etal-2019-modeling" class="csl-entry" role="listitem">
+Ponti, Edoardo Maria, Helen O’Horan, Yevgeni Berzak, Ivan Vulić, Roi Reichart, Thierry Poibeau, Ekaterina Shutova, and Anna Korhonen. 2019. <span>“Modeling Language Variation and Universals: A Survey on Typological Linguistics for Natural Language Processing.”</span> <em>Computational Linguistics</em> 45 (3): 559–601. <a href="https://doi.org/10.1162/coli_a_00357">https://doi.org/10.1162/coli_a_00357</a>.
+</div>
+<div id="ref-qi-etal-2022-enhancing" class="csl-entry" role="listitem">
+Qi, Kunxun, Hai Wan, Jianfeng Du, and Haolan Chen. 2022. <span>“Enhancing Cross-Lingual Natural Language Inference by Prompt-Learning from Cross-Lingual Templates.”</span> In <em>Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)</em>, edited by Smaranda Muresan, Preslav Nakov, and Aline Villavicencio, 1910–23. Dublin, Ireland: Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/2022.acl-long.134">https://doi.org/10.18653/v1/2022.acl-long.134</a>.
+</div>
+<div id="ref-sang2003introduction" class="csl-entry" role="listitem">
+Sang, Erik F, and Fien De Meulder. 2003. <span>“Introduction to the CoNLL-2003 Shared Task: Language-Independent Named Entity Recognition.”</span> <em>arXiv Preprint Cs/0306050</em>.
+</div>
+<div id="ref-schwenk-li-2018-corpus" class="csl-entry" role="listitem">
+Schwenk, Holger, and Xian Li. 2018. <span>“A Corpus for Multilingual Document Classification in Eight Languages.”</span> In <em>Proceedings of the Eleventh International Conference on Language Resources and Evaluation (<span>LREC</span> 2018)</em>, edited by Nicoletta Calzolari, Khalid Choukri, Christopher Cieri, Thierry Declerck, Sara Goggi, Koiti Hasida, Hitoshi Isahara, et al. Miyazaki, Japan: European Language Resources Association (ELRA). <a href="https://aclanthology.org/L18-1560/">https://aclanthology.org/L18-1560/</a>.
+</div>
+<div id="ref-yang-etal-2019-paws" class="csl-entry" role="listitem">
+Yang, Yinfei, Yuan Zhang, Chris Tar, and Jason Baldridge. 2019. <span>“<span>PAWS</span>-<span>X</span>: A Cross-Lingual Adversarial Dataset for Paraphrase Identification.”</span> In <em>Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)</em>, edited by Kentaro Inui, Jing Jiang, Vincent Ng, and Xiaojun Wan, 3687–92. Hong Kong, China: Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/D19-1382">https://doi.org/10.18653/v1/D19-1382</a>.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2022,
   author = {Bochman, Oren},
   title = {Sequence {Labeling}},
   date = {2022-01-20},
@@ -1436,6 +1630,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
   </div>
 </footer>
+<script>videojs(video_shortcode_videojs_video1);</script>
 <script>var lightboxQuarto = GLightbox({"closeEffect":"fade","descPosition":"right","loop":true,"openEffect":"fade","selector":".lightbox"});
 (function() {
   let previousOnload = window.onload;

@@ -16,6 +16,11 @@ categories:
 Lesson Video
 :::
 
+::: {#vid-01 .column-margin}
+{{< video https://slideslive.com/38938792 >}}
+XGLUE: A New Benchmark Dataset for Cross-lingual Pre-training, Understanding and Generation
+:::
+
 ::: {#sup-slide-deck .column-margin group="slides"}
 ![This week's slides](slides.pdf){width="420px" height="340px" style="@page {size: 16in 9in;  margin: 0;}" group="slides"}
 :::
@@ -622,6 +627,100 @@ character level features you can use pre-trained embeddings and so on so there's
 it's kind of like an experiment that you need to run on your own and we're excited to see your results
 
 :::
+
+## Outline 
+
+*   **Introduction to Text Classification and Sequence Labeling**
+    *   These are broad task categories, not tasks in themselves, that can be solved in similar ways.
+    *   Text classification involves predicting a categorical label for an input text.
+    *   Sequence labeling involves predicting an output label sequence of equal length to the input text.
+*   **Text Classification Tasks**
+    *   **Topic classification**: Assigning a topic to a given text. For example, "I like peaches and pears" would be classified as "food," while "I like peaches and herb" would be classified as "music".
+    *   **Language identification**: Identifying the language in which a text is written. This task is particularly important in multilingual learning.
+    *  **Sentiment analysis**: Determining the sentiment of a text (e.g., positive, negative, neutral) at the sentence or document level.
+*   **Sequence Labeling Tasks**
+    *   **Part-of-speech (POS) tagging**: Assigning a part of speech tag to each word in a sentence. For example, "He saw two birds" would be tagged as "PRON VERB NUM NOUN".
+    *   **Lemmatization**: Identifying the base form of words, which is particularly useful in languages with rich morphology.
+    *   **Morphological tagging**: Predicting various features of a word, such as tense, number, and verb form.
+*   **Span Labeling**
+    *   Involves predicting output spans and labels for input text.
+    *   **Named entity recognition (NER)**: Identifying and labeling named entities like person, organization, or location. For example, "Graham Neubig" would be labeled as a "person" and "Carnegie Mellon University" as an "organization".
+    *   **Syntactic chunking**: Splitting a sentence into noun phrases and verb phrases.
+    *   **Semantic role labeling**: Identifying the roles of different parts of a sentence, such as actor, predicate, and location.
+    *   Span labeling can also be treated as a sequence labeling task by predicting beginning, inside, and outside (BIO) tags for each word in the span.
+*    **Text Segmentation**
+    *   Splitting an input text into segmented text.
+    *   **Tokenization**: Splitting text into tokens.
+    *   **Word segmentation**: Identifying word boundaries in languages without spaces between words. For example, Japanese requires word segmentation since it does not use spaces.
+    *  **Morphological segmentation**: Splitting words into morphemes.
+*   **Modeling for Sequence Labeling and Classification**
+    *   The process involves extracting features from the input text and then predicting labels.
+    *   A feature extractor can extract a single vector for the whole sequence (for text classification) or one vector for each word (for sequence labeling).
+    *   A simple feature extractor is the **bag-of-words model**, which looks up a feature for each word and adds them together.
+    *   A simple predictor is a **linear transform with a softmax function**, which converts scores into probabilities.
+    *   More complex feature extractors include n-grams, syntax-based features, and neural networks.
+    *   **Neural networks**, which use computation graphs, are now more common because they allow for transfer across languages.
+*   **Neural Network Basics**
+    *   Neural networks are computation graphs with nodes and edges.
+    *   Nodes can represent values, and edges represent operations.
+    *   **Forward propagation** involves computing the value of each node in topological order, starting from the input values.
+    *   **Backpropagation** is used to calculate the derivatives of the parameters with respect to a loss function and update the parameters to improve model performance.
+*   **Recurrent Neural Networks (RNNs)**
+    *   RNNs are used to handle dependencies in language, such as word order, agreement, and semantic congruency.
+    *   They process sequences by taking the input at the current time step and the features from the previous time step.
+    *   RNNs can be used to represent sentences for tasks like text classification or represent words for tasks like sequence labeling.
+    *   Training RNNs involves calculating a loss function, summing it up over a sequence, and doing backpropagation through time to update the parameters.
+    *   Parameters are tied across time, allowing the network to handle sequences of arbitrary length.
+    *   **Bi-directional RNNs** process the input sequence from both left to right and right to left.
+*   **Multilingual Tasks and Datasets**
+    *   **Language identification** is a task that is inherently multilingual.
+    *   Other multilingual text classification and sequence labeling tasks can be used for benchmarking multilingual models.
+    *   **MLDoc corpus** is used for multilingual document classification.
+    *  **POS-X** is a corpus for paraphrase detection between languages.
+    *  **Cross-lingual natural language inference (XNLI)** is used for textual entailment prediction.
+    * **Cross-lingual sentiment classification** is another benchmark task.
+    *   **Universal Dependencies (UD) Treebank** is a high-quality multilingual corpus that contains syntactic parses, POS tags, and morphological features for 90 languages.
+    *   **CoNLL 2002/2003** is a dataset for language-independent named entity recognition.
+    *   **WikiAnn** is a dataset for entity recognition and linking in 282 languages.
+    *   **XTREME** and **XGLUE** are composite benchmarks for multilingual learning, aggregating different sequence labeling and classification tasks.
+*   **Assignment 1: Multilingual Part of Speech Tagging**
+    *   The goal is to give a practical introduction to multilingual part-of-speech tagging.
+    *   Students will be given a dataset of sentences in different languages and must output the POS tags for each word.
+    *   The assignment emphasizes an experimental approach to multilingual problems.
+    *   The assignment requires the use of a GPU and AWS is recommended.
+    *   A deep file containing code and data will be provided to students.
+    *   Students need to submit code and a report detailing their analysis of results and model improvements.
+    *   Grading criteria include running the code, training on multilingual datasets, and providing detailed analysis of the results.
+    *   Students can improve their grade by making a non-trivial extension to improve the existing scores.
+
+## Papers
+
+Here is a list of all the papers mentioned in the lesson:
+
+*  @jauhiainen2018automaticlanguageidentificationtexts **[Automatic Language Identification in Texts: A Survey](https://arxiv.org/abs/1804.08186)**
+    *   This is a survey that provides an overview of automatic language identification methods.
+*  @caswell-etal-2020-language **[Language ID in the Wild: Unexpected Challenges on the Path to a Thousand Language Web Text Corpus](https://aclanthology.org/2020.coling-main.579/)**
+    *   This paper discusses challenges in language identification, particularly when applied to web text.
+*  @schwenk-li-2018-corpus **[MLDoc: A Corpus for Multilingual Document Classification in Eight Languages](https://aclanthology.org/L18-1560/)**
+    *   This paper introduces a corpus for multilingual document classification.
+*  @qi-etal-2022-enhancing **[Cross-lingual Natural Language Inference (XNLI) corpus](https://aclanthology.org/2022.acl-long.134/)**
+    *   This paper presents a corpus for cross-lingual natural language inference, a task that involves textual entailment prediction.
+*  @yang-etal-2019-paws **[PAWS-X: Paraphrase Adversaries from Word Scrambling, Cross-lingual Version](https://aclanthology.org/D19-1382/)**
+    *   This paper describes a dataset for paraphrase detection across multiple languages.
+*  @ponti-etal-2019-modeling **[Modeling language variation and universals: A survey on typological linguistics for natural language processing](https://aclanthology.org/J19-3005/)**
+     * This is a survey on typological linguistics for natural language processing.
+*   @sang2003introduction **[CoNLL 2002/2003 Language Independent Named Entity Recognition](https://aclanthology.org/W03-0419.pdf)**
+    *   These papers introduce datasets for language-independent named entity recognition.
+*   @pan2017cross **[WikiAnn Entity Recognition/Linking in 282 Languages](https://aclanthology.org/P17-1178.pdf)**
+    *   This paper presents a dataset for entity recognition and linking extracted from Wikipedia.
+*   @hu2020xtreme **[XTREME: A Massively Multilingual Multi-task Benchmark for Evaluating Cross-lingual Generalization](https://arxiv.org/pdf/2003.11080)**
+    *   This paper introduces a benchmark for evaluating cross-lingual generalization across multiple tasks and languages.
+*   @liang-etal-2020-xglue **[XGLUE: A New Benchmark Dataset for Cross-lingual Pre-training, Understanding and Generation](https://aclanthology.org/2020.emnlp-main.484/)**
+     *  This paper presents a benchmark dataset for cross-lingual pre-training, understanding, and generation.
+
+These are all the papers explicitly mentioned in the sources. 
+The lesson also refer to the Universal Dependencies Treebank, Udify, and Stanza as resources for multilingual NLP tasks
+
 
 ## Resources
 
