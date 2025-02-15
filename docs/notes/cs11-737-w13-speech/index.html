@@ -21,7 +21,27 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -751,8 +771,15 @@ gtag('config', 'G-V0T6EFS8LY', { 'anonymize_ip': true});
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#outline" id="toc-outline" class="nav-link active" data-scroll-target="#outline">Outline</a></li>
+  <li><a href="#papers" id="toc-papers" class="nav-link" data-scroll-target="#papers">Papers</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/cs11-737-w13-speech/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
@@ -770,7 +797,7 @@ gtag('config', 'G-V0T6EFS8LY', { 'anonymize_ip': true});
 </div><div id="vid-01" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-vid figure">
 <div aria-describedby="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/cNaXzF8OKcQ" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/Hsdf8Vjai5g" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Video&nbsp;1: Lesson Video
@@ -823,13 +850,204 @@ Transcript
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <!-- Transcript here is machine generated no punctuation and I eddited it a but but it needs more work and I dont see the benefits unless I can run it through some tool. -->
+<section id="intro" class="level2">
+<h2 class="anchored" data-anchor-id="intro">Intro</h2>
+<p>Today’s lecture today is about speech. Today, we also have our assignment release. After this lecture, we will have a walkthrough of the assignment speech. I hope I can finish it earlier so that you guys have enough time to explain the assignment three. We actually put a lot of energy into it, so I hope you guys can enjoy it. anyway, for today’s content, I put the four other items: speech, speech applications, speech databases, and speech hierarchy. I will probably go through at least three items, and the fourth maybe the this time or next Thursday so the next week that I will talk about the</p>
+</section>
+<section id="what-is-speech" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-speech">What is speech???</h2>
+<p>The most important definition is speech. Many people say that “it’s sound produced by humans.” It may probably be true, but in many cases, we actually have a bit more narrow definition, which is “the sound produced by humans for the communication” that is mostly actually used in our kind of other speech processing but generally the wider meaning of the speech can be just by humans that is a kind of our other usual definition and then I will try to ask you guys about the four kinds of five audio and please answer this one is speech or not with water is it speech or not it is? Speech yes it’s very noisy but still speech next probably this is not speech or this thing is speech yeah probably business speech by the way all the sound oh no except for the first one. I picked up from the other free sound so this the link is also useful you guys can get a lot of kind of interesting sound and actually using it for your research. it’s also copyright free, so quite kind of easy to use the Saturn is this speech or not it’s actually the difficult so my definition still speech because laughing and so on actually accelerate our communication right so my definition are usually yeah they’re using it as a speech yeah even people are typing to do some communication but this is not human voice so this is not speech right and the last one what do you think is this speech or not so if this is the wide the sense of the the sound to produce a human this is speech but this is not free for the communication especially singing voice well some people can use singing words for the communication like opera and so on but in general it is not used for the communication so again this definition is not very clear but usually people actually regarding the speech and the singing voice are separate okay so this is the definition of the speech and the next a speech is made by the sun right and what is sound sound is just a change of the air pressure and that is captured my microphone so it’s quite physical phenomena so compared with the various topics we have been studying in multilingual nlp many of the kind of the problems are more like a syntax semantic other textual information but speech is actually quite that comes from this the physical phenomena and the actually this other sound</p>
+</section>
+<section id="speech-waveform" class="level2">
+<h2 class="anchored" data-anchor-id="speech-waveform">Speech waveform</h2>
+<p>pressure is captured by microphone and they converted either this other one-dimensional waveform and usually in this lecture, I use this one-dimensional waveform as an input to our problem in speech other processing but it’s actually not one-dimensional like for example human years a very good. example we actually at least have two two-dimensional other waveforms and the many of the the smart speakers including this one or the Alexa and so on. They also have the other more microphones but in general each of the kind of channel of the signal is the one other dimensional time domain waveform and since this is a waveform so this is governed by well-known physical properties. I am not sure how many people remember this kind of properties attenuation deflection the the the diffraction super position and so on so actually these properties are quite a making speech signal to be ditch information and due to this kind of property especially superposition and reflection is a kind of very important the property to include a lot of the information inside the waveform this becomes the least information in the speech so first no second question actually the second question to you guys is</p>
+</section>
+<section id="what-kind-of-information-does-speech-sound-contain" class="level2">
+<h2 class="anchored" data-anchor-id="what-kind-of-information-does-speech-sound-contain">What kind of information does speech sound contain?</h2>
+<p>what kind of information does speech sound contain of course I will talk about the speech condition so this means that the speech includes linguistic content transcription and so on right and the speech also has a speaker characteristics is there any other information that speech can deliver can someone tell me phonemic signals like emphasis and so on yes exactly exactly any other notion emotion yes good good are there any other examples actually quite a lot by the way for example one of them yeah you can tell if somebody’s sick yes if they have a cold yes they if they talk too much the previous night yes yes exactly exactly you know other other faculties here also that try to kind of detect the the person is copied or not from the voice signal so voice can also include the health information voice also that speech also includes a lot of other information for example we can speech information even include the location you guys can identify at least you know which direction speech comes right this is not purely speech but it’s a kind of multiple other signal of the speech we can identify other the the the location speech comes from speech also include the reverberation so from the evaporation we can even approximately say the room size and so on is there any other information maybe a lot that I can come up with other the many of them and actually this other information is that corresponds to various other speech applications so now move to the the speech applications so the speech applications are depend on the other problem but they actually the the many of the problem is to try to capture what information is delivered from speech speech condition is a good example right and there’s speech emotion recognition try to capture the emotion and of course we also have our audi the opposite problem given the text to generate the speech speech synthesis this is also the speech processing research topics and the we actually hover tons of the other problem in speech speaker recognition as I mentioned speech delivered speaker characteristics right so that from the speech signal we can actually identify who is speaking oh I forgot to mention about it this is actually very important for the modern thing or nlp language recognition from speech sound we can also identify the language and the there are a lot of the speech the program by the way these topics i extracted from the topics in the intel speech which is one of the biggest speech conference and the deadline is next month right one month right after right after this that day one month right after this today so if people here are thinking about doing something for speech inter speech is a good target but I think if we link it to the project here maybe it’s a bit too late okay so we have a tons of the speech application and by the way among them the next question among them what is the most widely used technique there’s you know under some how they say the definition what is other than the mostly used but I think everyone can agree if I mention the answer so can someone say what is the yes yes do not check the next line because people usually cannot answer so yeah speech recognition probably in terms of the number of the researchers the the biggest one is speech recognition and the next biggest the second biggest would be speech synthesis and other kind of following and the speech coding is actually a bit the the already sorted technique so there’s not so much research in this area but actually speech coding is the most used technique and the actually the speech coding is a unique compared with all others all the other tried to harder say some given input to extract some information or enrich some information by generating that and so on the speech coding is try to keep the original information but try to kind of compress the</p>
+</section>
+<section id="speech-coding" class="level2">
+<h2 class="anchored" data-anchor-id="speech-coding">Speech coding</h2>
+<p>information as much as possible and actually this was the one of the first or the most active study in the early the speech the processing research since at that time compression is quite important and also compression actually tells us what is speech what information is delivered is a quite important if we consider the speech coding and so on so that’s why people are starting to work on the speech coding and then the that we moved to various other applications and another the many of them are actually getting quite matured I would say and one of the techniques I would like to mention is a speech recognition and that can be covered</p>
+</section>
+<section id="automatic-speech-recognition-asr" class="level2">
+<h2 class="anchored" data-anchor-id="automatic-speech-recognition-asr">Automatic Speech Recognition (ASR)</h2>
+<p>in Thursday and after the break I will also other revisit the sr part again so using the two lectures to explain about a speech condition but the speech recognition is one of the very complicated system if you guys really want to understand a speech recognition it may take one semester so then please take the speech recognition and understanding in the next fall semester if you really want to know that the next the most the second the biggest obligation is speech synthesis</p>
+</section>
+<section id="speech-synthesis-tts-text-to-speech" class="level2">
+<h2 class="anchored" data-anchor-id="speech-synthesis-tts-text-to-speech">Speech Synthesis (TTS: Text to Speech)</h2>
+<p>and the speech synthesis is also are they given the text to generating the web form and how the wider and I think this is the possibly the the second biggest applications than speech recognition I believe because every and now you know are that hard about that the tts synthesize the voice right so in terms of the application this also has a big success and as everyone here may note that the young guys are lucky so professor aram black he is the pioneer of the text speech and he will have a lecture about dds I’m also very looking forward to that okay so there are a couple of others and I try to pick up not everything but some of them that are interesting or are important the next one that may be very related</p>
+</section>
+<section id="speech-translation" class="level2">
+<h2 class="anchored" data-anchor-id="speech-translation">Speech Translation</h2>
+<p>to this course is speech translation so directly converting the source speech to that target text so in this example a japanese speech it’s translated to english text how to do it one simple approach is to combine automatic speed recognition first and then machine translation and this is probably the other most kind of other the widely used way and the I think other that this way should be also considered but these are the two system combining two systems a bit complicated and also if we have our error in the asl side it cannot be well recovered in the second machine translation side so people also are starting to directly are using an end-to-end neural network to solve the japanese source speech like a Japanese speech to a english text directory without outputting Japanese text and so on and this approach is quite important if some languages don’t have their own scripts but they often kind of have a kind of a translation to their colonial languages and so on there’s such a lot of such kind of other databases actually and then this speech to speech to text direct information is also quite important in these cases and the this is to the speech to still text but if we try to use it for the interface to communicate to the foreign people in the foreign countries seamlessly we also want to develop the source a speech to speech translation in this case source speech is english and it is converted to the target speech and this is also started to be very popular not only as a research but also other other product and many of the systems are currently using the combination of the speech recognition first machine translation in the middle and then other other dts takes to speech but there are a lot of kind of a decent emergence techniques based on the end-to-end single neural network to even the model this kind of a very complicated pipeline based on a single architecture and I think this is one of the the ultimate goals of multilingual energy right if we have a perfect speech to speech translation systems probably we can solve many of the problems that discussed in this work but this problem is quite difficult and a lot of studies are all going on now so these are the related to marginal nlp and I will also introduce some of the other speech applications which will be very related to our problems so I just kind of combined the speaker recognition language construction speech emotion recognition all the event classification and detection so actually speech information has a lot of profiling information so as I mentioned the speech recognition is one of the example this means a linguistic information right and we speech also other the speaker gender aging information as well age is not very correct but we can still actually predict some range of the age based on speech and the language we can also add get the information from speech emotion that we have discussed that is also other extracted from speech and this is not completely speech information but the let’s say environment is important for us to understand about the communication scene and the song right and then audio event so when I am speaking the fun noises you know working on somewhere right this kind of information all that kind of informations are included in speech so superposition property is quite nice in terms of packing many of the information into the one sound wave form</p>
+</section>
+<section id="privacy-in-speech" class="level2">
+<h2 class="anchored" data-anchor-id="privacy-in-speech">Privacy in speech</h2>
+<p>so this the property is very good but it’s getting a bit more other difficult not difficult but challenging problem privacy in speech since speech has a lot of information so that the working on speech means we potentially touch a lot of information of that other person so the people are also seriously thinking about the privacy and on-device approach becomes quite important due to this i’m setting the how many slides I can have I have to finish maybe this is very cool so I can also either introduce one this one so as I mentioned the super position property is very cool in terms of the getting various information in the environment right but this information is not always useful actually many cases we just want to focus on target speaker right so then the speech enhancements peace separation techniques are also very important it’s not very related to this other lecture but I will just explain about it because many people actually often ask me the the my asl doesn’t work and most of the cases it comes from noise so I just want to emphasize that and there are way to deal with that and there are several types of the the noise</p>
+</section>
+<section id="speech-enhancement-several-types-of-problems" class="level2">
+<h2 class="anchored" data-anchor-id="speech-enhancement-several-types-of-problems">Speech enhancement Several types of problems</h2>
+<p>we have to deal with the first is a kind of how does this the the gesture or the environmental sound that adding to our the the usual sound you guys I guess can steal the recognize it right computer actually cannot at all probably you guys can do better than computer so to solve this problem we also cover other noising techniques this is actually after the denoising sounds better right this is actually very good for computer and the next debug variation is also another very the annoying issue again for you guys it is not so difficult to recognize but for computer this evaporation echo is quite harmful so there’s a technique to suppress the evaporation called the reverberation if you guys using the headset microphone you guys can even clearly see the the find that the the echo is removed since this room is a bit large so actually echo is further accomplished but I believe still people can understand it next one is the separation I think I prepared a very cool demonstration by oh yes I prepared this demonstration this is actually the he is my former colleague when I was working at the mitsubishi electric research laboratory jonathan and he actually it’s he was planning to come here this friday but it was cancelled so for it is unfortunate but instead other I just play his cool demonstration you can see that the the mixed speech is completely separated right so this is one of the pioneering work of using deep running for speech separation in the first time and this is already very clearly separated right but now the technology becomes mature and this other kind of a simple speech separation problem is almost solved however we have a lot of other difficult separation problems okay so I think these are more like the applications that I want to cover there are lots of other application if I have time I can also want to introduce the some of them like a spoken dialogue systems and so on but I just skipped them due to that time limitation okay so next the I will talk about speech databases to work on this kind of our core speech problems we have to have our database</p>
+</section>
+<section id="speech-variations-speaking-styles-and-environments" class="level2">
+<h2 class="anchored" data-anchor-id="speech-variations-speaking-styles-and-environments">Speech variations Speaking styles and environments</h2>
+<p>and the speech as I mentioned has a variations a lot of variations right and the there are many axes but mostly we separate classify the speech database with the speaking styles and the environment and so on, but I will just talk about the speaking styles for now so one style is wet speech and the other is spontaneous or non-bit speech, and I will explain how it is different maybe I can play some of them, so this one is the first one versus journal this is one of the most famous speech recognition corporates so if you guys have some cool idea for the speech equation techniques and the the showing the kind of other improvement in this abortion channel you guys can write the paper so it is a bit so the game is small, but it is a so-called red speech and the why it is called versus journal people are leading the world’s regional standards so that the the disco pacifi named work to each other switchboard this is an example of spontaneous speech. I think it is obvious that the second one it’s more difficult, right, but the second one is more the natural conversation and the third one this is the corpus called liberty speech and I mentioned that wall street just now is one of the most famous speech corporal, but now that this liberal speech is the most famous the most frequently used the corpus why it is used so popularly this is simply because the license is quite flexible wall street journal has a kind of a little bit limited license while river speech doesn’t have so much restriction for the license and also the amount of data is also quite large thousand hours so that’s the reason that people are using the legal speech so okay I will try to explain a bit more about what is red speech I kind of mentioned already about some of them so that speech is usually corrected as follows first other we have some sentence showing in the prompt, and then we can just read this prompt which are corresponding to we get the paradigm of the prompt and corresponding speech data that’s it right it’s very easy I believe i prepared this how many people knows this the the web page this kind of activity come on boys this is why widely the the used the speech the the data collection scheme led by the modular and this actually has tons of the multilingual speech resources now so if you guys want to get some speech data the one of the first phrase you will check is this common voice and this is a common voice the correction is based on the red speech prompt difficult for example if you click this one it’s working but she has also served as chair of the board of bomb health new zealand oh yes he has also served as jail the board of bomb health new zealand and the next prop this comes and I will speak that it is very cool system right and then we can actually create a lot of languages and again this supports many many languages now I was super happy when you know they started to support japanese and I spent you know half day just speaking probably many of the my voices are using this are the database however be careful people sometimes don’t speak correctly how to other than deal with that they actually are not only recording they actually hover oh sorry maybe I can reload it this is a bit difficult because I have to we also have another action listen this actually confirms whether the recorded speech is correct or not and I I haven’t tried this but I am only speaking in my Japanese so not sure if you know correctly you know they recognize my japanese and they registered it those are the useful corpus or not so this is the that speech</p>
+</section>
+<section id="read-speech-examples" class="level2">
+<h2 class="anchored" data-anchor-id="read-speech-examples">Read speech examples</h2>
+<p>so again this is easy to connect but I have a lot of experience that the people don’t speak correctly, so we actually need to check whether they are speaking correctly and also easy to anonymize compared to the spontaneous speech because it is prepared sentence it is not connected with the speaker’s identity, so if the speaker there is completely anonymized that we don’t care about it, but the problem is that let’s speech is not a real conversation, so this is a very good spot to starts to build a speech function system but if I put it in in this system in the conversational scenario it will not work so well</p>
+</section>
+<section id="spontaneous-speech" class="level2">
+<h2 class="anchored" data-anchor-id="spontaneous-speech">Spontaneous speech</h2>
+<p>so instead we also used a spontaneous speech, and this one is very tough. It’s actually hard to transcribe actual recording yeah again i prepared an example by the way, how many people use this to own that city did you know that audacity is developed here cmu yeah again you guys are very lucky cmu can provide any of the other tools for other speech and the nlp research and the I think I’ve prepared the wait a moment the way to transcribe the speech the situation speech I think, okay oh, I actually put the latest rider give it a moment my computer is not working now. Okay, now it’s working, so if I have more skills you know switch your screen and so on I can do some demonstration in front of you, but it’s very difficult to do it, you know, by checking the other back monitor and this monitor so instead i will just upgrade the play the audio a play the video of how to transcribe the spontaneous speech check the segment part manually, then type okay check the segment [Music] okay, just to transcribe this I don’t know five seconds of speech it takes a very long time compared with the left speech right so this is quite time consuming and it is quite rather expensive to collect such kind of data like for example this switchboard this is a switchboard corpus which is one of the other famous speech condition coppers, but this is spontaneous speech and the when the in the previous my lecture i actually had a homework to the student to transcribe two minutes of this dashboard conversation I think, yeah the 30 minutes is actually a shorter side most of the people takes random work this is the one of the most honestly biggest complaint of my homework actually since it is very very hard of course, transcribers are very professional, so they can finish it a little bit earlier but still the the spontaneous speech the the recognition and transcript transcription there is a very very difficult I think I need to finish in five minutes or so so this is the the just speech is very fluent but a dear situation is more difficult like for example the in the real situation the meeting scenario or compensation scenario this is a mostly we use for the speech right and then the situation is even more difficult As I mentioned last in the speech enhancement demonstration, we have background noise we have our interference speaker, and we have a reverberation and so on but this is kind of our again our usual the everyday conversation scenes right and we can easily recognize this kind of sound speech while the alexa and so on I guess you guys have like some other experience just you know, putting it to the the, and then we started to conversate it they actually cannot be recognized well they even don’t know that of each other person they recognize and so on it’s very difficult problem but again human can do it easily and if I am actually working on this area a lot so not only for the spontaneous speech but also in the kind of real everyday conversation scenario and the project is called chime project and this is we actually collected such kind of a very the adverse the the environment of this collected speech in the very adverse environment and then the also are organizing the challenge making a baseline and so on I can play some of them so compared with the previous conversation it has a lot of over by the way also noise and so on, but again, this is a natural conversation it makes the speech very difficult so I think yeah</p>
+</section>
+<section id="where-we-found-the-speech-data" class="level2">
+<h2 class="anchored" data-anchor-id="where-we-found-the-speech-data">Where we found the speech data?</h2>
+<p>I will finish it in a minute, so there are again a lot of types of the speech and many researchers many other the institutes actually collecting the data for the research and the development for the community and the we can actually the access to such data easily with some of the repository one of the most frequent one is ldc linguistic data consortium where you can actually get famous asr benchmarks like a teammate a world regional switchboard that I mentioned before however as I mentioned that this has some kind of the the restriction for the use we have to pay they do the I get this kind of data but again fortunately cmu is a member so everyone can actually get lgc data really so the for this part you guys would not cover any kind of issue, I believe, and another only for the fdc. There are a a lot of other institutes g,overnment institute or some the university and so on hosting a lot of other speech corporal so you guys can actually get such kind of the speech data through this kind of repository and the second are the bullet items are getting the more popular now the books first open the center of common boys are denoted and the common voice is that I mentioned before and this this data usually have a less restricted license a mostly creative command so that the that we may not go through the LDC and they can easily get the data and even redistribute the data and so on, so due to this reason, recently, many people actually starting to use this data in the box for your common voice and so forth, especially people working on the likewise machine learning and not in the nlp or speech some people may not have an access to the LDC and then people using this kind of repository to get the data, so these are also important resources by the way, these are important resources for assignment three as well, so that’s why I kind of spent some time for the explanation, and the last one is the audiobooks or public recordings with captions youtube actually the ten percent of the youtube videos hazard captions they are set by the the uploader so we can use speech and corresponding captions and the same for the podcast for data token and so on generally, they have some captions so that we can actually use such kind of data and so on, but for this data, maybe you guys also check the license. Sometimes it’s very strict, sometimes not but for most of the kind of research purpose in the academic institute, it shouldn’t be a problem, but the more difficult part is that this recording is required for just one hour and a half of the long recording and corresponding very long the caption so it’s it is just too long for us to use it so we need to correctly segment it and also this is caption is very noisy so it is not easy to use this kind of caption another very important difficulty is that this kind of data is updated frequently so they’re often deleted so we cannot actually others assure the reproducibility if we’re using this one and one of the the famous the databases actually cmu’s wireless the wiredness database game that professor alan black collected and it’s actually has a 700 languages wow that is very cool but it is also already has some issues written here like a bit noisy or API if API is changed it is not easy to get the data and so on, but in general, this is also very good source and the last very last this is important important for the assignment for speech recognition we often use our other unit so please remember I even saw that this is a common the sense for everyone and that they use it without caring about the your prior knowledge so I also want to actually define we often use the hour and, let’s say, more than a thousand dollars, we can make a commercial system but it requires a lot of computational cost 100 hours a speech equation started to be working so we can do the research and so on lesser 100 hour it is categorized as a low resource language in speech recognition so other please understand this range of the data if you try to practice speech recognition and then I would like to pass it to the assignment three but maybe I can accept one or two quick question there any questions yes, like annotating this spontaneous speech could we you first pass it into a voice activity detection: oh yeah segment it and then annotate it yes usually there are such kinds of assistance to a lot of assisted tools. Even we use a pre speech condition and then do it but the voice activity detection is super important so yes that we usually either have such kind of our other voice activity direction but voice activity detection is not working in the noisy environment so much so anyway most of the cases are the human segmentation is also quite important and in question yes definitely we have such kind of other issues since we tried to capture more like a similar closer information and then the the great program for the same gender and then speech separation performance is big world and it’s working very well in a male female and so on so it’s definitely that these kind of things exist but still the current technology almost perfectly separated we almost perfectly separate the speech even in the same gender but it’s a good question okay so maybe that’s it and I want to pass it to this chiang kai and patrick</p>
+</section>
 </div>
 </div>
 </div>
+<section id="outline" class="level3">
+<h3 class="anchored" data-anchor-id="outline">Outline</h3>
+<p>Here is a lesson outline about speech, as a markdown unnumbered list:</p>
+<ul>
+<li>What is Speech?
+<ul>
+<li><strong>Speech is sound produced by humans for communication</strong>.</li>
+<li>Speech is the most natural form of communication and more common than text, even if it is not the most recorded.</li>
+<li>Speech can be captured by a microphone as air pressure.</li>
+<li>A waveform is created by converting sound pressure into a time series.
+<ul>
+<li>Waveforms are usually one-dimensional (mono), but can be two-dimensional (stereo) or N-dimensional, using multiple microphones.</li>
+</ul></li>
+<li>Speech sounds contain information such as transcription and speaker identity.</li>
+</ul></li>
+<li>Producing and Hearing Speech.
+<ul>
+<li>Speech is generated from the vocal tract by pushing air from the lungs.</li>
+<li>The vocal cords may vibrate to create voiced speech.</li>
+<li>Positioning of the tongue, teeth, and lips controls the sounds produced.</li>
+<li>The ear drum vibrates in response to air pressure vibrations.</li>
+<li>The cochlea decomposes vibrations into frequency components.</li>
+<li>The auditory nerve transmits signals from the cochlea to the brain.</li>
+</ul></li>
+<li>Phones and Phonemes.
+<ul>
+<li>Phones are segments of linguistic space; changing a phone can change the word.</li>
+<li>The definition of phones can vary and can be hard to define exactly due to variations in how people speak them.</li>
+<li>The International Phonetic Alphabet (IPA) is a structured way to define phones, accounting for ambiguities and variance.</li>
+<li>The place of articulation of a consonant can range from the lips to the back of the throat.</li>
+</ul></li>
+<li>Computational Considerations.
+<ul>
+<li>The need to understand the different positions of the vocal tract.</li>
+<li>The importance of decomposing signals into frequency components, as the ear does.</li>
+<li>Digitizing speech requires sampling it at least 8,000 times a second.</li>
+</ul></li>
+<li>Speech Technologies.
+<ul>
+<li>Speech recognition (speech to text).</li>
+<li>Speech synthesis (text to speech).</li>
+<li>Speaker identification.</li>
+<li>Diarization to determine who said what.</li>
+</ul></li>
+<li>Applications of Speech Technologies.
+<ul>
+<li>Voice conversion.</li>
+<li>Speaker recognition.</li>
+<li>Language recognition.</li>
+<li>Speech emotion recognition.</li>
+<li>Speech coding.</li>
+<li>Speech perception.</li>
+<li>Speech enhancement.</li>
+<li>Microphone array processing.</li>
+<li>Audio event classification and detection.</li>
+<li>Speech separation.</li>
+<li>Spoken language understanding.</li>
+<li>Spoken dialogue systems.</li>
+<li>Speech translation.</li>
+<li>Multimodal processing.</li>
+</ul></li>
+<li>Data Considerations.
+<ul>
+<li>Style of speech.
+<ul>
+<li>Careful speech is easier to process than casual speech.</li>
+<li>Speaking to a machine is different than speaking to a human.</li>
+</ul></li>
+<li>Channel and context.
+<ul>
+<li>Microphone quality and placement.</li>
+<li>Background noise.</li>
+</ul></li>
+<li>Data repositories.
+<ul>
+<li>LDC.</li>
+<li>Vox Forge.</li>
+</ul></li>
+<li>The amount of available data varies significantly by language.
+<ul>
+<li>Thousands of hours of speech are needed for significant results.</li>
+<li>Low-resource languages may have limited data.</li>
+</ul></li>
+</ul></li>
+<li>Differences Between Speech and Text.
+<ul>
+<li>Speech and text are different and may be considered dialects of each other.</li>
+<li>Many languages have strong distinctions between spoken and written forms.</li>
+<li>Social media is blurring the line between written and spoken language.</li>
+</ul></li>
+<li>Speech Hierarchy.
+<ul>
+<li>The speech hierarchy consists of speech, applications, databases, and levels of the hierarchy.</li>
+</ul></li>
+<li>Variations in Speech.
+<ul>
+<li>Speaking styles and environments affect speech.</li>
+<li>Read speech involves reading prepared sentences.</li>
+<li>Non-read speech is spontaneous and requires transcription.</li>
+</ul></li>
+<li>Data Collection.
+<ul>
+<li>Data can be found in LDC, ELRA, Voxforge, and CommonVoice.</li>
+<li>Audiobooks and public recordings with captions can also be used.</li>
+</ul></li>
+</ul>
+</section>
+<section id="papers" class="level2">
+<h2 class="anchored" data-anchor-id="papers">Papers</h2>
+<p>Here is a list of papers mentioned in the lesson:</p>
+<ul>
+<li><span class="citation" data-cites="kim2017jointctcattentionbasedendtoend">Kim, Hori, and Watanabe (<a href="#ref-kim2017jointctcattentionbasedendtoend" role="doc-biblioref">2017</a>)</span> <a href="https://arxiv.org/abs/1609.06773">Joint CTC-Attention based End-to-End Speech Recognition using Multi-task Learning</a></li>
+<li><span class="citation" data-cites="baevski2020wav2vec20frameworkselfsupervised">Baevski et al. (<a href="#ref-baevski2020wav2vec20frameworkselfsupervised" role="doc-biblioref">2020</a>)</span> <a href="https://arxiv.org/abs/2006.11477">wav2vec 2.0: A Framework for Self-Supervised Learning of Speech Representations</a></li>
+<li><span class="citation" data-cites="hsu2021hubertselfsupervisedspeechrepresentation">Hsu et al. (<a href="#ref-hsu2021hubertselfsupervisedspeechrepresentation" role="doc-biblioref">2021</a>)</span> <a href="https://arxiv.org/abs/2106.07447">HuBERT: Self-Supervised Speech Representation Learning by Masked Prediction of Hidden Units</a></li>
+<li><span class="citation" data-cites="chang2021explorationselfsupervisedpretrainedrepresentations">Chang et al. (<a href="#ref-chang2021explorationselfsupervisedpretrainedrepresentations" role="doc-biblioref">2021</a>)</span> <a href="https://arxiv.org/abs/2110.04590">An Exploration of Self-Supervised Pretrained Representations for End-to-End Speech Recognition</a></li>
+<li><span class="citation" data-cites="hershey2016deepclustering">Hershey et al. (<a href="#ref-hershey2016deepclustering" role="doc-biblioref">2016</a>)</span> <a href="https://ieeexplore.ieee.org/abstract/document/7471631">Deep clustering based speech separation</a></li>
+</ul>
 
 
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2022,
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-baevski2020wav2vec20frameworkselfsupervised" class="csl-entry" role="listitem">
+Baevski, Alexei, Henry Zhou, Abdelrahman Mohamed, and Michael Auli. 2020. <span>“Wav2vec 2.0: A Framework for Self-Supervised Learning of Speech Representations.”</span> <a href="https://arxiv.org/abs/2006.11477">https://arxiv.org/abs/2006.11477</a>.
+</div>
+<div id="ref-chang2021explorationselfsupervisedpretrainedrepresentations" class="csl-entry" role="listitem">
+Chang, Xuankai, Takashi Maekaku, Pengcheng Guo, Jing Shi, Yen-Ju Lu, Aswin Shanmugam Subramanian, Tianzi Wang, et al. 2021. <span>“An Exploration of Self-Supervised Pretrained Representations for End-to-End Speech Recognition.”</span> <a href="https://arxiv.org/abs/2110.04590">https://arxiv.org/abs/2110.04590</a>.
+</div>
+<div id="ref-hershey2016deepclustering" class="csl-entry" role="listitem">
+Hershey, John R., Zhuo Chen, Jonathan Le Roux, and Shinji Watanabe. 2016. <span>“Deep Clustering: Discriminative Embeddings for Segmentation and Separation.”</span> In <em>2016 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)</em>, 31–35. <a href="https://doi.org/10.1109/ICASSP.2016.7471631">https://doi.org/10.1109/ICASSP.2016.7471631</a>.
+</div>
+<div id="ref-hsu2021hubertselfsupervisedspeechrepresentation" class="csl-entry" role="listitem">
+Hsu, Wei-Ning, Benjamin Bolte, Yao-Hung Hubert Tsai, Kushal Lakhotia, Ruslan Salakhutdinov, and Abdelrahman Mohamed. 2021. <span>“HuBERT: Self-Supervised Speech Representation Learning by Masked Prediction of Hidden Units.”</span> <a href="https://arxiv.org/abs/2106.07447">https://arxiv.org/abs/2106.07447</a>.
+</div>
+<div id="ref-kim2017jointctcattentionbasedendtoend" class="csl-entry" role="listitem">
+Kim, Suyoun, Takaaki Hori, and Shinji Watanabe. 2017. <span>“Joint CTC-Attention Based End-to-End Speech Recognition Using Multi-Task Learning.”</span> <a href="https://arxiv.org/abs/1609.06773">https://arxiv.org/abs/1609.06773</a>.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2022,
   author = {Bochman, Oren},
   title = {Speech},
   date = {2022-03-01},
@@ -1415,7 +1633,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/cs11-737-w13-speech/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/cs11-737-w13-speech/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p>This page is built with 💛 and <a href="https://quarto.org/">Quarto</a>.</p>
 </div>
