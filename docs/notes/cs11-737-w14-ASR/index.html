@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Oren Bochman">
+
+<title>Automatic Speech Recognition – NLP Course Notes &amp; Research</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-V0T6EFS8LY"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-V0T6EFS8LY', { 'anonymize_ip': true});
+</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<style>
+
+      .quarto-title-block .quarto-title-banner {
+        background: images/banner_deep.jpg;
+      }
+</style>
+
+
+<link rel="stylesheet" href="../../styles.css">
+<meta property="og:title" content="Automatic Speech Recognition – NLP Course Notes &amp; Research">
+<meta property="og:description" content="CMU CS11-737: Multilingual NLP">
+<meta property="og:image" content="https://orenbochman.github.io/notes-nlp/images/nlp-brain-wordcloud.jpg">
+<meta property="og:site_name" content="NLP Course Notes &amp; Research">
+</head>
+
+<body class="nav-sidebar floating nav-fixed slimcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">NLP Course Notes &amp; Research</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Automatic Speech Recognition</li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Automatic Speech Recognition</h1>
+            <p class="subtitle lead">CMU CS11-737: Multilingual NLP</p>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Attention</div>
+                <div class="quarto-category">Multilingual NLP</div>
+                <div class="quarto-category">NLP</div>
+                <div class="quarto-category">Notes</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-body">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Oren Bochman </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">Thursday, March 3, 2022</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Classification &amp; Vector Spaces</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Logistic Regression</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Frequencies</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Visualizing tweets</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Probability &amp; Bayes Rule</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Visualizing Naive Bayes</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Vector Space Models &amp; PCA</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Linear algebra with NumPy</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Manipulating word embeddings</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">MT &amp; Document Search via KNN</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vector manipulation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Hash functions and multiplanes</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Probabilistic Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">Autocorrect &amp; Dynamic Programming</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Building the vocabulary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Candidates from String Edits</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">POS tagging &amp; HMMS</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vocabulary with unknowns</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Working with tags and Numpy</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false">
+ <span class="menu-text">Autocomplete &amp; Language Models</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - N-grams Corpus preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Building the language model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Out of vocabulary words</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false">
+ <span class="menu-text">Word embeddings with neural networks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Data preparation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Intro to CBOW</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Training the CBOW</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true">
+ <span class="menu-text">Sequence Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false">
+ <span class="menu-text">Neural Networks for Sentiment Analysis</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Introduction to Trax</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Classes and Subclasses</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Data Generators</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false">
+ <span class="menu-text">RNN for Language Modeling</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Hidden State Activation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Calculating Perplexity</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Vanilla RNNs, GRUs and the scan function</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L4 - Creating a GRU model using Trax</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="false">
+ <span class="menu-text">LSTMs and Named Entity Recognition</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vanishing Gradients</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false">
+ <span class="menu-text">Siamese Networks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Creating a Siamese Model using Trax</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Modified Triplet Loss</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Evaluate a Siamese Model</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="true">
+ <span class="menu-text">NLP with Attention Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false">
+ <span class="menu-text">Neural Machine Translation</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Stack Semantics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - BLEU Score</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="false">
+ <span class="menu-text">Text Summarization</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-18" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Attention</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - The Transformer Decoder</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" role="navigation" aria-expanded="false">
+ <span class="menu-text">Question Answering</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-19" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - SentencePiece and BPE</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - BERT Loss</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - T5</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" role="navigation" aria-expanded="false">
+ <span class="menu-text">Chat Bots</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-20" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Reformer LSH</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Revnet</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#outline" id="toc-outline" class="nav-link active" data-scroll-target="#outline">Outline</a></li>
+  <li><a href="#papers" id="toc-papers" class="nav-link" data-scroll-target="#papers">Papers</a></li>
+  <li><a href="#warlpiri-in-10-minutes" id="toc-warlpiri-in-10-minutes" class="nav-link" data-scroll-target="#warlpiri-in-10-minutes">Warlpiri in 10 minutes</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/cs11-737-w14-ASR/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
+
+
+
+
+
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../images/tiling.png" class="nolightbox img-fluid figure-img" width="200"></p>
+<figcaption>course banner</figcaption>
+</figure>
+</div><div id="vid-01" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-vid figure">
+<div aria-describedby="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/OObrN8yMYZU" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Video&nbsp;1: Lesson Video
+</figcaption>
+</figure>
+</div><div id="sup-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides" style="@page {size: 16in 9in;  margin: 0;}">
+<figure class="quarto-float quarto-float-sup figure">
+<div aria-describedby="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="slides.pdf" class="lightbox" data-gallery="slides" title="This week’s slides"><embed src="slides.pdf" style="@page {size: 16in 9in;  margin: 0;}" width="420" height="340"></a></p>
+<figcaption>This week’s slides</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-sup quarto-uncaptioned" id="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Supplementary Figure&nbsp;1
+</figcaption>
+</figure>
+</div></div>
+
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>What is speech?</li>
+<li>Speech applications</li>
+<li>Speech databases</li>
+<li>Speech hierarchy</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Transcript
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<!-- Transcript here is machine generated no punctuation and I eddited it a but but it needs more work and I dont see the benefits unless I can run it through some tool. -->
+<blockquote class="blockquote">
+<p>okay so today i’d like to talk about uh automatic speech recognition uh this is uh one of the uh most uh the active uh research area in speech processing and also very important application for multilingual energy and today i will first explain about the speech recognition demonstration uh and also talking about evaluation metrics and the i will a little bit use the mass to explain about the formulation of the speech recognition and they will move to the explanation about the standard a speech recognition pipeline so uh let me first try to work on the demonstration um which i just tried to kind of use speech recognition here i want to go to the cmu campus affect right the technology and the i also want to show how the current sr technology is robust i want to go to the cmu campus oh it doesn’t work if i can work speak slowly i want to go to the cma campus that’s the current technology next i mentioned that the speech recognition is not a good for the noisy environment so let’s try to make the noisy environment i want to go to the cmu campus they are cool right yeah they are very very cool um so i try to kind of uh make some kind of a mistake uh but the google guides are doing a great job so it’s actually not easy to find some kind of a significant mistake with them one of the easy mistake that i can uh that try to make could be the the other query okay right yeah they should you know study more about me i will talk to my colleagues in google and the the other difficulty would be let me try so i mentioned that the speech recognition is not very good under the uh the simple noise it’s actually quite strong but if there are some uh the other speakers are speaking it’s still very challenging so i try to make this kind of situation okay so do you have you have a long like it’s not not if there’s scabbards raised in new york but i guess up there you all don’t have too long where we’re going i want to go to the cmu campus i want to go to the cmu campus but it’s actually not working quite well in general so um this is a current technology uh with some more other essays with the controlled environment the speech recognition is quite working well and today’s talk uh i will talk about the introduce about the speech recognition technology insider okay so uh the the first example i already mentioned this is one of the mistake that i found when i use acidity uh and yeah sometimes very good but sometimes it’s not working and the uh what kind of errors the speech equation has would be today’s uh discussion so please discuss it in the rest of the class after my lecture and the the now the many of the speech recognition engines actually also support the the other languages and i also uh try the uh japanese and it’s working quite well uh it i tried several times and then i found this kind of uh the the mistaken mistake but in general uh other uh language are also working quite well now and now i will uh move to the uh evaluation as you can see sometimes it’s perfectly revoking but sometimes it’s not working right and then the uh how to evaluate the major uh in speech recognition is quite important and the first uh the uh most intuitive measure would be the sentence level error anyway you know the the sentence uh uh correct or not i think it is the most other important measure i would say uh however uh by measuring the performance of the system in this case it’s almost correct right it’s just there are a few words are uh the wrong so i we actually want to give some partial score uh if the half of the rods are correct so to do that uh instead of using the sentence error rate uh we usually use the water rate and whatever it is computed by considering the three types of the error one is the insertion errors in this case uh this uh word is actually uh the the extra word compared from the difference so this uh the word error correspond to the insertion error and then the rest of the uh the error is the correspond to the substitution errors by the way it’s it is not unique of course you know uh we can consider this substitution uh this one is a substitution and the decision that other insertion uh and so on and usually we uh consider all the possible other error and then taking the minimum by also considering the each other cost of each error and then compute the edit distance i think many people here would be familiar with the distance so i may not need to explain about it indeed so much detail but anyway this uh is our kind of unusual uh uh measure to uh check the performance of the speech recognition and the um so this is a quite well defined major when we have a wide boundary but as you can see we have a lot of work uh the languages which actually don’t have a word boundary right and how to compute it there are uh two ways one is just using some uh the uh the tools to segment uh to get the gun in the world are you need and then other computing the model rate but we should be very careful about that because this chunking may depend on the tool or dictionary and so on i had a very bad experience that i had compared my japanese system and other other institute other systems and i are actually quite bad and i was very disappointed but i couldn’t reach to their numbers and finally we asked them how to chunk their word and their tools are different from ours and we actually cannot compare right so it is the other issue when we using the tanking but still uh if we use the same chunking we can compare so this is widely used but the mostly used uh the metallic for such kind of languages is actually character uh error rate just consider the the each character and the other computer uh edit distance so this is uh the more widely used when we uh the compute measure for the languages that doesn’t have hardware what boundary so the uh the assignment three that first you guys speak the uh the language right and then do the asl and do the evaluation be careful about the uh the which measure are are you guys using if the that language has a good word boundary you guys can use what uh error rate but otherwise a character error is safe yes when you’re speaking in japanese do you expect the system to transcribe the world cmu enrollment yes actually yes yeah the since uh it’s a kind of our other already the training data and so are mixed so other it’s uh the appeared other other the roman character uh in the japanese cases yeah japanese cases we have a ton of data so actually this kind of mix mixture will be handled by data delivery manner however are they that i think in some sense you’re right uh for example this cmu which can be also are the written other uh the katakanas sim the script which is the other or the japanese script to the described the word from the foreign countries and this may also happen instead of this kind of roman character happens and then in this case uh the other letter or character both cases it was correct but it’s not regarded as the wrong a mistake so actually uh in this sense the uh is depend on the language but the in some languages the same the world can be uh represented as a different script and then the uh the water right or even characteristic is not the perfect measure but this is a very difficult problem and usually we the normalize to either of the symbols or we actually don’t care so much about that and there are a lot of other metrics um since the the uh the script has an issue like as i mentioned some people use their phoneme literally but this actually lose the semantic other information a lot so uh this is uh used uh to more to uh that check the whether this uh the uh speech is acoustically phonetically uh the correct but it’s not sure it is the semantically uh the correct so it’s not so much used but anyway this is also another major prime error rate is also sometimes used but i skipped the other explanation and the other metrics decently these two uh the metrics are quite important the airtime factor in the latency since uh many of the systems are now in the uh the on the device and so on and the speech uh is used at the interface whatever speech has another application you know the offline archive uh and so on we don’t care about the uh at least latency a real-time factor other smaller may be better but the latest is quite important if you’re using a speech interface and the it’s also depend on the downstream uh evaluation metrics for example uh the if we combine this one uh with the uh the understanding system or if we combine it with the translation system uh of course we should evaluate it with such kind of downstream uh the evaluation method so in the speech transformation cases of of course it can be better if specification performance is better but we just check the group and the uh for speech recognition are the this uh the especially the characteristic of what error rate i recommend you to use the nist speech recognition scoring toolkit how many people knows nist nist is uh the government institute to standardize uh our uh the daily life activities uh including the uh the for example the um atomic clock and that was also uh the uh the standardized by the nist and the nist is actually uh helping us our community to standardize uh such kind of evaluation metric uh in speech and energy processing so uh and then of course if you know we use a different evaluation tools measures and then if this kind of result is different we cannot compare your result with others right so due to this reason i actually recommend you to use the sctk or other standard added the standardized or are the widely used uh the evaluation error evaluation uh metric uh then you know some tools that they did someone just made it to avoid to hover some uh the confusions again if the uh variation metric tools are different it is disaster right okay so uh with this kind of a great help from the uh the nist and so on uh the speech recognition actually uh was well measured in terms of the uh the the water rate or crop uh the kerati so everyone can for example either compare the performance the others are difficult right and they in the other previous lectures graham also discussed about the uh the blue or other evaluation metrics emerging translation and there are some discussions whether patreon is better or not while they’re at the characteristic there’s not so much discussion mostly it’s correct i say there are some kind of exceptions that i mentioned before but it’s mostly correct and also nice part is that this has a very high correlation with the downstream tasks better weather are definitely better in the speech translation right so anyway due to that study and also they start their needs are providing such kind of toolkit so that everyone can compare the error rate uh strictly so uh this is the one reason that the the speech recognition uh that has been studied for a long time with a common benchmark so now that everyone every field we have our other common benchmark and then you know performance major and readable and so on right speech condition actually has a long history of uh other comparing the techniques based on the shared uh the data are the same other evaluation metric and this is a kind of uh the the figure that i often show in this lecture uh this is a switchboard task and as i as i mentioned every month since 1990s up to now 20 to 30 years we still using this data and we still using the same vibration metric so that we can track the performance uh the improvement so this is possibly the one reason that actually deep running uh has been applied to many areas but the speech is actually one of the first area that deep running is applied since uh we can easily uh also fairly show the performance improvement uh based on this other evaluation measure okay uh so yes this area right whether this area is the the what when other i started speed recognition this area is one of the core data so are the any techniques that cannot improve the performance we also cannot uh the the the other further uh the the scale the training data and so on and also the uh uh the the budget big project uh the the uh kind of the the uh in this era for speech recognition uh anyway uh this is the kind of one of the other cold uh age in speech recognition it’s some slight improvement happens like a discriminative training and so on but uh before deep learning and this i i’ll say my most kind of a speech equation history by the way but i when i went to the conference we always talking about you know the method of a get a 0.3 percent well there are the improvement wow that’s a very good psychic only 2.3 or something like that yeah but the uh due to the deep running that’s kind of our are the uh the how they say we saw that this is the strings there and they cannot release to the human performance but thanks to the deep running and the computational uh the the uh the breakthrough gpu uh gpgpu and the strobe uh and also their open source or other other people’s uh did uh the knowledge uh sharing uh the now uh makes the performance to be included better and better okay so one more thing some people say speech recognition this search is easy this is because we have evaluation metric so the other areas it’s not easy because we have to start to make a variation method by ourselves or you know there’s multiple evaluation metric and we have to pick or something like that so instead speech condition is actually regarded as an easy research topic in terms of that we have a fixed evaluation metric so if you guys have a fancy neural network and then get the improvement by one person you can write the paper okay so uh i will move to the uh the uh speech recognition uh uh the oh yeah i need to kind of swap that a little bit using a mathematical formulation of uh speech recognition so first uh speech recognition as i mentioned in the yeah the the several times uh it’s quite uh interesting combustion problem input is completely physical signal wave pressure sound pressure right that’s undergoes the linguistic symbol so physical one becomes the linguistic uh symbol it’s very different right and the input other characteristics is also very different the waveform is gesture other than one sentence it can be like a two to three seconds and if with a final at the 16 kilohertz sampling grade the length will be the the order of ten thousand if we you use a short term fourier transform and other speech features it goes to the hundred dollar but still the bit long hundreds of thousands that only goes to the uh the three lengths of the symbols so uh a word uh in the vocabulary so this other conversion uh the from input and output is the i’ll say quite different and this actually makes the problem quite difficult okay so now i try to kind of explain that how other the speech function is realized one by one so the google uh the demonstration you guys just see that this is a one box right but it’s actually inside there are several books first one is the feature extraction this is i think i don’t have to mention about that so much about it any of the pattern recognition machine learning problem we first have our study the the feature extraction right and in speech anyway a waveform is not easy to deal with so instead we’re using the feature extraction called the uh mhcc i have a two more slides explaining this each of the modules so i will a bit more detail about it but anyway from now on i will start from the feature which is you know continuous vector time series of the continuous vector and then add a mapping to the word sequence how to formulate it one way is we just add hopefully uh making it a regression problem but instead the uh the people uh actually uh the the the formulate this problem uh more mathematically rigorous other ways they started to uh formulate this problem as a map decision theory here the posterior is from pw given node so the posterior probability of the word sequence are given the observation and then among all the kind of word sequence we just try to pick up the most likely uh sequence that’s because it becomes a speech condition uh quite simple right and the the the problem issue is how to obtain this pw given row so this is the kind of others the the speed recognition uh problem that we usually use for the probabilistic formulation and the just couple of the rules that we usually use i yeah if i have time i will explain bit more carefully about this one but anyway i just want to mention that why people using a probabilistic formulation there are a lot of reason but one of the reason is that we don’t actually have to remember various kind of equations we just have a three equation product rule sum rule conditional independence assumption conditional independence assumption is not rule but maybe just including this vector as a rule but by only using these three uh basic uh uh probabilistic rules we can actually other make this uh p double given no problem bit more tractable so the first thing that the people may often see for the speech recognition is to use a base rule to change this pw given o to p o w put p or given w p w divided by p o and then since the p o is not uh the uh depending on the w we actually uh the uh use the p o dot given w and the w so uh the two uh do to derive this one uh which rule other did we use from here to here mainly so yeah product rule yes so by using the product rule uh we kind of changing the problem uh from the original posterior distribution to the right grip and the prior distribution uh this is uh the methodology is called noisy channel model and the people actually using this method but is that enough to solve the problem for me it doesn’t actually change the difficulty or even that looks like it’s more difficult right and then the uh the how to uh the the make this uh problem more productive we actually uh the using the additional information so speech to text anyway this is a very different uh the conversion we want to have something between what they we can introduce like our linguistic knowledge we can use phoneme right and then the uh this is you know a little bit easier right from all to directory uh predicting the words are kind of difficult but by using the phoneme intermediate representation uh each kind of conversion is a bit sub problem and this is easier so this kind of a methodology is quite important to solve the very difficult combining problem okay so now we will we have our phoneme seekers let’s use the following sentence how to introduce this phoneme sequence in this uh the probability distribution some people may answer if either they took my course in the speech question and understanding which one we use some rule product rule coordination independence assumption it’s actually summer right some rule is great we actually can introduce the additional variable right still this is doesn’t change anything it doesn’t change the difficulties so how do the further other changes at this problem we just using the product rule like i mentioned before it’s part of the base rule but by using the product rule we can further factorize this problem to the three distribution and one the the other distribution in the denominator but this is not related to the our other optimization problem so we can safely actually ignore it right is that everything it’s actually not this is just equivalent uh the conversion right it actually doesn’t change the difficulty how to make the program more simple we’re using the conditional independence assumption for this case it’s where we use the condition of some individual functions here these are reasonable assumptions right the the relationship of the obligation speech features only depend on the election through the lexicon volume than the one it’s uh it’s a difficult approximation but it’s reasonable i would say right so we actually using this conditional independence assumption everywhere to make the problem attractable for example the acoustic model we first apply the conditional independence function hidden markov model is one of the conditional independence assumptions to make it tractable and uh we use a innogram language model now we use the neural language model which actually doesn’t have that but they used to use the endogram language model this is also conditional independence assumption so by using that we actually making this problem uh attractable and this methodology is quite rather powerful actually it’s not only used for speech recognition by the way this is also used for the machine translation as well you know before neural machine translation comes so uh actually the ibm uh is uh the the same other data the group same division are the proposed both speech recognition uh and the machine translation in this kind of a statistical form okay so now uh i uh decompose this uh the problem to the three distribution right this is actually structure uh that we uh that are solving the speech recognition so the first part feature extraction again this is not included in the probabilistic representation the first one is acoustic modeling lexicon language model it sounds like we just combined some kind of uh other sub problems right but it’s actually mathematically uh well uh decomposed and then we make each of the sub program tractable and then finally combine it based on the uh this uh the the equation this is the mass of the speech recognition or other other the problem of solving the secant sequence model before neural model comes the important concept is factorization to make the kind of problem to be decomposed and the other is its factorization itself doesn’t change the difficulty we also have to have a conditional independence assumption to make the problem practicable so uh i don’t know how you guys feel when i first learned this one i saw that this is very elegant the first thing that i just learned the speech recognition is these four components oh my god it’s just a complicated you know there are some modules that are combined to make a speech equation sounds like you know very cool but but a bit necessary but it turns out that it has a quite beautiful theory to other the original target is the base decision theory and i introduced each of the sub modules uh based on the uh the probabilistic formulation and actually at the in the uh the following uh the slide i will talk about each of the modules a little bit more but usually i skip the details and if you guys want to know more about each of the module and so on uh or please also consider to take a speech operation and understanding courses in the full semester okay um maybe i can accept one of a few questions here if not i can move to the each of the pipeline uh quickly um the first part uh feature extraction this is before you know the goes to the probabilistic model the feature extraction we use our other signal processing techniques uh to convert the waveform to the male frequency capture question mscc or other other features and i just want to think uh the multilingual energy this process is mostly uh the the language independent process as you can imagine right this is just a signal processing to convert the waveform to more tractable other part other feature so uh this is actually the the result of the conversion from the waveform to the uh ms60 i think most of people could agree the the bottom figures have more patterns right any more patterns so this has been very important uh to make the uh the feature uh to be uh used for the background of the processing uh by the way this signal processing based approach is gradually replaced by the deep running this is also happening now so one is the people using actually other cnn instead of mscg or some other people also using the sales supervisor learning now this is very powerful but the drawback is that this is a learnable learning based approaches so then the probably language independence property will be kind of mitigated to do that next acoustic modeling which converting the speech features to the following the sequence and for this other acoustic modeling uh we using the combination of the hidden markov model with gaussian mixture model or deep neural network and this approach is also the mostly uh language independent because speech features are more likely independent and the phoneme is also if we design well it can be a luggage independent or at least you know not so much other we can make it not so much depend on the languages although it is actually very difficult okay so the hidden markov model is uh the other actually quite important part in this uh the modeling what hidden markov model is doing is actually uh the um quite important role uh in the entire speech definition so as i mentioned the speech recognition the one over the difficulty is the output the symbol and the input uh the languages are very different so we need to make some arrangement uh all of the uh the speech features and the corresponding the following uh the information so in this case you know we don’t know which boundary we should take for each of the funding and to do this kind of alignment problem uh we are the classically uh using the hidden markov model and the hidden markov model is more like a charging of this other making this kind of alignment and given this alignment to provide a data accurate likelihood based on the as gaussian used to be gaussian but now deep neural network that is a kind of acoustic model and by the way this acoustic model part is the most important to get the performance than the other components in general the third module is the english and so on and this part is heavily language dependent so to do that uh we actually need to first access to get the other addiction information and i actually uh the uh usually show you the uh the cmu dictionary uh this is one of the most well-known uh english dictionary uh maintained by here but unfortunately it’s the stava is down now so i cannot make a demonstration uh and so on uh but uh this uh cmu dictionary the english is very lucky because we have a same reaction and then we can build a speech principle system the other language is it’s actually not easy to get that we don’t have so much kind of structure and the accessible dictionary in the other languages however other probably that i use this we dictionary and the if using navigationally we can also somehow get to the information about the other phoneme it’s actually covered many languages like this right by the way it’s not recovered yet not yet okay this is unfortunate so okay so uh by using that we can also uh the uh the use the other maker kind of of this uh dexcom component for each languages and the last part uh is the language model and the language model that we use the engram or a recurrent neural network and usually the first language model will be the the built is that the uh we uh try to kind of uh get the uh the uh how possibly uh that word uh uh given the pronunciation we can hover are the authority that given the kind of other the word sequence uh how possibly we select each language depending on the context that is what language model is doing and this uh the example i actually have these three uh the uh word sequence this is by the way the same go to the in terms of the phoneme and it can be actually go to or go to or go to right and then if for example check if we check the other uh this works journal sentences and check whether this but how many times this button appeared and then we can get the the uh how likely this other phrase appeared right go to appeared 51 times but the others actually are do not appear so this means that this go to will be most likely selected based on the language model right however this uh actually also other has some kind of other issues uh actually uh this pattern still exists in our languages so i actually include the text size from the ten thousand order to the median order and then can’t go to still other the biggest to more than two thousand can you guess how many times go to appears go to appears in the worst journal sentences two times only two times this is a one example it’s not completely good sentence but yeah it’s appearance right and the goal too there how many you you guys can guess it’s actually quite a large number and yeah most cases go too far uh this is the other sentence that the uh the uh the overnight show i saw when i uh search this other two other phrases so if we using the small corpus it doesn’t cover but if using the large coppers we can cover it so this is a kind of power up if using a large purpose we can cover many of the various are the language patterns as much as possible and this part is also language dependent so uh this is the most uh the the the building block of the speech recognition and actually i’d say that it is not easy to build that for you guys each of the components is governed by the different model feature extraction signal processing model acoustic model other pattern recognition machine learning deep learning and so on next come moderate coming from the other computational linguistic or other linguistics language modeling is also come from the nlp or are they now deep learning but anyway the each of the other modules has a different models so it is very difficult to actually develop all of them and also connecting all of this kind of module is also not easy so instead now people are also working on the uh end-to-end speech definition which try to make entire pipeline as a single neural network google’s a demonstration it’s actually they already switched to the end-to-end neural network other companies as far as i know they still didn’t add a seat to the neural network and to the neural network but either by using this pipeline and the uh the so maybe yeah maybe that’s it i want to uh finish my talk so uh the these are summary uh of the speech recognition first feature condition is very well defined problem and also fortunately we have a large corpus so it is quite you often use other other measure for the for our new machine learning algorithm and the factorization and making the problem productive this is a kind of great methodology for us to tackle this problem and the but since uh the this methodology is a bit complicated recently people are also that are the uh they’re the interesting and actually having a lot of development in the end to end a speech equation feature recovered in my next lecture and then this is the main topic or the other assignment three so please uh enjoy the speech recognition and let’s move to the discussion um the uh the priests i think you guys already tried a speech recognition engine by yourself right and then talk about what kind of errors you happened and also apply to the other language and discuss about it and since we don’t have enough time we don’t have our final discussion time just split and then either discuss it and then finish it okay so let’s just</p>
+</blockquote>
+</div>
+</div>
+</div>
+<section id="outline" class="level2">
+<h2 class="anchored" data-anchor-id="outline">Outline</h2>
+<p>Here is a lesson outline in a markdown unnumbered list format, based on the sources:</p>
+<ul>
+<li><strong>Speech Recognition Demo and Evaluation Metrics</strong>
+<ul>
+<li>Demonstration of speech recognition.</li>
+<li>Discussion of how well it works, and examples of when it fails.</li>
+<li>Evaluation metrics.</li>
+</ul></li>
+<li><strong>Evaluation Metrics</strong>
+<ul>
+<li>Sentence error rate.
+<ul>
+<li>Discuss if the entire sentence is correct.</li>
+<li>Explain why this is too strict of a measure, and the need to consider local correctness.</li>
+</ul></li>
+<li>Word error rate (WER).
+<ul>
+<li>Using edit distance word-by-word.</li>
+<li>Calculating error rate percentage.</li>
+<li>How to compute WER for languages without word boundaries.</li>
+</ul></li>
+<li>Other metrics.
+<ul>
+<li>Phoneme error rate (requires a pronunciation dictionary).</li>
+<li>Frame error rate (requires an alignment).</li>
+</ul></li>
+<li>NIST Speech Recognition Scoring Toolkit (SCTK).</li>
+</ul></li>
+<li><strong>(A bit) Mathematical Formulation of Speech Recognition</strong>
+<ul>
+<li>Speech recognition as a conversion from a physical signal to a linguistic symbol.</li>
+<li>Explanation of probabilistic formulation.
+<ul>
+<li>MAP decision theory to estimate the most probable word sequence.</li>
+<li>Noisy channel model.</li>
+<li>Factoring and conditional independence.</li>
+</ul></li>
+</ul></li>
+<li><strong>Standard Speech Recognition Pipeline</strong>
+<ul>
+<li>Feature extraction.
+<ul>
+<li>Converting waveform to MFCC.</li>
+<li>Language-independent process.</li>
+<li>Desirable representations.</li>
+</ul></li>
+<li>Acoustic Modeling.
+<ul>
+<li>Converting speech features to phoneme sequences.</li>
+<li>Using Hidden Markov Model (HMM) to align speech features and phoneme sequences.</li>
+<li>Language-independent.</li>
+</ul></li>
+<li>Lexicon.
+<ul>
+<li>Pronunciation dictionary.</li>
+<li>CMU dictionary.</li>
+<li>Multilingual phone dictionary.</li>
+</ul></li>
+<li>Language Model.
+<ul>
+<li>Using N-grams or recurrent neural networks.</li>
+<li>Word selection based on context.</li>
+<li>Language-dependent.</li>
+</ul></li>
+</ul></li>
+<li><strong>End-to-end Speech Recognition</strong>
+<ul>
+<li>Using a single neural network.</li>
+<li>A simpler solution for multilingual ASR.</li>
+</ul></li>
+</ul>
+</section>
+<section id="papers" class="level2">
+<h2 class="anchored" data-anchor-id="papers">Papers</h2>
+<ul>
+<li><span class="citation" data-cites="Pallett2003ALA">Pallett (<a href="#ref-Pallett2003ALA" role="doc-biblioref">2003</a>)</span> <a href="http://www.itl.nist.gov/iad/mig/tests/rt/ASRhistory/pdf/NIST_benchmark_ASRtests_2003.pdf">A look at NIST’s benchmark ASR tests: past, present, and future</a></li>
+<li><span class="citation" data-cites="saon2015ibm">Saon et al. (<a href="#ref-saon2015ibm" role="doc-biblioref">2015</a>)</span> <a href="https://arxiv.org/pdf/1505.05899">The IBM 2015 English Conversational Telephone Speech Recognition System</a></li>
+<li><span class="citation" data-cites="xiong2017achievinghumanparityconversational">Xiong et al. (<a href="#ref-xiong2017achievinghumanparityconversational" role="doc-biblioref">2017</a>)</span> <a href="https://arxiv.org/pdf/1610.05256">ACHIEVING HUMAN PARITY IN CONVERSATIONAL SPEECH RECOGNITION</a></li>
+</ul>
+</section>
+<section id="warlpiri-in-10-minutes" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="warlpiri-in-10-minutes">Warlpiri in 10 minutes</h2>
+<div class="page-columns page-full"><p>  </p><div class="no-row-height column-margin column-container"><img src="geom.png" id="fig-lit-greo" class="img-fluid" width="400" alt="Geography"><img src="consonants.png" id="fig-lit-cons" class="img-fluid" width="400" alt="Consonants"><img src="vowels.png" id="fig-lit-vowel" class="img-fluid" width="200" alt="Vowels"></div></div>
+<ul>
+<li>Spoken in the Northern Territory of Australia by the Warlpiri people.</li>
+<li>Approximately 2,500-3,000 native speakers.</li>
+<li>One of the largest Aboriginal languages in Australia based on the number of speakers.</li>
+<li>One of only 13 indigenous languages in Australia still being passed down to children.</li>
+<li>Alternative names include Walbiri and Waljbiri.</li>
+</ul>
+<p><strong>Language Family &amp; History</strong></p>
+<ul>
+<li>Pama-Nyungan.</li>
+<li>Ngarrkic languages.</li>
+<li>The term <em>Jukurrpa,</em> referring to Aboriginal spiritual beliefs, comes from Warlpiri.</li>
+<li>A writing system was not developed until the 1970s when the language began to be taught in schools.</li>
+</ul>
+<p><strong>Grammar</strong></p>
+<ul>
+<li><strong>Free word order</strong>, but the auxiliary word is almost always the second word in a clause.</li>
+<li><strong>Ergative</strong> marking. The actor takes a special ending called the ergative ending. The ergative ending marks the subject of a transitive sentence.</li>
+<li><strong>Split ergativity</strong>. Nouns follow one set of rules, while pronouns and auxiliary verbs follow another.</li>
+<li>Suffixes indicate person and number of the subject and object.</li>
+<li><strong>Vowel harmony</strong>.</li>
+</ul>
+<p><strong>Phonology</strong></p>
+<ul>
+<li>Most Warlpiri languages have only <strong>three vowels</strong>.</li>
+<li><strong>No voicing contrast</strong>. Aboriginal languages have no contrast between voiced and voiceless consonants. A sound can sound like a ‘p’ or a ‘b’ depending on its position in the word.</li>
+<li><strong>No fricative sounds</strong>.</li>
+<li>Love the ‘r’ sound. Warlpiri has three ‘r’ sounds.</li>
+</ul>
+<p><strong>Interesting Linguistic Features</strong></p>
+<ul>
+<li><strong>Avoidance register</strong>, a special style of language is used between certain family relations that have a drastically reduced lexicon.</li>
+<li>Warlpiri Sign Language also exists.</li>
+<li>Speakers are often multilingual, learning each other’s languages.</li>
+<li>A strong tradition exists of not saying the names or showing images of people who have passed away.</li>
+</ul>
+<p><strong>Present Status</strong></p>
+<ul>
+<li>Warlpiri is considered a threatened language because children sometimes respond in English even when spoken to in Warlpiri.</li>
+<li>There are efforts to teach the language in schools and create modern terminology.</li>
+</ul>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-Pallett2003ALA" class="csl-entry" role="listitem">
+Pallett, David. 2003. <span>“A Look at NIST’s Benchmark ASR Tests: Past, Present, and Future.”</span> <em>2003 IEEE Workshop on Automatic Speech Recognition and Understanding (IEEE Cat. No.03EX721)</em>, 483–88. <a href="https://api.semanticscholar.org/CorpusID:17986888">https://api.semanticscholar.org/CorpusID:17986888</a>.
+</div>
+<div id="ref-saon2015ibm" class="csl-entry" role="listitem">
+Saon, George, Hong-Kwang J Kuo, Steven Rennie, and Michael Picheny. 2015. <span>“The IBM 2015 English Conversational Telephone Speech Recognition System.”</span> <em>arXiv Preprint arXiv:1505.05899</em>.
+</div>
+<div id="ref-xiong2017achievinghumanparityconversational" class="csl-entry" role="listitem">
+Xiong, W., J. Droppo, X. Huang, F. Seide, M. Seltzer, A. Stolcke, D. Yu, and G. Zweig. 2017. <span>“Achieving Human Parity in Conversational Speech Recognition.”</span> <a href="https://arxiv.org/abs/1610.05256">https://arxiv.org/abs/1610.05256</a>.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2022,
+  author = {Bochman, Oren},
+  title = {Automatic {Speech} {Recognition}},
+  date = {2022-03-03},
+  url = {https://orenbochman.github.io/notes-nlp/notes/cs11-737-w14-ASR/},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2022" class="csl-entry quarto-appendix-citeas" role="listitem">
+Bochman, Oren. 2022. <span>“Automatic Speech Recognition.”</span> March
+3, 2022. <a href="https://orenbochman.github.io/notes-nlp/notes/cs11-737-w14-ASR/">https://orenbochman.github.io/notes-nlp/notes/cs11-737-w14-ASR/</a>.
+</div></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("^(?:http:|https:)\/\/www\.quarto\.org\/custom");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+          // default icon
+          link.classList.add("external");
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© Copyright 2023-2025, Oren Bochman</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/cs11-737-w14-ASR/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This page is built with 💛 and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"fade","descPosition":"right","loop":true,"openEffect":"fade","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

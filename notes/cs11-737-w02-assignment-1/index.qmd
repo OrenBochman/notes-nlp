@@ -1,0 +1,64 @@
+---
+date: 2022-02-15
+title: "Assignment 1: Multilingual POS Tagging"
+subtitle: "CMU CS11-737: Multilingual NLP"
+description: "This week we will cover text classification and sequence labeling. We will start with the basics of text classification, and then move on to more advanced topics like sequence labeling."
+categories: 
+    - Multilingual NLP
+    - NLP
+    - Notes
+---
+
+![course banner](/images/tiling.png){.column-margin .nolightbox width="200px"}
+
+::: {#vid-01 .column-margin}
+{{< video https://www.youtube.com/watch?v=Gx5eLtOY10g&list=PLp-0K3kfddPwLUlWMDjMoVfNcVbnjG9m3&ab_channel=CarnegieMellonUniversityDeepLearning >}}
+Recitation of AWS Fundamentals 01
+:::
+
+::: {#vid-01 .column-margin}
+{{< video https://www.youtube.com/watch?v=TAn-WlnwZhY&list=PLp-0K3kfddPwLUlWMDjMoVfNcVbnjG9m3&ab_channel=CarnegieMellonUniversityDeepLearning >}}
+Recitation of AWS Fundamentals 02
+:::
+
+::: {#vid-01 .column-margin}
+{{< video https://www.youtube.com/watch?v=25VuoasPues&list=PLp-0K3kfddPwLUlWMDjMoVfNcVbnjG9m3&index=17&ab_channel=CarnegieMellonUniversityDeepLearning >}}
+Recitation of AWS Fundamentals 03
+:::
+
+::: {#vid-01 .column-margin}
+{{< video https://www.youtube.com/watch?v=32vgKiOEpPA&list=PLp-0K3kfddPwLUlWMDjMoVfNcVbnjG9m3&index=18&ab_channel=CarnegieMellonUniversityDeepLearning >}}
+Recitation of AWS Fundamentals 04
+:::
+
+::: {#sup-slide-deck .column-margin group="slides"}
+![assignment slides](slides.pdf){width="420px" height="340px" style="@page {size: 16in 9in;  margin: 0;}" group="slides"}
+:::
+
+::: {.callout-note}
+## Learning Objectives  {.unnumbered}
+
+- Example Sequence Classification/Labeling Tasks
+- Overall Framework of Sequence Classification/Labeling
+- Sequence Featurization Models (BiRNN, Self Attention, CNNs)
+
+:::
+
+::: {.callout-note collapse="true"}
+### Transcript {.unnumbered}
+<!-- Transcript here is machine generated no punctuation and I eddited it a but but it needs more work and I dont see the benefits unless I can run it through some tool. -->
+
+:::
+
+## Some Ideas
+
+
+1. crearing a multilingual POS tagger
+1. using a hierarchical model that does partial pooling to learn from multiple languages when working on a low-resource language
+1. creating a surrogate simulated language which
+    1. has parameters that correspond to the low resource language - resources are drawn from language database like WALS, Ethnologue, and Glottolog
+    Note that the challange then becomes in how to generate the surrogate language based on these parameters. One could try to create real phonetic and morphological rules etc or one might side step this complexity and use a simple mathematical construct to create data to create suitable embeddings.
+    2. Use a phrase book as a template for generating texts in the surrogate languages. The outcome should be a dataset of translations of the phrase book in multiple languages. Note that it could also be feasible to generate multiple variants for the both the source and target language to avoid overfitting on the phrase book.
+    1. a priors distribution that follows high resource languages. (i.e. idea that high frequency source words are more likely to be translated to high frequency target words)
+    1. a language model that is trained on the high resource language and then used to generate the surrogate language
+    1. a model that is trained on the surrogate language and then used to tag the low resource language

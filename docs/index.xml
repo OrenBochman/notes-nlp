@@ -2172,6 +2172,424 @@ Learning to Align and Translate.”</span> February 11, 2024. <a href="https://o
 <item>
   <title>Speech</title>
   <dc:creator>Oren Bochman</dc:creator>
+  <link>https://orenbochman.github.io/notes-nlp/notes/cs11-737-w19-syntax-and-parsing/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/images/tiling.png" class="nolightbox img-fluid figure-img" width="200"></p>
+<figcaption>course banner</figcaption>
+</figure>
+</div><div id="vid-01" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-vid figure">
+<div aria-describedby="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/f-3N0stPtbw" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Video&nbsp;1: Lesson Video
+</figcaption>
+</figure>
+</div><div id="sup-slide-deck1" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides" style="@page {size: 16in 9in;  margin: 0;}">
+<figure class="quarto-float quarto-float-sup figure">
+<div aria-describedby="sup-slide-deck1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="slides.pdf" class="lightbox" data-gallery="slides" title="This week’s slides"><embed src="slides.pdf" style="@page {size: 16in 9in;  margin: 0;}" width="420" height="340"></a></p>
+<figcaption>This week’s slides</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-sup quarto-uncaptioned" id="sup-slide-deck1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Supplementary Figure&nbsp;1
+</figcaption>
+</figure>
+</div><div id="sup-slide-deck2" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides" style="@page {size: 16in 9in;  margin: 0;}">
+<figure class="quarto-float quarto-float-sup figure">
+<div aria-describedby="sup-slide-deck2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="slides2.pdf" class="lightbox" data-gallery="slides" title="This week’s slides"><embed src="slides2.pdf" style="@page {size: 16in 9in;  margin: 0;}" width="420" height="340"></a></p>
+<figcaption>This week’s slides</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-sup quarto-uncaptioned" id="sup-slide-deck2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Supplementary Figure&nbsp;2
+</figcaption>
+</figure>
+</div></div>
+
+
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>What is speech?</li>
+<li>Speech applications</li>
+<li>Speech databases</li>
+<li>Speech hierarchy</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Transcript
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<!-- Transcript here is machine generated no punctuation and I eddited it a but but it needs more work and I dont see the benefits unless I can run it through some tool. -->
+</div>
+</div>
+</div>
+<section id="navajo-in-10" class="level2">
+<h2 class="anchored" data-anchor-id="navajo-in-10">Navajo in 10</h2>
+<ul>
+<li><p><strong>Language Name and Classification</strong>:</p>
+<ul>
+<li><strong>Navajo</strong> (also known as <strong>Navaho</strong>).</li>
+<li>Navajo: <em>Diné bizaad</em> [tìnépìz̥ɑ̀ːt] or <em>Naabeehó bizaad</em> [nɑ̀ːpèːhópìz̥ɑ̀ːt].</li>
+<li>It is a <strong>Southern Athabaskan language</strong> of the <strong>Na-Dené family</strong>.</li>
+</ul></li>
+<li><p><strong>Speakers and Location</strong>:</p>
+<ul>
+<li>Spoken primarily in the <strong>Southwestern United States</strong>, especially in the <strong>Navajo Nation</strong>.</li>
+<li>One of the most widely spoken <strong>Native American languages</strong>.</li>
+<li>The most widely spoken Native American language north of the <strong>Mexico–United States border</strong>.</li>
+<li>Almost <strong>170,000 Americans</strong> speaking Navajo at home as of 2011.</li>
+</ul></li>
+<li><p><strong>Nomenclature</strong>:</p>
+<ul>
+<li>The word <em>Navajo</em> is an <strong>exonym</strong> from the Tewa word <em>Navahu</em>, meaning ‘large field’.</li>
+<li>The Navajo refer to themselves as the <em>Diné</em> (‘People’), with their language known as <em>Diné bizaad</em> (‘People’s language’) or <em>Naabeehó bizaad</em>.</li>
+</ul></li>
+<li><p><strong>Official Status</strong>:</p>
+<ul>
+<li>Official language in <strong>Navajo Nation</strong>.</li>
+</ul></li>
+<li><p><strong>History and Development</strong>:</p>
+<ul>
+<li>The Apachean languages, of which Navajo is one, are thought to have arrived in the American Southwest from the north by 1500.</li>
+<li>Speakers of the Navajo language were employed as <strong>Navajo code talkers</strong> during World Wars I and II.</li>
+<li>Orthography developed in the late 1930s and is based on the <strong>Latin script</strong>.</li>
+</ul></li>
+<li><p><strong>Writing System</strong>:</p>
+<ul>
+<li>Based on the <strong>Latin script</strong>.</li>
+<li>Developed between 1935 and 1940.</li>
+<li>Uses an apostrophe to mark <strong>ejective consonants</strong> and mid-word or final <strong>glottal stops</strong>.</li>
+<li>Represents nasalized vowels with an <strong>ogonek</strong> and the voiceless alveolar lateral fricative with a <strong>barred L</strong>.</li>
+</ul></li>
+<li><p><strong>Phonology</strong>:</p>
+<ul>
+<li>Has a fairly large <strong>consonant inventory</strong>.</li>
+<li><strong>Stop consonants</strong> exist in three laryngeal forms: aspirated, unaspirated, and ejective.</li>
+<li>Has a simple <strong>glottal stop</strong> used after vowels.</li>
+<li>Four <strong>vowel qualities</strong>: /a/, /e/, /i/, and /o/.</li>
+<li>Each vowel exists in both <strong>oral and nasalized</strong> forms and can be either <strong>short or long</strong>.</li>
+<li>Distinguishes for <strong>tone</strong> between high and low.</li>
+</ul>
+<p><img src="https://orenbochman.github.io/notes-nlp/notes/cs11-737-w19-syntax-and-parsing/navajo-consonants.png" class="img-fluid" width="400" alt="Navajo Consonants"> <img src="https://orenbochman.github.io/notes-nlp/notes/cs11-737-w19-syntax-and-parsing/navajo-vowels.png" class="img-fluid" width="400" alt="Navajo Vowels"></p></li>
+<li><p><strong>Grammar</strong>:</p>
+<ul>
+<li>Relies heavily on <strong>affixes</strong>, mainly prefixes.</li>
+<li>Affixes are joined in unpredictable, overlapping ways that make them difficult to segment.</li>
+<li>Basic word order is <strong>subject–object–verb</strong>.</li>
+<li>Verbs are conjugated for <strong>aspect and mood</strong>.</li>
+</ul></li>
+<li><p><strong>Vocabulary</strong>:</p>
+<ul>
+<li>Most Navajo vocabulary is of <strong>Athabaskan origin</strong>.</li>
+<li>Has been conservative with <strong>loanwords</strong> due to its highly complex noun morphology.</li>
+<li>Expanded its vocabulary to include Western technological and cultural terms through <strong>calques and Navajo descriptive terms</strong>.</li>
+</ul></li>
+<li><p><strong>Revitalization and Current Status</strong>:</p>
+<ul>
+<li><strong>Bilingual Education Act</strong> in 1968 provided funds for educating young students who are not native English speakers.</li>
+<li>Navajo Nation Council decreed in 1984 that the Navajo language would be available and comprehensive for students of all grade levels in schools of the Navajo Nation.</li>
+<li><strong>Navajo-immersion programs</strong> have cropped up across the Navajo Nation.</li>
+<li>Diné College offers an associate degree in the subject of Navajo.</li>
+<li>In December 2024, Navajo Nation President made Navajo language the official language of Navajo Nation.</li>
+</ul></li>
+</ul>
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2022,
+  author = {Bochman, Oren},
+  title = {Speech},
+  date = {2022-03-29},
+  url = {https://orenbochman.github.io/notes-nlp/notes/cs11-737-w19-syntax-and-parsing/},
+  langid = {en}
+}
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2022" class="csl-entry quarto-appendix-citeas">
+Bochman, Oren. 2022. <span>“Speech.”</span> March 29, 2022. <a href="https://orenbochman.github.io/notes-nlp/notes/cs11-737-w19-syntax-and-parsing/">https://orenbochman.github.io/notes-nlp/notes/cs11-737-w19-syntax-and-parsing/</a>.
+</div></div></section></div> ]]></description>
+  <category>Attention</category>
+  <category>Multilingual NLP</category>
+  <category>NLP</category>
+  <category>Notes</category>
+  <guid>https://orenbochman.github.io/notes-nlp/notes/cs11-737-w19-syntax-and-parsing/</guid>
+  <pubDate>Mon, 28 Mar 2022 21:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Automatic Speech Recognition</title>
+  <dc:creator>Oren Bochman</dc:creator>
+  <link>https://orenbochman.github.io/notes-nlp/notes/cs11-737-w14-ASR/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/images/tiling.png" class="nolightbox img-fluid figure-img" width="200"></p>
+<figcaption>course banner</figcaption>
+</figure>
+</div><div id="vid-01" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-vid figure">
+<div aria-describedby="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/OObrN8yMYZU" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Video&nbsp;1: Lesson Video
+</figcaption>
+</figure>
+</div><div id="sup-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides" style="@page {size: 16in 9in;  margin: 0;}">
+<figure class="quarto-float quarto-float-sup figure">
+<div aria-describedby="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="slides.pdf" class="lightbox" data-gallery="slides" title="This week’s slides"><embed src="slides.pdf" style="@page {size: 16in 9in;  margin: 0;}" width="420" height="340"></a></p>
+<figcaption>This week’s slides</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-sup quarto-uncaptioned" id="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Supplementary Figure&nbsp;1
+</figcaption>
+</figure>
+</div></div>
+
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>What is speech?</li>
+<li>Speech applications</li>
+<li>Speech databases</li>
+<li>Speech hierarchy</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Transcript
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<!-- Transcript here is machine generated no punctuation and I eddited it a but but it needs more work and I dont see the benefits unless I can run it through some tool. -->
+<blockquote class="blockquote">
+<p>okay so today i’d like to talk about uh automatic speech recognition uh this is uh one of the uh most uh the active uh research area in speech processing and also very important application for multilingual energy and today i will first explain about the speech recognition demonstration uh and also talking about evaluation metrics and the i will a little bit use the mass to explain about the formulation of the speech recognition and they will move to the explanation about the standard a speech recognition pipeline so uh let me first try to work on the demonstration um which i just tried to kind of use speech recognition here i want to go to the cmu campus affect right the technology and the i also want to show how the current sr technology is robust i want to go to the cmu campus oh it doesn’t work if i can work speak slowly i want to go to the cma campus that’s the current technology next i mentioned that the speech recognition is not a good for the noisy environment so let’s try to make the noisy environment i want to go to the cmu campus they are cool right yeah they are very very cool um so i try to kind of uh make some kind of a mistake uh but the google guides are doing a great job so it’s actually not easy to find some kind of a significant mistake with them one of the easy mistake that i can uh that try to make could be the the other query okay right yeah they should you know study more about me i will talk to my colleagues in google and the the other difficulty would be let me try so i mentioned that the speech recognition is not very good under the uh the simple noise it’s actually quite strong but if there are some uh the other speakers are speaking it’s still very challenging so i try to make this kind of situation okay so do you have you have a long like it’s not not if there’s scabbards raised in new york but i guess up there you all don’t have too long where we’re going i want to go to the cmu campus i want to go to the cmu campus but it’s actually not working quite well in general so um this is a current technology uh with some more other essays with the controlled environment the speech recognition is quite working well and today’s talk uh i will talk about the introduce about the speech recognition technology insider okay so uh the the first example i already mentioned this is one of the mistake that i found when i use acidity uh and yeah sometimes very good but sometimes it’s not working and the uh what kind of errors the speech equation has would be today’s uh discussion so please discuss it in the rest of the class after my lecture and the the now the many of the speech recognition engines actually also support the the other languages and i also uh try the uh japanese and it’s working quite well uh it i tried several times and then i found this kind of uh the the mistaken mistake but in general uh other uh language are also working quite well now and now i will uh move to the uh evaluation as you can see sometimes it’s perfectly revoking but sometimes it’s not working right and then the uh how to evaluate the major uh in speech recognition is quite important and the first uh the uh most intuitive measure would be the sentence level error anyway you know the the sentence uh uh correct or not i think it is the most other important measure i would say uh however uh by measuring the performance of the system in this case it’s almost correct right it’s just there are a few words are uh the wrong so i we actually want to give some partial score uh if the half of the rods are correct so to do that uh instead of using the sentence error rate uh we usually use the water rate and whatever it is computed by considering the three types of the error one is the insertion errors in this case uh this uh word is actually uh the the extra word compared from the difference so this uh the word error correspond to the insertion error and then the rest of the uh the error is the correspond to the substitution errors by the way it’s it is not unique of course you know uh we can consider this substitution uh this one is a substitution and the decision that other insertion uh and so on and usually we uh consider all the possible other error and then taking the minimum by also considering the each other cost of each error and then compute the edit distance i think many people here would be familiar with the distance so i may not need to explain about it indeed so much detail but anyway this uh is our kind of unusual uh uh measure to uh check the performance of the speech recognition and the um so this is a quite well defined major when we have a wide boundary but as you can see we have a lot of work uh the languages which actually don’t have a word boundary right and how to compute it there are uh two ways one is just using some uh the uh the tools to segment uh to get the gun in the world are you need and then other computing the model rate but we should be very careful about that because this chunking may depend on the tool or dictionary and so on i had a very bad experience that i had compared my japanese system and other other institute other systems and i are actually quite bad and i was very disappointed but i couldn’t reach to their numbers and finally we asked them how to chunk their word and their tools are different from ours and we actually cannot compare right so it is the other issue when we using the tanking but still uh if we use the same chunking we can compare so this is widely used but the mostly used uh the metallic for such kind of languages is actually character uh error rate just consider the the each character and the other computer uh edit distance so this is uh the more widely used when we uh the compute measure for the languages that doesn’t have hardware what boundary so the uh the assignment three that first you guys speak the uh the language right and then do the asl and do the evaluation be careful about the uh the which measure are are you guys using if the that language has a good word boundary you guys can use what uh error rate but otherwise a character error is safe yes when you’re speaking in japanese do you expect the system to transcribe the world cmu enrollment yes actually yes yeah the since uh it’s a kind of our other already the training data and so are mixed so other it’s uh the appeared other other the roman character uh in the japanese cases yeah japanese cases we have a ton of data so actually this kind of mix mixture will be handled by data delivery manner however are they that i think in some sense you’re right uh for example this cmu which can be also are the written other uh the katakanas sim the script which is the other or the japanese script to the described the word from the foreign countries and this may also happen instead of this kind of roman character happens and then in this case uh the other letter or character both cases it was correct but it’s not regarded as the wrong a mistake so actually uh in this sense the uh is depend on the language but the in some languages the same the world can be uh represented as a different script and then the uh the water right or even characteristic is not the perfect measure but this is a very difficult problem and usually we the normalize to either of the symbols or we actually don’t care so much about that and there are a lot of other metrics um since the the uh the script has an issue like as i mentioned some people use their phoneme literally but this actually lose the semantic other information a lot so uh this is uh used uh to more to uh that check the whether this uh the uh speech is acoustically phonetically uh the correct but it’s not sure it is the semantically uh the correct so it’s not so much used but anyway this is also another major prime error rate is also sometimes used but i skipped the other explanation and the other metrics decently these two uh the metrics are quite important the airtime factor in the latency since uh many of the systems are now in the uh the on the device and so on and the speech uh is used at the interface whatever speech has another application you know the offline archive uh and so on we don’t care about the uh at least latency a real-time factor other smaller may be better but the latest is quite important if you’re using a speech interface and the it’s also depend on the downstream uh evaluation metrics for example uh the if we combine this one uh with the uh the understanding system or if we combine it with the translation system uh of course we should evaluate it with such kind of downstream uh the evaluation method so in the speech transformation cases of of course it can be better if specification performance is better but we just check the group and the uh for speech recognition are the this uh the especially the characteristic of what error rate i recommend you to use the nist speech recognition scoring toolkit how many people knows nist nist is uh the government institute to standardize uh our uh the daily life activities uh including the uh the for example the um atomic clock and that was also uh the uh the standardized by the nist and the nist is actually uh helping us our community to standardize uh such kind of evaluation metric uh in speech and energy processing so uh and then of course if you know we use a different evaluation tools measures and then if this kind of result is different we cannot compare your result with others right so due to this reason i actually recommend you to use the sctk or other standard added the standardized or are the widely used uh the evaluation error evaluation uh metric uh then you know some tools that they did someone just made it to avoid to hover some uh the confusions again if the uh variation metric tools are different it is disaster right okay so uh with this kind of a great help from the uh the nist and so on uh the speech recognition actually uh was well measured in terms of the uh the the water rate or crop uh the kerati so everyone can for example either compare the performance the others are difficult right and they in the other previous lectures graham also discussed about the uh the blue or other evaluation metrics emerging translation and there are some discussions whether patreon is better or not while they’re at the characteristic there’s not so much discussion mostly it’s correct i say there are some kind of exceptions that i mentioned before but it’s mostly correct and also nice part is that this has a very high correlation with the downstream tasks better weather are definitely better in the speech translation right so anyway due to that study and also they start their needs are providing such kind of toolkit so that everyone can compare the error rate uh strictly so uh this is the one reason that the the speech recognition uh that has been studied for a long time with a common benchmark so now that everyone every field we have our other common benchmark and then you know performance major and readable and so on right speech condition actually has a long history of uh other comparing the techniques based on the shared uh the data are the same other evaluation metric and this is a kind of uh the the figure that i often show in this lecture uh this is a switchboard task and as i as i mentioned every month since 1990s up to now 20 to 30 years we still using this data and we still using the same vibration metric so that we can track the performance uh the improvement so this is possibly the one reason that actually deep running uh has been applied to many areas but the speech is actually one of the first area that deep running is applied since uh we can easily uh also fairly show the performance improvement uh based on this other evaluation measure okay uh so yes this area right whether this area is the the what when other i started speed recognition this area is one of the core data so are the any techniques that cannot improve the performance we also cannot uh the the the other further uh the the scale the training data and so on and also the uh uh the the budget big project uh the the uh kind of the the uh in this era for speech recognition uh anyway uh this is the kind of one of the other cold uh age in speech recognition it’s some slight improvement happens like a discriminative training and so on but uh before deep learning and this i i’ll say my most kind of a speech equation history by the way but i when i went to the conference we always talking about you know the method of a get a 0.3 percent well there are the improvement wow that’s a very good psychic only 2.3 or something like that yeah but the uh due to the deep running that’s kind of our are the uh the how they say we saw that this is the strings there and they cannot release to the human performance but thanks to the deep running and the computational uh the the uh the breakthrough gpu uh gpgpu and the strobe uh and also their open source or other other people’s uh did uh the knowledge uh sharing uh the now uh makes the performance to be included better and better okay so one more thing some people say speech recognition this search is easy this is because we have evaluation metric so the other areas it’s not easy because we have to start to make a variation method by ourselves or you know there’s multiple evaluation metric and we have to pick or something like that so instead speech condition is actually regarded as an easy research topic in terms of that we have a fixed evaluation metric so if you guys have a fancy neural network and then get the improvement by one person you can write the paper okay so uh i will move to the uh the uh speech recognition uh uh the oh yeah i need to kind of swap that a little bit using a mathematical formulation of uh speech recognition so first uh speech recognition as i mentioned in the yeah the the several times uh it’s quite uh interesting combustion problem input is completely physical signal wave pressure sound pressure right that’s undergoes the linguistic symbol so physical one becomes the linguistic uh symbol it’s very different right and the input other characteristics is also very different the waveform is gesture other than one sentence it can be like a two to three seconds and if with a final at the 16 kilohertz sampling grade the length will be the the order of ten thousand if we you use a short term fourier transform and other speech features it goes to the hundred dollar but still the bit long hundreds of thousands that only goes to the uh the three lengths of the symbols so uh a word uh in the vocabulary so this other conversion uh the from input and output is the i’ll say quite different and this actually makes the problem quite difficult okay so now i try to kind of explain that how other the speech function is realized one by one so the google uh the demonstration you guys just see that this is a one box right but it’s actually inside there are several books first one is the feature extraction this is i think i don’t have to mention about that so much about it any of the pattern recognition machine learning problem we first have our study the the feature extraction right and in speech anyway a waveform is not easy to deal with so instead we’re using the feature extraction called the uh mhcc i have a two more slides explaining this each of the modules so i will a bit more detail about it but anyway from now on i will start from the feature which is you know continuous vector time series of the continuous vector and then add a mapping to the word sequence how to formulate it one way is we just add hopefully uh making it a regression problem but instead the uh the people uh actually uh the the the formulate this problem uh more mathematically rigorous other ways they started to uh formulate this problem as a map decision theory here the posterior is from pw given node so the posterior probability of the word sequence are given the observation and then among all the kind of word sequence we just try to pick up the most likely uh sequence that’s because it becomes a speech condition uh quite simple right and the the the problem issue is how to obtain this pw given row so this is the kind of others the the speed recognition uh problem that we usually use for the probabilistic formulation and the just couple of the rules that we usually use i yeah if i have time i will explain bit more carefully about this one but anyway i just want to mention that why people using a probabilistic formulation there are a lot of reason but one of the reason is that we don’t actually have to remember various kind of equations we just have a three equation product rule sum rule conditional independence assumption conditional independence assumption is not rule but maybe just including this vector as a rule but by only using these three uh basic uh uh probabilistic rules we can actually other make this uh p double given no problem bit more tractable so the first thing that the people may often see for the speech recognition is to use a base rule to change this pw given o to p o w put p or given w p w divided by p o and then since the p o is not uh the uh depending on the w we actually uh the uh use the p o dot given w and the w so uh the two uh do to derive this one uh which rule other did we use from here to here mainly so yeah product rule yes so by using the product rule uh we kind of changing the problem uh from the original posterior distribution to the right grip and the prior distribution uh this is uh the methodology is called noisy channel model and the people actually using this method but is that enough to solve the problem for me it doesn’t actually change the difficulty or even that looks like it’s more difficult right and then the uh the how to uh the the make this uh problem more productive we actually uh the using the additional information so speech to text anyway this is a very different uh the conversion we want to have something between what they we can introduce like our linguistic knowledge we can use phoneme right and then the uh this is you know a little bit easier right from all to directory uh predicting the words are kind of difficult but by using the phoneme intermediate representation uh each kind of conversion is a bit sub problem and this is easier so this kind of a methodology is quite important to solve the very difficult combining problem okay so now we will we have our phoneme seekers let’s use the following sentence how to introduce this phoneme sequence in this uh the probability distribution some people may answer if either they took my course in the speech question and understanding which one we use some rule product rule coordination independence assumption it’s actually summer right some rule is great we actually can introduce the additional variable right still this is doesn’t change anything it doesn’t change the difficulties so how do the further other changes at this problem we just using the product rule like i mentioned before it’s part of the base rule but by using the product rule we can further factorize this problem to the three distribution and one the the other distribution in the denominator but this is not related to the our other optimization problem so we can safely actually ignore it right is that everything it’s actually not this is just equivalent uh the conversion right it actually doesn’t change the difficulty how to make the program more simple we’re using the conditional independence assumption for this case it’s where we use the condition of some individual functions here these are reasonable assumptions right the the relationship of the obligation speech features only depend on the election through the lexicon volume than the one it’s uh it’s a difficult approximation but it’s reasonable i would say right so we actually using this conditional independence assumption everywhere to make the problem attractable for example the acoustic model we first apply the conditional independence function hidden markov model is one of the conditional independence assumptions to make it tractable and uh we use a innogram language model now we use the neural language model which actually doesn’t have that but they used to use the endogram language model this is also conditional independence assumption so by using that we actually making this problem uh attractable and this methodology is quite rather powerful actually it’s not only used for speech recognition by the way this is also used for the machine translation as well you know before neural machine translation comes so uh actually the ibm uh is uh the the same other data the group same division are the proposed both speech recognition uh and the machine translation in this kind of a statistical form okay so now uh i uh decompose this uh the problem to the three distribution right this is actually structure uh that we uh that are solving the speech recognition so the first part feature extraction again this is not included in the probabilistic representation the first one is acoustic modeling lexicon language model it sounds like we just combined some kind of uh other sub problems right but it’s actually mathematically uh well uh decomposed and then we make each of the sub program tractable and then finally combine it based on the uh this uh the the equation this is the mass of the speech recognition or other other the problem of solving the secant sequence model before neural model comes the important concept is factorization to make the kind of problem to be decomposed and the other is its factorization itself doesn’t change the difficulty we also have to have a conditional independence assumption to make the problem practicable so uh i don’t know how you guys feel when i first learned this one i saw that this is very elegant the first thing that i just learned the speech recognition is these four components oh my god it’s just a complicated you know there are some modules that are combined to make a speech equation sounds like you know very cool but but a bit necessary but it turns out that it has a quite beautiful theory to other the original target is the base decision theory and i introduced each of the sub modules uh based on the uh the probabilistic formulation and actually at the in the uh the following uh the slide i will talk about each of the modules a little bit more but usually i skip the details and if you guys want to know more about each of the module and so on uh or please also consider to take a speech operation and understanding courses in the full semester okay um maybe i can accept one of a few questions here if not i can move to the each of the pipeline uh quickly um the first part uh feature extraction this is before you know the goes to the probabilistic model the feature extraction we use our other signal processing techniques uh to convert the waveform to the male frequency capture question mscc or other other features and i just want to think uh the multilingual energy this process is mostly uh the the language independent process as you can imagine right this is just a signal processing to convert the waveform to more tractable other part other feature so uh this is actually the the result of the conversion from the waveform to the uh ms60 i think most of people could agree the the bottom figures have more patterns right any more patterns so this has been very important uh to make the uh the feature uh to be uh used for the background of the processing uh by the way this signal processing based approach is gradually replaced by the deep running this is also happening now so one is the people using actually other cnn instead of mscg or some other people also using the sales supervisor learning now this is very powerful but the drawback is that this is a learnable learning based approaches so then the probably language independence property will be kind of mitigated to do that next acoustic modeling which converting the speech features to the following the sequence and for this other acoustic modeling uh we using the combination of the hidden markov model with gaussian mixture model or deep neural network and this approach is also the mostly uh language independent because speech features are more likely independent and the phoneme is also if we design well it can be a luggage independent or at least you know not so much other we can make it not so much depend on the languages although it is actually very difficult okay so the hidden markov model is uh the other actually quite important part in this uh the modeling what hidden markov model is doing is actually uh the um quite important role uh in the entire speech definition so as i mentioned the speech recognition the one over the difficulty is the output the symbol and the input uh the languages are very different so we need to make some arrangement uh all of the uh the speech features and the corresponding the following uh the information so in this case you know we don’t know which boundary we should take for each of the funding and to do this kind of alignment problem uh we are the classically uh using the hidden markov model and the hidden markov model is more like a charging of this other making this kind of alignment and given this alignment to provide a data accurate likelihood based on the as gaussian used to be gaussian but now deep neural network that is a kind of acoustic model and by the way this acoustic model part is the most important to get the performance than the other components in general the third module is the english and so on and this part is heavily language dependent so to do that uh we actually need to first access to get the other addiction information and i actually uh the uh usually show you the uh the cmu dictionary uh this is one of the most well-known uh english dictionary uh maintained by here but unfortunately it’s the stava is down now so i cannot make a demonstration uh and so on uh but uh this uh cmu dictionary the english is very lucky because we have a same reaction and then we can build a speech principle system the other language is it’s actually not easy to get that we don’t have so much kind of structure and the accessible dictionary in the other languages however other probably that i use this we dictionary and the if using navigationally we can also somehow get to the information about the other phoneme it’s actually covered many languages like this right by the way it’s not recovered yet not yet okay this is unfortunate so okay so uh by using that we can also uh the uh the use the other maker kind of of this uh dexcom component for each languages and the last part uh is the language model and the language model that we use the engram or a recurrent neural network and usually the first language model will be the the built is that the uh we uh try to kind of uh get the uh the uh how possibly uh that word uh uh given the pronunciation we can hover are the authority that given the kind of other the word sequence uh how possibly we select each language depending on the context that is what language model is doing and this uh the example i actually have these three uh the uh word sequence this is by the way the same go to the in terms of the phoneme and it can be actually go to or go to or go to right and then if for example check if we check the other uh this works journal sentences and check whether this but how many times this button appeared and then we can get the the uh how likely this other phrase appeared right go to appeared 51 times but the others actually are do not appear so this means that this go to will be most likely selected based on the language model right however this uh actually also other has some kind of other issues uh actually uh this pattern still exists in our languages so i actually include the text size from the ten thousand order to the median order and then can’t go to still other the biggest to more than two thousand can you guess how many times go to appears go to appears in the worst journal sentences two times only two times this is a one example it’s not completely good sentence but yeah it’s appearance right and the goal too there how many you you guys can guess it’s actually quite a large number and yeah most cases go too far uh this is the other sentence that the uh the uh the overnight show i saw when i uh search this other two other phrases so if we using the small corpus it doesn’t cover but if using the large coppers we can cover it so this is a kind of power up if using a large purpose we can cover many of the various are the language patterns as much as possible and this part is also language dependent so uh this is the most uh the the the building block of the speech recognition and actually i’d say that it is not easy to build that for you guys each of the components is governed by the different model feature extraction signal processing model acoustic model other pattern recognition machine learning deep learning and so on next come moderate coming from the other computational linguistic or other linguistics language modeling is also come from the nlp or are they now deep learning but anyway the each of the other modules has a different models so it is very difficult to actually develop all of them and also connecting all of this kind of module is also not easy so instead now people are also working on the uh end-to-end speech definition which try to make entire pipeline as a single neural network google’s a demonstration it’s actually they already switched to the end-to-end neural network other companies as far as i know they still didn’t add a seat to the neural network and to the neural network but either by using this pipeline and the uh the so maybe yeah maybe that’s it i want to uh finish my talk so uh the these are summary uh of the speech recognition first feature condition is very well defined problem and also fortunately we have a large corpus so it is quite you often use other other measure for the for our new machine learning algorithm and the factorization and making the problem productive this is a kind of great methodology for us to tackle this problem and the but since uh the this methodology is a bit complicated recently people are also that are the uh they’re the interesting and actually having a lot of development in the end to end a speech equation feature recovered in my next lecture and then this is the main topic or the other assignment three so please uh enjoy the speech recognition and let’s move to the discussion um the uh the priests i think you guys already tried a speech recognition engine by yourself right and then talk about what kind of errors you happened and also apply to the other language and discuss about it and since we don’t have enough time we don’t have our final discussion time just split and then either discuss it and then finish it okay so let’s just</p>
+</blockquote>
+</div>
+</div>
+</div>
+<section id="outline" class="level2">
+<h2 class="anchored" data-anchor-id="outline">Outline</h2>
+<p>Here is a lesson outline in a markdown unnumbered list format, based on the sources:</p>
+<ul>
+<li><strong>Speech Recognition Demo and Evaluation Metrics</strong>
+<ul>
+<li>Demonstration of speech recognition.</li>
+<li>Discussion of how well it works, and examples of when it fails.</li>
+<li>Evaluation metrics.</li>
+</ul></li>
+<li><strong>Evaluation Metrics</strong>
+<ul>
+<li>Sentence error rate.
+<ul>
+<li>Discuss if the entire sentence is correct.</li>
+<li>Explain why this is too strict of a measure, and the need to consider local correctness.</li>
+</ul></li>
+<li>Word error rate (WER).
+<ul>
+<li>Using edit distance word-by-word.</li>
+<li>Calculating error rate percentage.</li>
+<li>How to compute WER for languages without word boundaries.</li>
+</ul></li>
+<li>Other metrics.
+<ul>
+<li>Phoneme error rate (requires a pronunciation dictionary).</li>
+<li>Frame error rate (requires an alignment).</li>
+</ul></li>
+<li>NIST Speech Recognition Scoring Toolkit (SCTK).</li>
+</ul></li>
+<li><strong>(A bit) Mathematical Formulation of Speech Recognition</strong>
+<ul>
+<li>Speech recognition as a conversion from a physical signal to a linguistic symbol.</li>
+<li>Explanation of probabilistic formulation.
+<ul>
+<li>MAP decision theory to estimate the most probable word sequence.</li>
+<li>Noisy channel model.</li>
+<li>Factoring and conditional independence.</li>
+</ul></li>
+</ul></li>
+<li><strong>Standard Speech Recognition Pipeline</strong>
+<ul>
+<li>Feature extraction.
+<ul>
+<li>Converting waveform to MFCC.</li>
+<li>Language-independent process.</li>
+<li>Desirable representations.</li>
+</ul></li>
+<li>Acoustic Modeling.
+<ul>
+<li>Converting speech features to phoneme sequences.</li>
+<li>Using Hidden Markov Model (HMM) to align speech features and phoneme sequences.</li>
+<li>Language-independent.</li>
+</ul></li>
+<li>Lexicon.
+<ul>
+<li>Pronunciation dictionary.</li>
+<li>CMU dictionary.</li>
+<li>Multilingual phone dictionary.</li>
+</ul></li>
+<li>Language Model.
+<ul>
+<li>Using N-grams or recurrent neural networks.</li>
+<li>Word selection based on context.</li>
+<li>Language-dependent.</li>
+</ul></li>
+</ul></li>
+<li><strong>End-to-end Speech Recognition</strong>
+<ul>
+<li>Using a single neural network.</li>
+<li>A simpler solution for multilingual ASR.</li>
+</ul></li>
+</ul>
+</section>
+<section id="papers" class="level2">
+<h2 class="anchored" data-anchor-id="papers">Papers</h2>
+<ul>
+<li><span class="citation" data-cites="Pallett2003ALA">Pallett (2003)</span> <a href="http://www.itl.nist.gov/iad/mig/tests/rt/ASRhistory/pdf/NIST_benchmark_ASRtests_2003.pdf">A look at NIST’s benchmark ASR tests: past, present, and future</a></li>
+<li><span class="citation" data-cites="saon2015ibm">Saon et al. (2015)</span> <a href="https://arxiv.org/pdf/1505.05899">The IBM 2015 English Conversational Telephone Speech Recognition System</a></li>
+<li><span class="citation" data-cites="xiong2017achievinghumanparityconversational">Xiong et al. (2017)</span> <a href="https://arxiv.org/pdf/1610.05256">ACHIEVING HUMAN PARITY IN CONVERSATIONAL SPEECH RECOGNITION</a></li>
+</ul>
+</section>
+<section id="warlpiri-in-10-minutes" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="warlpiri-in-10-minutes">Warlpiri in 10 minutes</h2>
+<div class="page-columns page-full"><p>  </p><div class="no-row-height column-margin column-container"><img src="https://orenbochman.github.io/notes-nlp/notes/cs11-737-w14-ASR/geom.png" id="fig-lit-greo" class="img-fluid" width="400" alt="Geography"><img src="https://orenbochman.github.io/notes-nlp/notes/cs11-737-w14-ASR/consonants.png" id="fig-lit-cons" class="img-fluid" width="400" alt="Consonants"><img src="https://orenbochman.github.io/notes-nlp/notes/cs11-737-w14-ASR/vowels.png" id="fig-lit-vowel" class="img-fluid" width="200" alt="Vowels"></div></div>
+<ul>
+<li>Spoken in the Northern Territory of Australia by the Warlpiri people.</li>
+<li>Approximately 2,500-3,000 native speakers.</li>
+<li>One of the largest Aboriginal languages in Australia based on the number of speakers.</li>
+<li>One of only 13 indigenous languages in Australia still being passed down to children.</li>
+<li>Alternative names include Walbiri and Waljbiri.</li>
+</ul>
+<p><strong>Language Family &amp; History</strong></p>
+<ul>
+<li>Pama-Nyungan.</li>
+<li>Ngarrkic languages.</li>
+<li>The term <em>Jukurrpa,</em> referring to Aboriginal spiritual beliefs, comes from Warlpiri.</li>
+<li>A writing system was not developed until the 1970s when the language began to be taught in schools.</li>
+</ul>
+<p><strong>Grammar</strong></p>
+<ul>
+<li><strong>Free word order</strong>, but the auxiliary word is almost always the second word in a clause.</li>
+<li><strong>Ergative</strong> marking. The actor takes a special ending called the ergative ending. The ergative ending marks the subject of a transitive sentence.</li>
+<li><strong>Split ergativity</strong>. Nouns follow one set of rules, while pronouns and auxiliary verbs follow another.</li>
+<li>Suffixes indicate person and number of the subject and object.</li>
+<li><strong>Vowel harmony</strong>.</li>
+</ul>
+<p><strong>Phonology</strong></p>
+<ul>
+<li>Most Warlpiri languages have only <strong>three vowels</strong>.</li>
+<li><strong>No voicing contrast</strong>. Aboriginal languages have no contrast between voiced and voiceless consonants. A sound can sound like a ‘p’ or a ‘b’ depending on its position in the word.</li>
+<li><strong>No fricative sounds</strong>.</li>
+<li>Love the ‘r’ sound. Warlpiri has three ‘r’ sounds.</li>
+</ul>
+<p><strong>Interesting Linguistic Features</strong></p>
+<ul>
+<li><strong>Avoidance register</strong>, a special style of language is used between certain family relations that have a drastically reduced lexicon.</li>
+<li>Warlpiri Sign Language also exists.</li>
+<li>Speakers are often multilingual, learning each other’s languages.</li>
+<li>A strong tradition exists of not saying the names or showing images of people who have passed away.</li>
+</ul>
+<p><strong>Present Status</strong></p>
+<ul>
+<li>Warlpiri is considered a threatened language because children sometimes respond in English even when spoken to in Warlpiri.</li>
+<li>There are efforts to teach the language in schools and create modern terminology.</li>
+</ul>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="ref-Pallett2003ALA" class="csl-entry">
+Pallett, David. 2003. <span>“A Look at NIST’s Benchmark ASR Tests: Past, Present, and Future.”</span> <em>2003 IEEE Workshop on Automatic Speech Recognition and Understanding (IEEE Cat. No.03EX721)</em>, 483–88. <a href="https://api.semanticscholar.org/CorpusID:17986888">https://api.semanticscholar.org/CorpusID:17986888</a>.
+</div>
+<div id="ref-saon2015ibm" class="csl-entry">
+Saon, George, Hong-Kwang J Kuo, Steven Rennie, and Michael Picheny. 2015. <span>“The IBM 2015 English Conversational Telephone Speech Recognition System.”</span> <em>arXiv Preprint arXiv:1505.05899</em>.
+</div>
+<div id="ref-xiong2017achievinghumanparityconversational" class="csl-entry">
+Xiong, W., J. Droppo, X. Huang, F. Seide, M. Seltzer, A. Stolcke, D. Yu, and G. Zweig. 2017. <span>“Achieving Human Parity in Conversational Speech Recognition.”</span> <a href="https://arxiv.org/abs/1610.05256">https://arxiv.org/abs/1610.05256</a>.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2022,
+  author = {Bochman, Oren},
+  title = {Automatic {Speech} {Recognition}},
+  date = {2022-03-03},
+  url = {https://orenbochman.github.io/notes-nlp/notes/cs11-737-w14-ASR/},
+  langid = {en}
+}
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2022" class="csl-entry quarto-appendix-citeas">
+Bochman, Oren. 2022. <span>“Automatic Speech Recognition.”</span> March
+3, 2022. <a href="https://orenbochman.github.io/notes-nlp/notes/cs11-737-w14-ASR/">https://orenbochman.github.io/notes-nlp/notes/cs11-737-w14-ASR/</a>.
+</div></div></section></div> ]]></description>
+  <category>Attention</category>
+  <category>Multilingual NLP</category>
+  <category>NLP</category>
+  <category>Notes</category>
+  <guid>https://orenbochman.github.io/notes-nlp/notes/cs11-737-w14-ASR/</guid>
+  <pubDate>Wed, 02 Mar 2022 22:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Speech</title>
+  <dc:creator>Oren Bochman</dc:creator>
   <link>https://orenbochman.github.io/notes-nlp/notes/cs11-737-w13-speech/</link>
   <description><![CDATA[ 
 
@@ -2951,6 +3369,145 @@ February 17, 2022. <a href="https://orenbochman.github.io/notes-nlp/notes/cs11-7
   <pubDate>Wed, 16 Feb 2022 22:00:00 GMT</pubDate>
 </item>
 <item>
+  <title>Assignment 1: Multilingual POS Tagging</title>
+  <dc:creator>Oren Bochman</dc:creator>
+  <link>https://orenbochman.github.io/notes-nlp/notes/cs11-737-w02-assignment-1/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://orenbochman.github.io/notes-nlp/images/tiling.png" class="nolightbox img-fluid figure-img" width="200"></p>
+<figcaption>course banner</figcaption>
+</figure>
+</div><div id="vid-01" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-vid figure">
+<div aria-describedby="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/Gx5eLtOY10g" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Video&nbsp;1: Recitation of AWS Fundamentals 01
+</figcaption>
+</figure>
+</div><div id="vid-01" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-vid figure">
+<div aria-describedby="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/TAn-WlnwZhY" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Video&nbsp;2: Recitation of AWS Fundamentals 02
+</figcaption>
+</figure>
+</div><div id="vid-01" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-vid figure">
+<div aria-describedby="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/25VuoasPues" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Video&nbsp;3: Recitation of AWS Fundamentals 03
+</figcaption>
+</figure>
+</div><div id="vid-01" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-vid figure">
+<div aria-describedby="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/32vgKiOEpPA" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Video&nbsp;4: Recitation of AWS Fundamentals 04
+</figcaption>
+</figure>
+</div><div id="sup-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides" style="@page {size: 16in 9in;  margin: 0;}">
+<figure class="quarto-float quarto-float-sup figure">
+<div aria-describedby="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="slides.pdf" class="lightbox" data-gallery="slides" title="assignment slides"><embed src="slides.pdf" style="@page {size: 16in 9in;  margin: 0;}" width="420" height="340"></a></p>
+<figcaption>assignment slides</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-sup quarto-uncaptioned" id="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Supplementary Figure&nbsp;1
+</figcaption>
+</figure>
+</div></div>
+
+
+
+
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Example Sequence Classification/Labeling Tasks</li>
+<li>Overall Framework of Sequence Classification/Labeling</li>
+<li>Sequence Featurization Models (BiRNN, Self Attention, CNNs)</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Transcript
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<!-- Transcript here is machine generated no punctuation and I eddited it a but but it needs more work and I dont see the benefits unless I can run it through some tool. -->
+</div>
+</div>
+</div>
+<section id="some-ideas" class="level2">
+<h2 class="anchored" data-anchor-id="some-ideas">Some Ideas</h2>
+<ol type="1">
+<li>crearing a multilingual POS tagger</li>
+<li>using a hierarchical model that does partial pooling to learn from multiple languages when working on a low-resource language</li>
+<li>creating a surrogate simulated language which
+<ol type="1">
+<li>has parameters that correspond to the low resource language - resources are drawn from language database like WALS, Ethnologue, and Glottolog Note that the challange then becomes in how to generate the surrogate language based on these parameters. One could try to create real phonetic and morphological rules etc or one might side step this complexity and use a simple mathematical construct to create data to create suitable embeddings.</li>
+<li>Use a phrase book as a template for generating texts in the surrogate languages. The outcome should be a dataset of translations of the phrase book in multiple languages. Note that it could also be feasible to generate multiple variants for the both the source and target language to avoid overfitting on the phrase book.</li>
+<li>a priors distribution that follows high resource languages. (i.e.&nbsp;idea that high frequency source words are more likely to be translated to high frequency target words)</li>
+<li>a language model that is trained on the high resource language and then used to generate the surrogate language</li>
+<li>a model that is trained on the surrogate language and then used to tag the low resource language</li>
+</ol></li>
+</ol>
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2022,
+  author = {Bochman, Oren},
+  title = {Assignment 1: {Multilingual} {POS} {Tagging}},
+  date = {2022-02-15},
+  url = {https://orenbochman.github.io/notes-nlp/notes/cs11-737-w02-assignment-1/},
+  langid = {en}
+}
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2022" class="csl-entry quarto-appendix-citeas">
+Bochman, Oren. 2022. <span>“Assignment 1: Multilingual POS
+Tagging.”</span> February 15, 2022. <a href="https://orenbochman.github.io/notes-nlp/notes/cs11-737-w02-assignment-1/">https://orenbochman.github.io/notes-nlp/notes/cs11-737-w02-assignment-1/</a>.
+</div></div></section></div> ]]></description>
+  <category>Multilingual NLP</category>
+  <category>NLP</category>
+  <category>Notes</category>
+  <guid>https://orenbochman.github.io/notes-nlp/notes/cs11-737-w02-assignment-1/</guid>
+  <pubDate>Mon, 14 Feb 2022 22:00:00 GMT</pubDate>
+</item>
+<item>
   <title>Translation and Translation Data</title>
   <dc:creator>Oren Bochman</dc:creator>
   <link>https://orenbochman.github.io/notes-nlp/notes/cs11-737-w09-training-transfer/</link>
@@ -3011,686 +3568,6 @@ February 15, 2022. <a href="https://orenbochman.github.io/notes-nlp/notes/cs11-7
   <category>Notes</category>
   <guid>https://orenbochman.github.io/notes-nlp/notes/cs11-737-w09-training-transfer/</guid>
   <pubDate>Mon, 14 Feb 2022 22:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Translation and Translation Data</title>
-  <dc:creator>Oren Bochman</dc:creator>
-  <link>https://orenbochman.github.io/notes-nlp/notes/cs11-737-w08-contact/</link>
-  <description><![CDATA[ 
-
-
-
-
-
-
-<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="https://orenbochman.github.io/notes-nlp/images/tiling.png" class="nolightbox img-fluid figure-img" width="200"></p>
-<figcaption>course banner</figcaption>
-</figure>
-</div><div id="vid-01" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-vid figure">
-<div aria-describedby="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/kfbMP3oKK-E" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Video&nbsp;1: Lesson Video
-</figcaption>
-</figure>
-</div><div id="sup-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides" style="@page {size: 16in 9in;  margin: 0;}">
-<figure class="quarto-float quarto-float-sup figure">
-<div aria-describedby="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="slides.pdf" class="lightbox" data-gallery="slides" title="This week’s slides"><embed src="slides.pdf" style="@page {size: 16in 9in;  margin: 0;}" width="420" height="340"></a></p>
-<figcaption>This week’s slides</figcaption>
-</figure>
-</div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-sup quarto-uncaptioned" id="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Supplementary Figure&nbsp;1
-</figcaption>
-</figure>
-</div></div>
-
-
-
-
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2022,
-  author = {Bochman, Oren},
-  title = {Translation and {Translation} {Data}},
-  date = {2022-02-10},
-  url = {https://orenbochman.github.io/notes-nlp/notes/cs11-737-w08-contact/},
-  langid = {en}
-}
-</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2022" class="csl-entry quarto-appendix-citeas">
-Bochman, Oren. 2022. <span>“Translation and Translation Data.”</span>
-February 10, 2022. <a href="https://orenbochman.github.io/notes-nlp/notes/cs11-737-w08-contact/">https://orenbochman.github.io/notes-nlp/notes/cs11-737-w08-contact/</a>.
-</div></div></section></div> ]]></description>
-  <category>Attention</category>
-  <category>Multilingual NLP</category>
-  <category>NLP</category>
-  <category>Notes</category>
-  <guid>https://orenbochman.github.io/notes-nlp/notes/cs11-737-w08-contact/</guid>
-  <pubDate>Wed, 09 Feb 2022 22:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Data-driven Strategies for NMT</title>
-  <dc:creator>Oren Bochman</dc:creator>
-  <link>https://orenbochman.github.io/notes-nlp/notes/cs11-737-w07-data-driven-NMT/</link>
-  <description><![CDATA[ 
-
-
-
-
-
-
-<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="https://orenbochman.github.io/notes-nlp/images/tiling.png" class="nolightbox img-fluid figure-img" width="200"></p>
-<figcaption>course banner</figcaption>
-</figure>
-</div><div id="vid-01" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-vid figure">
-<div aria-describedby="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/XeDCP0newd8?list=PL8PYTP1V4I8BhCpzfdKKdd1OnTfLcyZr7&amp;index=17&amp;ab_channel=GrahamNeubig" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Video&nbsp;1: Lesson Video
-</figcaption>
-</figure>
-</div><div id="vid-02" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-vid figure">
-<div aria-describedby="vid-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-video"><video id="video_shortcode_videojs_video1" class="video-js vjs-default-skin vjs-fluid" controls="" preload="auto" data-setup="{}" title=""><source src="https://aclanthology.org/P19-1579.mp4"></video></div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Video&nbsp;2: Generalized Data Augmentation for Low-Resource Translation (<span class="citation" data-cites="xia-etal-2019-generalized">Xia et al. (2019)</span>)
-</figcaption>
-</figure>
-</div><div id="vid-03" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-vid figure">
-<div aria-describedby="vid-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-video"><video id="video_shortcode_videojs_video2" class="video-js vjs-default-skin vjs-fluid" controls="" preload="auto" data-setup="{}" title=""><source src="https://aclanthology.org/Q17-1024.mp4"></video></div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-03-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Video&nbsp;3: Google’s Multilingual Neural Machine Translation System: Enabling Zero-Shot Translation (<span class="citation" data-cites="johnson-etal-2017-googles">Johnson et al. (2017)</span>)
-</figcaption>
-</figure>
-</div><div id="vid-04" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-vid figure">
-<div aria-describedby="vid-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-video"><video id="video_shortcode_videojs_video3" class="video-js vjs-default-skin vjs-fluid" controls="" preload="auto" data-setup="{}" title=""><source src="https://aclanthology.org/D18-1103.mp4"></video></div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-04-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Video&nbsp;4: Rapid Adaptation of Neural Machine Translation to New Languages (<span class="citation" data-cites="neubig-hu-2018-rapid">Neubig and Hu (2018)</span>)
-</figcaption>
-</figure>
-</div><div id="sup-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides" style="@page {size: 16in 9in;  margin: 0;}">
-<figure class="quarto-float quarto-float-sup figure">
-<div aria-describedby="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="slides.pdf" class="lightbox" data-gallery="slides" title="This week’s slides"><embed src="slides.pdf" style="@page {size: 16in 9in;  margin: 0;}" width="420" height="340"></a></p>
-<figcaption>This week’s slides</figcaption>
-</figure>
-</div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-sup quarto-uncaptioned" id="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Supplementary Figure&nbsp;1
-</figcaption>
-</figure>
-</div></div>
-
-
-
-
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Transcript
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<section id="introduction" class="level3">
-<h3 class="anchored" data-anchor-id="introduction">Introduction</h3>
-<blockquote class="blockquote">
-<p>This time I’ll be talking about Machine Translation one more time</p>
-<p>I didn’t get a chance to talk about <strong>evaluation of translation</strong> two times ago. I’d like to start out with that because that’s pretty important and then we can talk about <strong>the data augmentation strategies</strong>.</p>
-</blockquote>
-</section>
-<section id="machine-translation-evaluation" class="level2">
-<h2 class="anchored" data-anchor-id="machine-translation-evaluation">Machine Translation Evaluation</h2>
-<blockquote class="blockquote">
-<p>MT evaluation is a very important and difficult topic in doing machine translation research. <mark>I think we’ve gotten to the point where almost evaluating how well we’re doing is maybe as difficult as like actually doing the translation itself</mark> The reason for this is: if we output a translation there are many different correct translations. We could have paraphrases where the output is “this is a dog”, “I see a dog”, “there is a dog” here other things like this and all of those would be appropriate for an equivalent sentence in another language.</p>
-</blockquote>
-</section>
-<section id="manual-evaluation" class="level2">
-<h2 class="anchored" data-anchor-id="manual-evaluation">Manual Evaluation</h2>
-<blockquote class="blockquote">
-<p>The basic evaluation paradigm in MT. There’s two different types. There’s human evaluation or manual evaluation and automatic evaluation. This is the basic evaluation paradigm for automatic evaluation. Where basically what we do is we have a parallel test set where we have an input and an output in the language pair that we’re interested in. We use a system to generate translations and we compare the target translations with references. Before I talk a little bit more detail about that I’d like to talk about kind of manual evaluation. This is the gold standard of doing evaluation of translation systems. Where basically we ask human evaluators to check whether the answer is correct or not. To give an example we’ve taken a source side sentence we generate some outputs and you can either evaluate by having a human evaluator look at the source in the output or look at a reference and in the output and the reference would be like the so-called correct translation looking at the source and the output only works if you’re bilingual in both languages and it’s somewhat difficult to get bilingual speakers or at least more expensive however given the quality of machine translation systems nowadays very often you don’t know if the output of a human translator like your reference is better than the machine translation system so like very often if you hire a person to do evaluation you know they might not try super hard and like I mentioned before so kind of the gold standard is to get somebody who knows the source and the target to do the evaluation there’s a number of different axes along which you can do evaluation I just listed a couple of them here one is adequacy and adequacy is basically whether the meaning of the translation is conveyed properly and the in this case this is the correct answer here you would know this if you knew japanese which you know most people don’t but if you knew japanese you would know the first one is correct so this is perfectly adequate it conveys the target message the middle one is conveys the target message but is this fluent so it would score high on an adequacy scale but on a fluency scale it would score low the one over here is fluent but not adequate so basically it switched the subject to that object for order so it would be wrong and one notable thing about fluency is you don’t need to know the source language to evaluate fluency all you need to know is the target language because it only has to do with whether the output is fluent or not you can also do pairwise evaluation which just says which one of these is better one of the good things about pairwise evaluation is it’s very simple because you just ask question which do you like better which do you think is a better translation the problem with it is it doesn’t give you an absolute idea of how well you’re doing so if you have two really bad systems and say which is better one might be better but they’re both really bad if you have two really good systems and say which is better one might be better but they’re both really good so kind of absolute scales have that advantage another thing is just like you might get bad translators you might get lazy evaluators you know if you hire people on mechanical turks and they’re not very motivated for example so you need to be careful about quality control as well</p>
-</blockquote>
-</section>
-<section id="human-evaluation-shared-tasks" class="level2">
-<h2 class="anchored" data-anchor-id="human-evaluation-shared-tasks">Human Evaluation Shared Tasks</h2>
-<blockquote class="blockquote">
-<p>There’s a <strong>human evaluation shared tasks</strong> so the most famous one is <em>the conference on machine translation shared tasks</em>. I can show you a little bit what this looks like. They basically have a whole bunch of tasks that you can participate in most of these are tasks for actual translation, but they also have evaluation tasks on metrics and quality estimation so basically what you try to do here is you try to create a metric that has the highest correlation with with human evaluation and for quality estimation what this is is this is essentially evaluation without a gold standard reference so you’re just given the input and the output and you want to guess how good the system output is and this is harder obviously because you don’t have an example of what a good translation looks like but it’s also very useful in practical situations where like let’s say you’re a machine translation company and you want to decide whether you need to get a human translator to go in and check the output and correct it or something like that so if that’s the case if you can estimate very accurately whether the input and output are correct or not then that would save you money save you time give you confidence in the results</p>
-</blockquote>
-</section>
-<section id="bleu-scores-bilingual-evaluation-understudy" class="level2">
-<h2 class="anchored" data-anchor-id="bleu-scores-bilingual-evaluation-understudy">BLEU Scores (BiLingual Evaluation Understudy)</h2>
-<blockquote class="blockquote">
-<p>There’s also other leaderboards and stuff for other seq2seq models but that’s a little bit less important for this multilingual class. There are other metrics like BLEU scores so BLEU score is very famous. You know if you’ve done any research on machine translation or even heard of it you probably encountered BLEU. The exact details of how BLEU is calculated are: What you do is you take the precision of N-grams output by the system. So for example if you look at the unigram precision that’s out of all the unigrams that the system output how many of them exist in a reference or one of the references that you’re provided. If in the case that you’re using multiple references and this gives you a position of like three out of five and then you take the geometric mean of N-grams, usually one to four and then you also have a penalty for outputting two short sentences. Because one way to improve your precision is to not output very many things &gt; This is basically to prevent you from gaming system. But the important thing is now the details of how BLEU is calculated probably the important thing is that this is a <strong>lexical metric</strong> which means that you’re just doing exact match with the references and this has a few issues. One of the issues is essentially that you So there’s there’s two major issues that cause BLEU to either underestimate how good a translation is or overestimate how good a translation is.</p>
-</blockquote>
-<blockquote class="blockquote">
-<p>BLEU tends to underestimate how good translations are when the translations are paraphrases of the true reference. So for example had I have like “I went I went to the store and bought a book yesterday” and you compare that with “yesterday I bought a book at the store” Those are almost identical in meaning But they would get a low BLEU square because I’ve just rearranged the phrases a little bit. So that’s when BLEU tends to underestimate scores.</p>
-</blockquote>
-<blockquote class="blockquote">
-<p>BLEU tends to overestimate scores when you get very critical words in the sentence wrong but get everything else right</p>
-</blockquote>
-<p>for example</p>
-<p>“could you please send this big package to philadelphia”</p>
-<p>turns into:</p>
-<p>“could you please send this big package to japan”</p>
-<blockquote class="blockquote">
-<p>That would get a very good BLEU score because most of the words are the same but your package would go to Japan and that’s probably not what you intended by that, otherwise right.</p>
-</blockquote>
-<blockquote class="blockquote">
-<p>That’s the the downside of BLEU. It’s basically not smart enough with respect to these.</p>
-</blockquote>
-</section>
-<section id="shortness-penalty" class="level2">
-<h2 class="anchored" data-anchor-id="shortness-penalty">Shortness Penalty</h2>
-<blockquote class="blockquote">
-<p>Yhe brevity the brevity penalty basically gives you a penalty if your output is shorter than the intended output. If the reference is like 20 words then you’re and your sentence is 15 words you would get a penalty of about 0.75 It’s not exactly like just the ratio it actually drops off faster and stuff like that but that’s a basic idea. That’s a really good question so you pay a penalty in your precision your precision goes down by a lot because there’s no way to get good precision if you output too many things. One thing you should know about BLEU if you’re using it in your research which you might is that it’s very very sensitive to the length. So if your length is a little bit too short or a little bit too long it hurts your BLEU really badly. That’s another problem with BLEU essentially is that it’s not sensitive to paraphrases that are too long or too short as well.</p>
-</blockquote>
-</section>
-<section id="bert-score" class="level2">
-<h2 class="anchored" data-anchor-id="bert-score">Bert Score</h2>
-<blockquote class="blockquote">
-<p>Recently in the past three years or so, there’s been a huge improvement in embedding based metrics which are basically metrics that you know take advantage of recent NLP techniques and one of the first ones was bert score and these can be separated into unsupervised metrics and supervised metrics unsupervised metrics require no annotated data of whether a translation is a good translation or a bad translation supervised metrics are trained to basically regress to an estimation of how good a transplantation is or not so a Bert score is an unsupervised metric that’s based essentially on the similarity between burton betting so it has this matching algorithm where you basically for each word in the output you try to find you know how good it matches with one of the words in the input and this is good because it can do things like handle paraphrases as long as the paraphrases have similar bert embeddings another famous one is BLEUrt</p>
-</blockquote>
-</section>
-<section id="bluert" class="level2">
-<h2 class="anchored" data-anchor-id="bluert">BlueRT</h2>
-<p>What they did essentially was they trained bert to predict human evaluation scores so they essentially solve a regression problem from the sentences like the reference in this system output to an evaluation score so they’re just going in directly predicting evaluation and they have a bunch of other tricks like unsupervised training where they try to predict BLEU or rouge or other lexical metrics beforehand and that makes it more robust the favorite one that we use in our Comet research on mt now is a comet and comet is also similarly it trains the model to predict human evaluation but in addition to using the just the system output in reference it also uses a source sentence which means that essentially I talked about human evaluation right where you can either ask a human evaluator to look only at the the reference or also look at the source and for a similar reason to why we would like a speaker human speaker to do that it’s also useful to have the model do that because the model can look at the source and see if the information is reflected in the target</p>
-</section>
-<section id="bart-score" class="level2">
-<h2 class="anchored" data-anchor-id="bart-score">Bart Score</h2>
-<p>and the final one prism’s another one based on paraphrasing a final one is a bart score environment score is one that I’m a co-author on this is a unsupervised metric that is based on basically a generative model that tries to generate the the system output using the reference or the reference using the system output or the source using the system output et cetera et cetera and bart score I think is good because it’s unsupervised like birth score but it’s essentially more accurate and more controllable so you can do things like calculate recall calculate a precision and other things like that so if that sounds interesting you can take a look at the paper as well but basically if you’re doing empty I would suggest using comment now because it’s well supported it has a nice package it’s pretty widely tested and follow-up reports have suggested that it has very good correlation with human evaluation so that’s my suggestion you can</p>
-</section>
-<section id="meta-evaluation" class="level2">
-<h2 class="anchored" data-anchor-id="meta-evaluation">Meta Evaluation</h2>
-<p>Meta evaluation runs human evaluation and automatic evaluation on the same outputs and calculates the correlation this is what they do in the wmt shared tasks like the wmt metrics task for mt other things for summarization etc and one interesting thing is that evaluation as I mentioned at the beginning is pretty hard especially with good systems so most metrics actually had no correlation with human eval over a subset of the best systems at some of the wmt 2019 tasks which means that basically all of the evaluation metrics we had were kind of broken on like evaluating really good mt systems so fortunately now we have comment we have other things like this that actually seemed to be a lot more robust but it was a major problem so you basically calculate the correlation you calculate pearson’s correlation there’s experiments correlation and the way you do that is you human you do human eval of a whole bunch of sentences or humans develop a whole bunch of systems and you try to find the metric that has the highest correlation between the evaluation scores of the systems and the evaluations given by the humans yep all right they often don’t support that many languages well so that’s a good that’s a really good question I many of them do use something like embert or xlmr which support a lot of languages xlmr actually envert’s a little bit more biased xlmr has pretty good coverage of the most common languages in the world but of course as you go down to less well resource languages that’s going to continue to be a problem there you might be stuck with BLEU for now but honestly if you have really bad systems really bad empty systems I still think BLEU is probably good enough in many cases oh another option is carefu chrf and that’s a character-based evaluation metric for mt that’s particularly good for languages with like rich morphology or something like that so I think when you’re working with low resource languages your mnt systems are also going to be really bad so any metric you have is still going to be like reasonably good at measuring progress so</p>
-</section>
-<section id="database-strategies" class="level2">
-<h2 class="anchored" data-anchor-id="database-strategies">Database Strategies</h2>
-<p>The next thing I’d like to talk about is the database strategies to low resource mt there’s not a whole lot of content here so I’ll try to go through it rather quickly to leave time for the discussion but basically we have data challenges in the resource mt so mt of high resource languages with large parallel corpora gives us you know very good translations but low resource languages with small parallel corporate you just train there you can end up with nonsense so this is an example of a system trained on 5 000 languages and the most frequent failure state is basically that a neural nt system will just spit out something that has nothing to do with the original inputs there’s a famous example of this so that says why is google translate spitting out sinister religious prophecies and basically if you put in a dog dog dog dog dog in maori it outputs doomsday clock is three minutes at 12 we are experiencing characters in a dramatic development in which jesus returns [Music] can you guess why this happened exactly they use bible data in training their system and when you use bible data and training your system and your system doesn’t know what to do because it has so few resources or it sees something it doesn’t know it just reverts to using the language model and basically outputs whatever the language model thinks and thinks it looks likely and so you know if your system is trained on bible data that looks like the bible if your system’s trained on something else it looks like something else High and Low Resource Languages so you know that’s basically what happened here as well so some ways to fix this we can transfer from high resource languages to low resource languages so basically what you do is you train on a high resource language or multiple high resource languages and then you adapt to the low resource language one the simplest way to do that is just to continue fine tuning on the low resource language you can also do joint training with the low resource language in the high resource language so just concatenate all the data together and in training so this is okay but there are some problems with this as well one problem is a sub-optimal lexical or syntactic sharing and another problem is it’s not possible to leverage monolingual data because you still require a parallel data here and I’m going to be talking more about like lexical overlap and loanwords and stuff in in the next class so I’ll cover that more there but basically suffice to say the high resource language and the lower resource language are different so training on different data is sub-optimal for information sure</p>
-</section>
-<section id="data-augmentation" class="level2">
-<h2 class="anchored" data-anchor-id="data-augmentation">Data Augmentation</h2>
-<p>so if we think about data augmentation data augmentation is basically generating other data that looks like the data that you want to have the very convenient thing about this is generating more training data and feeding it into your existing system is easy but effective in in improving mt performance so it’s actually a pretty widely used technique now so if we look at the available resources we might have a low resource language parallel data a high resource language parallel data and also for example target data which is monolingual hence the m here and what we do is we would like to create augmented data where we have target data and like pseudo low resource language data and train our model on this with the idea being that if we can create this this will be closer to our final evaluation scenario where we where we want to generate the target given a low resource language</p>
-</section>
-<section id="back-translation" class="level2">
-<h2 class="anchored" data-anchor-id="back-translation">Back Translation</h2>
-<p>so the first example is a back translation and the way back translation works is basically we train a target two low resource language system and we take our monolingual target data and we generate fake low resource language data by translating the target data into the low resource language data so this is how it works we take our target to low resource language system we back translate using the system and then we train a low resource language to target language system using the concatenation of this augmented data in the original data and the key point here is that when we are when we’re training like a sequence sequence model or a machine translation model we’re we’re training it to do two things we’re training it to do language modeling on the target side only and we’re trying to do mapping between the source side and the target side and in order to do language modeling we only really need good target site data so even if there’s some degree of error in this like low resource language here we’ll still be able to learn target site data and we’ll be able to learn a the language model from target side data and we’ll be able to learn a mapping you know even if it’s imperfect from the low resource language to the target language</p>
-</section>
-<section id="training-schedule" class="level2">
-<h2 class="anchored" data-anchor-id="training-schedule">Training Schedule</h2>
-<p>so there’s a couple ways to generate translations when doing back translation the first one is using beam search oh sorry yeah yeah that’s a really that’s a really good question so the question was is there any sort of training schedule that you use when you do this so the the kind of quote-unquote obvious training schedule that you might do is you might train jointly on both of them at first and then fine-tune on this data over here and that would make sense because you know this is good data this is like actually translated data however there’s another issue which actually is not super obvious at first but it’s maybe obvious in hindsight which is that if this data is all from the bible and then you want to translate news then actually fine tuning on bible data will be really out of domain and cause issues for you so in fact in the original black translation paper they threw away this data and only trained on this because it was more in domain and that ended up giving better results but that was predicated on the fact that they have a good you know batch translation system in the first place so it’s not necessarily clear what the ideal schedule is but you would almost certainly benefit from some sort of schedule or balancing or something but that’s a complicated hyper parameter so because it’s a complicated hyper parameter it’s also very common to just concatenate the two and these are good details to know for assignment too by the way because they might make a difference in your final scores</p>
-</section>
-<section id="generating-translations" class="level2">
-<h2 class="anchored" data-anchor-id="generating-translations">Generating Translations</h2>
-<blockquote class="blockquote">
-<p>How to generate translations?</p>
-<p>Beam search is one way and basically what this is doing is selecting the highest scoring output. This was done in the original paper. This has the advantage of having higher quality but also lower diversity in the outputs and the potential for bias. You might like for example one result is beam search tends to mostly output pronouns from the majority gender because they’re over-represented. You might get only get male inflections if you do beam search. That’s the type of data bias that could result from here. The other option is sampling. What you do is you randomly sample from the back translation model which gives a lower overall quality but higher diversity. Most reports say this works better at the moment. We had a recent paper which I’m going to introduce in a second but this has kind of a theoretical explanation for why we think sampling should be better which is that it’s a better model of the underlying data distribution that we’re trying to model. I think I’m pretty firmly a believer that sampling is the way to go there’s also a method of iterative back translation.</p>
-</blockquote>
-</section>
-<section id="iterative-back-translation." class="level2">
-<h2 class="anchored" data-anchor-id="iterative-back-translation.">Iterative back translation.</h2>
-<blockquote class="blockquote">
-<p>Iterative back translation is particularly useful when you have a large monolingual data in both languages. Again the idea is simple you train a low resource language to target system first. This is going in the direction you originally want to translate. You generate pseudo data with the target language. You use that to train your target to low resource language system. You back translate and then you use this to train your final system so this is now you have three systems your forward translation data augmentation system your back translation data augmentation system and your forward translation final system you can do this as many times as you want obviously you could also do it on the fly in the process of training the system so this can become arbitrarily complicated if you want</p>
-</blockquote>
-</section>
-<section id="metaback-translation" class="level2">
-<h2 class="anchored" data-anchor-id="metaback-translation">Metaback translation</h2>
-<p>just one example of this this is a paper that I just talked about but we have a paper called meta back translation which I think is kind of a an interesting idea so normally when we’re training this system to train the the low resource language to the target language system we’re back propping the gradient from the slow resource language data but we can also do a back propagation step where we basically train oh sorry that arrow is thrown I apologize so the arrow actually should be going from here around this to here so the basic idea I’ll fix this later in the slides but the basic idea is we use the signal that we get from from training the final system that we want to train to update the parameters of the back translation system so we’re essentially training the ideal back translation system to train a good forward translation system so this is a I like the idea behind here which is basically the final goal of the back translation system is to improve the forward translation system so we can directly optimize it to do this</p>
-</section>
-<section id="metaback-translation-issues" class="level2">
-<h2 class="anchored" data-anchor-id="metaback-translation-issues">Metaback translation issues</h2>
-<p>so there are a couple issues here the first issue is that back translation often fails in low resource languages or domains and as a solution one thing that we can do is we can use other high resource languages or we can combine them with monolingual data maybe with denoising objectives which we’re covering in a following class and we can perform other varieties of rule-based augmentation so I’m gonna go through these in a little bit in maybe in a few minutes so also actually we’ll have discussion about about these two so maybe I’ll just briefly explain the idea and we can discuss more in the discussion for people who read those papers so using high resource languages High resource languages augmentation and augmentation the problem is target to low resource language back translation might be very low quality so the idea is we can also use a high resource language that’s similar to the low resource language and basically for example if we have something like azerbaijani in turkish azerbaijani and turkish are very highly related so maybe we could use information from azerbaijani to english translation back translate into az into turkish which is certainly going to give us higher quality data and use that to augment our data for azerbaijani english system and then we can just throw away this azerbaijani data that we know is not going to be very useful so that would High resource languages pivoting give us additional high resource language to target language data and another thing we can do is we can augment via pivoting and so basically what that does is that gives us data where we take the high resource language data and we translate that into the low resource language and presumably translation from the high resource language to low resource language is easier because these languages are more related so basically what this does is that gives us a better like low resource language pseudo data here and we can also do a similar thing where we generate more high resource language data and this basically gives us three different ways to create this pseudo-parallel data between the low resource language and target language another simple trick this is kind of</p>
-</section>
-<section id="monolingual-data-copying" class="level2">
-<h2 class="anchored" data-anchor-id="monolingual-data-copying">Monolingual data copying</h2>
-<p>like frustratingly effective at improving your models is monolingual data copying and the issue is that back translation may help with structure but one of the issues with the resource language systems is that they tend to fail really badly on unusual vocabulary so like for example proper names or something like this so you might get a back translation system that’s very good at getting the structure right but get it gets you know all of your proper names and entities incorrect so basically one thing that you can do here is you just copy the target data into the source data and then you’re done and this kind of guarantees to maintain the entities so or the the rare words so that will help mitigate these issues of like vocabulary being dropped yeah something to point out with copying is that even in languages with different scripts it seems to work really well. &gt; Maybe because of auto and clutter objective stuff yeah even in languages with different scripts</p>
-</section>
-<section id="transfer-learning" class="level2">
-<h2 class="anchored" data-anchor-id="transfer-learning">Transfer learning</h2>
-<blockquote class="blockquote">
-<p>There’s actually a nice paper by the same authors who wrote this paper where they examine this. Basically they are trying to figure out <strong>transfer learning</strong>. Why does transfer learning have this positive effect? One of the things that they <mark>show is that even making sure the length is the same or approximately the same or making sure that the words are output in approximately the same order as the input is is effective for improving translation accuracy.</mark> If you have a low resource language the translation system might drop half the content or it might like totally mess up the order or something like this This paper is demonstrating that kind of just like a monotonic bias and a bias towards outputting approximately the same number of words gets you a long way in improving the results which of course monolingual data copying would also do</p>
-</blockquote>
-</section>
-<section id="dictionary-based-augmentation" class="level2">
-<h2 class="anchored" data-anchor-id="dictionary-based-augmentation">Dictionary based augmentation</h2>
-<blockquote class="blockquote">
-<p>So for the final things which we’re also reading so we can talk more about them in the discussion. We had dictionary based augmentation and dictionary based augmentation basically finds rare words in the source sentences it could also be in the target sentence and tries to replace the words with other words that are kind of in the same semantic class. It replaces car with motorbike and then using a lexicon. It replaces the words in the targeted sentence as well. It’s basically creating more sentences to augment augmented data with like words that are less frequent in the original</p>
-</blockquote>
-</section>
-<section id="word-alignment" class="level2">
-<h2 class="anchored" data-anchor-id="word-alignment">Word alignment</h2>
-<blockquote class="blockquote">
-<p>In order to do this they need to use a tool called word alignment What Word alignment does is, it essentially takes in two parallel corpora. The parallel corpora you want to find which words align to each other in the source and target sentences. This is useful for a number of reasons it’s useful for analysis it’s useful for cross-lingual transfer learning I talked about supervised alignment as a training method last time I believe and there’s a couple methods to do so there’s again traditional symbolic methods which like BLEU are based on exact lexical match or you know some variety of clustering</p>
-</blockquote>
-<p>giza ++ has some clustering involved in it but recently neural methods have been largely outperforming these and I can recommend a highly our aligner called awesome lion I i didn’t name it I’m far too humble to name my alignment or awesome line but but it’s pretty awesome I have to say and basically it uses multilingual perks and it tries to find things that are similar but it’s also fine-tuned multilingually on supervised data so basically there’s some supervision that goes into it to try to inform the aligner about the outputs and it works on any language that’s included in mvert again like the question before it won’t work on very low resource languages of course so then you might be stuck with keystone plus plus and faster Word by word data augmentation so you can also do things like word by word data augmentation where you simply translate sentences word by word into the target sentence using a dictionary this is another frustratingly you know effective method like monolingual data copying however there are problems like word order and syntactic divergence so if you get like I the new car bought number one the order is strange number two these words don’t actually align with each other so that’s a problem so Reordering other things you can do or you can try to decrease this divergence with reordering or rules so this was also another paper in the potential reading and basically what the idea is that you a priori do some reordering from one language from english into like reordered english and then do data augmentation on top of that and the good thing about this is like english has a lot of analysis tools you could like do syntactic parsing of english get the syntactic structure build reordering rules on top of that and then just apply dictionary-based translation and then the hope would be that you would get something that looks a lot more like japanese than if you just translated english word by word and one interesting thing we showed here was we demonstrated that this was useful for japanese translation but then we applied the exact same reordering rules and also applied it to wigger which is another language that’s completely different different language family but it’s it has a very similar syntax to japanese so because of that the exact same reordering rules for english were still effective in improving the results for weaker english translations so because of that you know it’s not language dependent it’s rather syntax dependent and because there’s syntactic similarities between the language it helps so yeah given that we now have the</p>
-</section>
-<section id="assignment" class="level2">
-<h2 class="anchored" data-anchor-id="assignment">Assignment</h2>
-<p>assignment actually this is this slide is missing one of the one of the papers that was a potential paper to read so first before we go to the discussion are there any questions so I kind of breezed through it the last part quickly but hopefully we can also talk about them in the discussion okay if not this time we’re going to try a new experiment we’re going to try to make six groups so the groups are going to be half the size and they’re going to be front middle front right front left back middle back left back middle in that right so we’re gonna ask everybody to talk a little bit more quietly but also you’ll be in a smaller circle so hopefully that’ll be easier and yeah let’s go ahead and actually guys since we’re running a little bit late I think maybe we’ll skip the reporting part this time is that okay and we’ll just you know be within our groups and if there’s anything really interesting we can share on piazza or something okay</p>
-</section>
-</div>
-</div>
-</div>
-<section id="papers" class="level2">
-<h2 class="anchored" data-anchor-id="papers">Papers:</h2>
-<ul>
-<li><span class="citation" data-cites="xia-etal-2019-generalized">Xia et al. (2019)</span> <a href="https://aclanthology.org/P19-1579/">Generalized data augmentation for low-resource translation</a>.</li>
-<li>Transfer HRL to LRL
-<ul>
-<li><span class="citation" data-cites="zoph-etal-2016-transfer">Zoph et al. (2016)</span> <a href="https://aclanthology.org/D16-1163/">Transfer Learning for Low-Resource Neural Machine Translation</a><br>
-</li>
-<li><span class="citation" data-cites="nguyen-chiang-2017-transfer">Nguyen and Chiang (2017)</span> <a href="https://aclanthology.org/I17-2050/">Transfer Learning across Low-Resource, Related Languages for Neural Machine Translation</a></li>
-</ul></li>
-<li>Joint training with LRL and HRL parallel data
-<ul>
-<li><span class="citation" data-cites="johnson-etal-2017-googles">Johnson et al. (2017)</span> <a href="https://aclanthology.org/Q17-1024/">Google’s Multilingual Neural Machine Translation System: Enabling Zero-Shot Translation</a></li>
-<li><span class="citation" data-cites="neubig-hu-2018-rapid">Neubig and Hu (2018)</span> <a href="https://aclanthology.org/D18-1103/">Rapid Adaptation of Neural Machine Translation to New Languages</a></li>
-</ul></li>
-<li>Back Translation
-<ul>
-<li><span class="citation" data-cites="sennrich-etal-2016-improving">Sennrich, Haddow, and Birch (2016)</span> <a href="https://aclanthology.org/P16-1009.pdf">Improving neural machine translation models with monolingual data</a>.</li>
-<li><span class="citation" data-cites="edunov-etal-2018-understanding">Edunov et al. (2018)</span> <a href="https://aclanthology.org/D18-1045.pdf">Understanding Back-Translation at Scale</a></li>
-<li><span class="citation" data-cites="pham2021metabacktranslation">Pham et al. (2021)</span> <a href="https://arxiv.org/abs/2102.07847">Meta Back-translation</a></li>
-</ul></li>
-<li><span class="citation" data-cites="currey-etal-2017-copied">Currey, Miceli Barone, and Heafield (2017)</span> <a href="https://aclanthology.org/W17-4715/">Copied Monolingual Data Improves Low-Resource Neural Machine Translation</a></li>
-<li><span class="citation" data-cites="fadaee-etal-2017-data">Fadaee, Bisazza, and Monz (2017)</span> <a href="https://aclanthology.org/P17-2090/">Data Augmentation for Low-Resource Neural Machine Translation</a></li>
-<li>Word-by-word Data Augmentation
-<ul>
-<li><span class="citation" data-cites="lample2018unsupervisedmachinetranslationusing">Lample et al. (2018)</span> <a href="https://arxiv.org/abs/1711.00043">Unsupervised Machine Translation Using Monolingual Corpora Only</a></li>
-</ul></li>
-<li>Word-by-word Augmentation w/ Reordering
-<ul>
-<li><span class="citation" data-cites="zhou2019handlingsyntacticdivergencelowresource">Zhou et al. (2019)</span> <a href="https://arxiv.org/abs/1909.00040">Handling Syntactic Divergence in Low-resource Machine Translation</a></li>
-</ul></li>
-</ul>
-</section>
-<section id="in-class-assignment" class="level2">
-<h2 class="anchored" data-anchor-id="in-class-assignment">In-class Assignment</h2>
-<p>Read one of the cited papers on heuristic data augmentation - <span class="citation" data-cites="fadaee-etal-2017-data">Fadaee, Bisazza, and Monz (2017)</span> or - <span class="citation" data-cites="zhou2019handlingsyntacticdivergencelowresource">Zhou et al. (2019)</span></p>
-<ul>
-<li>Try to think of how it would work for one of the languages you’re familiar with</li>
-<li>Are there any potential hurdles to applying such a method? Are there any improvements you can think of?</li>
-</ul>
-</section>
-<section id="resources" class="level2">
-<h2 class="anchored" data-anchor-id="resources">Resources</h2>
-<ul>
-<li><a href="https://github.com/moses-smt/giza-pp">GizA++</a></li>
-<li><a href="https://github.com/moses-smt/mgiza">mgiza</a></li>
-<li><a href="https://github.com/clab/fast_align">Fast Align</a></li>
-<li><a href="https://github.com/neulab/awesome-align">awesome-align</a> (<span class="citation" data-cites="dou2021wordalignmentfinetuningembeddings">Dou and Neubig (2021)</span>)</li>
-</ul>
-<pre><code>doch jetzt ist der Held gefallen . ||| but now the hero has fallen .
-neue Modelle werden erprobt . ||| new models are being tested .
-doch fehlen uns neue Ressourcen . ||| but we lack new resources .</code></pre>
-<pre><code>0-0 1-1 2-4 3-2 4-3 5-5 6-6
-0-0 1-1 2-2 2-3 3-4 4-5
-0-0 1-2 2-1 3-3 4-4 5-5</code></pre>
-
-
-
-</section>
-
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
-<div id="ref-currey-etal-2017-copied" class="csl-entry">
-Currey, Anna, Antonio Valerio Miceli Barone, and Kenneth Heafield. 2017. <span>“Copied Monolingual Data Improves Low-Resource Neural Machine Translation.”</span> In <em>Proceedings of the Second Conference on Machine Translation</em>, edited by Ondřej Bojar, Christian Buck, Rajen Chatterjee, Christian Federmann, Yvette Graham, Barry Haddow, Matthias Huck, Antonio Jimeno Yepes, Philipp Koehn, and Julia Kreutzer, 148–56. Copenhagen, Denmark: Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/W17-4715">https://doi.org/10.18653/v1/W17-4715</a>.
-</div>
-<div id="ref-dou2021wordalignmentfinetuningembeddings" class="csl-entry">
-Dou, Zi-Yi, and Graham Neubig. 2021. <span>“Word Alignment by Fine-Tuning Embeddings on Parallel Corpora.”</span> <a href="https://arxiv.org/abs/2101.08231">https://arxiv.org/abs/2101.08231</a>.
-</div>
-<div id="ref-edunov-etal-2018-understanding" class="csl-entry">
-Edunov, Sergey, Myle Ott, Michael Auli, and David Grangier. 2018. <span>“Understanding Back-Translation at Scale.”</span> In <em>Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing</em>, edited by Ellen Riloff, David Chiang, Julia Hockenmaier, and Jun’ichi Tsujii, 489–500. Brussels, Belgium: Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/D18-1045">https://doi.org/10.18653/v1/D18-1045</a>.
-</div>
-<div id="ref-fadaee-etal-2017-data" class="csl-entry">
-Fadaee, Marzieh, Arianna Bisazza, and Christof Monz. 2017. <span>“Data Augmentation for Low-Resource Neural Machine Translation.”</span> In <em>Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics (Volume 2: Short Papers)</em>, edited by Regina Barzilay and Min-Yen Kan, 567–73. Vancouver, Canada: Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/P17-2090">https://doi.org/10.18653/v1/P17-2090</a>.
-</div>
-<div id="ref-johnson-etal-2017-googles" class="csl-entry">
-Johnson, Melvin, Mike Schuster, Quoc V. Le, Maxim Krikun, Yonghui Wu, Zhifeng Chen, Nikhil Thorat, et al. 2017. <span>“<span>G</span>oogle‘s Multilingual Neural Machine Translation System: Enabling Zero-Shot Translation.”</span> Edited by Lillian Lee, Mark Johnson, and Kristina Toutanova. <em>Transactions of the Association for Computational Linguistics</em> 5: 339–51. <a href="https://doi.org/10.1162/tacl_a_00065">https://doi.org/10.1162/tacl_a_00065</a>.
-</div>
-<div id="ref-lample2018unsupervisedmachinetranslationusing" class="csl-entry">
-Lample, Guillaume, Alexis Conneau, Ludovic Denoyer, and Marc’Aurelio Ranzato. 2018. <span>“Unsupervised Machine Translation Using Monolingual Corpora Only.”</span> <a href="https://arxiv.org/abs/1711.00043">https://arxiv.org/abs/1711.00043</a>.
-</div>
-<div id="ref-neubig-hu-2018-rapid" class="csl-entry">
-Neubig, Graham, and Junjie Hu. 2018. <span>“Rapid Adaptation of Neural Machine Translation to New Languages.”</span> In <em>Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing</em>, edited by Ellen Riloff, David Chiang, Julia Hockenmaier, and Jun’ichi Tsujii, 875–80. Brussels, Belgium: Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/D18-1103">https://doi.org/10.18653/v1/D18-1103</a>.
-</div>
-<div id="ref-nguyen-chiang-2017-transfer" class="csl-entry">
-Nguyen, Toan Q., and David Chiang. 2017. <span>“Transfer Learning Across Low-Resource, Related Languages for Neural Machine Translation.”</span> In <em>Proceedings of the Eighth International Joint Conference on Natural Language Processing (Volume 2: Short Papers)</em>, edited by Greg Kondrak and Taro Watanabe, 296–301. Taipei, Taiwan: Asian Federation of Natural Language Processing. <a href="https://aclanthology.org/I17-2050/">https://aclanthology.org/I17-2050/</a>.
-</div>
-<div id="ref-pham2021metabacktranslation" class="csl-entry">
-Pham, Hieu, Xinyi Wang, Yiming Yang, and Graham Neubig. 2021. <span>“Meta Back-Translation.”</span> <a href="https://arxiv.org/abs/2102.07847">https://arxiv.org/abs/2102.07847</a>.
-</div>
-<div id="ref-sennrich-etal-2016-improving" class="csl-entry">
-Sennrich, Rico, Barry Haddow, and Alexandra Birch. 2016. <span>“Improving Neural Machine Translation Models with Monolingual Data.”</span> In <em>Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)</em>, edited by Katrin Erk and Noah A. Smith, 86–96. Berlin, Germany: Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/P16-1009">https://doi.org/10.18653/v1/P16-1009</a>.
-</div>
-<div id="ref-xia-etal-2019-generalized" class="csl-entry">
-Xia, Mengzhou, Xiang Kong, Antonios Anastasopoulos, and Graham Neubig. 2019. <span>“Generalized Data Augmentation for Low-Resource Translation.”</span> In <em>Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics</em>, edited by Anna Korhonen, David Traum, and Lluís Màrquez, 5786–96. Florence, Italy: Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/P19-1579">https://doi.org/10.18653/v1/P19-1579</a>.
-</div>
-<div id="ref-zhou2019handlingsyntacticdivergencelowresource" class="csl-entry">
-Zhou, Chunting, Xuezhe Ma, Junjie Hu, and Graham Neubig. 2019. <span>“Handling Syntactic Divergence in Low-Resource Machine Translation.”</span> <a href="https://arxiv.org/abs/1909.00040">https://arxiv.org/abs/1909.00040</a>.
-</div>
-<div id="ref-zoph-etal-2016-transfer" class="csl-entry">
-Zoph, Barret, Deniz Yuret, Jonathan May, and Kevin Knight. 2016. <span>“Transfer Learning for Low-Resource Neural Machine Translation.”</span> In <em>Proceedings of the 2016 Conference on Empirical Methods in Natural Language Processing</em>, edited by Jian Su, Kevin Duh, and Xavier Carreras, 1568–75. Austin, Texas: Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/D16-1163">https://doi.org/10.18653/v1/D16-1163</a>.
-</div>
-</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2022,
-  author = {Bochman, Oren},
-  title = {Data-Driven {Strategies} for {NMT}},
-  date = {2022-02-08},
-  url = {https://orenbochman.github.io/notes-nlp/notes/cs11-737-w07-data-driven-NMT/},
-  langid = {en}
-}
-</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2022" class="csl-entry quarto-appendix-citeas">
-Bochman, Oren. 2022. <span>“Data-Driven Strategies for NMT.”</span>
-February 8, 2022. <a href="https://orenbochman.github.io/notes-nlp/notes/cs11-737-w07-data-driven-NMT/">https://orenbochman.github.io/notes-nlp/notes/cs11-737-w07-data-driven-NMT/</a>.
-</div></div></section></div> ]]></description>
-  <category>Attention</category>
-  <category>Multilingual NLP</category>
-  <category>NLP</category>
-  <category>Notes</category>
-  <category>NMT</category>
-  <guid>https://orenbochman.github.io/notes-nlp/notes/cs11-737-w07-data-driven-NMT/</guid>
-  <pubDate>Mon, 07 Feb 2022 22:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Translation Models</title>
-  <dc:creator>Oren Bochman</dc:creator>
-  <link>https://orenbochman.github.io/notes-nlp/notes/cs11-737-w06-translation-models/</link>
-  <description><![CDATA[ 
-
-
-
-
-
-
-<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="https://orenbochman.github.io/notes-nlp/images/tiling.png" class="nolightbox img-fluid figure-img" width="200"></p>
-<figcaption>course banner</figcaption>
-</figure>
-</div><div id="vid-01" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-vid figure">
-<div aria-describedby="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/XeDCP0newd8" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Video&nbsp;1: Lesson Video
-</figcaption>
-</figure>
-</div><div id="sup-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides" style="@page {size: 16in 9in;  margin: 0;}">
-<figure class="quarto-float quarto-float-sup figure">
-<div aria-describedby="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="slides.pdf" class="lightbox" data-gallery="slides" title="This week’s slides"><embed src="slides.pdf" style="@page {size: 16in 9in;  margin: 0;}" width="420" height="340"></a></p>
-<figcaption>This week’s slides</figcaption>
-</figure>
-</div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-sup quarto-uncaptioned" id="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Supplementary Figure&nbsp;1
-</figcaption>
-</figure>
-</div></div>
-
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Learning Objectives
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<ul>
-<li>Sequence-to-sequence models w/ attention</li>
-<li>Decoding strategies</li>
-<li>Transformers</li>
-</ul>
-</div>
-</div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Transcript
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<!-- Transcript here is machine generated no punctuation and I eddited it a but but it needs more work and I dont see the benefits unless I can run it through some tool. -->
-<blockquote class="blockquote">
-<p>looking forward to talking about machine translation and sequence sequence models today as always I’ll welcome discussion on this some of this might be this is kind of the basic modeling stuff regarding machine translation so I think some of this might be elementary for people who have taken an nlp class before but there are you know some people who might not have covered this so I’d like to go through it after this we’re going to be talking about some concrete code details so looking at code from the annotated transformer and also from the assignment and as always please feel free to ask questions on chat or like live anytime you want so language models are basically generative models of text and what they do is they calculate the probability of a text x given you know calculate a probability of a text x and they allow you to sample from this probability distribution to generate outputs with a high probability and the so given this you know if we train on a particular variety of texts like let’s say we train on harry potter books the sampling distribution will generate things that look like harry potter there’s also conditional language models and conditional language models don’t just generate text but they generate text according to some specifications so if we have our input x and our output y our input x could be structured data output y could be a natural language description what we’re going to talk about this time is translation so input x could be english output y could be japanese our input x could be a document output y could be a short description and our input could be an utterance output of response inputs image output text input speech output transcript so you can see that a lot of things a lot of different tasks you know data to text generation or natural language generation translation summarization response generation image captioning and speech recognition all fit within this general paradigm so because of this you know these are a very powerful and widely used variety of models and so I’d like to go a little bit into exactly how we formulate this problem and learn these probabilistic models so when we calculate the probability of a sentence the way we can do that is by taking a sentence which consists of I words and calculating the probability by the product of the probabilities of the word in the sentence so if the next word is x I we calculate the probability of x i given all of the previous words in the sentence and this is a particular variety of language model oh sorry there’s a language intense sorry yeah I’ll find a good place to cut off this description and switch over to the language intent I am totally slipped my mind so [Music] then conditioned language models basically what they do is they condition on some added context and they calculate the probability of y given x and then they do the same thing where you condition on x and all of the previous generated words i talked about calculating the probability of words in a sentence and in most cases we’re taking the previous context calculating the probability of the next word given the previous context these are also called by a variety of names one name is an autoregressive link model where basically that means we’re predicting the next word given the previous words in some order specifically when the words that you’re predicting the the word here from all come to the left they’re also called left to right language models and there’s also a term causal language models which I I don’t prefer as much but you’ll also see in the literature and basically if you have a left to right language model we can use something like a recurrent neural network to feed in the previous word predict the next word feed in the previous word predict the next word feed in the previous word predict the next word etc etc and if we want to develop a conditional language model that conditions on some sort of context to predict the probability of the words the upcoming words we can do something like feed in the conditioning context into a recurrent neural network and predict the the outputs like this so basically we read the conditioning context one by one maybe it’s a japanese sentence and then we predict the probability of the output of the english sentence one by one so we have the encoder and so this is often called an encoder and this is called the decoder so these are often called encoder decoder models and they’re used pretty widely and you know all of nlp nowadays so I’ll actually skip that part so now we have this model we can train it you know I think a lot of people are everybody in the class is now training you know models for part of speech tagging now so because of that I I assume you know like about the recurrent neural networks and other things like this the the place where these kind of sequence sequence models or translation models become different is that we need to do generation from the models and so instead of like taking in individual words and trying to put a tag on them we actually need to generate outputs and the generation problem is basically we form a model of p of y given x and how do we use it to generate a sentence and there’s basically two methods the first method is sampling where we try to generate a random sentence according to the probability distribution and the next method is argmax where we try to generate a sentence with the highest probability and in general in translation which is the main topic of this lecture here we we use the arg max and actually maybe I’ll explain why in a few slides after I explain each method so for sampling the most common way to do this is called ancestral sampling where we randomly generate words one by one and the algorithm for doing so looks a little bit like this so we have while yj minus one is not equal to the end of sentence symbol so basically while we have not yet finished our sentence we calculate the probability of the next word given all the previous words in the conditioning context and we randomly sample a word from the next time step and this is a method for an exact method for sampling from p of y given x so this will give you you know basically samples that exactly follow the probability distribution that the model specifies if you had a really really good model where basically it only assigned probability to why that were you know plausible translations for x then probably the sampling would be fine you would get different translations every time but you know each translation that you sampled would be good however unfortunately our models are not all that great and very often if you sample kind of lower probability things according to this probability distribution they might not be very good translations so what we try to do instead is do some sort of search for the highest probability translation and one way to do this is doing something like greedy search so basically one by one we pick the single highest probability word in the output so that looks a little bit like this we similarly we go until we reach the end of sentence symbol but instead of sampling a random word according to the probability distribution each time we we take the highest probability word at the next time step each time so what this is doing is this is instead of picking you know any any old word next time it picks always fix the highest one which moves us closer to a very you know high scoring output unfortunately this is also not exact and it causes real problems so for example it will often kind of regardless of what the syntax should look like it might try to generate the kind of easier words in the sentence first because the easier words in the sentence will have higher probabilities so this arg max this greedy arg max we’ll try to choose those words first and another issue that this can bring up is it will prefer multiple common words to one rare word so like for example if we had a choice between new york and pittsburgh even if the product of new in york was lower than the probability of pittsburgh if the probability of new only was higher than pittsburgh this greedy search would kind of make that decision prematurely and not be able to back off and and reconsider the decision later so what we do instead is we have a method called beam search there are other methods as well but beam search is the most common method where instead of picking one high probability word at every time step we maintain several paths so this is an example of beam search with size two where basically we instead of like taking the highest probability word at the first time step which would be b we consider two high probability words of the first time step a and b we expand all next words for each of those possibilities and and then select the highest scoring sequence of length two based on all of these and basically beam search allows you to spend more time computing to look for a high scoring high scoring output and basically allows you to do more precise search and help resolve some of the issues that I talked about on the previous slide cool there’s also lots of other details if you want to go deep into the details of this like for example there are other methods for sampling that try to kind of alleviate the issues that you get from low probability [Music] low probability outputs by only sampling from the highest probability outputs things like top k sampling and nucleus sampling there’s also other methods for search that incorporate you know like dynamic beam sizes or other things like this but basically these standard b in machine translation standard beam search tends to be the thing that most people use and you usually just pick a beam size of five and forget about it and hope you know that that’s good enough and it usually is cool any questions about that before I move on okay I guess not so actually sorry I need to check a chat so next I’d like to talk about attention so attention is very very important in machine translation and one issue with the example like machine translation model that I talked about before is basically what we’re asking this model to do here is read in a whole sentence express all of the meaning in that sentence in a single vector and then output the appropriate translation based on this and i because I have previously worked as a translator I like to make an analog to what that would be like if you were asking a translator to do something so this is kind of like asking a translator to read a whole sentence memorize that whole sentence put the book that they were looking at away and then tried to translate output the whole sentence based entirely on their memory and you know for a lot of sentences a lot of things have people you know think of they might be able to do that but it’s a lot harder than if you can go back and reference the like original sentence when you’re doing translation and so this was kind of eloquently stated by ray mooney a professor at ut austin where he said you can’t cram the meaning of a whole bleeping sentence into a single bleeping vector and so the idea of attention is basically to relax this constraint of memorizing all of the content of a sentence in a single vector and put it into multiple vectors one vector for each token in the input so then we have the model that goes back and references each of these vectors one at a time so the basic idea behind attention is that we encode each word in the sentence into a single vector and when decoding we kind of perform a linear combination of these vectors weighted by attention weights and we use this combination from the vectors in picking the next word and I have a graphical example of this here so let’s say we have our encoder here and our encoder calculates a representation for each word in the sentence and our decoder here basically is stepping through the sentence word by word and it’s gotten to the place where it’s at like I hate and that it wants to generate the next word so what a translator would do at this point is they would go back and reference the original sentence maybe after they’ve read through it once and try to decide which word they want to be translating next think about what word they want to translate that into and that’s basically what attention does so it takes this query vector down here and it compares that query vector to all of the key vectors in the original included input and it calculates a score or a weight based on the congruence between the query vectors and the key vectors so you put it through this function here that takes in the query vector and the key vector and it spits out a scalar weight and we do this for each pair of the query vector in one of the key vectors in the key matrix basically and then we normalize these so they add to one using a softmax function and basically what this looks like is we take in these values and we output something that looks like a probability vector here and I’m sure you know everybody’s familiar with the softmax from the homework that you’re already working on then after we do this we take the value vectors which are the things that we want to attend to the types of information that we want to combine and we multiply this by the attention vector here and that gives us a single vector that we can then feed into any part of the model and specifically in the case of machine translation or whatever else we will be feeding this into the decoder in order to calculate the the probability over the next word so if we have a attention mechanism when we’re doing translation this is a picture from the paper that introduced the attention mechanism basically you’ll see that every time it translates a next word I believe in french here from english to french it will be attending to it will be attending to multiple words in the original source documents so and you can see that these align with each other and even when like the order reverses then the appropriate words are being attended to so I left the the actual function that we used to take in the query and the key vector underspecified but if we assume that the query and the key q is a query and k is the key we can do various things like feeding the query and the key into a multi-layer perceptron where we concatenate them together multiply them by a weight matrix take a non-linearity like the tan h and multiply by another vector to get this value this is flexible and often very good with larger data sizes another thing that we can do and in fact this is maybe the most common method that we use nowadays we can multiply by the key we can have the key and the query and we have a weight matrix here that we multiply and this gives us the [Music] attention weight here and then we also have other things like the dot product where we just take the dot product between the two vectors this is very very simple and and can be effective but the problem is that this one issue with this is this definitely requires the key and the query to be the same size because otherwise you can’t take the dot product so the bi-linear function gives you a bit more flexibility in that you don’t have to assume that the query and the key are in the same kind of like underlying space and it also allows you to compare things of different size and then finally we can have the scaled dot product and so one problem is that the scale of the dot product increases as the number of dimensions gets larger and so the way of fixing this is basically scaling it by the size of the vector so you take the square root of the size of either the key vector or the query vector it doesn’t really matter which one because they’re both the same size here and this allows you to make sure that even if you have larger or smaller values the scale with which the attention weights varies stays approximately the same okay so this is a a brief overview we’ll be going through some concrete examples a bit later in the class but are there any questions here I imagine many people will be familiar with this already okay if not I will go ahead so then we have improvements to attention so attention one issue with attention is basically that neural models often tend to drop or repeat content when they’re doing generation in particular for tasks like machine translation where in machine translation we can make the implicit assumption that all content in the source should be translated into the targets we can additionally add biases to that basically model how many times words in the input have been covered and if they have not been covered you know approximately one time we can give some sort of penalty so basically this is making the assumption that each word should be translated about once or another option is to let the model to tell the model how many times each word has been covered but let it learn to use that information appropriately in making its next translation decisions so either way you know this is explicitly or implicitly encouraging the model to you know cover things once and only once or like as many times as necessary another very common improvement used in most models nowadays is multi-head attention where the idea is that we have multiple attention heads that focus on different parts of the sentence so this is an example where essentially what we do this is an example with two attention heads and the two attention heads each have a different function the first attention head is like a normal attention head that is just used to calculate representations of the words in the sentence so kind of like how I explained attention before as a way to combine together information at each time step and then the second attention head is basically focusing on words that should be copied from the source to the target and this is used in particular for a summarization task where lots of copying needs to be done so basically it’s summarizing source code into into function names so what you can see is the first attention head because it’s just pulling in information about the input sentence in general it’s kind of spread out across the entire input sentence and the second one because it’s kind of choosing which words to copy to generate outputs is very focused on individual words as opposed to being spread out across the whole sentence and so I like this example because it gives an example about how like theoretically you might want to have different attention heads with different functions but in standard models nowadays what we use instead is we have multiple attention heads but we just let the attention heads kind of learn on their own what they would like to focus on and here is an example of basically this word making attending to other words in the same sentence in self-attention which I’m going to talk about in a second and you can see that making one of the attention heads is attending to making itself there are other attention heads like the blue attention head orange one green red which are attending to more difficult which is kind of the the object of making and then you have another attention head that’s pulling in information from like the previous word to making so you can see that each of these heads has kind of specialized in a different like form or like function that it should be achieving so that’s good because you know there are things like local context like you know the previous word 2009 which could be very useful but there’s also other varieties of context farther away like the object of a verb that could be important for making particular decisions as well so another common improvement to attention is supervised training and normally we just train the attention together with the entire model and however sometimes we can get like quote unquote gold standard alignments a priori and gold standard alignments are basically mit could be manual alignments where we’ve asked a human annotator to say specifically which words in the source correspond to which words in the target and the reason why we might want to do this is because as you can see here or no as you can see here even though this is a relatively good example it’s not always the case that attention will focus directly on the words that are being translated like for example here the period only has a very vague attention on the period in the input so because of this you can’t necessarily like look at the attention value and immediately tell which words are being translated and that’s even worse in the case of something like multi-headed attention however like as I talked about last class you know if you’re a human translator using machine translation it might be very important or useful to you to know which words were translated which other words so you could check that they’re correct or something else like this and in that case doing supervised training with manual alignments or something could make sure that at least you know some of the attention heads correspond with human intuition about which words were translated into which other words another way you can get gold standard alignments is by using a strong alignment model so you might have a an alignment model that was trained on manual alignments or something like this and you could also use that to kind of bootstrap the training of your model and this can also improve accuracy overall by making sure that the model is attending to like words that are actually aligned as well so exactly how you do the supervised training basically the answer you can do a number of things but the simplest one is you just have another loss function that you incorporate into your model where the loss is higher if the alignments are like incongruent with the with the annotated alignments and so you can do things like take the the norm the l2 norm of the difference between the alignment vectors or something like that okay and now I’m going to go into self-attention which is very widely used in nlp nowadays and self-attention basically the idea is up until now we talked about things like recurrent neural networks is a way to gather encodings for each word in the sentence but another way you can do this is you can have some sort of attention that uses that where you attend each token in the sentence that you’re looking at now attends to the same sentence itself so for example the word this would attend to this is an example the word is would also attend to this is an example etc etc and the basic idea here is that this can function is kind of a drop-in replacement for another type of word-level encoder like rnns and and calculate the representation of each word so for example for this the word this might attend to this a lot is a little bit and the other one’s not very much is might attend to is and its subject and object and other things like this the motivation for this becomes very obvious if you think about the translation of words like like the word is or maybe the word run is a better example so the word run you know depending on whether you’re running a marathon or running a company or running along the road or running along the creek or something like this run might be translated differently so if the encoding for the word run pulled in the subject information about the subject and the object that would make it a lot easier to perform like lexical selection in translation or something like that so why would you want to use self-attention instead of an rnn or something like this unlike rnn’s it’s very parallelizable which allows for fast training on gpus you can calculate all of the words in the sentence at the same time so this is probably the most important reason why people like using transformers sorry like using self-attention and the transformers that I’m going to be talking about in a second another reason why people like it is unlike both rnn’s and other options like convolutional neural networks it can easily capture global context from the entire sentence so you you’ll note that every time each word is attending to all other words in the sentence so that gives a very direct connection to you know pulling context there in general transformers seem to yield a pretty high accuracy and a large number of nlp casks although it’s not 100 clear that they’re actually all that much better with respect to accuracy like there’s this study by chen at all that compared them with rnns and the results were were similar essentially but the but the advantages here of like fast training and being able to easily pull in global contacts are are widely appreciated one downside to this is quadratic computation time so essentially because like you can even see this computation time directly from this attention graph here so you can see that if the length is 4 you have 4 times 4 16 attention values here and this can become onerous if you’re using very long sequences to compute so there’s also a lot of different methods to improve over this recently so now that I’ve introduced a bunch of you know improvements or kind of elements that go into attentional models I’d like to introduce the transformer which is kind of the core element that is used in most state-of-the-art mt or nlp models nowadays and basically this is a self a model that uses both self attention and regular attention between the source and the target so we have a transformer encoder in a transformer decoder where the transformer encoder takes in some word embeddings it adds something called the positional encoding where the positional encoding basically is a another word embedding that tells you not the identity of the word but rather the position of the word in the sentence so instead of saying like this is the word summary it would say this is the first word in the sentence so you add them together and you get like summary and first word in embedding indicating that then you run this through multi-head self-attention you add in the original input and you do something called layer normalization which basically kind of normalizes the outputs to be average of around zero and norm of around one and then you run through a feed-forward network and then you do the addition and normalization and then you do this over and over again you know six times or eight times or ten times or whatever and then on the the right side over here you have the transformer decoder which is very similar output embeddings positional encodings self-attention but you also have additional cross attention that attends to the input here so that’s kind of the place where you get the attention that I showed before between the source and the target here so that this is in the cross-attention part and then in the self-attention part you have the encoding of the sentences like you have here so you’re you’re doing both in the transformer so often we talk about like the transformer is kind of like a monolithic block that is used in in translation models but actually you know it contains a lot of the tricks that I talked about before so it contains self-attention multi-headed attention it’s using normalized dot product or actually maybe bilinear attention would be more accurate because it’s multiplying by a a weight matrix for the key in the queries and it has positional encodings it also uses a whole bunch of training tricks such as layer normalization helping ensure that layers remain in a reasonable range it also has a specialized training schedule where you have the atom optimizer but you have a specialized learning rate that kind of gradually ramps up and then slows down in the transformer paper they also used a technique called label smoothing i’m not going to go into a lot of detail about this but basically it kind of smooth smooths out the distribution you’re predicting so you’re not predicting 100 probability on the true next word but you’re giving a little bit of probability to all the other words this is pretty effective in a wide variety of neural network based tasks and you also have a masking method for efficient training and so the way this masking works is basically you decide when you’re calculating the representation for a particular word you decide which previous which context to attend to so when you’re calculating the representation for the word I you only attend to the context in the input when you’re calculating the representation for the word hate you calculate you attend to any of these things over here and similarly throughout the entire like calculation of the representations for the decoders so on the encoder side you always attend to all the other words but on the decoder side you only attend to words in the input and previous words in the output and so this was about transformers taking a step back we can kind of take a unified view of the models that we’ve talked about so far in this class so we have sequence labeling where sequence labeling has a feature extractor and then given the feature extractor we have a feature for each word and calculate the output so this is what you know everybody is doing for assignment one and then we have sequence sequence modeling where we have a feature x director so these can actually be exactly the same thing and calculate one representation for each word and then we have essentially a masked feature extractor here where we calculate representations that can ref reference any of the things from the input feature extractor but only things that occurred previously in the current output sentence and then we predict the the words here as well cool so this is all I have in terms of the lecture content and then I’m going to try to go through the code for the transformer just a little bit and then Patrick’s going to introduce what you need to do for the assignment are there any questions about the lecture content that I talked about here okay I guess not at the moment so if you if you know about this already this might be a bit of review if you’re not familiar with this it’s very important so please do you know ask questions go to office hours other other things like this and then the final thing I’d like to do is go through a brief code walk through this thing called the annotated transformer and this is a very good thing it’s linked on the class site and basically what it does is it it demonstrates how you would actually implement the transformer model together with all of the description from the original paper and so basically [Music] if you look at the model architecture first the the way it looks is we’re talking about in encoder decoder architecture we have our encoder here we have our decoder here and sorry my computer is very slow nowadays because my battery is broken as you heard last time but i’ll try to do this nonetheless we have our source embedders we have our target embedders and then we have some sort of generation policy so this would be you know like something that helps us do sampling or or helps us predict the probability of the next token and we take in and process source and target sentences the encoder encodes the source sentence and then the decoder encodes the target sentence and the memory so I believe this is the encoded source sentence and then we have the source mask and the target mask and the generator is basically just doing a soft max like you’re all familiar with and so this is the kind of encoder architecture this is the decoder architecture and then we have our generator here and one other feature of the of the transformer is basically we have n times this this encoder block in decoder block so this method here produces n identical layers so it it copies each module so you get n of them so that allows you to do the nx here the core encoder is a stack of n layers where we also have a layer norm after all of them or no sorry this is a final final layer moments and then we pass the the input and mask through each layer and turn so we just have a for loop over each of the the layers here and the layer norm what this does is this basically attempts to normalize so I mentioned we’re trying to set the mean close to zero and the and the variance close to close to one so you can see that that’s kind of doing that here and we we add dropout oh yes so dropout is kind of like regular regularizing the model to prevent it from overfitting we have layer norm and then for each of these blocks you’ll notice that we have the multi-head attention and then we have this add-in norm after this so this sub-layer what it’s doing is it is doing layer normalization and it’s doing layer normalization it’s calling the the sub-layer function here it’s doing dropout over the output and then it’s adding a residual connection so that’s kind of the the yellow block in the transformer stack here and then each layer has in the encoder has two sub-layers one is the self-attention layer one is the feed-forward layer and then this is cloned you know two times essentially there then the decoder also has a stack of n layers basically and the decoder is the same except in addition to having self-attention it has a source of tension in the feed forward layer so that’s basically what you can see here in the diagram and then it talks a little bit about masking here so that was the masking that I talked about in the in the lecture where you’re basically creating this mask that gets rid of all of the things that are in the future for the decoder and this is applied only to the decoder only to the decoder then finally I’m going to talk about the attention how the attention is done within the the transformer so basically the transformer attention is doing this sort of dot product attention with scaling you take the soft max and you multiply this by the value vector so that’s you know what I talked about in class and that’s all implemented here it’s basically doing a matrix multiplication between the query and the key vector here query and key matrix here it’s taking the square root based on the size of the query vector actually this is dk but this is query so that’s a little bit strange but you know it makes no difference as I mentioned before and then you take the soft max and you multiply the attention by the value vector so that’s basically the multiplication here so you can see you can make a map between the equations of the code and then there’s also implementation of multi-head attention this is a little bit more involved about exactly how this is implemented so I’m not going to go through all the equations here because I want to leave time for patrick but if you want to look at exactly how the multi-head is implemented you can see this here and yeah that that’s the basic idea of what this looks like i think it’s important to know what’s going on in these models but if you want to like actually use this in your code itself it’s also pytorch is also nice enough to just have this transformer class for you that you don’t need to like you don’t need to implement yourself and basically if you look at this it’s doing the same implementation that I just showed you but it’s you know maybe more optimized or you know like you know it’s right so you won’t be making mistakes so if you’re actually going to be using this I suggest just using the transformer module but I think it’s important to know what’s going on inside so you can understand the behavior and other things like that great so that’s all I have here are there any questions about the implementation or other things yes isn’t the annotated transformer I seem to remember like it’s slower because it uses for loops for the batches instead of converting them into like multi-dimensional tensors is that ringing a bell and is that accurate or let me I didn’t cover batches so like batching is important it’s a very it’s a very important thing because like basically when you batch together multiple sentences you can get them to like all process in a single gpu call instead of in many different gpus calls I’ve I talked about this a little bit more in advanced nlp i don’t see actually I was thinking of the of the multi the multiple heads the attention heads because I think I think the I think it actually matches by input sequence it definitely watches because he has access to a mask so if he has a mask it’s definitely watching yeah yeah i don’t like I I seem to remember this was actually implemented pretty well pretty efficiently i don’t I didn’t actually talk about how the multi-headed attention is implemented but I it’s implemented in a clever way which also makes it hard to read which is why I didn’t go into the details quite as much here but I I do think this is actually a pretty good example of how you would implement it efficiently as well although I’d have to go through in more detail to make sure for sure but that’s a good question what I can tell you is the pytorch one is definitely implemented efficiently so if you want to look and see the the best way to do that you can look there I’ll turn this over to patrick then who will I guess go through the assignment for assignment two and this is now available on the on the website also if you want to follow along and let me share the screen okay do you guys see the right screen yeah cool yeah so I’m going to introduce assignment 2 which was released today they’re still the code still needs to be uploaded but all the instructions are there and yeah so let’s get started because we’re short on time so ah and this was developed by me and vijay which will explain the later part of this sign cool so the task for this assignment is machine translation so as gram described given a source language sentence you want to relate to a target language to target language so conditional language modeling and the goals of this assignment are to understand how the standard data processing pipeline is used in empty to be able to train and empty models both bilingual and multilingual using an empty framework and to learn how these models are evaluated and finally to investigate methods to tackle the data scarcity problem in low resource language pairs which is what you’re going to tackle in this assignment so for requirements you definitely need a machine with gpu unlike the previous assignments it will be very very hard to run this on a cpu as in you will run but no invisible amounts of time I I didn’t test it but I’m pretty sure you can run it on a call out but still if you have access to the credits I would probably recommend doing aws for this and in terms of packages it’s mostly the same as the last assignment you can almost certainly reuse the the environment that you have we tested it and this design will also use firstec as a backbone for training models so first tech is like sequence modeling toolkits and and it automates data loading training decoding and a bunch of other small not boring but like you might not want to consider for this assignment and it also supports many other tasks other than translation for the basic requirements you will not need to dive deep into fair sec but if you want to modify for the actual requirements you probably will need to dive into faresec and and yeah you also need to install soccer blue and combat to evaluate your models and but this is all automated in the instructions of the assignment you just have to follow the the assignment and everything should be installed automatically so the assignment is a collection of scripts which will pre-process you data train your data and score you’re there and we’ll go over them in a few slides so for that you will be using the ted talks corpus which contains parallel data between english and 58 languages and you will focus on two low resource language pairs english azerbaijani and ecospeller russian so to pre-process the data there’s a script that does the following steps we will read the raw parallel data you will learn about byte pairing coding separately for the source and target languages and in particular this assignment will use sentence piece which is a particular implementation of bypass encoding we’ll apply bp to all splits there’s also a very minor data cleaning pipeline which just filters based on the size of sentences and finally you’ll binarize the data which makes it efficient for first to trade and crucially for this assignment we simplify the bits sometimes you also do some tokenization using moses prior to learning the bp but in this case we simplify then we just use center space which works fine by itself but sometimes people do moses organization before just as a remark for modeling in training and generation we’ll use the reform architecture as describe diagram and embeddings will be shared between source and targets despite the fact that they use different bps this is still possible and this will be trained to minimize cross entropy with adam and decoding will be done using beam search in particular it’s fixed to beam search of five and is an example of what the scripts call and this is just like cli for fersae so you don’t have to worry about too much about training loops or anything for evaluation for mt you traditionally don’t look at perplexity because it’s not a good measure of how the models perform in terms of translation and in this assignment we’ll use two metrics blur which is the de facto standard for empty evaluation which uses n-gram overlap between the reference in the target and because there’s some concerns with the reliability of blue and this correlation with human judgment would also consider comet which is part of a new generation of neural neural model based metrics which rely on pre-trained models and are trained to optimize relatively human correlations again you don’t have to think too much about it because there’s a script that already does it it’s just good to know that you’ll evaluate your models based on both okay and I’ll turn it over to vijay thanks patrick so the minimum requirements for this assignment involve first training these mt models on bilingual data and so here we would we you we expect you to train models from azerbaijani to english and vice versa and also bella russian english and vice versa next slide but then the more interesting bit which is also required in the minimal in the in the our minimal expectations is to train multilingually using a transfer language which in the case of azerbaijani is turkish and we have scripts to do this already for both bilingual and multilingual but you’ll have to modify these scripts minimally in order to support belarusian and we’ve also introduced because nowadays while multilingual training is still very effective there’s a new paradigm that’s become super popular which is fine tuning a massive multilingual model that’s been trained on a large amount of data and to allow you to try this approach which is now pretty predominant you can also instead of doing multilingual training you can fine-tune a model that we have provided that has been trained on the floor s 101 data set which is like a massively multi-lingual mt data set and you can instead use this strategy and this will also get you to the to the b b plus grading range next slide but I think where this assignment gets really exciting and what you need to do to get an a minus a or a plus is to add extensions beyond what we provided in these scripts and I think graham will be talking about a lot of this in the next week some of it he already talked about this week but data augmentation which he hasn’t talked about yet is one very promising strategy you could use these terms will make more sense once his lecture is completed next slide you can also try to use better transfer languages we’ve currently suggested two basic transfer languages for both azerbaijani and belarusian but as you might remember from the lecture last week there’s more of a structured way you can choose a good transfer language based on your knowledge of typology or based on learn models and we encourage you to try this and see what what results you can get and then lastly in terms of the data our baseline models use sentence piece for byte pair encoding which is basically a way of breaking up words into sub words but there’s like many other ways to do this and this is a particularly interesting and active area of research and so we encourage you to consider different variants of this and lastly this is probably the most broad category feel free to try different models different training algorithms different ways of doing learning or different and there’s like a huge space here so we really encourage you to be creative and also when you when you choose something analyze it and try to deepen your understanding of why these things work in machine translation and just for reference like the assignment includes a bunch of references to different techniques that seem to work for this feel free to follow them or do your own literature review of course and in terms of what we ask from you when you submit the homework first you need to submit the code which should include both the minimum requirements for like the scripts that you’ve modified in order to support the the bilingual and multilingual training for the language pairs in the assignment but also for the additional modifications that you make we also and this is probably the most important part we want to see a write-up that provides some solid analysis of of the methods describing the assignment and lastly we don’t want you to submit the actual model files because these are quite very large and it’ll take a long time to upload but we do want to see you submit your model outputs once you start playing with the software this will it’ll make sense what this is but basically this way we could compare the translations that your model predicts with our references and reproduce your evaluations just to make sure everyone’s on the same page and these are all submitted on canvas as a tarball like the previous assignment and so I’ve been touching on this but the grading tranches are like first for the minimal requirements you just need to reproduce the modify the scripts that we have for both azerbaijani and belarusian and that will get eub if you couple this with detailed analysis then you’ll get a b plus to get an a minus you need to implement at least one pre-existing method or a new method to try to improve the ability to do this multilingual machine translation next slide and then to get an a we expect you to do two or more several methods to improve multilingual transfer and you might find that some of these methods are more lightweight than others so it might be quite doable to try several and we we also would hope that one of the methods you try is actually novel something that you’d come up with and then lastly building on that a if you’ve done something that is particularly extensive or creative or your analysis is like super compelling then that’ll get you an a plus and just to recall that this is a group assignment unlike the first assignment so it’s expected that it will be done in groups of two three I’m not exactly sure how this will be arranged but I’m pretty sure gram and you don’t know what’s the best way to do this but just to apply for expectations yeah regarding groups feel free to make groups you know obviously you’ve already talked to people about the language intent things so that would be one option but you’re obviously not obligated to do that if you don’t have a group yet but would like to form one please I think one one good idea</p>
-</blockquote>
-</div>
-</div>
-</div>
-<section id="outline" class="level2">
-<h2 class="anchored" data-anchor-id="outline">Outline</h2>
-<p>Here is a lesson outline for your notes, based on the provided sources:</p>
-<ol type="1">
-<li><strong>Introduction to Language Models</strong>
-<ul>
-<li>Language models are generative models of text.</li>
-<li>They calculate the probability of a text, P(x), and allow sampling to generate outputs with high probability.</li>
-<li>Training on specific texts (e.g., Harry Potter) results in the model generating similar text.</li>
-</ul></li>
-<li><strong>Conditional Language Models</strong>
-<ul>
-<li>These models generate text based on some specifications or conditions.</li>
-<li>They calculate the probability of an output, y, given an input, x: P(Y|X).</li>
-<li>Examples include:
-<ul>
-<li>Translation (English to Japanese)</li>
-<li>Summarization (document to short description)</li>
-<li>Response generation (utterance to response)</li>
-<li>Image captioning (image to text)</li>
-<li>Speech recognition (speech to transcript)</li>
-</ul></li>
-</ul></li>
-<li><strong>Calculating the Probability of a Sentence</strong>
-<ul>
-<li>The probability of a sentence is calculated by multiplying the probabilities of each word in the sentence: P(X) = ∏ P(xi | x1, …, xi-1)</li>
-<li>Conditional language models add context to this calculation: P(Y|X) = ∏ P(yj | X, y1, …, yj-1)</li>
-<li>The probability of the next word is conditioned on the previous context.</li>
-<li>This is also called an autoregressive model, a left-to-right language model, or a causal language model.</li>
-</ul></li>
-<li><strong>Sequence-to-Sequence Models and Encoder-Decoder Architecture</strong>
-<ul>
-<li>Recurrent neural networks (RNNs) can be used to feed in previous words and predict the next word in a sequence.</li>
-<li>For conditional language models, the conditioning context (e.g., a Japanese sentence) is fed into an encoder, and the output (e.g., an English sentence) is predicted using a decoder.</li>
-<li>This architecture is called an <strong>encoder-decoder model</strong> and is widely used.</li>
-</ul></li>
-<li><strong>Methods of Generation</strong>
-<ul>
-<li>The generation problem is how to use the model P(Y|X) to generate a sentence.</li>
-<li>Two main methods:
-<ul>
-<li><strong>Sampling</strong>: Generating a random sentence based on the probability distribution.
-<ul>
-<li><strong>Ancestral sampling</strong> generates words one by one.</li>
-</ul></li>
-<li><strong>Argmax</strong>: Generating the sentence with the highest probability.
-<ul>
-<li><strong>Greedy search</strong> picks the highest probability word one by one.</li>
-</ul></li>
-</ul></li>
-<li>Greedy search is not exact and can cause issues like generating easy words first or preferring multiple common words over one rare word.</li>
-<li><strong>Beam search</strong> maintains several paths instead of just one, allowing for a more precise search.</li>
-</ul></li>
-<li><strong>Attention Mechanisms</strong>
-<ul>
-<li>Attention relaxes the constraint of memorizing the entire input sentence in a single vector, using multiple vectors for each token in the input.</li>
-<li>The model references these vectors when decoding.</li>
-<li>Each word in the input sentence is encoded into a vector.</li>
-<li>During decoding, a linear combination of these vectors, weighted by attention weights, is used to pick the next word.</li>
-<li>A query vector (from the decoder) is compared to key vectors (from the encoder) to calculate attention weights.</li>
-<li>These weights are normalized using softmax.</li>
-<li>Value vectors are combined using these weights.</li>
-<li>The result is used in the decoder.</li>
-</ul></li>
-<li><strong>Attention Score Functions</strong>
-<ul>
-<li>Various functions can be used to calculate attention scores (how well a query vector matches a key vector):
-<ul>
-<li>Multi-layer Perceptron (MLP): flexible, good with large data</li>
-<li>Bilinear: allows comparison of different sized vectors</li>
-<li>Dot Product: simple, requires same-size vectors</li>
-<li>Scaled Dot Product: scales the dot product by the size of the vectors</li>
-</ul></li>
-</ul></li>
-<li><strong>Improvements to Attention</strong>
-<ul>
-<li><strong>Coverage:</strong> Addresses issues with dropping or repeating content.
-<ul>
-<li>Models how many times words in the input have been covered, adding a penalty if words are not covered approximately once.</li>
-<li>Uses embeddings indicating coverage.</li>
-</ul></li>
-<li><strong>Multi-head attention:</strong> Multiple attention “heads” focus on different parts of the sentence.
-<ul>
-<li>Different heads can focus on different functions (e.g.&nbsp;copying vs regular attention).</li>
-<li>In standard models, attention heads learn what to focus on independently.</li>
-</ul></li>
-<li><strong>Supervised training</strong>: Uses “gold standard” alignments (manual or from a strong alignment model) to train the model to match alignments.</li>
-</ul></li>
-<li><strong>Self-Attention and Transformers</strong>
-<ul>
-<li><strong>Self-attention</strong>: Each word in the sentence attends to other words in the same sentence, creating context-sensitive encodings.
-<ul>
-<li>It can be a drop-in replacement for RNNs or CNNs.</li>
-</ul></li>
-<li>Self-attention advantages:
-<ul>
-<li>Parallelizable, which allows for faster training on GPUs.</li>
-<li>Easily captures global context.</li>
-</ul></li>
-<li>Self-attention disadvantage:
-<ul>
-<li>Quadratic computation time.</li>
-</ul></li>
-<li><strong>Transformers</strong> use both self-attention and regular attention between the source and target.
-<ul>
-<li>The transformer encoder processes input word embeddings with positional encodings and multi-head self-attention, adding the original input and layer normalization, and a feed-forward network repeatedly.</li>
-<li>The transformer decoder is similar but includes cross-attention to the encoder output.</li>
-<li>Transformers use tricks such as layer normalization, specialized training schedules, label smoothing, and masking.</li>
-</ul></li>
-</ul></li>
-<li><strong>Unified View of Sequence-to-Sequence Models</strong>
-<ul>
-<li>Sequence labeling: feature extraction followed by output prediction for each word.</li>
-<li>Sequence-to-sequence modeling: a feature extractor followed by a masked feature extractor, and then prediction of words.</li>
-</ul></li>
-<li><strong>The Annotated Transformer</strong>
-<ul>
-<li>Provides an implementation of the transformer model.</li>
-<li>Includes an encoder, decoder, source embedders, target embedders and a generation policy.</li>
-<li>Uses multiple identical encoder and decoder layers.</li>
-<li>The core encoder consists of a stack of layers with layer normalization and dropout.</li>
-<li>The core decoder is similar but has self-attention and source attention.</li>
-<li>Uses masking for the decoder.</li>
-<li>Implements scaled dot product attention.</li>
-<li>Also implements multi-head attention.</li>
-</ul></li>
-<li><strong>Assignment 2</strong>
-<ul>
-<li>Task: Machine translation</li>
-<li>Goals: Understand data processing, train bilingual/multilingual models, learn evaluation, and tackle data scarcity.</li>
-<li>Uses the TED talks corpus.</li>
-<li>Focuses on low-resource language pairs (English-Azerbaijani and English-Belarusian).</li>
-<li>Data preprocessing includes byte pair encoding (BPE) with sentence piece.</li>
-<li>Uses the transformer architecture.</li>
-<li>Evaluation uses BLEU and COMET metrics.</li>
-<li>Minimum requirements involve bilingual and multilingual training, as well as using a provided pre-trained model.</li>
-<li>Additional extensions include: data augmentation, better transfer languages, different BPE variants, and other model improvements.</li>
-<li>Submission requires code, analysis, and model outputs.</li>
-<li>Grading is based on implementation, analysis, and novelty of methods.</li>
-</ul></li>
-</ol>
-</section>
-<section id="papers" class="level2">
-<h2 class="anchored" data-anchor-id="papers">Papers</h2>
-<p>Here are the papers mentioned in the lesson outline:</p>
-<ul>
-<li><strong>Mikolov et al.&nbsp;(2011)</strong>: This paper is referenced in the context of language models and is cited as “Extensions of recurrent neural network language model”.</li>
-<li><strong>Sutskever et al.&nbsp;(2014)</strong>: This paper is mentioned in the context of sequence-to-sequence models and is cited as “Sequence to sequence learning with neural networks”. This paper is also mentioned in relation to how to pass hidden states in encoder-decoder models and initializing the decoder with the encoder.</li>
-<li><strong>Kalchbrenner &amp; Blunsom (2013)</strong>: This paper is referenced in the context of input at every time step for conditional language models and is cited as “Recurrent continuous translation models”.</li>
-<li><strong>Bahdanau et al.&nbsp;(2015)</strong>: This paper is cited in the context of attention mechanisms and is referenced as “Neural machine translation by jointly learning to align”. It is also referenced in relation to the multi-layer perceptron attention score function.</li>
-<li><strong>Luong et al.&nbsp;(2015)</strong>: This paper is cited in the context of attention score functions and is referenced as “Effective approaches to attention-based neural”. It is also mentioned in relation to bilinear and dot product attention score functions.</li>
-<li><strong>Vaswani et al.&nbsp;(2017)</strong>: This paper is cited in the context of scaled dot product attention, multi-headed attention, and the Transformer model.</li>
-<li><strong>Cohn et al.&nbsp;(2015)</strong>: This paper is referenced in the context of coverage for attention models and is cited as “Incorporating structural alignment biases into an attentional neural translation model”.</li>
-<li><strong>Mi et al.&nbsp;(2016)</strong>: This paper is also referenced in the context of coverage for attention models and adding embeddings indicating coverage.</li>
-<li><strong>Allamanis et al.&nbsp;(2016)</strong>: This paper is mentioned in the context of multi-headed attention and is cited as “A convolutional attention network for extreme summarization of source code”.</li>
-<li><strong>Liu et al.&nbsp;(2016)</strong>: This paper is referenced in the context of supervised training with gold standard alignments.</li>
-<li><strong>Cheng et al.&nbsp;(2016)</strong>: This paper is mentioned in the context of self-attention and is cited as self-attention.</li>
-<li><strong>Chen et al.&nbsp;(2018)</strong>: This paper is mentioned in the context of the accuracy of self-attention/transformers and is cited as “The best of both worlds: Combining recent advances in neural machine translation”.</li>
-</ul>
-<section id="see-also" class="level3">
-<h3 class="anchored" data-anchor-id="see-also">See also</h3>
-<p><span class="citation" data-cites="bahdanau2016neuralmachinetranslationjointly">Bahdanau, Cho, and Bengio (2016)</span></p>
-<p><span class="citation" data-cites="luong2015effectiveapproachesattentionbasedneural">Luong, Pham, and Manning (2015)</span></p>
-<p>Reference: Self Attention (Cheng et al.&nbsp;2016)</p>
-<p><span class="citation" data-cites="vaswani2023attentionneed">Vaswani et al. (2023)</span></p>
-
-
-
-</section>
-</section>
-
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
-<div id="ref-bahdanau2016neuralmachinetranslationjointly" class="csl-entry">
-Bahdanau, Dzmitry, Kyunghyun Cho, and Yoshua Bengio. 2016. <span>“Neural Machine Translation by Jointly Learning to Align and Translate.”</span> <a href="https://arxiv.org/abs/1409.0473">https://arxiv.org/abs/1409.0473</a>.
-</div>
-<div id="ref-luong2015effectiveapproachesattentionbasedneural" class="csl-entry">
-Luong, Minh-Thang, Hieu Pham, and Christopher D. Manning. 2015. <span>“Effective Approaches to Attention-Based Neural Machine Translation.”</span> <a href="https://arxiv.org/abs/1508.04025">https://arxiv.org/abs/1508.04025</a>.
-</div>
-<div id="ref-vaswani2023attentionneed" class="csl-entry">
-Vaswani, Ashish, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. 2023. <span>“Attention Is All You Need.”</span> <a href="https://arxiv.org/abs/1706.03762">https://arxiv.org/abs/1706.03762</a>.
-</div>
-</div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2022,
-  author = {Bochman, Oren},
-  title = {Translation {Models}},
-  date = {2022-02-03},
-  url = {https://orenbochman.github.io/notes-nlp/notes/cs11-737-w06-translation-models/},
-  langid = {en}
-}
-</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2022" class="csl-entry quarto-appendix-citeas">
-Bochman, Oren. 2022. <span>“Translation Models.”</span> February 3,
-2022. <a href="https://orenbochman.github.io/notes-nlp/notes/cs11-737-w06-translation-models/">https://orenbochman.github.io/notes-nlp/notes/cs11-737-w06-translation-models/</a>.
-</div></div></section></div> ]]></description>
-  <category>Attention</category>
-  <category>Multilingual NLP</category>
-  <category>NLP</category>
-  <category>Notes</category>
-  <category>seq2seq</category>
-  <category>NMT</category>
-  <guid>https://orenbochman.github.io/notes-nlp/notes/cs11-737-w06-translation-models/</guid>
-  <pubDate>Wed, 02 Feb 2022 22:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>

@@ -73,6 +73,15 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-V0T6EFS8LY"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-V0T6EFS8LY', { 'anonymize_ip': true});
+</script>
 <style>html{ scroll-behavior: smooth; }</style>
 <style>
 
@@ -754,6 +763,9 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#discussion-prompt" id="toc-discussion-prompt" class="nav-link active" data-scroll-target="#discussion-prompt">Discussion Prompt</a></li>
+  <li><a href="#outline" id="toc-outline" class="nav-link" data-scroll-target="#outline">Outline</a></li>
+  <li><a href="#papers" id="toc-papers" class="nav-link" data-scroll-target="#papers">Papers</a></li>
+  <li><a href="#kannada-in-10-minutes" id="toc-kannada-in-10-minutes" class="nav-link" data-scroll-target="#kannada-in-10-minutes">Kannada in 10 minutes</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/cs11-737-w04-words/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -939,6 +951,172 @@ In English we rarely have anything that inserts in the middle of a word we’re 
 <p>Pick a language in one of the following branches of language families: Bantu, Dravidian, Finno-Ugric, Japonic, Papuan, Semitic, Slavic, Turkic. Tell us about some interesting aspects of morphology of that language, following examples from the assigned reading. Cite your sources.</p>
 <p>If you would need to implement a tokenizer for that language, what language specific knowledge would need to be incorporated into the tokenizer?</p>
 </blockquote>
+</section>
+<section id="outline" class="level2">
+<h2 class="anchored" data-anchor-id="outline">Outline</h2>
+<ul>
+<li><strong>Introduction to Words in NLP</strong>
+<ul>
+<li>Words are fundamental in NLP, yet defining them can be non-trivial.</li>
+<li>The notion of a <strong>word boundary</strong> is not always straightforward, especially when moving beyond English.</li>
+<li><strong>White space</strong> separated tokens are a good approximation for words in some languages, <em>but this isn’t a universal rule</em>.</li>
+</ul></li>
+<li><strong>Challenges in Defining Words</strong>
+<ul>
+<li><strong>Clitics:</strong> Apostrophe-s (’s) is a clitic, not an isolated word, and it can attach to whole noun phrases.</li>
+<li><strong>Compounds:</strong> Some compounds (like “handyman”) are treated as single words, even with spaces, while others are hyphenated (“do-it-yourself”), and these distinctions are not always consistent.</li>
+<li><strong>Contractions:</strong> Contractions like “kinda” and “isn’t it” can be written in reduced forms and require decisions about tokenization.</li>
+<li><strong>Agglutination:</strong> Some languages (e.g., Turkish) join words together with no spaces, resulting in what might be considered phrases in English being single words.</li>
+<li><strong>Ambiguity:</strong> In some languages, a single written word can have multiple meanings depending on how it is separated into morphemes (e.g., Hebrew example given).</li>
+</ul></li>
+<li><strong>Linguistic Approaches to Defining Words</strong>
+<ul>
+<li><strong>Phonetics:</strong> Word definitions could be based on pronunciation, such as every word containing a vowel or having a certain syllable structure.</li>
+<li><strong>Morphology</strong>: Word definitions could be based on the individual morphemes within the word.</li>
+<li><strong>Syntax:</strong> Words can be defined by their class and interchangeability with other words of the same class.</li>
+<li><strong>Semantics:</strong> Word definitions could relate to the meaning they convey, including multi-word units with a single idea like “navy blue”.</li>
+<li><strong>Pragmatics:</strong> Some phrases like “New York” may be used as single words even though they have white space within them.</li>
+</ul></li>
+<li><strong>Orthographic Definitions</strong>
+<ul>
+<li><strong>White Space:</strong> Even in English, white space is complex (spaces, tabs, new lines, etc.) and includes non-breakable spaces which may or may not be considered word boundaries.</li>
+<li><strong>Written vs.&nbsp;Spoken:</strong> Most languages are not written, and in spoken language, there are no spaces between words. A definition of words is needed that is independent of the written form.</li>
+</ul></li>
+<li><strong>Prosodic Definitions</strong>
+<ul>
+<li><strong>Intonation:</strong> Phrases grouped together in a single intonational phrase (like “in the park”) can be treated as a single word in some languages.</li>
+</ul></li>
+<li><strong>Syntactic Definitions</strong>
+<ul>
+<li>Words can be grouped into syntactic classes; for example “New York” is a particular city in the same way that “Pittsburgh” is.</li>
+<li><strong>Open Classes</strong> (Nouns, verbs, adjectives, adverbs): These classes are vast and can easily accommodate new words.</li>
+<li><strong>Closed Classes</strong> (Prepositions, determiners, pronouns, conjunctions, auxiliary verbs): These classes have a finite set of words, and new words rarely enter these classes.</li>
+</ul></li>
+<li><strong>Part-of-Speech Tagging</strong>
+<ul>
+<li><strong>Tag Sets:</strong> Tag sets, like those based on the Penn Treebank (with 43 tags), are used to categorize words into parts of speech.</li>
+<li><strong>Universal Dependency Tag Sets:</strong> A smaller set of tags is used across many languages for universal dependency grammar.</li>
+<li><strong>Importance of Tagging:</strong> Tagging provides structured information, which can improve machine learning models, especially with limited data.</li>
+</ul></li>
+<li><strong>Morphology</strong>
+<ul>
+<li><strong>Morphemes:</strong> Morphemes are the smallest atomic parts of a word.</li>
+<li><strong>Derivational Morphology</strong>: This changes the meaning and part of speech class of a word. English is rich in derivational morphology.</li>
+<li><strong>Inflectional Morphology</strong>: This changes syntactic properties such as tense or number, and usually occurs after derivational morphology.</li>
+<li><strong>Morphosyntax:</strong> How stems and affixes combine.</li>
+<li><strong>Morphophonemics:</strong> Pronunciation and orthographic changes at morpheme boundaries. This can make morphology non-segmental.</li>
+</ul></li>
+<li><strong>Morphological Decomposition</strong>
+<ul>
+<li><strong>Stems/Roots, Prefixes, and Suffixes:</strong> Words can be broken into their root forms, prefixes, and suffixes. English usually adds prefixes and suffixes but some languages have infixes.</li>
+<li><strong>Infixes:</strong> Some languages have infixes (elements inserted within the word, with examples from Southeast Asia) and even change the consonants and vowels, as in templatic morphology in Semitic languages.</li>
+<li><strong>Need for Decomposition</strong>: Decomposing words into morphemes allows for a more finite set of meaningful units for processing and tokenization.</li>
+</ul></li>
+<li><strong>Types of Morphology</strong>
+<ul>
+<li><strong>Isolating/Analytic</strong>: Very little morphological change (e.g.&nbsp;Vietnamese, Chinese dialects, English).</li>
+<li><strong>Synthetic/Fusional/Flectional</strong>: Things are constantly being created (e.g.&nbsp;German, Greek, Russian).</li>
+<li><strong>Templatic</strong>: Often consonants are the basis, and the vowels change around them.</li>
+<li><strong>Agglutinative</strong>: Lots of things joining together (e.g.&nbsp;Japanese, Finnish, Turkish).</li>
+<li><strong>Polysynthetic</strong>: Complex joining of many parts, often with a whole phrase in one word (e.g.&nbsp;some Native American languages).</li>
+</ul></li>
+<li><strong>Tools for Morphological Analysis</strong>
+<ul>
+<li><strong>Morphological Analyzers</strong>: Existing tools, including those from the UniMorph project, can provide morphological decomposition for many languages.</li>
+<li><strong>Finite State Morphology:</strong> Finite state machines are useful for modeling morphology because of its localized nature.</li>
+<li><strong>Unsupervised Methods</strong>: Tools like Morfessor can identify prefixes and suffixes.</li>
+<li><strong>Stemming:</strong> Removing word endings to find the root, useful for information retrieval.</li>
+<li><strong>Byte Pair Encoding (BPE):</strong> Finds optimal letter sequences for segmentation, also helpful in tokenization.</li>
+</ul></li>
+<li><strong>Related Problems</strong>
+<ul>
+<li><strong>Tokenization:</strong> The process of splitting text into words or tokens.</li>
+<li><strong>Lemmatization</strong>: Finding the linguistic root of a word after morphological decomposition.</li>
+<li><strong>Text Normalization</strong>: Replacing numbers, symbols, and abbreviations with standard words.</li>
+<li><strong>Spelling Correction</strong>: Addressing spelling errors and social media language.</li>
+<li><strong>Tokenization Mismatch</strong>: Different tokenization methods can lead to issues, for example when using models like BERT.</li>
+<li><strong>Word Segmentation:</strong> In languages without spaces, segmenting words is necessary.</li>
+</ul></li>
+<li><strong>Practical Applications</strong>
+<ul>
+<li>The need to consider different language families when developing tokenization methods because morphology and orthography are often similar within a family.</li>
+<li>Tokenization decisions impact all downstream tasks, including word embeddings and parsing.</li>
+</ul></li>
+</ul>
+</section>
+<section id="papers" class="level2">
+<h2 class="anchored" data-anchor-id="papers">Papers</h2>
+<p>Here’s a list of the papers mentioned in the lesson</p>
+<ul>
+<li><strong>Sproat et al 2001 CSL 15(3)</strong>: <a href="">Normalization of Non-standard Words</a>, is referenced in the context of <strong>text normalization</strong>. It deals with the expansion of non-standard words.</li>
+</ul>
+</section>
+<section id="kannada-in-10-minutes" class="level2">
+<h2 class="anchored" data-anchor-id="kannada-in-10-minutes">Kannada in 10 minutes</h2>
+<p>Okay, here is an overview of Kannada, drawing from the provided Wikipedia article.</p>
+<ul>
+<li><strong>Language Name and Classification</strong>:
+<ul>
+<li>Kannada (<strong>ಕನ್ನಡ</strong>) is a <strong>classical Dravidian language</strong>.</li>
+<li>It belongs to the <strong>South Dravidian</strong> language family.</li>
+<li>It evolved from <strong>Tamil-Kannada</strong>.</li>
+<li>It was formerly known as <strong>Canarese</strong>.</li>
+</ul></li>
+<li><strong>Speakers and Location</strong>:
+<ul>
+<li>Approximately <strong>44 million native speakers</strong>.</li>
+<li>Around <strong>15 million second-language speakers</strong>.</li>
+<li>Primarily spoken in the state of <strong>Karnataka</strong> in southwestern India.</li>
+<li>Spoken by minority populations in neighboring states, such as <strong>Tamil Nadu, Maharashtra, Andhra Pradesh, Telangana, Kerala, and Goa</strong>.</li>
+<li>Kannada speaking communities also exist in countries like the <strong>United States, Canada, Australia, Singapore, and Malaysia</strong>.</li>
+</ul></li>
+<li><strong>Official Status</strong>:
+<ul>
+<li>Official and administrative language of <strong>Karnataka</strong>.</li>
+<li>It has <strong>scheduled status in India</strong>.</li>
+<li>Recognized as one of India’s <strong>classical languages</strong>.</li>
+</ul></li>
+<li><strong>History and Development</strong>:
+<ul>
+<li>The language’s history is divided into: <strong>Old Kannada</strong> (450-1200 AD), <strong>Middle Kannada</strong> (1200-1700 AD), and <strong>Modern Kannada</strong> (1700-present).</li>
+<li>Influenced by <strong>Sanskrit and Prakrit</strong>.</li>
+<li>Some scholars suggest a spoken tradition existed as early as the <strong>3rd century BC</strong>.</li>
+<li>The earliest Kannada inscriptions date back to the <strong>5th century AD</strong>.</li>
+<li>The language has an unbroken <strong>literary history of approximately 1200 years</strong>.</li>
+</ul></li>
+<li><strong>Writing System</strong>:
+<ul>
+<li>Uses the <strong>Kannada script</strong>.</li>
+<li>The script evolved from the <strong>5th-century Kadamba script</strong>.</li>
+<li>It is a <strong>syllabic script</strong>.</li>
+<li>It contains <strong>49 phonemic letters</strong>.</li>
+</ul></li>
+<li><strong>Phonology</strong>:
+<ul>
+<li>Vowels include front, central, and back vowels, with variations in length.</li>
+<li><img src="kannada-vowels.png" class="img-fluid" style="clear: both;" width="400"></li>
+<li>Consonants include labial, dental, retroflex, palatal, velar, and glottal sounds.</li>
+<li>Most consonants can be geminated.</li>
+<li>Aspirated consonants are rare in native vocabulary.</li>
+<li><img src="kannada-consonants.png" class="img-fluid" style="clear: both;" width="450"></li>
+</ul></li>
+<li><strong>Grammar</strong>:
+<ul>
+<li>Word order is typically <strong>subject-object-verb (SOV)</strong>.</li>
+<li>It is a highly inflected language with <strong>three genders</strong> and <strong>two numbers</strong>.</li>
+<li><strong>Compound bases (<em>samāsa</em>)</strong> combine two or more words.</li>
+</ul></li>
+<li><strong>Dialects</strong>:
+<ul>
+<li>Approximately <strong>20 dialects</strong> of Kannada exist, including Kundagannada, Havigannada, and Are Bhashe.</li>
+<li>Dialects are influenced by regional and cultural backgrounds.</li>
+<li>Related languages include Badaga, Holiya, Kurumba, and Urali.</li>
+</ul></li>
+<li><strong>Significance to Modern Linguistics</strong>:
+<ul>
+<li>Kannada’s syntactic properties, particularly regarding causative morphemes and negation, have been significant in studies of language acquisition and innateness.</li>
+</ul></li>
+</ul>
 
 
 </section>
