@@ -1,0 +1,647 @@
+---
+date: 2022-03-01
+title: "Speech"
+subtitle: "CMU CS11-737: Multilingual NLP"
+description: "This week we will be discussing speech recognition and the various methods used to achieve it."
+categories: 
+    - Attention
+    - Multilingual NLP
+    - NLP
+    - Notes
+---
+
+![course banner](/images/tiling.png){.column-margin .nolightbox width="200px"}
+
+::: {#vid-01 .column-margin}
+{{< video https://www.youtube.com/watch?v=_05i0funFvE&list=PL8PYTP1V4I8BhCpzfdKKdd1OnTfLcyZr7&index=7&ab_channel=GrahamNeubig >}}
+
+Lesson Video
+:::
+
+::: {#sup-slide-deck .column-margin group="slides"}
+![This week's slides](slides.pdf){width="420px" height="340px" style="@page {size: 16in 9in;  margin: 0;}" group="slides"}
+:::
+
+::: {.callout-note}
+## Learning Objectives  {.unnumbered}
+
+- Introduction to end-to-end speech recognition
+- HMM-based pipeline system
+- Connectionist temporal classification (CTC)
+- Attention-based encoder decoder
+- Joint CTC/attention (Joint C/A)
+- RNN transducer (RNN-T)
+
+:::
+
+
+::: {.callout-note collapse="true"}
+### Transcript {.unnumbered}
+<!-- Transcript here is machine generated no punctuation and I eddited it a but but it needs more work and I dont see the benefits unless I can run it through some tool. -->
+
+
+okay so um maybe it's time to start today uh we don't have our language then
+so we directly uh the start vector yeah yes uh
+yes so uh today's topic uh the sequence to sequence model uh for speech recognition
+or i also call it end to end speech recognition uh and
+i will try to cover uh many of the uh the speech recognition
+systems uh as much as possible uh today's in this today's
+lecture uh which is the first agent-based uh the system that i briefly uh discussed uh
+last time and then the other four uh the systems
+uh the c connectionist temporal classification cdc attention-based encoder decoder
+uh joint ctc attention uh and rnn uh transducer
+and the note that attention-based encoder decoder is quite uh
+hover over with the machine translation so uh
+if you guys uh missed some kind of concept let's try to
+think about this problem to be interpreted as a machine translation problem but
+just changing the source target uh changing the source target to speech the input
+okay so uh before moving to the uh end to speech condition i will briefly
+summarize what we have discussed in the previous section
+this is i call it noisy channel model and
+how much people how many people here remember uh the in the hmm error and how to deal
+with uh this uh the speech condition problem starting from the base decision
+uh crm i'm just curious because we use a couple of months right
+so uh yeah i hope you remember uh this
+uh the kind of a basic uh operation to make our speech recognition problems are
+tractable uh based on some rule product rule and conditional independence assumption
+and by using this uh we can make this problem oh why it is not appear
+here let me try to
+working now okay cool
+so uh we try to make other make the problem p w given o
+uh to be tractable by using the various probabilistic other
+techniques and then at the finally uh we tackle
+these are the three distribution uh this is a kind of our other classical
+speech condition uh techniques and actually this is not the end of the
+uh approximation after that we perform a lot of
+approximations for the acoustic modeling side for example we use a hidden markov model
+which is another way of the conditional independence assumption uh and the language model we also use
+the uh enneagram model this is also conditional independence assumption
+and this methodology is very cool with that we can make the problem uh
+uh destructible uh by uh tackling each of the small modules
+rather than a big problem here but at the same time uh these are the
+other method a factorization and conditional independence assumption
+actually brings a lot of uh the uh problems brings a lot of kind of
+limitations for the model this actually becomes a big barrier for
+making speech equations to be improved and the mastery again comes from the conditional independence assumption
+based on hidden markov model uh enneagram and so on and actually uh before that we are
+working on the n2 and the speech recognition many researchers actually tried to kind of relax the condition
+or try to extend this model uh the that this comes from the conditional independence assumptions
+so this kind of uh the difficulty a barrier is at a continued uh the like 40 years
+or something like that very long time however uh this barrier
+uh this is a barrier yeah okay uh it's uh broken
+by uh sequence to sequence model so now i will uh explain the sequence to
+sequence model uh and uh try to kind of uh uh deformulate a speech recognition problem
+based on the sequence to sequence model and the uh the mostly uh the model is
+actually trying to directly model speed that will give all based on the single
+neurons uh a single neural network and again as i mentioned that this is
+not only in the speech recognition field again machine translation or even other
+other uh the processing field uh sequence to sequence uh based single neural network
+is now replacing other classical other problems
+so uh this is a kind of introduction of trade stock and then now
+i will discuss about each of the sequence to sequence model and the first is just uh review the
+agent-based pipeline systems and then discuss about the pros and cons
+so uh speech recognition is actually a sequence one of the kind
+of typical example of the sequence to sequence problem input is of other speech
+features it can be waveform or it can be other features mhcc features speech features
+and so on and then with the function to convert this other input sequence to
+the output sequence uh in this case in physical in some cases it can be a one
+sequence or a character sequence or other bp software token a sequence or
+whatever and then the problem uh is how to uh the other
+solve this other function and then lastly we have five ways to
+absorb uh this problem and i will try to explain one by one
+and the first one hm based speech recognition pipeline which i mentioned
+already in the previous uh lecture uh composed of the ph extraction
+this converting the waveform to the uh the speed features like the mscc or
+bank or whatever and then after that probabilistic approaches are
+the uh uh making the uh this kind of problem are tractable
+acoustic modeling is a probabilistic model to convert the uh the observation to the election under
+funding sequences and the next scan is to convert this
+uh the phoneme sequence to the water sequence and mostly this one is based on the
+dictionary so other people may not use so much other advanced probabilistic models
+uh but uh the anyway this part is also governed by the probability to some extent and then finally language model
+are two other uh they are providing the most likely sequence in terms of the world sequence
+okay let's uh discuss about how to build this hmm-based speech recognition
+pipeline i would say that this is not easy
+the future extraction part are the mostly based on the signal processing
+how many people here for example uh that know the digital signal processing and so on
+not so many right yeah it's a little bit kind of still included in the computer science
+in some part but mostly in the other electrical and computer engineering
+and the acoustic modeling this part is uh more like a becomes
+computer science but anyway still uh the pattern recognition machine
+learning and so on is required for this acoustic modeling
+of course some of the models is replaced with deep neural network and the third one lexicon this part is
+more like linguistics and we get some kind of information from the linguistics
+and finally uh language modeling uh this is more like are the uh the
+machine learning statistical other model nlp
+and so on so this other to realize this kind of four blocks
+we actually need to have a lot of knowledge so i think it is very very
+difficult to master all of these kind of areas and then making this kind of ease of the
+program by the way i kind of simplify this problem actually later
+this one is fully combined and then such processes happened so then that we actually have to also the
+working on the discrete uh the uh the mathematics uh such uh and
+so on so other to implement all of them will actually require a lot of a lot of
+other knowledge for other various fields and the
+i i will say that even for me it is very difficult to implement
+all of the components but i can say that i have an experience of
+implementing feature extraction acoustic modeling well lexicon is more like getting some resources but i have
+an experience of exploring that market modeling i also have an experience of implementing others uh everything from
+the scratch with my kind of 20 years of the research history however i still have never
+either implement the entire search process by myself so like even
+for me like experienced researchers it is very difficult to cover the entire pipeline and
+building a speech condition and also uh this is a uh the another
+important part is that this dexcom this is a completely knowledge based
+well there are some combination of the knowledge and the statistical method but mostly that we use the knowledge
+uh that is other pronunciation and so on and we are lucky uh if we use the major
+languages like english and the uh the mandarin and so on we could usually get to the a very accurate a
+pronunciation lexicon but the other language is it's more getting
+difficult and the uh due to that it is very difficult to build
+sr systems for a known expert but entering the neural network is
+either changing this kind of situation more first
+this is a single neural network to directly map a speech signal to the target uh character
+so this since uh this uh compared with these four blocks we just have a one a
+single neural network so this actually greatly simplified
+the a complicated model building and decoding process
+and especially this process doesn't have a lexicon component
+which is learned based on the data volume driven manner
+so this means that we don't need a dexcom uh for especially when we try to
+work on the new languages or some kind of new domains we usually don't have a good uh channel
+to get a good lexicon in this case actually the end-to-end neural network may have some
+benefit and the third one is maybe i can also add the moving part
+this one again so each of the module is based on the different training criteria or different
+are the other the criteria to optimize the system so after we optimize
+each of the system and then combine the system is it the global optimum
+it's not it's local optimum right instead
+uh end-to-end neural network potentially uh the the
+uh the hybrid ability to globally optimize
+the entire neural network with a single other
+system single objective function so this sounds like a very good benefit
+right but please note that this should be a pros and cons for example in some cases we have a very
+good uh the mexican uh comes from the effort big reference from
+the linguist linguist in some particular language and we don't have enough
+amount of training data to fully optimize this other system
+[Music] due to the added risk of the overtraining and then of course the classical system
+is better so this kind of a property i kind of make emphasizing
+uh but it can be a process so please remember that
+and the i am uh that uh now i'm moving to explain about each of the end to end system
+but one thing i actually want to admit is that usually
+we do not include the feature as an end-to-end neural network pipeline
+because we still don't have a good benefit of making this part to be
+represented as a neural network mscc seems to be very good enough and
+very kind of a shallow computational cost so that many of our systems still are
+using the other mscc so from now i mentioned end-to-end neural
+network but this is mostly after the future extraction okay
+so
+today we have a bit more time right because we don't have a language then so maybe i can accept some questions here
+yes from other applications
+is certain feature extraction at the beginning this is more to kind of reduce the so
+it's space itself while doing while getting the wrong features or does it have some other benefits
+yeah the uh the this is a good question and the it's uh the partly yes other more like you know
+that if we are also applying this to the neural network in this other part as well the network becomes
+very complicated and even we have a more other hyper parameters and so on and it is
+difficult to optimize which is one thing and the other part is that the
+front end part feature extraction part has a lot of requirement plus it has to
+be very shallow computation cost very small computational cost it has to be
+other online streaming it should either finish the competition within the
+millisecond and so on so due to this kind of constraint people still like uh to use the separate
+uh signal processing based approaches but of course this can be replaced like
+a 1d composition with a very small window and so on which is actually quite
+similar performance but then what you mentioned would happen that optimization becomes more difficult
+and the uh also training becomes a little bit more uh
+than the uh uh using the feature extraction based on mscc so due to this kind of engineering
+reasons mainly still people are using the mscc here
+okay okay so uh let's move to the first
+end-to-end method this is a connection is the temporal classification cdc
+this is historically one of the first uh the method end to end the method
+are the uh the developed in this speech equation area and actually cmu
+is one of the other big other contributors to develop this as ctc uh based
+approaches uh the open source uh software called esen is one of the first
+are the open source ctc tools developed here
+uh by the way for end to end asl there are a lot of kind of ctc uh cmu people
+that uh appeared other kind of main developers contributed in
+innovators yeah well the the other speech concern part
+as well so first uh the ctc uh i am always trying to use this kind
+of a figure i mean pipeline figure uh so that you know
+which model covers which other modules more clearly so please add uh
+note that ctc uh is actually covering
+from the acoustic modeling direction but it actually doesn't explicitly cover
+language model and i will skip the many of the kind of
+equations and try to give you some concept of cdc so ctc like the other are the sequence
+to seek is the neural network like encoder decoder what uh we will do is more like a encoder to
+perform the feature extraction uh the older days we use a brstm but now
+it's either replaced with the other transformer or cnn and the lstm combinations
+uh or the the convolution transformer con the other combination but anyway the first
+part is to just get the kind of features higher representation of the feature
+which correspond to the phoneme or character or whatever
+but the important part is that the output
+output is character or textual token or whatever
+this is usually very short compared with
+the input feature and this uh the alignment program is the actually rather difficult
+and the speech recognition or even machine translation sequence to sequence model the most
+important part is how to deal with this alignment problem and in ctc
+we use dynamic programming i mean briefly explain with some patterns about it and the other
+uh property okay uh the other property is that very simple uh we have some you know blcm or
+server attention or whatever and then we just put the ctc loss
+and then we can actually uh realize at this at the ctc based speech condition
+this is also first and this also be used for the online
+processing so uh in this regard ctc is quite quite another powerful
+however in general compared with the other end-to-end method
+ctc is a little bit poor performance and also the application is
+limited i will explain about the meaning of these unlimited applications later
+okay so i will briefly discuss about the problem uh of
+speech recognition are the major problem in the speech recognition which is alignment
+and as i mentioned usually a speech
+are very long this is a say mscc vector
+converted from the this spectrogram and then that we have our
+uh the c like a character three character and the problem is how to
+assign each of the kind of a token character and corresponding speech features
+maybe one possibility would be like that some of the beginning part
+and the some transition of the spectrogram part may be fast character by other concerns yes
+and then the center of the path may be second e
+and the best part will be the last character of the e
+and is it's true not sure right we don't know
+uh because we don't have such kind of label well we are not sure whether we
+can definitely have such kind of a label explicitly so it can be this alignment
+it can be disarranged little bit shifted we are not very sure
+which alignment that we are taking in this problem
+and actually uh in this other problem i can be well i'll read the
+so-called police structure let's say this is the s
+e e the character and i kind of reduce the other
+uh the input here from the uh
+more than 30 to the five for other simplicity and the problem of
+this finding this alignment is actually try to find the path
+inside this torrence and for example one possible
+uh path can be go from this one to this one this one to
+this one and the other final one and this uh the paths
+correspond to however uh the trend uh the alignment of the first s is in the
+first two of the frames and the second e is the other third and
+fourth frames and the last character is the rest of the speech features and so on
+if we know this alignment we can actually somehow compute
+the probability so uh with this
+other alignment we approximately uh the uh up uh the the derived
+this uh the probability are the with the three
+uh the probability here but from here to here
+we use a lot of aggressive conditional independence assumption
+uh for example this one s can be also depending on the other speech features three o three o
+four o five but we ignore them this e can be depending on the o one
+o two o five or even this can be depending on this uh previous character
+s but we ignore them same for this one last one
+so given the alignment we also perform the conditional independence assumption
+and then by using that we can somehow compute the probability here
+by the way in cgc there are little bit motorics like the so-called blank symbol
+is used to even uh use this kind of body
+uh the this one still has a different length but by using the blank symbol we
+actually uh have auxiliary uh information to make the input and
+output can be the same length but i will skip this other
+discussion uh today uh if you want uh you can find some uh you can find the other difference
+that i am attaching later and the uh this uh
+is one alignment it's possibly the other alignment again still we can write it as authorities
+and then we can cover this kind of alignment and then we can have another possible
+probability uh based on this uh different argument
+and then other two other finally i compute this as a probability
+uh we summing all possible passes and this uh the summing all possible
+passes are actually very difficult problem we need are actually uh to compute
+the uh the the passes which can be possibly the
+exponential so uh this other other this summation
+all over the possible passes are very difficult in general but luckily in this uh the particular
+structure we can use the dynamic programming and then can efficiently compute the
+past all possible passes the summation of the all possible passes
+and then by using that we can compute this uh probability
+and by using this probability we can do anything the most easy part is that a most useful
+part is that given this probability we can use this as a likelihood training objective to optimize the model
+parameters and so on so this is a kind of other essence of the ctc but again behind this ctc
+there are a lot of interesting a problem of how to introduce the blank symbols and
+how to introduce a conditional independence assumption and how to steal other
+from this kind of summation of all possible passes to other
+get the derivative of the parameters are the required sum of the masses and again i
+will leave it to the difference okay so i would like to discuss a little
+bit about the hmm that i have mentioned before
+and the cdc so first
+conditional independence assumptions hmm ctc
+uh both are using conditional independence consumption or not
+yes they both using the conditional independence assumptions and the cctc
+and the hmm itself actually doesn't have our language models
+hmm we can attach it based on the uh the probabilistic uh the
+method and the ctc as well but the mod the html model ctc model
+itself actually doesn't include a language model like structure
+and the use of pronunciation lexicon hmm can do it
+because it has a clear distinction with a lexical model and the
+other component ctc it's actually directly the predicting
+from the other the these speech features to other token so it's actually cannot
+be easily combined by using the pronunciation electrical information
+and the implementation wise ctc is easier because this is just one
+model now i will move to the attention based
+encoder decoder
+yes this is a very good other question and then this is actually with the attention
+uh or rn transducer this is because
+actually uh this part as i mentioned uh
+this part is actually not true
+it should be conditioned on the other character this one
+but the ctc to stop it efficiently we ignore
+this character condition conditional independence assumption
+but this one is actually having a such kind of you know history of the text corresponding to including the language
+model right so that's why i mentioned that ctc doesn't explicitly green language model
+and this is a kind of other general case that the ctc
+any other have questions i tend to how does i make it longer so
+i'm very careful about it
+so next uh the attention-based encoder decoder and i will also explain the joint ctc attention
+uh the because this is also used uh the in our toolkit the esp net and we
+therefore actually you guys are using this joint ctc attention in the assignment three
+so now the speech consumption pipeline compared with the ctc
+uh becomes different attention is actually including reliable model as well
+and this is uh because the attention decoder
+can also have a language model like behavior
+given the previous history of the predicted sequence we try to predict the next sequence like
+a neural machine translation and the uh this part like similar to the
+neural machine translation again the encoder is either initially uh represented by
+the uh recurrent neural network language model like a beer system or gru
+a bgru but it is now a depressed with transformer or composition and
+transformer uh the combination called conformer and so on
+and here i really would like to emphasize that it doesn't have a no con
+uh doesn't have our uh conditional independence assumption to uh derive uh this
+uh the uh the uh problem so uh this due to that
+as i mentioned compared with the ctc uh theoretically and actually practically
+uh the attention-based eco encoder decoder is better than cdc
+in terms of the performance and also this structure is very very
+flexible oh i actually forgot to mention very important thing in the ctc
+in ctc actually there's another assumption that
+the output language should be longer than actually input language should be longer
+than out of it so this is also another big constraint
+which is very natural for speech problems but like for example if radar using
+tts if we try to use the ctc for dts is this possible
+is very difficult because in general other the
+uh dts is open from the text input or phoneme input
+to predict the feature and out of it is longer
+and also the the output is continuous not discrete this is another reason but anyway by uh
+due to that we cannot use tts therefore uh
+issue for tts but i am still trying to do it by the way i tried to use the fast discretize
+the feature and then i also tried to kind of up sample the text
+uh and making it longer and then applied to ctc but it didn't work so if you guys are interested in you
+guys can try it as a research other project so
+then this is actually one other comment some people may failed to train your
+model in the assignment three some cases this is because
+your your model uh your data may not satisfy this condition
+speech features input features should be longer than the data output
+the labels to perform the joint ctc attention so in this case your training is failed
+and it doesn't output other meaningful results and if it happens ctc probability
+becomes none and so on so in this case instead of other posting questions to
+the theater i recommend you to check the data speech features almost almost all the
+cases longer must be longer than the text so in this other case happens means that
+your data preparation is wrong okay sorry about that uh i just
+remember the one kind of important note for the assignment 3 okay so uh this is the uh the reason
+that attention-based encoder decoder has a wider applications because attention-based encoder decoder doesn't
+have such kind of limitations uh it can be used even the output
+the sequences are the longer than the other input so we can use it for the tts
+as well and we can use of course it is originally developed for the machine uh
+translation and so on and the nice part is that uh uh the
+because the alignment part is very flexible uh it doesn't have a so much constraint
+but it's actually this other flexibility sometimes becomes a difficulty of making training with attention based
+on good recorder so uh i will try to explain bit more
+about the other the the attention part uh this is more of the other correctly
+uh we may call it source target attention uh because we're also using a self-assessment so self-attention and
+source target attention is different so other very pleased other remaining products
+the the source target attention is to convert the other
+infrared features to the output context vector uh by using the rated summation
+that state there is no con consent except for that this one is a probability
+and with this kind of flexible architecture it can be used for many of the
+applications as i mentioned uh the
+how it looks like let's say you know alignment pattern that i mentioned before in the previous cases i kind of hardly
+assign like for example this area to be a fast s
+and this area to be the second e and the third part will be the uh this area and so on i hardly assign
+each feature to the other the corresponding uh their text
+and then the pass is actually probability however in the attention cases
+the attention rate is actually already solved so in the first
+character s could have a higher probability in the previous three other frames
+and the next other uh token can be more higher probability in
+the next chunks of the frames and the at the last of the frames
+can be uh i can be more uh that uh have a higher
+probability in the last uh chunks of the speech features so it's slightly
+different previously we consider it as a hard alignment but now it's considered as a soft alignment and please note that
+even this person has a connection to the old kind of other features
+it is very low probability but it's possible it happens due to the mathematical
+constraint and then the uh the attention source target attention can be written
+as this kind of picture but we can also write the previous uh the hard alignment as also uh based on this kind of picture
+and the soft alignment can also be usually uh written as other disks
+are depicted by this picture and then the uh the higher probability means that
+this token attained this region of the speech features
+and generally i want to know that it becomes diagonal
+this is actually very important the property in speech for example do you think
+the token end of the token here
+would be depending on the initial part of the speech features
+there might be some more probability but mostly no right same other the second other token should
+hover higher probability in the second vision
+of the speech features and this uh the property of input
+are the other sequence and output sequence uh the the correspondence has some kind of
+keeping the order it's called the monotonic attention uh due to that uh it's actually the the
+attention weight is written like this one the other the
+line by the way uh this monotonic attention is important for speech
+or the important speech recognition or important for the speech synthesis but of course
+uh it does not have to be in the other sequence two sequence model right like a
+machine translation the ordering happens our ordering is happened so that we actually don't have
+to add a force uh this monotonic other alignment property in the machine
+translation but for speech this is very important
+and this is a kind of uh one very typical wrong alignment
+and this is a difference in the corresponding uh the attention-based
+result and the blue line shows that it's
+actually uh the errors what happens
+this one first you know either do some kind of a attention monotonically
+but suddenly they actually switch back to
+the uh the beginning of the token and then uh started to the same things
+uh that again and this are the the uh the patterns uh
+that uh they appeared additional two times and it's actually at the corresponding
+to the very large uh insertion networks and this naturally happens
+in attention-based encoder decoder and there are a lot of ways to the uh the avoider
+this kind of approaches for example by uh limiting the output language and so on
+so uh this is a kind of other way to avoid to have a wrong alignment due to the
+uh the two flexible other assignments
+yeah so there are a lot of ways to uh solve this problem first way is the the
+as i mentioned setting the links apriori because given the speech features we
+could expect links the other way is to see the attention rate do not
+study the attend the same part same part twice or more than twice
+or that more specifically accumulated weight should not be either higher than some
+student and so on and the other solution uh is i will explain the ctc
+the joint ctc attention okay so now i will uh also
+discuss about this other the four are powered and they reveal a dimension about the
+difference with the cdc 18 mm and attention uh the
+first part conditional independence assumptions now
+attention actually does not have a explicit conditional independence assumptions
+so this is a kind of unique compared with hmm and ctc the other about
+language model and as i mentioned uh the attention decoder network
+implicitly has a language model so that it actually can under the hover
+or the language model like behaviors in the decoder which correspond to improve
+the performance from the hmm and the ctc although hmm the ctc we can also combine
+the language model so finally the performance may be comparable but if we purely compare it with the other hm ctc
+and attention attention has a benefit and the other two are very similar to
+ctc uh the attention is also direct mapping so it doesn't have election
+information so we cannot use electrical information easily in the network and the implementation compared with the
+hmm the election language model fsd based approaches uh attention is still easier
+ctc is the the a bit uh the further easier but
+attention is still easier compared with the uh the hmm
+the last not rust the third one is the joint ctc attention
+uh this is actually uh that try to solve the problem of the attention
+weight because uh this uh attention uh the the flexible uh the source target attention
+was very annoying issue when uh we don't have so much computational resources to
+tune the parameters well we don't have enough data to train the attention based model and so on
+due to this motivation uh they actually uh the the this first author
+uh suyan kim is also the graduate from here and when she was an internship student
+uh with me when i was in the company we actually developed uh this approach
+called joint ctc extension the idea is simple ctc has a monotonic attention
+the attention doesn't have so how about combining these two methods
+and how to combine we just using the ballast learning fashion
+during the training we actually attaching the attention-based encoder decoder loss and
+the ct zeros to regularize this network to be a monotonic
+and even in the output we actually combine these two results because ctc also do the speech recognition but they
+can also do the speech recognition at the same time so why not combine it during the inference
+by doing that we are the actually can solve uh the attention
+uh the uh the the two flexible uh attention patterns uh the the
+the by using the uh help from a cdc and the assignment three people are
+using the esp net and espnet are using this joint ctc attention as default
+and this is a kind of example that i showed before the this rotation pattern
+is not very good we just have our same attentions uh the three times which is well regularized
+based on the cdc constraint and then we recover the monotonic
+tension um yes uh this is the output
+so this is a liquid yes yes it's actually in this case character
+in chinese so and this is another very good a very
+kind of a frequent example of the failed attention
+attention stop to the attempt and then only the output
+out of it only output the label uh that other the before reaching
+the older kind of uh the consuming the all the features
+and then this correspond thing to become the deletion errors
+and this is also can be very about based on the joint sheet this attention
+so join that city's attention is easier to make attention attractable so that's
+why i we use it as a default but this is just makes it easier if we have a more
+other tuning and some other effort we can still make attention to be working like other
+people doing okay
+errors um yes down sampling a lot and then we don't have enough information to
+uh get the kind of out of the token and then this may also happen
+but if we correctly downsampled i think that still that enough information will
+be going to the uh the encoder out of it and then the other
+this kind of duration would not usually be happen but if we have a aggressive down sampling yes down some other
+direction errors still happen okay so the uh last part rna transducer
+this is actually one of the most widely used the neural network and the system
+now uh especially in the industry and this approach is actually quite
+similar to the con the ctc however a date that the method is try to
+kind of deduct the conditional independence assumption especially for the uh the label part
+that i will explain in the figure but anyway the uh the this other
+uh the the other entrances are based approaches it's the uh
+the it's also handling the language model like architecture
+based on this kind of neural network uh and then the uh this part is very
+similar to cdc uh by doing that uh we can keep the ctcs
+uh the uh the benefit like uh other simple uh under
+the explicit alignment based and also it it's very good for the online streaming
+uh system uh the while uh it's uh the actually also uh the still at the lower
+than the uh the uh lower performance than the attention
+uh based on the uh the still uh there's some conditional independence assumption
+also the iron transistor takes takes over the ct sheets uh that
+uh the issues are the features the uh it's only applied to the case that
+speech features uh longer uh input features are longer than other
+bit by the way it's actually technically other entrances that can avoid it
+by using the very kind of a cool transition method but practically uh the
+still are the better to have a longer input features than other with features
+that is based on my experience
+yeah i try to explain that so
+this is that kind of tourists that i mentioned before and if we have this kind of a loop right
+and then as i mentioned in cdc we actually uh
+having the very aggressive conditional independence assumption to remove many of the kind of
+conditions and then compute this probability
+rn transitions are actually slightly modifying it
+it's keeping this condition here a condition here
+so that it actually also holds the uh the uh the
+the dependency of the history is corresponding to the language model so
+in this sense the this behavior is very similar to the potential basic for the recorder in the sense that it's
+including the language model however still from here to here it has some kind of conditional independence
+assumptions uh in the input feature level so that actually slightly rather than
+translucent is rather performing worse than the attention-based encoder in general
+but the nice part of this other iron transducer is that again we still have a kind of a
+considerable history of the token out of the token and relax the conditional independence
+assumption from the cdc and also uh this one that is still uh we
+can compute the other other uh the all possible summation of the all possible paths uh
+based on the dynamic program okay so that this is a kind of a very
+very large part of the atria and bus ctc versus attention by the southern transistor
+and again conditional independence of same assumption like uh if we consider this one hm and the ctc are very
+aggressive attention almost doesn't have explicit uh conditional independence assumptions rnt has some conditional
+independence assumption but compared with the ctc it's actually a deduct more relaxed than the
+other ctc and the language modeling attention random transducer including the other
+label dependency in the model so it actually can hold the language modeling like behavior
+but all three methods ctc attention rn transducer uh cannot well use the uh the electrical
+model because it doesn't have an explicit module of the hexagon
+information and finally implementation again compared with hmm lexical language
+model it is still easy so uh that's a kind of comparison of
+this kind of other four method and finally the our
+uh quickly summarize all the kind of five method
+and except except for the hm based pipeline uh actually the espnet assignment three
+other has all implementations default is uh number four join ctc
+attention but by setting the uh there's some kind of our other hyper parameter
+we can switch to the attention based encoder decoder well we can switch the con the cdc
+also by changing the the configuration we can also apply the rn transducer and
+someone if you want to play with this one or if you want to kind of how to say include the performance
+uh that based on the other architecture and so on uh you guys can actually underplay with this hormone uh embryo
+implemented in the uh espn uh that's the uh yes
+yes since both ctc as well as the attention-based recovery decoder language modeling separately
+so how do you combine the output of the language you just take the maximum either of
+those cases yeah very good question it's actually performing the first other attention-based thing for the decoder we
+use our other build servers and during the bim search we actually combine the score of that comes from the
+attention comes from the cdc what even comes from by the way external language
+yeah this kind of score combination is performed during the bim search uh that is a another actually trick of that uh
+making the the joint ctc attention are the performance better than ctc or at
+the attention basically yeah any other questions
+so if not let's move to the discussion and the today's discussion is the uh the
+please talk about assignment three your experience of you know what part is
+difficult and what kind of tips are the important other for the other people and some other configurations like what kind
+of gpu you are using and so on it could be a good information for the other people as well so please try to describe
+it so that's the uh discussion so let's move to this question
+:::
+
+
+## Outline
+
+*   **Introduction to End-to-End Speech Recognition**
+    *   Sequence-to-sequence model for speech recognition, also known as end-to-end speech recognition
+    *   The sequence-to-sequence model uses a single neural network to directly model speech
+    *   Speech recognition is a sequence-to-sequence problem that converts an input sequence of speech features into an output sequence such as a word or character sequence
+    *   Five methods to address the sequence-to-sequence problem
+        *   HMM-based pipeline system
+        *   Connectionist Temporal Classification (CTC)
+        *   Attention-based encoder-decoder
+        *   Joint CTC/attention (Joint C/A)
+        *   RNN transducer (RNN-T)
+*   **HMM-Based Pipeline System**
+    *   Composed of feature extraction, acoustic modeling, lexicon, and language modeling
+    *   Feature extraction converts the waveform to speech features such as MFCC
+    *   Acoustic modeling is a probabilistic model to convert the observation to phoneme sequences
+    *   Lexicon converts the phoneme sequence to a word sequence
+    *   Language modeling provides the most likely word sequence
+    *   Requires knowledge of digital signal processing, pattern recognition, machine learning, linguistics, NLP, and statistical modeling
+    *   Difficult to master all areas and implement all components
+*   **Connectionist Temporal Classification (CTC)**
+    *   One of the first end-to-end methods developed in speech recognition
+    *   Covers acoustic modeling but does not explicitly cover language modeling
+    *   Uses an encoder to perform feature extraction
+    *   The output is character or textual tokens
+    *   Uses dynamic programming to address the alignment problem
+    *   Can be used for online processing
+    *   Has a conditional independence assumption
+*   **Attention-Based Encoder-Decoder**
+    *   Includes a language model
+    *   The attention decoder can have a language model-like behavior, predicting the next sequence based on the previous history of the predicted sequence
+    *   The encoder is initially represented by a recurrent neural network but is now often replaced with a transformer or conformer
+    *   Does not have a conditional independence assumption
+*   **Joint CTC/Attention (Joint C/A)**
+    *   Combines CTC and attention during training based on multitask learning
+    *   Combines CTC and attention during inference based on score combination
+    *   The idea is to combine the monotonic attention of CTC with the attention mechanism
+    *   CTC loss regularizes the network to be monotonic
+*   **RNN Transducer (RNN-T)**
+    *   Similar to CTC but deducts the conditional independence assumption, especially for the label part
+    *   Handles language model-like architecture
+    *   Good for online streaming systems
+    *   Has some conditional independence assumptions at the input feature level
+
+
+## Papers
+
+The papers covered in the lesson, according to the sources, are:
+
+*   **Connectionist Temporal Classification (CTC)**: Graves, Alex, et al. "Connectionist temporal classification: labelling unsegmented sequence data with recurrent neural networks." Proceedings of the 23rd international conference on Machine learning. 2006.
+*   **Attention-Based Models**: Chorowski, Jan K., et al. "Attention-based models for speech recognition." Advances in neural information processing systems 28 (2015).
+*   **Joint CTC/Attention**: Watanabe, Shinji, et al. "Hybrid CTC/attention architecture for end-to-end speech recognition." IEEE Journal of Selected Topics in Signal Processing 11.8 (2017): 1240-1253.
+*   **RNN Transducer**: Graves, Alex, “Sequence transduction with recurrent neural networks,” in ICML Representation Learning Workshop, 2012.

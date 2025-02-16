@@ -1,0 +1,444 @@
+---
+date: 2022-03-01
+title: "Speech"
+subtitle: "CMU CS11-737: Multilingual NLP"
+description: ""
+categories: 
+    - Attention
+    - Multilingual NLP
+    - NLP
+    - Notes
+---
+
+![course banner](/images/tiling.png){.column-margin .nolightbox width="200px"}
+
+::: {#vid-01 .column-margin}
+{{< video https://www.youtube.com/watch?v=y9sVFrmGu0w&list=PL8PYTP1V4I8CHhppU6n1Q9-04m96D9gt5&index=17&ab_channel=GrahamNeubig >}}
+
+Lesson Video from 2020  as the video was missing in 2022
+:::
+
+::: {#sup-slide-deck .column-margin group="slides"}
+![This week's slides](slides.pdf){width="420px" height="340px" style="@page {size: 16in 9in;  margin: 0;}" group="slides"}
+:::
+
+::: {.callout-note}
+## Learning Objectives  {.unnumbered}
+
+- What is speech?
+- Speech applications
+- Speech databases
+- Speech hierarchy
+:::
+
+
+::: {.callout-note collapse="true"}
+### Transcript {.unnumbered}
+<!-- Transcript here is machine generated no punctuation and I eddited it a but but it needs more work and I dont see the benefits unless I can run it through some tool. -->
+
+
+hi everyone welcome back to multilingual natural language processing
+and today we start the next part of the course in which we go deeper into individual topics in
+multilingual nlp and we will talk about morphosyntax
+and we talk about morphosyntax because the same meaning can be grammaticalized
+in different ways in different languages for example some languages will
+grammaticalize the meaning of future as word others as morpheme
+and others as grammatical structure and today we will talk about morphology
+morphological processing morphological analysis and inflection generation and in the next
+class we will talk about syntax we'll start with a reminder from the
+beginning of the course when we discussed linguistic typology we have discussed
+earlier the definition of a word what is a word is a slippery topic and we have agreed
+on the following definition that words are the building blocks
+of phrases and sentences that are members in a syntactic category so
+they have a part of speech that words tend to be able to move around relatively to each other
+and be composed into sentences so until now what i mentioned is a syntactic
+definition and words are linguistic units that usually have main stress
+sometimes as secondary stress this is a phonological definition and they can correspond to a unit of
+mean this is a semantic definition so all this together is a definition of a word which works
+rather robustly although there are still some problems for example related to idioms
+and multi-word expressions such as an expression by and large
+now words themselves are not atoms they have internal structure and
+morphology is the study of the formation and internal structure of words
+as you can see in this drawing a fundamental concept in morphology is that of
+morphine morphine is a minimal pairing of form and meaning by form we mean the sequence
+of sounds like on the bottom of this drawing 3 and
+it can be a sequence of letters for example spelling of the word 3
+and this is a mapping between the here the phonetic string 3 and the
+meaning or content of the word and this mapping is called is a morpheme
+and we say that morpheme is a minimal pairing because we require that morpheme is a
+pairing that cannot be reduced to smaller subunits so for example the plural form of the
+word three trees will contain two more themes three and s plural marker
+okay so words are made of morphemes and what i highlighted in a sentence
+on the top or in the example of rich morphology of english on the bottom
+is what you can see is the concatenations
+of [Music] morphemes and there are
+three morphemes morphemes that occur independently for example the word establish and there
+are bound morphemes those that are attached to other words so in the word this establishment
+established is a free morpheme but their prefix this and suffix meant
+are bound more things
+words can undergo morphological processes or formal operations what are these morphological processes
+these are for example concatenation it is the most common morphological
+process if we concatenate the stem which is the core of the word
+with the affixes which are purely grammatical morphemes
+that cannot occur in isolation this process is called a fixation
+so in the example this establishment the stem is established and the
+there are prefix and suffix these and meant and the concatenation of
+if you concatenate prefix and then stem and the suffix both from two sides this
+process is called circumfixation so these are concatenative processes
+uh there are also non-concatenative processes uh for example when we add an infix in
+there so this when we add a morpheme in the middle of a string and another
+common type of morphological process is compounding when rather than
+concatenating bound morphemes we concatenate three morphemes we concatenate several
+stems like in the word dishwasher
+or in the word skyscraper
+so you can see that there are two types of morphological processes and these
+morphological several types of morphological processes more than two and these morphological processes
+can change the meaning of the word like for example with compounding
+or with [Music] the the modification of establishing to
+disestablish or they can change the grammatical
+function for example cats turning is a plural form of the word cat but the
+meaning has not changed here are some examples of interesting
+languages and their morphologies tagalog language is spoken in
+philippines it illustrates a great many form of morphological processes including
+prefixations fixation in fixation and reduplication
+so here the singular form is formed with prefix ma
+and then the plural form is formed with both prefixing
+prefixation and prefixing reduplication the infix boo
+and you can read more examples of interesting examples in the book that i reference below by
+laurie levin and david mortensen this is still a draft but a very nice draft human languages for artificial
+intelligence here are some other interesting examples
+arabic is a semitic language that uses templatic morphology in these languages
+root consists of two or four consonants and then
+morphology is uh represented by vowels and consonants which are
+inserted in between the root consonants so the root and the pattern
+of specific vowels each function like separate morphemes
+uh so they are combined like a beads in the stream
+and the uh on the bottom we can see chinese so although chinese has poor inflectional morphology
+it has many compound words and so there are compounding processes
+you can see examples below which i cannot read
+okay morphological functions so talking about morphological processes uh such as concatenation so compounding
+only tells us part of a story our next question in what are the
+functions of these operations the two broadest functional categories of morphology are derivation and
+inflection derivational morphemes examples are on the top are used to
+create new words they change meaning they can result in a new part of speech
+but of course not always for example the same example establish and
+disestablish and then another modification is this establishment
+then when we move from the verb to noun the second type of morphological
+function is uh and the important class of morphemes are
+inflectional morphemes they use to mark grammatical distinctions like cat and the suffix s will turn it into a
+cat but it does not change the meaning of the word
+so how do we formally discuss morphological properties of a language and learn about languages morphology
+in linguistics so in linguistics we introduce a interlinear gloss
+text igt interlinear gloss text is a
+standard way to explain the structure and properties of the language via examples
+it is described in detail in a document that i link on the top of the
+slide and i recommend you read this document if the topic of morphology is
+interesting to you and on the bottom i
+paste the simplest example of igt interlinear gloss text from the same
+document so you can see that there are three lines
+the top line corresponds to the original source language or object language which is in our case
+indonesian the third line is a translation of the first line
+into a meta language which is typically in linguistic papers this is english this is a lingua franca
+the second line is the gloss and it is between the first and the third one this is
+a line this is why it's called interlinear
+every token in the second line is written in a meta language in english but it is
+not an english sentence this is an alignment with talking
+with tokens in their object language so you can see that the word they in jakarta now are aligned
+with the first line all tokens are aligned and this is important
+because this gloss contains information more complicated examples of this gloss
+contain information about morphosyntax of the object language which is
+indonesian and in this example we can see from this
+even simple example of igt we can see the difference between
+english and indonesian and in particular
+how english uses copula verb r b while
+indonesian doesn't
+and here is another more complicated example of the interlinear gloss text
+between the morphologically rich russian this is our object language
+the top line and the bottom line is that translation of the sentence into english
+which is a meta language and in between you can see two lines
+representing a little bit different information this is optional both variants are
+possible this these are interlinear gloss text so the word the the
+fourth token in the russian sentence [Music]
+is split into three more themes corresponding to stem
+past tense and plural and you can see this specification
+in the igt lines two and three so this would be a stem go and then past
+tense and the number plural and the word bas of tobusan
+its fifth token in russian is split into two more themes
+corresponding to stem and suffix marking the case instrumental case
+so you can see from this linguistic description and alignment
+between the two sentences and the morphological analysis of individual talking
+in the top sentence how the morphologies of russian and
+english are different and you can see that morphology of russian is significantly more complex than the
+morphology of english
+in this slide which i will not read to you but you can use it later as a
+reference i list the types of morphological categories across parts of speech all languages
+possess the same set of about 25 categories number gender tense in if
+each of which have several functions so there are roughly 25 categories and
+roughly 100 functions for example a category for nouns a category
+[Music] number can
+of the object can be singular plural dual across different languages this
+corresponds to number another example of a category is noun
+class which uh noun classes are linked to
+grammatical gender in indo-european languages but in other languages
+this can be arbitrary set of categories and all nouns must belong to a category
+so an interesting example of noun classes uh is in swahili which is an african bantu
+language uh there are several classes
+i don't remember i think it's seven there is a class corresponding to anime
+animate nouns denoting people animals insects birds fish there is a different class
+corresponding to trees plants body parts and another chorus class corresponding
+to foods and so on and there is a separate class for singular
+animated nouns versus plural animate now so these are semantic classes and the
+different morphological rules different prefixes and suffixes are applied to different
+classes so languages differ in how they express
+these categories some use like seems like chinese
+vietnamese these are morphologically what we call poor languages some use freestanding grammatical
+morphemes such as pronouns prepositions so which means that they express the
+same categories but through syntax and some languages use affixes prefixes suffixes and this means
+that they express these categories through morphology so this is what it means when i said in
+the beginning of the class that different languages grammaticalize the
+this relationships and the cutting function categories and functions differently
+through words or through syntax or through morphology
+and this is why we have different types of languages which we categorize into
+morphological typology so there is also a disagreement on
+the typology but i present uh an analysis from david
+morton sense and the lori levine's book
+and traditionally languages have been divided into four
+times types based on how morphologically rich they
+are languages like chinese vietnamese and a little less english are called
+isolating or analytic languages these languages have relatively little
+morphology and very little inflectional morphology with the exception of compounding
+like i showed in the example of chinese so most words consist of a single frame
+or theme languages that similarly to isolating languages have relatively few
+three more themes per word but unlike isolating languages have many prefixes
+and suffixes are called fusional or flexional languages examples include
+greek russian german there is a special subclass of fusional
+languages which are called templatic languages as i showed in previous example
+arabic and hebrew is also like this the next category is agglutinative or
+agglutinating languages these languages often have many more themes within a world examples
+include finnish turkish and swahili
+and these languages have very long words and finally the most morphologically
+rich languages are polysynthetic which can include the whole sentences
+whole propositions uh they can concatenate them into a
+single topic so analytic languages have lower morpheme to word ratio
+and higher restrictions of word order in a sentence languages with richer morphology
+synthetic languages typically have higher morpheme to word ratio in more free word order
+there are tight token curves that also can visualize how
+[Music] properties of morphologically rich
+languages so we can see that the richer the morphology of a
+language the higher is type to token ratio in a language and consequently the
+higher is the sparsity of tokens in the corpus
+here for example [Music] this paper by
+2012 they took a multi-parallel corpus consisting of six languages with varying
+degrees of morphological complexity so these are the same sentences this is a multi-parallel corpus
+but written in different languages in english chinese german arabic turkish and korean
+and you can see that as the morphological complexity of the language increases the number of types in the
+corpus increases resulting in a steeper curve the most morphologically rich in this
+drawing is innoctitude which is a polysynthetic language it concatenates many morphemes together
+into single words and on top of this it has it has complex morphophonological
+uh processes between morphemes so uh in for inuktitut at
+1 million tokens it it it has approximately 225 000 types
+compared to english which is for around 1 million tokens has
+only 30 000 types
+okay so due to morphological complexity and the diversity of languages
+there are several challenges in processing morphologically rich languages
+first is related to high lexical sparsity due to the variability of morphological
+forms this leads to sparse statistics many forms of words appear only once
+or few times even in very large corpus and there are many plausible word forms
+that do not appear at all these are called out of vocabulary words
+or ovs and these out of vocabulary or rare words that
+appear only once so twice lead to errors in systems such as machine translation speech recognition
+dialogue question answering and so on so on so this is the first challenge of
+processing morphologically rich languages the corpora no matter how large they are they are
+very sparse but on top of this morphologically rich languages are often resource poor
+so the problem of sparsity is much more acute specifically for these languages
+an additional challenge of morphologically rich languages is their complex word agreement
+this leads to agreement errors in language generation especially when we need to model
+agreement between words that appear far from each other in a sentence just because
+as i mentioned in some of the in the few slides before that the
+morphologically rich sentences are languages also have more free word
+order
+okay so on top of this high variability
+there is also a mismatch between morphologies of variability between morphologists
+across languages and language families and this is so mapping between
+morphologies of different languages is difficult
+this leads to difficulties in transfer learning when we want to
+transfer training corpora from language one language to another uh this can lead
+to problems this can also lead problems in translation errors for example when we translate
+from languages that don't have the concept of definiteness
+like chinese or russian and so
+chinese and russian don't have definite indefinite articles and when we would like to translate from
+chinese or russian into english that have definitely indefinite articles
+so these translations tend to contain errors
+and another problem is that differences in mapping across
+morphologies of different languages can lead to exacerbation or amplification of
+social biases for example when we translate from languages like turkish or
+hungarian that do not mark gender of
+third person pronouns like he or she and we translate from turkish or
+hungarian into english so it was shown in previous work that
+for example translation of lower status occupation would be translated with the female
+pronouns whereas the translations of higher status occupations
+would be translated with male pronouns so a turkish sentence that is
+written basically they are a nurse would be translated as she is a nurse
+and they are a scientist would be translated as he is a scientist and this just amplifies biases in
+english training data so to summarize main challenges
+for processing morphologically rich languages are high sparsity different
+errors in generation for example caused by uh in for the need to enforce agreement
+between words and the differences in morphological properties across languages that are
+different to map across languages
+and because of these challenges we do morphological processing and incorporate morphological knowledge
+into models explicitly so what are the types of morphological processing
+first morphological analysis and we can talk about morphological parsing
+or morphological segmentation the second is related to generation
+and the task can be inflection generation or full paradigm completion
+i will show later an example and the third less common task would be in acquisition
+of morphology although we have resources for hundreds of languages
+where we know their morphology uh thousands of languages we still don't
+have enough knowledge about their mythological properties so the task of acquisition of morphology
+would focus on learning languages morphologies automatically
+so the most common task is morphological analysis and also this it is called morphological
+parsing our input is a word and our output is a
+word stem and features expressed by other morphemes
+for example given in input cats morphological analyzer's output
+will be cat plus n which corresponds to noun
+plus pl which corresponds to the plural form
+so morphological parsing is the process of determining what are those morphemes given an input word
+and as you can see in these examples uh this information morphological
+information comes from three major sources first from lexicon
+so we need to know the stem second from morpho tactics we need to
+know morphosyntactic rules and third is from spelling or
+pronunciation rules because we need to know uh
+for example um the world cities uh we need to know that as a stem
+city which ends with a y in a plural form will be changed into cities with eye
+having this information about lexicon about morphotag tactic
+rules and about spelling rules we can build a morphological analyzer
+classical approaches to morphological analysis used finite state transducers
+and they achieved the high accuracies high results good results so uh in these approaches
+we have two tapes uh lexical and surface as in this example
+in the drawing on the top these drawings are from the girovsky martin textbook
+so and we build a finite state transducer so either one so it can be inverted so
+either lexical form can be in in surface form can be an input and the
+output can be stem plus morphological analysis or stem plus morphological analysis can be an
+input and the output would be a surface form so we will build a transducer so that
+given an input word cats it would read the word the input letter c
+and output c lead and read a output a read t output t
+then read the plus n and would output an
+empty string epsilon and then it would read plus pl plural and would output s
+so the output would be cats and it's coming from lexical
+interpretation to the surface interpretation
+so on the bottom we have a simplified fst for morphological parsing
+cats goes from q0 to q1 from state q0 to state q1 this
+is a regular noun then q1
+outputs an epsilon the for for the noun plus n and then
+we have we can go from q4 to output s a plural form
+and we have the end of string in q7 so we can build such an fst finance
+state transducer as a recognizer and it would say is it a legal string
+if we if we accept it and or if it's not a legal string if
+it's not a word illegal word in a language in this case the fst would reject it and we can build
+this fst as a translator in which we input a string of characters from the
+surface form and output the string of morphemes
+okay so in 2016 there were a surge of papers that started to
+replace fin state transducers with current neural networks so this is one
+of the many examples of papers that i present here by katarina khan and
+her collaborators ryan cotterell and henrik schutzen
+and they showed how to implement the same task of morphological analysis
+using recurrent neural networks and i present specifically this paper
+because it's interesting for two reasons first they
+show how to do canonical segmentation rather than
+surface level segmentation of words so canonical segmentation
+so you can see in this example for the word achievability uh how would for the input achievability
+how would an output surface segmentation look like and how would output canonical segmentation look like
+so for a surface segmentation we will just segment the input sequence
+into substrings in canonical segmentation we don't only segment
+the sequences into substrings but also replace substrings with the canonical form
+this canonical segmentation has several representational advantages
+[Music] because it shows more themes
+that are not obfuscated by morphology so it reduces the sparsity more significantly
+but it is also more challenging for example it would be difficult to implement with finite state transducers
+uh because it doesn't only segment uh words into substrings but also
+reverses orthographic changes so how did they do it they first used
+the standard character based bi-directional uh
+gru encoder with attention and then they have a unidirectional gre
+decoder so this is a very standard sequence to sequence architecture
+uh run end with attention and then a novel component they
+introduced was a neural re-ranking for segments to
+identify canonical segments so in particular when they kind of produce
+the segmentation of a word they first output
+[Music] a surface level segmentation
+but then they did re-ranking and specifically looked
+for segments that are more frequent
+when they occur as an independent word is in a lexicon and for this they
+incorporated simple lexical information into word embeddings that marked an
+additional that added an additional dimension to the word embedding a binary feature that said
+whether this word is appears as an independent word in the lexicon
+or not so this is a standard sequence to sequence
+character-based model plus a re-ranker on top of it
+to prioritize words that appear more frequently as independent words in the lexicon
+so in case in this case the in the segmentation of a word achievability
+the word so the second token able would appear more frequently
+than the token abil
+so how do we evaluate morphological analysis
+there are several evaluation measures that are described in the paper in the
+previous slide and in several other papers first is error rate defined as 1 minus
+the proportion of guesses that are completely
+correct so proportion of 1 minus proportion of outputs of the model that are completely
+correct second is the added distance so when the first first is a hard measure it's uh
+the correct or incorrect output eleven stain distance would measure the similarity between
+the gas and the gold standard form and finally morpheme f1 score calculates
+the precision and recall of correctly generated morphemes
+where the training corpora usually come from in this paper and other papers on
+morphological analysis a most common resource to work with is unimorph it annotates hundreds of
+languages using a unified schema it includes
+currently annotations for 110 languages and i put the link in the slide
+okay so this was about morphological analysis uh the second type of prominent type of
+direction of research is focusing on morphological generation in particular inflection generation
+there are two tasks one is uh to generate a single inflection
+so our input would be a lemma and grammatical features for example
+[Music] this is an example in german
+cow which is a calf and the grammatical features such as case
+nominative number plural infraction generator will output calvary
+and the second task which is a generalization of inflection generation task introduced relatively recently in single
+phone competitions that given a lemma
+as an input we would need to fill a table and this table this means we need to
+general generate all possible inflections of a word for all morphological categories
+so an example where inflection generation either inflection generation or paradigm completion is useful
+is for reducing sparsity of the corpus for example in machine translation
+machine translation suffers from data sparsity as i mentioned before when translated
+thing morphologically rich languages since every surface form is considered
+every token is considered as an independent entity and to alleviate the problem of sparsity
+we can translate into lemmas in the target language and then apply inflection generation as a
+post-processing step so these tasks morphological analysis
+morphological inflection generation paradigm completion they are
+widely explored in particular in the sigmar phone competitions so
+sigma phone is a special interest group on computational morphology and for phonology
+and they organize workshop and workshops and share tasks every language and i put here
+some interesting summaries of workshop tasks that you can look into
+and there is a lot of research so i really gave a high level overview
+morphological inflection generation in general the base model is a
+usually a simple bile stem with attention so some
+recurrent sequence to sequence model uh and then while the base model is
+simple there are several interesting challenges specific to morphology
+an interesting challenge for example is how to enforce monotonic alignment
+between input and output because we unlike in machine translation morphology we don't need to do a lot of
+reordering to output to the output sequence
+uh second interesting challenge is how to better learn longer distance relationships between
+characters to model variation in inflection
+due to spelling and phonological rules in a language so some of the papers
+focusing on shared tasks specifically focus on for example adding a crf layer
+on top of the decoder to better model relationships between characters in the
+outputs and if you want to know more about the field you can start with the
+sigma phone 2020 share task summary which provides an overview and the historical development of the
+task and the links to interesting papers and to read a particularly interesting
+paper about morphological generation let's read this paper that i put in this slide
+so it particularly focuses on low resource settings so
+morphological inflection has been pretty thoroughly studied in monolingual high resource setting
+but in this paper adonis and graham focus on um low resource
+perspective and uh on cross-lingual transfer across languages and your task for the
+discussion is just to read this paper and provide your insights for example you
+can provide the critique about an individual component of the model so the model in the paper
+consists of several different components so you can talk about an individual component or individual experiment or
+experimental setup and in particular you can propose ideas for follow-up work or
+how a specific modeling decision could be adapted to a language of your choice for example
+a language that you speak and that's it thank you and see you
+tomorrow
+
+:::
