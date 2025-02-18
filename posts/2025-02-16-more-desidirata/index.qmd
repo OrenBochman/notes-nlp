@@ -1,0 +1,113 @@
+---
+title: "Further Desiderata for Emergent Language"
+date: 2025-02-17
+---
+
+## Three applications for emergent language
+
+Some additional desiderata for emergent language come from:
+
+1. Using the emergent language as **surrogate for low resource languages**. Though in a Bayesian setting we may consider them as priors. We may want to have multiple surrogates for a low resource language so that we can fit to the set of surrogates rather then to the lexemes of one specific surrogate! Fitting to a set of languages should teach the neural model about relations. A single surrogate would be less useful as it models would tend to overfit to features like lexemes which are made-up. 
+
+2. Using games where agents learn multiple languages. This allows to study the field of language contact. In this case speakers speak more than one language and the languages influence each other. To make things more concreate we may want to evolve languages that are similar to certain specification that come from the WALS database. ^[this is at last another good reason for multiple senders to be used and for them to send different languages.]
+
+3. A third idea that may be of interest is to evolve languages that can be used as a **universal interlingua**. This are emergent language that are minimally ambiguous have capture most deep features. It would be created using a large state space and be given a long time for planning or to evolve and become more uniform, the verbs more regular and transformations more compositional. 
+    Ideally the verbs and nouns would only require one form to master all possible forms and their meanings. Perhaps the nouns could even be derived from the verbs using an automatic process, to reduce the learning load even further.
+    Why multiple interlingua? Since we propose to use these for translations it may be possible to create smaller-interlinguas that are used for a restricted language hierarchy. A second reason is that again we may not want to overfit to a single interlingua but to some set of interlinguas captring diverse deep features and surface features. Idealy some interlinguas would be a better fit for certain languages then others and an attention mechanism could be used to relay on the  interlinguas that are the best fit for the language being translated. Think of using different shortcuts to get from one place to another. (e.g. An interlingua with politeness and honorifics would be a better fit for Japanese then one without.)
+
+
+## ??
+
+So the main thrust is that we want to evolve language that are similar to a WALS specification. THis may require too much work though and we may prefer to consider certain aspects of language in the database that are both common, easy to implement and measure and ideally can become surrogates that are more like a certain language then any high resource language (e.g. Turkish).
+
+While a number of *tricks* may be used to make the emergent language more like a low resource language, the more systematic route is to consider a suitable set of states for the lewis game. Spontaneous symmetry breaking may then serve us. In other cases we may be able to
+incorporate different aggregation rule
+
+However to get started  I think one needs to simply generate suitable states. The desedirate has a duality with the states. The number and structure of the state will shape the size and complexity of the emegent languages. Since these will likely be large languages we may also need to find algorithms that allow these to emerge quickly.
+
+Another idea is to make to make three views of the state space.
+    - an image based on a chart
+    - a frame based view
+
+- We may want to express propositions using a 'Block world'
+- We may want to express possession using a 'Possession world'
+- We may want to first breakdown the verb to indicate tense, aspect, mood, number, politeness, formality & counterfactual.
+- For thematic roles we may start the figure from  [@winston1992artificial pp. 211] and the frame it shows.
+- Winston points out that the number of roles which can range from 6 to 24 is less important, so long as we can learn the constraints verbs place on the roles when forming a sentence. This seems to be even more important if we are going to learn these constraints from data using an attention mechanism.
+- Filamore explains that semantic roles are a tool to eliminate the polisemy inherent in verbs.
+
+
+1. Distributional Similarity - to a NL
+    - lexeme should be distributed similarly to a corresponding word in a natural langauge.
+    - this is desirable because when translating from high frequency words should map to high frequency words.
+    - this seems a challenge but lets recall that we also wanted to have a power law distribution.
+    - if lexemes are distributed following a power law. so fee words are high frequency and almost all are low frequency.
+    - metrics for this could be cosine similarity, KL divergence, or some other measure of distributional similarity.
+    - probability theorem has convergence in distribution and it may be of interest here, particularly as we may be interested in more then the lexemes distribution but of other probabilistically modeled aspects of the language.
+2. We may want to choose a fully emergent language with phonology, morphology, syntax, and semantics. This might be more complexity than we need though. We might want to work with a system that is simpler but can be used to make embeddings that are useful for approximating low resource languages. In such a case we may use concatentaed numeric codes for representing the lexems.
+3. verb tense, aspect, mood, conterfactuals
+    - tense is a time reference
+        - past, present, future.
+    - aspect is the way the action is viewed e.g. 
+        - perfective means: the action is viewed as a whole (e.g. "I have eaten")
+        - imperfective means: the action is viewed as ongoing (e.g. "I am eating")
+        - progressive means: the action is viewed as ongoing (e.g. "I am eating right now, but I will call you when I am done")
+        - habitual means: the action is viewed as a habit (e.g. "I eat breakfast every day")
+        - perfect means: the action is viewed as completed (e.g. "I have eaten")        
+    - mood is the attitude of the speaker some examples are:
+        - indicative means: the speaker is making a statement of fact (e.g. "I am happy")
+        - subjunctive means: the speaker is expressing a wish, a doubt, or a hypothetical (e.g. "I wish I were happy")
+        - imperative means: the speaker is giving a command (e.g. "Be happy!")
+        - conditional means: the speaker is expressing a condition (e.g. "If I were happy, I would be smiling")
+        - interrogative means: the speaker is asking a question (e.g. "Are you happy?")
+        - exclamatory means: the speaker is making an exclamation (e.g. "How happy I am!")
+    - counterfactuals are statements that are contrary to fact. (e.g. "In the best of possible worlds, I would be smiling")
+3. thematic roles
+    - agent
+    - patient
+    - experiencer
+    - theme
+    - goal
+    - source
+    - instrument
+    - location
+    - benefactor
+4. possession world
+    - possessor
+    - possessed
+States:
+
+1. We may want to have verbs and nouns and other parts of speech. 
+    - states could be frames for verbs with slots for subjects, objects.
+      this can 
+
+Propositions could be materialized using a block world.
+
+Possession could be materialized using a possession world.
+
+- block world [@winston1992artificial pp. 47-60] , c.f. Mover and SHRDLU  by Terry Winograd
+
+## Block world
+
+
+## Zookeeper
+
+- in Zookeeper [@winston1992artificial pp. 121-125] we need to classify animals using deduction. 
+- https://www.kaggle.com/uciml/zoo-animal-classification/data
+- we can give each of 101 animal 18 properties  in a table via a zoo.csv. We can then sample from the table to create sets of animals with different properties.
+- we might then play games based on this data:
+    - we may need to identify the animal based on it properties.
+    - each property may come from a different sender.
+    - an early response may be to attack, evade or ignore based on a partial identification.
+    - this requires some kind of reasoning about the properties of the animals in the 'zoo' 
+
+This means
+    states for animals and their properties.
+
+
+
+Minsky's K-lines
+- physical world 214
+- mental world 215
+- ownership world 216
+- @kanade1980theory [A Theory of Origami World](https://www.ri.cmu.edu/pub_files/pub3/kanade_takeo_1980_1/kanade_takeo_1980_1.pdf)

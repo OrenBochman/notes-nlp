@@ -1,0 +1,126 @@
+---
+title: "A Samurai's World"
+subtitle: "Inducing politeness, honor, into an Emergent language"
+date: 2025-02-17
+---
+
+> "if proof theory is about the sacred, then model theory is about the profane"  -- [@van2012logic p.1]
+
+## Motivation
+
+In the previous post, "Further Desiderata for Emergent Language", I discussed the need to adapt emerging languages to conform with established properties of natural languages. You can read more about motivations in that post. 
+
+Rather then considering all the ways this could be achieved in a single essay, I believe that this should be broken down and considered one aspect at a time. This can make both the linguistics and the development easier to understand.
+
+Once enough examples are available it should become clearer on how to integrate the desiderata using suitable states or other mechanisms.
+
+## The task
+
+Moving on I'd like to tackle the capacity of certain languages to encode politeness and honorifics. This is a feature that is present in many natural languages, and it it bering some awareness that may be absent from many ai systems where agents lack a sense of social structure.
+
+In this post I'd like to consider the emergence of politeness in a multi-agent language game. We saw that politeness emerged as a way to avoid conflict and to maintain social harmony. In this post, we will explore the emergence of honor in a multi-agent language game. Honor is a concept that is closely related to politeness, but it has some distinct features that make it an interesting topic of study.
+
+## How is politeness encoded in Japanese?
+
+- Politeness persists into modern Japanese, and is a challange for learners of the language who wish to master it as they must become aware of social aspects in which they are participating.
+- Japanese has three forms of politeness and formality:
+    - informal
+        - the informal form is used with friends, family, and people of lower social status.
+    - Polite (desu/masu)
+        - the polite form is used in formal situations, with strangers, and with people of higher social status.
+        - Verbs end in -masu (affirmative) or -masen (negative); copula is desu.
+    - Honorific Language **Keigo**
+        - the honorific form is used to show respect to the listener or the subject of the conversation.
+        - **Sonkeigo** (Respectful Language): Elevates the subject's actions (e.g., o-hanashi ni naru for "to speak").
+        - **Kenjougo** (Humble Language): Lowers the speaker's actions to show deference (e.g., moushiageru for "to say").
+        - **Teineigo** (Polite Language): The desu/masu form falls under this when speaking politely without changing perspective.
+
+### Questions
+
+- what is changing perspective?
+    - In Japanese, the speaker must change their perspective when using honorific language. [This means that the speaker must consider the listener's perspective and use language that is appropriate for that perspective.]{.mark}
+- Are politeness and honorifics only encoded in the verb inflection or do they further manifest in the subject object as agreements or other forms ?
+
+## Samurai world - Sub-States that imbue an emergent language with politeness and formality
+
+This is a small state space which is used as a model^[in the sense of logic] for politeness and formality in natural language based on Japanese which has a more sophisticated system of politeness and formality then most languages.
+
+In this game agents interact in a framing game.
+In the lewis sub-game they need to coordinate a system in which they observe politeness and formality to avoid being decapitated by their superiors, yet avoid losing face, i.e. without being too polite or formal to their inferiors.
+
+
+- state:
+    - speaker's status 
+        - gender, age, social status, relationship to subject
+    - subject's status
+ 
+
+One could evolve the use of poltiness in a reconstruciton game or a discrimination game.
+
+- In the reconstruction task, Sender gets an input item, it sends a message to Receiver, and Receiver must generate an output item identical to Sender's input. 
+- In the discrimination task, Sender gets an input item (the target); Receiver gets multiple input items (the same target and a number of distractors, in random order). 
+
+Note that reconstruction is very much like the original lewis signaling game.
+While the discrimination easier task as the receiver could in theory fail to reconstruct, or have to choose at random from a very large, perhaps even infinite set of possible reconstructions and that having a jusk K distractorsit is down to 1/k probability of sucess. More so if it is equipped with the ability of learning from errors he might score the distractors and make progress with much higher information levels then in the reconstruction game.
+
+
+## Code 
+
+
+
+Here is a data generation script that may be used with [@kharitonov:etal:2021] EGG emergence game toolkit to model politeness and formality in a multi-agent language game.
+
+
+
+::: {.callout-info}
+## states for verbs and nouns
+
+One issue is that there that I have not yet written up the states needed for differentiating between nouns and verbs. Not the states for creating inflected verbs. 
+
+Both of these are bigger tasks and I will need to write them up quickly. 
+
+Anyhow is this case we should assume that there are already 
+
+- nouns and verbs and possible other parts of speech.
+- verbs may be inflected.
+
+now we wish to split certain verb states by adding sub-states that correspond to a politeness and formality flag.
+:::
+
+## Code 
+
+
+
+Here is a data generation script that may be used with [@kharitonov:etal:2021] EGG emergence game toolkit to model politeness and formality in a multi-agent language game.
+
+```{python}
+import random
+import numpy as np
+
+
+state = dict()
+
+def add_politenes_state(state):
+
+    state["speaker_status"] = random.choice(["0", "1", "2", ])
+    state["subject_status"] = random.choice(["0", "1", "2", ])
+    return state
+
+for i in range(20):
+    state = dict()
+    state = add_politenes_state(state)
+    print(f"{i},{state} should be polite {state['subject_status'] > state['speaker_status']} ")
+    
+```
+
+ok now that we have the states we can consider 
+
+1. ensuring that the speaker's status is encoded in the message
+    2. we can do this indierctly as part of the reconstruction.
+    3. we can also do this as a penalty coming from the framing game. 
+        - Rude speakers are penalized!
+        - Losing face is also penalized.
+2. we can refine the model by adding flags for 
+    `informal_settings`, `friendship_settings` and `gender_speaker` `gender_subject` `age_speaker` `age_subject` to further refine the politeness and formality of the language.
+3. we may also want to consider the setting where the subject social status is unknown to the speaker and thus the speaker must use a default politeness setting. 
+    

@@ -1,0 +1,121 @@
+---
+title: "Knights and Knaves world"
+subtitle: "Inducing logic into an Emergent language"
+date: 2025-02-17
+---
+
+> "if proof theory is about the sacred, then model theory is about the profane"  -- [@van2012logic p.1]
+
+## Motivation
+
+In the previous post, "Further Desiderata for Emergent Language", I discussed the need to adapt emerging languages to conform with established properties of natural languages. You can read more about motivations in that post. 
+
+Rather then considering all the ways this could be achieved in a single essay, I believe that this should be broken down and considered one aspect at a time. This can make both the linguistics and the development easier to understand.
+
+Once enough examples are available it should become clearer on how to integrate the desiderata using suitable states or other mechanisms.
+
+## The task
+
+Today I want to consider the ability of language to encode logical reasoning. Logic is such a big field it can encampass all of mathematics and philosophy. So for this post we need to narrow things down.
+
+I'd like the agents not only to learn to speak in a langauge that captures logical reasoning, but also to be able to reason about states and statements made in that language.
+
+I am targeting reconstruction and discrimination games as
+the inner game which is used to evolve the language. The frameing game might be drawn from 
+
+1. Knights and Knaves puzzles
+2. Lewis Carroll's [The Game of Logic](https://en.wikipedia.org/wiki/The_Game_of_Logic) - for 
+3. Jon Barwise and John Etchemendy created [Tarski's World](https://en.wikipedia.org/wiki/Tarski%27s_World) - for first order logic
+
+
+## Knights and Knaves worlds
+
+In "What Is the Name of This Book" and his other works Raymond Smullyan use this as a framework to cover this puzzle to cover from propositional logic to the problem of undecidability...
+
+The initial state is simple - each individual is either a knight or a knave. Knights always tell the truth, and knaves always lie.
+
+In most puzzles we need to determine the type of each individual from a set of statements made by them.
+
+Another type of variation is that we want to find out some fact about the world but must ask the right question to get the correct answer regardless of the individual's type.
+
+Another variant that seems salient in this context is when the people in the puzzle respond in their own language, which is unkown to us. In this case we need to deduce the meaning of the words from the context.
+
+To spice his puzzles up Smullyan introduced individuals that, who can lie or tell the truth as he pleases these might be called "Normals"
+
+In his Transilvanian puzzles he introduced the notion that half the population are insane and have false beliefs e.g. that $2+2\ne4$ and they are also devided into truthfull and lying types this time humans and vampires. In another book he introduced monkeys that look like humans. The only real difference was that monkeys have a tail and humans don't. In terms of logic it just add another collumn to the truth table for each individual.
+
+
+We have for n individuals we have 2^n possible states.
+
+next comes the creative part of the task we want to automate. The statements the individuals make. While each individual can make a statement tht reveals their ground truth we the idea is to 
+
+1. ensure all the ground truths are revealed
+2. use a minimal number of statements (i.e. by omitting a statement the problem should be rendered unsolvable)
+3. ensure that the ground truths are unique
+
+In the website https://christopherphelps.trinket.io/sites/knight_knave_puzzler the generator can be used to generate a number of statements:
+
+1. meta statements - is the puzzle solvable
+2. name calling - calling some one a knight or knave a normal a monkey, insane etc.
+3. Ascriptive statements - where an someone says what some type of individual would say about another speaker
+4. Prime statements- statements on the prime number of knights or knaves in the group
+5. independent statements - statements that don't seem to be related to the puzzle 
+
+
+One property of the puzzle is if no one makes a statement about an individual then his type is unconstrained and could be swapped without affecting the consistency of the puzzle.
+
+
+## How is logic encoded in the knights and knaves Puzzles?
+
+So it is interesting to consider how one give a minimal general solution for such puzzles. In reality most puzzles do have
+short solutions but in general when we consider logic and language we can't be certain that there is a neat solution or that 
+the puzlle has a unique answer or that the puzzle is solvable.
+
+So here is a general approach to solve these puzzles using boolean logic:
+
+1. We encode all possible combinations of sub-states of the world using as inputs for a truth table. 
+I.e. a column for each individual titled with their name and stating that they are a knight.
+We don't need to encode the knave column as the two are mutually exclusive.
+If there are other sub-states like being a monkey, insane, a spy we would need to add a column for these too.
+2. For each statement said we should rewrite it as a boolean expression in terms of these states.
+3. We need to verify the outcome of the statement for each combination of 
+
+Then we encode the statements made by the individuals as a column in the truth table.
+
+let's look at some examples with just knights and knaves
+
+### Name calling
+
+1. [ ] A says "I am knave."    
+    - not possible for a knight (False) 
+    - not possible for a knave (True)
+    - This will therefore not appear on it own. 
+    - This will not be part of a conjunction made by a knight. i.e. "and ..."
+    - It can be used conjunction with a truthy statement made by a knave. ... and I am a knave
+2. [ ] A says "I am knight."   
+    - if A is a knight (True)
+    - if A is a knave (False)
+3. A says "B is a knave." 
+    - if A is a knight and B is knave (True) 
+    - if A is a knave and B is a knight (False)
+    note: that both types will call the other type a knave. so this only tells us the speaker is the same type as another individual.
+4. [ ] A says "B is a knight." 
+    - if A is a knight and B is a knight (True)
+    - if A is a knave and B is a knave  (False) 
+5. [ ] A says "I am the same type as B"
+    same situation as #3
+6. [ ] A says "B would say that I am a knave" 
+7. [ ] A says "B would say that I am a knight"
+8. There are a prime number of knaves in the group.
+9. There are a prime number of knights in the group.
+10. "The puzzle is solvable" means there isn't a contradiction in the statements made by the individuals. 
+11. "The puzzle is unsolvable" means there is a contradiction in the statements made by the individuals.
+
+
+|A|B|A:#1|B:#1|
+|-|-|----|----|
+|1|1|0   |0   |
+|1|0|0   |1   |
+|0|1|1   |0   |
+|0|0|1   |1   |
+
