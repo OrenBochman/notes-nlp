@@ -1,7 +1,10 @@
 ---
 title: "A Samurai's World"
 subtitle: "Inducing politeness, honor, into an Emergent language"
+description: "In this post, we will explore the emergence of face, politeness, and formality via multi-agent signaling language game. Specifically I consider the complex states and a framing game for a signaling game for which  the requisite linguistics aspects of politeness and formality would emerge out of language evolution"
 date: 2025-02-17
+categories: [Emergent Language, Game Theory, Social Structure]
+keywords: [Formality, Politeness, Honorifics]
 ---
 
 > "if proof theory is about the sacred, then model theory is about the profane"  -- [@van2012logic p.1]
@@ -19,6 +22,28 @@ Once enough examples are available it should become clearer on how to integrate 
 Moving on I'd like to tackle the capacity of certain languages to encode politeness and honorifics. This is a feature that is present in many natural languages, and it it bering some awareness that may be absent from many ai systems where agents lack a sense of social structure.
 
 In this post I'd like to consider the emergence of politeness in a multi-agent language game. We saw that politeness emerged as a way to avoid conflict and to maintain social harmony. In this post, we will explore the emergence of honor in a multi-agent language game. Honor is a concept that is closely related to politeness, but it has some distinct features that make it an interesting topic of study.
+
+::: {.callout-info}
+## Over thinking politeness 
+
+Is politeness is not some random flag in some language? 
+
+I think that language is a social construct and that politeness is a social construct. It is not just a flag that is set in a language, but rather a complex set of rules and norms that govern how people interact with each other.
+
+The social and biological basis for politeness can be viewed as an expression of dominance hierarchies and submission. In this view, politeness is a way of signaling respect and deference to others, and it is a way of maintaining social harmony and avoiding conflict associated with reestablishing dominance hierarchies when there are disputes within a social group.
+
+This suggests three phenomena that are relevant to the emergence of politeness in a multi-agent language game:
+
+1. Face for a speaker has a dual. It is the ability and a requirement of an individual to express their dominance and status with respect to his subordinates in society as well as the acknowledgment of the , but more so it due to subordinates giving the speaker their due respect.
+   Thus loss of face can happen in private but is more significant in public. Face can be lost when the an individual is shamed by actions as well as words.
+
+Any loss of face in public may be viewed as a challenge to the speaker's dominance and status. Such a challange when viewed by some third party may be viewd by others at large as destablizing the social harmony of the established order embodied in the entire hierarchy. 
+    
+could be seen as a challenge to the speaker'
+2. Informal speech may be used when there is no conflict or challenge to dominance hierarchies.
+3. Politeness forms that are ingrained in a language are means to permanently establish dominance hierarchies. and to avoid conflict by signaling respect and deference to others. 
+
+:::
 
 ## How is politeness encoded in Japanese?
 
@@ -61,16 +86,11 @@ One could evolve the use of poltiness in a reconstruciton game or a discriminati
 - In the discrimination task, Sender gets an input item (the target); Receiver gets multiple input items (the same target and a number of distractors, in random order). 
 
 Note that reconstruction is very much like the original lewis signaling game.
-While the discrimination easier task as the receiver could in theory fail to reconstruct, or have to choose at random from a very large, perhaps even infinite set of possible reconstructions and that having a jusk K distractorsit is down to 1/k probability of sucess. More so if it is equipped with the ability of learning from errors he might score the distractors and make progress with much higher information levels then in the reconstruction game.
-
+While the discrimination easier task as the receiver could in theory fail to reconstruct, or have to choose at random from a very large, perhaps even infinite set of possible reconstructions and that having a just K-distractions, it is down to 1/k probability of success. More so if it is equipped with the ability of learning from errors he might score the distractions and make progress with much higher information levels then in the reconstruction game.
 
 ## Code 
 
-
-
 Here is a data generation script that may be used with [@kharitonov:etal:2021] EGG emergence game toolkit to model politeness and formality in a multi-agent language game.
-
-
 
 ::: {.callout-info}
 ## states for verbs and nouns
@@ -102,21 +122,33 @@ state = dict()
 
 def add_politenes_state(state):
 
-    state["speaker_status"] = random.choice(["0", "1", "2", ])
-    state["subject_status"] = random.choice(["0", "1", "2", ])
+    state["speaker_status"] = random.choice([0, 1, 2, ])
+    state["subject_status"] = random.choice([0, 1, 2, ])
     return state
 
 for i in range(20):
     state = dict()
     state = add_politenes_state(state)
     print(f"{i},{state} should be polite {state['subject_status'] > state['speaker_status']} ")
-    
+
+ 
+## TODO: estimate politeness and face in a states
+## TODO: estimate politeness and face in an utterance
+## TODO: the politeness loss is the formality of the utterance and the politeness of the state. I.e. if the state is more polite then the utterance there is a loss associated with that.
+
+def politeness_loss_penalty(state):
+    if state["subject_status"] > state["speaker_status"]:
+        return 0
+    else:
+        return 1
+
+
 ```
 
 ok now that we have the states we can consider 
 
 1. ensuring that the speaker's status is encoded in the message
-    2. we can do this indierctly as part of the reconstruction.
+    2. we can do this indirectly as part of the reconstruction.
     3. we can also do this as a penalty coming from the framing game. 
         - Rude speakers are penalized!
         - Losing face is also penalized.
@@ -124,3 +156,9 @@ ok now that we have the states we can consider
     `informal_settings`, `friendship_settings` and `gender_speaker` `gender_subject` `age_speaker` `age_subject` to further refine the politeness and formality of the language.
 3. we may also want to consider the setting where the subject social status is unknown to the speaker and thus the speaker must use a default politeness setting. 
     
+- https://blog.duolingo.com/japanese-politeness-formal-language
+
+## Establishing a hierarchy.
+
+The establishment of hierarchies, particularly in a multi-agent system, is a complex process that involves a variety of factors. This may well be a bigger topic than we need to consider here and may easily confuse the issues I wish to discuss here which is the minimal example for the emergence of politeness and honorifics in a multi-agent language game.
+I therefore moved further discussion to the next post titled [Establishing Hierarchies](../2025-02-18-domination/index.qmd).
