@@ -1,0 +1,102 @@
+---
+date: 2021-05-10
+title: "It’s MBR All the Way Down: Modern Generation Techniques Through the Lens of Minimum Bayes Risk"
+subtitle: Review
+categories: 
+    - NLP     
+    - Paper
+    - Review
+    - MBR
+    - Minimum Bayes Risk
+    - ASR task
+    - Automatic speech recognition
+    - MT task
+    - Syntactic Parsing task
+    - AMR parsing task
+    - Question answering task
+    - Summarization task
+keywords: 
+    - Model Ensembling
+    - Decoding Methods
+    - Text Generation
+    - Density Estimation
+    - Range Voting
+    - Self-Consistency
+---
+
+![Litrature review](/images/literature-review-open-book.jpg){.column-margin}
+
+
+## Abstract
+
+Minimum Bayes Risk (MBR) decoding is a method for choosing the outputs of a machine learning system based not on the output with the highest probability, but the output with the lowest risk (expected error) among multiple candidates. It is a simple but powerful method: for an additional cost at inference time, MBR provides reliable several-point improvements across metrics for a wide variety of tasks without any additional data or training. Despite this, MBR is not frequently applied in NLP works, and knowledge of the method itself is limited. We first provide an introduction to the method and the recent literature. We show that several recent methods that do not reference MBR can be written as special cases of MBR; this reformulation provides additional theoretical justification for the performance of these methods, explaining some results that were previously only empirical. We provide theoretical and empirical results about the effectiveness of various MBR variants and make concrete recommendations for the application of MBR in NLP models, including future directions in this area. -- [@bertsch2023itsmbrwaydown]
+
+## Outline
+
+- Abstract
+    - Describes Minimum Bayes Risk (MBR) decoding.
+    - Presents MBR as a widely applicable method that often improves performance over beam search and single-sample decoding.
+    - Shows that several recent generation methods can be framed as special cases of MBR, thereby providing theoretical grounding for their empirical success.
+- Introduction
+    - Presents Minimum Bayes Risk (MBR) decoding as a simple yet powerful decoding method.
+    - Discusses how recent methods in natural language processing (NLP) unknowingly replicate aspects of MBR.
+- Formalization
+    - Standard decoding
+        - Describes the standard decoding methods for autoregressive models such as greedy decoding, sampling, and beam search.
+    - Minimum Bayes Risk decoding
+        - Defines the theoretical foundation of Minimum Bayes Risk (MBR) decoding, including the concept of risk based on expected error.
+        - Explains how risk computation is typically approximated using Monte Carlo methods due to the intractability of calculating the full expectation.
+- Taxonomy of MBR
+    - Notes four key design considerations for implementing an MBR method: the hypothesis set, the evidence set, the gain/error function, and the evidence distribution.
+    - Sampling a hypothesis set
+        - Highlights several works that show improvements in MBR by filtering the hypothesis set to contain only higher-quality candidate outputs.
+    - Sampling an evidence set
+        - Briefly discusses various sampling strategies, with most work focusing on drawing unbiased samples from the model distribution.
+    - What metric do we want to maximize?
+        - Explores the impact of different gain (or error) functions, noting that using a specific metric as a gain function in MBR tends to lead to improved performance on that metric.
+    - What probability distribution should we use to estimate risk?
+        - Briefly discusses the choice of the distribution used to estimate risk in MBR, with most methods using the model's score distribution over outputs, and some work using alternative distributions like a human or true distribution.
+- MBR as a frame for other methods
+    - Highlights the framing of self-consistency, range voting, output ensembling, and density estimation as special cases of MBR.
+    - Self-consistency as MBR
+        - Shows how self-consistency, a method where the most frequent answer from multiple model generations is selected, can be formulated as MBR.
+        - Explains that the best performing sampling strategies for self-consistency are those closest to ancestral sampling due to its unbiased estimation properties.
+    - Output Ensembling as MBR
+        - Presents output ensembling, where a set of models is used to generate outputs and a combined output is selected, as a form of MBR with a mixture distribution.
+    - MBR as Density Estimation
+        - Establishes the connection between MBR and kernel density estimation, noting that both can be seen as mode-seeking methods.
+    - Range Voting as MBR
+        - Shows that range voting, where candidates are assigned scores by voters, can be formulated as MBR by treating candidates as hypotheses and voters as evidence.
+- Design Decisions Impact MBR Performance
+    - Examines cases where the choices made in designing an MBR method significantly affect its performance.
+    - Experimental Details
+        - Presents the datasets and models used for evaluating MBR in abstractive summarization and machine translation tasks.
+    - The MBR metric matters–but perhaps not as much as the hypothesis set
+        - Demonstrates that MBR using different gain functions (ROUGE-1, BEER, BERTScore) improves abstractive summarization performance.
+        - Notes that the choice of hypothesis set has a more significant impact than the choice of gain function.
+    - Varying the risk distribution: lessons from beam search don’t translate to MBR
+        - Investigates the effects of correcting for length bias in the evidence distribution used for estimating risk in MBR.
+        - Finds that while length correction benefits beam search, it hurts MBR performance, possibly due to a high-variance estimator of risk.
+- MBR applications in NLP
+    - Presents a historical overview of MBR applications in NLP, from its early use in statistical models to its recent resurgence in neural models.
+    - Historical context
+        - Traces the roots of MBR to Bayesian decision theory and its use in parsing, speech recognition, and machine translation since the 1990s.
+        - Explains how early MBR applications were constrained by graph-based model structures, requiring complex algorithms for exact decoding.
+    - Recent usage
+        - Discusses the revival of MBR in neural text generation tasks, with much of the recent work focusing on machine translation.
+        - Notes the decline in the explicit use of the term "MBR" in favor of newer terminologies like "self-consistency."
+- Conclusion
+    - Discusses the terminology drift in NLP that leads to the renaming of MBR as different methods.
+    - Reemphasizes the importance of connecting modern techniques with their historical roots for a better understanding of why they work.
+- Appendix A: More details on importance sampling for MBR
+    - Provides a detailed explanation of importance sampling and its application to MBR, specifically when estimating risk under a length-corrected distribution.
+- Appendix B: Contextualizing this work within philosophy of science
+    - Explores the broader implications of the work within the context of meta-analysis of scientific research.
+    - Discusses the phenomena of citational amnesia and terminology drift in scientific literature and their possible consequences.
+
+
+
+
+## The Paper
+
+![paper](./paper.pdf){.col-page width=800px height=1000px group="slides"}
