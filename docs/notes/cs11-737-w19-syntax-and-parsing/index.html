@@ -7,8 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Oren Bochman">
+<meta name="description" content="This week we’re delve into syntax in general but dependency parsing in particular. We’ll also discuss the Universal Dependencies treebank and the differences between syntactic and semantic dependencies.">
 
-<title>Speech – NLP Course Notes &amp; Research</title>
+<title>Syntax and Parsing – NLP Course Notes &amp; Research</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -111,8 +112,8 @@ gtag('config', 'G-V0T6EFS8LY', { 'anonymize_ip': true});
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Speech – NLP Course Notes &amp; Research">
-<meta property="og:description" content="CMU CS11-737: Syntax and Parsing">
+<meta property="og:title" content="Syntax and Parsing – NLP Course Notes &amp; Research">
+<meta property="og:description" content="This week we’re delve into syntax in general but dependency parsing in particular. We’ll also discuss the Universal Dependencies treebank and the differences between syntactic and semantic dependencies.">
 <meta property="og:image" content="https://orenbochman.github.io/notes-nlp/images/nlp-brain-wordcloud.jpg">
 <meta property="og:site_name" content="NLP Course Notes &amp; Research">
 </head>
@@ -175,7 +176,7 @@ gtag('config', 'G-V0T6EFS8LY', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Speech</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Syntax and Parsing</li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -185,10 +186,16 @@ gtag('config', 'G-V0T6EFS8LY', { 'anonymize_ip': true});
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Speech</h1>
-            <p class="subtitle lead">CMU CS11-737: Syntax and Parsing</p>
-                                <div class="quarto-categories">
-                <div class="quarto-category">Attention</div>
+      <h1 class="title">Syntax and Parsing</h1>
+            <p class="subtitle lead">CMU CS11-737: Multilingual NLP</p>
+                  <div>
+        <div class="description">
+          This week we’re delve into syntax in general but dependency parsing in particular. We’ll also discuss the Universal Dependencies treebank and the differences between syntactic and semantic dependencies.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Syntax</div>
+                <div class="quarto-category">Dependency parsing</div>
                 <div class="quarto-category">Multilingual NLP</div>
                 <div class="quarto-category">NLP</div>
                 <div class="quarto-category">Notes</div>
@@ -831,12 +838,6 @@ gtag('config', 'G-V0T6EFS8LY', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../reviews/paper/2018-understanding-back-translation/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Understanding back translation</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../../reviews/paper/2018-PTWM-NMT/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">PTWM NMT</span></a>
   </div>
@@ -845,12 +846,6 @@ gtag('config', 'G-V0T6EFS8LY', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../reviews/paper/2019-morphological-embeddings/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Morphological embeddings</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../reviews/paper/2020-reformer/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">reformer</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -883,12 +878,6 @@ gtag('config', 'G-V0T6EFS8LY', { 'anonymize_ip': true});
  <span class="menu-text">xLSTM</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../reviews/paper/2025-transformer-to-rnn/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Transformer to RNN</span></a>
-  </div>
-</li>
       </ul>
   </li>
     </ul>
@@ -904,6 +893,7 @@ gtag('config', 'G-V0T6EFS8LY', { 'anonymize_ip': true});
   <li><a href="#outline" id="toc-outline" class="nav-link active" data-scroll-target="#outline">Outline</a></li>
   <li><a href="#reflection" id="toc-reflection" class="nav-link" data-scroll-target="#reflection">Reflection</a></li>
   <li><a href="#navajo-in-10" id="toc-navajo-in-10" class="nav-link" data-scroll-target="#navajo-in-10">Navajo in 10</a></li>
+  <li><a href="#hard-to-parse-in-english" id="toc-hard-to-parse-in-english" class="nav-link" data-scroll-target="#hard-to-parse-in-english">Hard to parse in English</a></li>
   <li><a href="#papers" id="toc-papers" class="nav-link" data-scroll-target="#papers">Papers</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/cs11-737-w19-syntax-and-parsing/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -1000,7 +990,7 @@ Transcript
 <p>The first one is <strong>dependency structure</strong> which focuses on the relations between words and it looks a little bit like this: For example we have the word saw and the word <code>saw</code> as the root of the sentence and this is connected to other words like <code>i</code> and <code>with</code> and girl</p>
 </blockquote>
 <blockquote class="blockquote">
-<p>We also have <strong>phrase structure</strong> which is focuses on the kind of structure of the sentence as opposed to the relationships between words Both of these are common expressions of syntax or common ways to represent syntax. <mark>In particular phrase structure was widely used in English and you know kind of developed by chomsky and other very influential linguists from 1950s 1960s until now</mark> However recently there’s been a big move towards dependency structure and the reason why is because they’re relatively straightforward to express. And in particularly relatively straightforward to express across a wide variety of languages. and so for example we can do things like say saw is the subject of the sentence so or saw is the root of the sentence and then it has a subject it has a direct object and it has a prepositional phrase and these kinds of things are relatively you know constant across languages maybe not prepositional phrases but you know a phrase like this and it’s particularly good for multilinguality because in some free word order languages it’s also possible to have basically words intervene into a phrase which makes it very difficult to say this is like a particular phrase and what i mean by this is if you have a dependency tree and words cross it’s very hard to come up with an example of this in English. I don’t know if anybody knows one of the top of your head like ellen okay it’s like i went i saw a movie yesterday that was good so this is a relatively natural English sentence but actually yesterday yesterday is a child of saw and movie that is a child of movie so you can see the dependency is crossing here basically the only place where we get this in in English is is with adverbs adverbs can be like are basically the only thing with really free word order in English but they break this kind of phrase structure representation because you can’t say that any there’s a consistent phrase here so basically that’s an issue and there are other languages where these are like extremely common where the word order is free for all different kinds of phrases so because of this a lot of syntactic analysis is kind of moving in the direction of using dependencies instead of phrase structure</p>
+<p>We also have <strong>phrase structure</strong> which is focuses on the kind of structure of the sentence as opposed to the relationships between words Both of these are common expressions of syntax or common ways to represent syntax. <mark>In particular phrase structure was widely used in English and you know kind of developed by chomsky and other very influential linguists from 1950s 1960s until now</mark> However recently there’s been a big move towards dependency structure and the reason why is because they’re relatively straightforward to express. And in particularly relatively straightforward to express across a wide variety of languages. and so for example we can do things like say saw is the subject of the sentence so or saw is the root of the sentence and then it has a subject it has a direct object and it has a prepositional phrase and these kinds of things are relatively you know constant across languages maybe not prepositional phrases but you know a phrase like this and it’s particularly good for multilinguality because in some free word order languages it’s also possible to have basically words intervene into a phrase which makes it very difficult to say this is like a particular phrase and what i mean by this is if you have a dependency tree and words cross it’s very hard to come up with an example of this in English. I don’t know if anybody knows one of the top of your head like ellen okay it’s like i went i saw a movie yesterday that was good pt so this is a relatively natural English sentence but actually yesterday yesterday is a child of saw and movie that is a child of movie so you can see the dependency is crossing here basically the only place where we get this in in English is is with adverbs adverbs can be like are basically the only thing with really free word order in English but they break this kind of phrase structure representation because you can’t say that any there’s a consistent phrase here so basically that’s an issue and there are other languages where these are like extremely common where the word order is free for all different kinds of phrases so because of this a lot of syntactic analysis is kind of moving in the direction of using dependencies instead of phrase structure</p>
 </blockquote>
 </section>
 <section id="universal-dependencies" class="level2">
@@ -1307,6 +1297,30 @@ Transcript
 </ul></li>
 </ul>
 </section>
+<section id="hard-to-parse-in-english" class="level2">
+<h2 class="anchored" data-anchor-id="hard-to-parse-in-english">Hard to parse in English</h2>
+<blockquote class="blockquote">
+<p>Alice drove down the street in her car – prepositional phrase attachment ambiguity</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>time flies like an arrow. Fruit flies like bananas – polysemic ambiguity</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>I drove my car to the hospital in town on Saturday – Projectives in English</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>You cannot add flavour to a bean that isn’t there – Non Projectives in English</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Alex went to Sam’s house, where he told her that they would miss his show. – Coreference resolution ambiguity</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>I saw an elephant yesterday in my pajamas – Non Projectives in English</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Bill loves and mary hates soccer – Non Projectives in English</p>
+</blockquote>
+</section>
 <section id="papers" class="level2">
 <h2 class="anchored" data-anchor-id="papers">Papers</h2>
 <ul>
@@ -1390,13 +1404,14 @@ Yamada, Hiroyasu, and Yuji Matsumoto. 2003. <span>“Statistical Dependency Anal
 </div>
 </div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2022,
   author = {Bochman, Oren},
-  title = {Speech},
+  title = {Syntax and {Parsing}},
   date = {2022-03-29},
   url = {https://orenbochman.github.io/notes-nlp/notes/cs11-737-w19-syntax-and-parsing/},
   langid = {en}
 }
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2022" class="csl-entry quarto-appendix-citeas" role="listitem">
-Bochman, Oren. 2022. <span>“Speech.”</span> March 29, 2022. <a href="https://orenbochman.github.io/notes-nlp/notes/cs11-737-w19-syntax-and-parsing/">https://orenbochman.github.io/notes-nlp/notes/cs11-737-w19-syntax-and-parsing/</a>.
+Bochman, Oren. 2022. <span>“Syntax and Parsing.”</span> March 29, 2022.
+<a href="https://orenbochman.github.io/notes-nlp/notes/cs11-737-w19-syntax-and-parsing/">https://orenbochman.github.io/notes-nlp/notes/cs11-737-w19-syntax-and-parsing/</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
