@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Oren Bochman">
+<meta name="description" content="This week we’re delve into the LORELEI project, a DARPA initiative to rapidly develop low-resource information extraction in new languages.">
+
+<title>The LORELEI Project – NLP Course Notes &amp; Research</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-V0T6EFS8LY"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-V0T6EFS8LY', { 'anonymize_ip': true});
+</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<style>
+
+      .quarto-title-block .quarto-title-banner {
+        background: images/banner_deep.jpg;
+      }
+</style>
+
+
+<link rel="stylesheet" href="../../styles.css">
+<meta property="og:title" content="The LORELEI Project – NLP Course Notes &amp; Research">
+<meta property="og:description" content="This week we’re delve into the LORELEI project, a DARPA initiative to rapidly develop low-resource information extraction in new languages.">
+<meta property="og:image" content="https://orenbochman.github.io/notes-nlp/images/nlp-brain-wordcloud.jpg">
+<meta property="og:site_name" content="NLP Course Notes &amp; Research">
+</head>
+
+<body class="nav-sidebar floating nav-fixed slimcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">NLP Course Notes &amp; Research</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">The LORELEI Project</li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">The LORELEI Project</h1>
+            <p class="subtitle lead">CMU CS11-737: Multilingual NLP</p>
+                  <div>
+        <div class="description">
+          This week we’re delve into the LORELEI project, a DARPA initiative to rapidly develop low-resource information extraction in new languages.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Active learning</div>
+                <div class="quarto-category">Multilingual NLP</div>
+                <div class="quarto-category">NLP</div>
+                <div class="quarto-category">Notes</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-body">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Oren Bochman </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">Tuesday, April 12, 2022</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Classification &amp; Vector Spaces</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Logistic Regression</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Frequencies</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w1/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Visualizing tweets</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Probability &amp; Bayes Rule</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Visualizing Naive Bayes</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Vector Space Models &amp; PCA</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Linear algebra with NumPy</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Manipulating word embeddings</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">MT &amp; Document Search via KNN</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vector manipulation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Hash functions and multiplanes</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Probabilistic Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">Autocorrect &amp; Dynamic Programming</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Building the vocabulary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Candidates from String Edits</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">POS tagging &amp; HMMS</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vocabulary with unknowns</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Working with tags and Numpy</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false">
+ <span class="menu-text">Autocomplete &amp; Language Models</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - N-grams Corpus preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Building the language model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w3/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Out of vocabulary words</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false">
+ <span class="menu-text">Word embeddings with neural networks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Data preparation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Intro to CBOW</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c2w4/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Training the CBOW</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true">
+ <span class="menu-text">Sequence Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false">
+ <span class="menu-text">Neural Networks for Sentiment Analysis</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Introduction to Trax</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Classes and Subclasses</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w1/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Data Generators</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false">
+ <span class="menu-text">RNN for Language Modeling</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Hidden State Activation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Calculating Perplexity</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Vanilla RNNs, GRUs and the scan function</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w2/lab04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L4 - Creating a GRU model using Trax</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="false">
+ <span class="menu-text">LSTMs and Named Entity Recognition</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vanishing Gradients</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false">
+ <span class="menu-text">Siamese Networks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Creating a Siamese Model using Trax</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Modified Triplet Loss</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c3w4/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Evaluate a Siamese Model</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="true">
+ <span class="menu-text">NLP with Attention Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false">
+ <span class="menu-text">Neural Machine Translation</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Stack Semantics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - BLEU Score</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="false">
+ <span class="menu-text">Text Summarization</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-18" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Attention</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - The Transformer Decoder</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" role="navigation" aria-expanded="false">
+ <span class="menu-text">Question Answering</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-19" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - SentencePiece and BPE</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - BERT Loss</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w3/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - T5</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" role="navigation" aria-expanded="false">
+ <span class="menu-text">Chat Bots</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-20" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Reformer LSH</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../notes/c4w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Revnet</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-21" role="navigation" aria-expanded="true">
+ <span class="menu-text">Papers</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-21" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-21" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../reviews/paper/2014-NMT-by-jointly-learning-to-align-and-translate/" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">NMT by Jointly Learning to Align and Translate</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../reviews/paper/2015-LSH/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Practical &amp; Optimal LSH for Angular Distance</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../reviews/paper/2015-effective-approaches-to-attention-based-NMT/" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Effective Approaches to Attention-based NMT</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../reviews/paper/2016-coverage-embedding-models-for-NMT/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Coverage Embedding Models for NMT</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../reviews/paper/2016-neural-morphological-segmentation/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Neural Morphological Analysis Encoding-Decoding Canonical Segments</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../reviews/paper/2017-attention-is-all-you-need/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Attention is all you need</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../reviews/paper/2017-data-augmentation-low-resource-NMT/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data augmentation for low-resource NMT</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../reviews/paper/2018-ELMo/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ELMO</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../reviews/paper/2018-BERT/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">BERT</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../reviews/paper/2018-PTWM-NMT/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PTWM NMT</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../reviews/paper/2019-morphological-embeddings/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Morphological embeddings</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../reviews/paper/2022-nakdimon/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nakdimon</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../reviews/paper/2023-exposing-glitches/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">exposing glitches</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../reviews/paper/2023-MBR-all-the-way-down/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MBR all the way down</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../reviews/paper/2024-MBR-decoding/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MBR decoding</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../reviews/paper/2025-xLSTM/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">xLSTM</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#outline" id="toc-outline" class="nav-link active" data-scroll-target="#outline">Outline</a></li>
+  <li><a href="#papers" id="toc-papers" class="nav-link" data-scroll-target="#papers">Papers</a></li>
+  <li><a href="#reflection" id="toc-reflection" class="nav-link" data-scroll-target="#reflection">Reflection</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/cs11-737-w21-LORELEI/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
+
+
+
+
+
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../images/tiling.png" class="nolightbox img-fluid figure-img" width="200"></p>
+<figcaption>course banner</figcaption>
+</figure>
+</div><div id="vid-01" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-vid figure">
+<div aria-describedby="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/l3F4zmYGU9g" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Video&nbsp;1: Lesson Video
+</figcaption>
+</figure>
+</div></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Learning Obj·ectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Rapidly developing a low-resource information extraction in new languages</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Transcript
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<!-- Transcript here is machine generated no punctuation and I eddited it a but but it needs more work and I don't see the benefits unless I can run it through some tool. -->
+<p>The thing i want to talk about today is a large darpa project that happened 2015-ish for four or five years um called lorelai and the reason i’d like to talk about it is it basically was a big project by darpa so lots of sites caring about low resource languages and building resources for low low resource languages it was mostly about information extraction at least they wanted information about streams of information and languages that we might not know and um it introduced two very interesting things within the nlp community about moving from having a problem and solving it to thinking about what the problem is going to be in advance and pre-solving it by building appropriate pre-training and and data okay um the fundamental idea darpa usually has Overview grand schemes on what they want to do they don’t always implement them in the right way and we don’t really solve the problem during the project but they usually cause us to take significant steps forward that longer term actually helps a lot and this seems to be a pattern that happens in dartmouth and darpa’s aware that locally they might not solve the problem but actually five years or more down the line may actually do and i think this is true for uh lorelei so it’s basically how to deal with the low language um resource quickly okay um so i’m going to talk about that i’m going to talk about how funding normally works for law resource languages and how do you get funding how do you do research in law resource languages because we know that english put on what are the economically most reasonable languages to work on on the planet there are lots of speakers of them it’s worthwhile improving that but how do we deal with the other languages like basque where there’s not enough people to be able to fund and research in it or not as many and how can we actually do anything so it’s a case study looking at lorelei project lorelei stood for something um and it was clearly a backer name in the sense that they came up with the name and then thought what it might stand for but i don’t think i know what it ever stood for and went from 2015 up until 2020. Government Investment in Languages um so language technologies you know as we’ve seen is there for the big languages but how do we deal with the other languages and how do we get funding how do we build models that are going to deal with bas can we collect all enough data to be able to build a better bask or what can we do from a multilingual point of view um there’s a class of languages that have significant numbers of speakers these speakers might not all be monolingual but some of them might be and they’re big enough number of speakers that there’s tv radio news in those languages and it’s probably you know the rankings of around about the 300 to a thousand um so it’s not village local languages they’re languages that still have major cities and the languages where people will use the language outside the home uh how can we actually deal with those languages rather than just restricting ourselves to the high um colonial languages that are there okay and much more importantly okay uh if these languages okay only have a few million speakers and enough of the rich people there speak another language why would you ever build technology for them because if they are educated in english or in um standard chinese or russian or spanish then why do we ever need to care about them from language technology point of view because amazon’s going to work for them when they’re talking in their other language um so we don’t have to do anything about them okay that’s of course unfair okay um and it’s not just that we should be looking at commercial use of these languages and we should be looking at you know helping people on the planet and you know from the researcher point of view is why is it that we only work on the languages that we have an infinite amount of data from rather than actually know how to deal with a small amount of data in order to be able to get support and it’s not we’re not saying that we should each work on each language it’s how can we build support for these languages um so we can deal with them reasonably okay and there are two reasons on the planet that after um economics that will cause people to research into language when i say research into language i mean doing nlp nowadays but historically i mean teaching people to actually speak the language and that’s wars and religion okay so if you want your language to be important what you should do is you could pick a fight with a big country and and then everybody will start wanting to learn your language so they can send spies to your country this has happened a lot okay the reason that russian was a big language during the cold war that people were trying to learn in the united states was because they wanted to understand what was happening in russia but oh my god all these people were using russian and they weren’t using english so we had to learn russian in order to be able to talk to them okay um and then there’s religion okay so the other reason that people will spend money on translation etc is to be able to get their message out quite simply they want to get their message out and it’s independent of economics so they’re not there to try and make money out of amazon they want to get their story to these people and hence the most common form of um translation information that’s there parallel translation information that’s actually out there on the planet is of course linux manuals no sorry i mean the bible okay um but um other groups of people who also believe in their work and are willing to work for free or nearly for free um will give you translations of the linux manuals and the quran and the bible without being paid and therefore these are available and these are the sorts of groups of documents that you’re likely to find and translations for all over the world okay so wars if you cause a war or religion people trying to get their story out are the things that are most likely to cause funding um and cause interest in actually doing things in uh in the world US Government LT Investment um the us government is uh excellent example of um a a large organization that’s willing to invest in language in spite of some people believing that the united states is a monolingual culture and it’s actually somewhat amazingly diverse people have come here for the last 500 years depending how you count um usually from other um cultures speaking other languages the nativeness of people usually dies off after a few generations um but the us is very much aware that in order to be able to interact with the rest of the world they have to be able to interact in those other people language languages and so they have invested in technology to be able to help language learning language translation and language and resources okay um darpa started investing in machine translation pretty early on and there was lots of research that was done in machine translation from as far back as 1940s um in the 1970s especially here at um cmu um speech recognition was being invested by um darpa with the idea of being able to do speech trans transcription and invest in dialogue systems in the 1990s speech translation in the 1990s darpa was one of the leaders in being able to fund and build systems and rapidly build systems for new languages without having to do years of development okay and so it’s not really unusual or strange that um darpa then says okay let’s do something directly targeted at low resource languages okay The Scenario so here’s the scenario and always in darpa there’s a sort of background scenario that they use to pitch to their bosses about why this is an interesting thing to do why is it interesting research project okay and so for example a disaster happens an earthquake okay and the area affected doesn’t speak any of the major languages okay so they’re not uh english-speaking area of india’s mostly an english-speaking area which can usually find english-speaking people or indonesia malaysia you can find english-speaking people so the primary language that’s in there is not one of the english spanish russian and putin hua and there’s communications in the local language that are coming out they’re coming from official sources like news and also coming from social media okay um and they’re also just um speech so tv and radio um how can we do something to track to actually work out what’s going on so if you’ve got resources and you’re here to help you know there’s an earthquake you’ve got resources that will have um a heavy equipment that can that can fix buildings that have collapsed or medical care or shelter and where do you take it to and all this stream of information is coming to you in the language you do not know and or there’s very very few interpreters around that will allow you to be able to get that information so what you’d like to be able to know is um who should you uh provide support for um where should it go um who’s affected how many people need help okay and what’s the urgency so there are messages but you don’t know what they mean how can we actually understand them so um Lorelei Incident we ran with that um a disaster communication in a local language and we wanted to provide machine translation in a language we don’t know in advance um named entity recognition so we want to know people places um and we wanted to extract what became called situation frames these were 11 specific types plus location status urgency and there was another term gravity that nobody understood what it meant and this was things like needing medical help needing infrastructure um has broken down needing food shelter and unrest um so the riots um just giving information in our translated form in english that would allow people to do um actionable help when they’re actually doing the resources what’s more they wanted to do as fast as possible okay so um a they ended up although it didn’t start like this they ended up saying you’ll be given 24 hours notice earthquake will happen you’re going to be tested 24 hours later um we’ll also have another deadline one week later and another deadline 30 days later okay so make it a little bit more realistic because you know the earthquake happens you go i’ll work on that language and three years later you end up with some support for that language yeah it’s too late okay what can you do in 24 hours 24 hours is very very short okay um you’re told about the language at our zero and i mean you don’t have to try and work out what the language is if you’re told the name of the language here’s the wikipedia page for the language okay we would get a paragraph that described the disaster in english and then everything else was in the local language okay we weren’t allowed to use post hoc information like the wikipedia article about the disaster because there’ll be a wikipedia um page about the article in in english we’re not allowed to use that we can only use things from before that point okay Lorelei Evaluation Exercises um so we started um in 2015 and everybody had cool ideas about how to be able to do this and we all started working on it and then came 2016 they said okay we’re going to start with the first language we’re going to start with the language that there will be speakers in every single team so it won’t be an unusual language at all so we did mandarin okay because all of the teams had mandarin speakers in them because all teams do have mandarin speakers in them okay and so that’s what we did first um and then uh we sort of tested it there was evaluation metrics where we’d have to submit the results and we would try to um evaluate how well we’d extracted the information from the documents um and then in july uh the first language that they gave us was uyghur uyghur has spoken western china and you’re probably aware of it in the news it’s a muslim group in western china um that is not treated well by the government there and it’s a turkic language it’s written in a latin uh in a arabic script um which makes it a little bit harder to deal with but unlike other languages that use the arabic script it writes all the vowels so it makes it much easier than urdu or um persian um and so that was the first one and again it was an earthquake that was the actual event that we were actually trying to um understand now i’ll go into some more detail about these later uh the following year we did to grinya and oromo they’re both spoken and spoken in southern ethiopia depending on your definition of where the ethiopia ethiopian border is um a degrena is written in the giz script which is the same as amharic aromo is written in latin script and the spelling’s almost random and so there’s a lot of noise in the spelling and that’s something that we had to deal with because there’s no standardization for our spell um in july 2018 we had two different languages from different continents we have ken rwandan spoken to central africa um and sinhala spoken in sri lanka and sinhala is not a dravidian language it’s not a southern indian language it’s a northern indian language um and actually bengali might be one of the closer languages to it and so we built up support for that in 2018 we did um albanian and actually it sort of moved away from being this fixed evaluation that would happen with them albanian what actually happened is there was an exercise in europe which they did in albanian and we actually provided support from people who were sending in pretend messages of important things that were happening and we were trying to extract the information from the albanian um tweets that were coming out in order to be able to do that 2019 we did um oria audio spoken in uh um india and ilikano was one of the languages spoken in the philippines um and then again in september um 2019 we again moved away from this fixed form of evaluation to actually deal with something of a bunch of real news stories with an exercise that was happening in papua new guinea is one of the standard languages in papua new guinea it’s a pigeon english and it is related to english and it has a number of native forms in it but it’s now a standard language even though originally it was a pigeon um and so it has news and um tv reports in it um who was involved in this well you Lorelei Performers know there’s a bunch of researchers in north america that are very often involved in these big language and speech-related projects and it was the same there was big teams that were formed across different groups and we shared things so um university of southern california isi um with uiuc and notre dame and joined as one team cmu was also working with uh uw uh melbourne as in australia and lido’s private company and bbn was with johns hopkins and university pennsylvania and there was other um components as well so other groups would develop things and we could use them and try to bring them into our system so um colombia university colombia not the country um was doing analysis to give us urgency and sentiment automatically from data and rather interestingly university of texas at el paso what they were trying to do they were trying to recognize situation frames or at least urgency information from speech from prosody alone without knowing what the words are so can you tell that this recording is urgent or not and you might think oh yeah if it’s got screams in it it’s probably urgent but no these are mostly news reports or youtube type reports and it’s how people are speaking but you could still get significant information and it would actually help on combinations CMU System: Ariel the cmu system was called aerial but nobody can remember that we had a fancy name for it and again it was an acronym but i can’t remember what it was um rather interestingly compared to the other teams we decided to begin with to instead of build a translator that translates everything to english and dual extraction in english but we decided we’ll work in the target language itself okay because we knew that translation was going to be bad we knew that translation we wouldn’t have enough data um for it and much more importantly graham hadn’t moved to cnu yet so we knew that it wasn’t going to be good until we got graham to move to us and we mostly worked in the phonetic domain and this was something that we do is we take whatever the written form is we project it into the written form and we display it in the native script we display it in the phonetic script so now anybody could read it or at least it was easier to read and sometimes we project it into a romanized script because it’s much easier for you if you don’t speak these languages to remember things when you see them in a latin script if you’re more familiar with it um um we then would use um a cross into cross language information for example um uyghur um actually to protect the roman script and youtube uzbek and projected into roman script it writes in cyrillic or maybe it’s kazakh the rights and cirilla can never remember which one it is but once you put them into the roman script they’re actually very similar there’s lots of cognates that are immediately obvious in the language because they’re shared they’re both turkic languages and they’re both in this central asian and we could get information out of that and people who don’t speak the language could see these um similarities but also our models could see the similarities while if they’re written in different scripts it can be very hard to actually see that we built base keyword systems we were allowed to have native informants um to be able to tell us something about the language um but we had limited access to them so maybe four hours of access and that was it and so what do you do if you’ve got four hours access to a bilingual speaker who’s not an nlp expert can’t program in python what’s the best most useful thing that you can get out of them in order to be able to do this and one of the things was like to translate these 50 words um into your language so you know the word for helicopter doctor and medicine portable water etc okay um we also built cross-lingual word embedding systems to be able to build on top of these and we and a number of uh um research groups and that were working on that we had um active learning so how best can we use this um human who knew the language and be able to get the best information out of them in a very limited time such that the system really could work well um we had to do all of this in speech as well so we did lots of work in cross-lingual recognition where we didn’t really have time to train a language at best we could recognize it and then on top of that tried to extract information what happened was you end up with lots and lots and lots of pre-preparation so we’d build um language independent models or very large multilingual models in order to be able to to do the 24-hour thing and basically we couldn’t sleep in the 24 hour and so darpa doesn’t believe in sleep so we’d have to find out when the best things were and so the people who were building models that had a four hour training period were felt to be lucky because that means they could sleep during that training period of course unless it fails because then they got woken up um Techniques performing in the pronunciation space was definitely something that was worthwhile we gained a lot from that we were beating the other teams to begin with what usually happens these the there’s competitive things and people use different things but by the fourth or fifth year we then sort of settle on um more standardized forms and and machine translation got a lot better um when we got uh later on um uh doing this um in the pronunciation space rather than doing words or morphemes we sometimes make decisions about whether we do morphological decomposition or not depends on the language and whether it’s worthwhile we also do interesting cross-lingual transfer and like unknown translation we’d get some key words that we’d have in the other language and we’d use that to try and predict what embeddings might be other forms the example that was always given with this imagine you know that china japan and korea are always going to appear or are likely to appear together in standard news stories and then you have three um chinese characters that you don’t know pretend you don’t know what they are um and uh you’re told that this one means china and you’re told that this one’s means japan then you have to guess what the one actually is um and i assume the third one is the chinese for korea but it might not somebody we have a chinese speaker is it is this yeah okay right for south korea yeah north korea’s got a different one okay i wasn’t sure what he is but yeah um because he’s a japanese um but then you could work this out okay and i’ve been in situations like this where i’ve seen something written in chinese okay and i could recognize it said america it said france it said britain and it said something else so i thought well it must be another country it must be another big country okay and i had to try and work out um what it might be and so i had three characters in it and it wasn’t any characters i recognized from japanese but you know if i could uh um read any of them the last one was the big character so then it’s a named engine duh okay and so it’s canada okay um because you know from the context it was something about cost of calling the countries or something um these were all very low languages resource i mean not ridiculously low but low they would have media in that language but it was hard to be able to find data okay um darpa would provide us with language packs which would often have all of the parallel data was available for that particular language which really was bible quran and unix manuals because they are the most common form that you would find on opus or somewhere else often wikipedia had some information but it was really very varied and rather interestingly not based on the number of speakers in the language it’s based on the interest of people doing it or something and we also had this native informant it was often called a taxi driver and this is partly as a a joke but partly because we’re very serious about that because the taxi drivers in a country are often the people who speak these other interesting languages because if you can’t speak the native language of the country you move to very well you can often still be a taxi driver and so it would allow us to be able to meet them and so we every time we were in the taxi we would ask so what languages do you speak and would you like to come in and do some work for us um the techniques that we actually cared about here global linguistic knowledge you know um we knew the name of the language so we made sure um that when it started we could look up the wikipedia page and make fixed decisions about the writing system the local shared languages that we have the influence of any educational or colonial language that was nearby that would be worthwhile caring about um linguistic aspects of the morphology the word order etc and should we do anything okay and the answer might be no we should do nothing but it might be it’s worthwhile spending an hour or two david martinson would do this um to write a morphological analyzer because a standard bpe might not get the information that we’d like it to get and so we would do that and then pre-process everything after that but that depends on the language and you have to read the wikipedia entry and make the decision about the amount of time that you take to be able to do that um so linguistic closeness and helps a lot okay but also colonial close closeness the languages in the indian subcontinent linguistically bear literal resemblance to english even though they’re both got a shared root in proto-indo-european and but the influence of english on indian languages and also elsewhere it’s pretty large okay you know um and so you know the word for doctor in hindi you know the person you go to to get medicine when you don’t feel very well is the word doctor okay yes there’s some sanskrit rooted word that also means it but that’s not what you say when i feel sick i have to go to a doctor it’s doctor is the word and so there’s that english influence is there and so you want to know about that and so you want to know while in indonesia it might be spanish and in south america when you’re looking at native indigenous languages is going to be spanish or portuguese is what the influence language is going to be so you want to be aware of that um you might discover things like all the numbers are turkic because it’s a turkic language and then all of a sudden you get translation of all these numbers and it works well you might also find that there’s other interesting things like the mercy the french for thank you is the arabic for thank you at least the casual thank you in um arabic you also get um pastor spoken in afghanistan and which was one of our languages is uh is index but it’s got lots of influence from persian in it because the people who speak it there are speaking with daddy speakers who have got a lot of uh and you might also find that there’s um some other influence you know petrol but we all know is what petrol might be called gas or of course benzene is the other international term for that um nothing is spelled consistently okay and this is something you learn very quickly when you look at this is like there is no standard spelling so you’ve got a low amount of data but you’ve got random spelling you’ve got noise in the spelling so almost everything that you think should work isn’t going to work because if you do a word divect type thing there’s going to be a lot of space in how people are going to spell things okay um dialects aren’t very well defined okay and although a written form might be closer to the standard there might not be a standard written form and therefore it’s shared and therefore you have lots of noise when that’s actually happening um the registers so how people talk to each other whether it’s a politeness level or whether it’s just some form of familiarity level that’s going on can be very very important social media is probably not going to use the same register that announcements from the government actually are and you have to it’s almost a different language also um people code mix all the time so they share their languages when they’re speaking and realistically if there is only a few million people who speak that language these people are going to be multilingual at least lots of them are going to be multilingual so you’re going to get multilingual information and so if you’re looking for tweets in the language you’ll find it will also often be mixed with english or spanish or what again the colonial languages because people are trying to get information out and therefore they’re likely to use a more international language because it’s a widely um used language and they might not be fluent in that language but they’ll know some words and so you find that you get that too um Lorelei Questions so there’s some question about this we worked for this for five years um people uh darpa who were doing the evaluation uh which shows these numbers after evaluation about how badly we were doing and um we actually said well wait a minute we’re actually not doing badly okay we’re giving you answers in a day and a week in a language we’ve never seen before and you’re saying we’re nowhere near as good as what humans are who spent 25 years learning the language we think that’s a little unfair okay and what we should really do is find out how it is if you don’t have a system like this and see how well it works we also noted that the humans weren’t very good at it either or at least weren’t very consistent about it and so we started investigating how well they could label the data and there was lots of noise on whether people were labeling the data and properly or not then the next thing that we decided to look as a bigger thing is how can we make an estimate about how well we will do in a language so if you select a language and give it to us say disaster is going to happen here um how well are you going to do it recognizing the information as opposed to this other place on the planet can we look at the language the language resources its relationships to other um other languages uh how how much of a literate language is it and make predictions about how well we’re actually going to do it so we did we did these things because they’re always quite interesting to do it all of the System vs Annotator Performance languages were named by number um in official documents so and we ended up not saying the names of the languages although i’ve often added the name but i don’t always do that because i forget okay and i only think it’s il8 but i can’t remember which one so instance language eight but i can’t remember which one it actually was um so um this first graph here is basically showing you how well which is how well we did these situation breaks how we do information extraction out of um the system when compared to humans doing it so we give humans the documents and say label the important frames that are in there with extracting the information and so for two of the early ones durgenia and oromo um the systems were competitive for the human integrinia and um better than the humans in rome although that wasn’t quite true there were certain things in the romo that made the labeling not as well defined and so actually we have some weird things that actually come out of the definitions um i i should actually well there’s a couple of little examples i wanted to say so one of the things that we wanted to do was identify named entities um including locations and be able to say if there was a need and so in the first mandarin um system that we built our named entity expert um akash who’s indian and came up with the most common place name that he found labeled it with the best confidence and he says this one seems to have issues and i think there’s something like it needs water because they don’t have any water there and this is the chinese character for moon okay um and we’re absolutely right moon is a place and moon doesn’t have much water on it so it probably needs that but it’s not going to be affected by the earthquake on on on the planet our planet anyway okay and realistically i believe this is actually the word month it’s not the word moon at all okay so because you don’t know the language you get things like this coming out of it okay because it is a place okay but no it isn’t okay and the other one that came out a lot was um there’s this agency that says that is going to provide support and going to provide relief but they never do it okay and something like about 15 of the messages seem to end in a message that says that okay and so we had a closer look and we had our native informant tell us and uh after he stopped laughing he explained to us yeah that’s a quote from the quran and it says allah will save us okay and allah is not actually one of the agencies involved in the relief effort at least not directly okay indirectly maybe but he’s not going to come along with a truck of um uh your water okay probably he might cause a drop of water to come back that’s a different issue okay but of course we couldn’t recognize that this was just a standard phrase god save us um that appears because we didn’t know another even though i think i mentioned in the named entity thing before that it’s been defined that gods are not named entities okay and so allah is not a named entity so you get these weird things that go wrong but you also get these weird things that go wrong because humans are doing these things and they’re not very sure okay and therefore really this one where we did better than the humans was because they weren’t well informed about sometimes gonna move on Experiments on English Core Data um so we also tried to do this thing about trying to guess how well we’re going to do in a language okay um and really it came down to if you’ve got a good bilingual lexicon to start off with you’re going to do a lot better okay and so if you had a bilingual lexicon in all pairs of languages that might be the best thing to invest in in order to be able to improve um these systems because you’ve got a very good start and then you could start learning from it um so which languages do we better in which languages do we do worsen well it sort of varies i mean our worst language here is which is spoken in nigeria and we just didn’t have much data for that even though it’s a relatively well resourced language and which languages do we do particularly well in tamil because there’s quite a lot of information around for that okay and there’s another one near the end hungarian but the european ones were always a little bit easier Lessons Learned and what did we learn from all of this um [Music] so build it pre-building models makes a big difference really makes a big difference and that actually i’d say all of our research moves from being how can we build models on on time zero from how can we build our models from beforehand and all we’re doing is adapting within you know the first half hour of actually getting the systems um uh working in the instant language actually made is a big difference especially at the very beginning so we really do well in the first 24 hours but once we got a translation system up in one and we could actually bootstrap a better translation system in a week we were doing better in translation than doing things on the um english translated form well the translated form but to begin with it was very hard to be able to compete because you had to get the translation system up and running and then have the extraction running so working in the target language actually made a difference but of course you could do combinations and that’s something you could do as well um the the trying to use the native environment in the most efficient way became really important and finding the best way to ask them questions so that their result could immediately feed into your system and actually improve it um graeme mentioned something about this and the other day in active learning about you know having some examples you know at the beginning really gives you a big boost okay um it maybe doesn’t matter after you’ve got lots of data i mean even a small amount of data but you know the first few hundred things really does make a difference because there’s massive holes in the data that you’re actually dealing with Let’s Try It in a Real Disaster so at the end of the project we decided this was a really cool idea and we wanted to test it out in a real form so we took graham okay and we put him in the cmu timeless time machine you all know about the time machine that we have at cmu and we sent them back to 2011 to try to apply some of these techniques um to the japanese um earthquake in 2011. unfortunately the um the time machine didn’t work and grain was already there in 2011 so he actually did this work before he came to cmu okay um which was very informative post hoc um about what was going on so there was a a major earthquake in japan in uh march um 2011 and um graham and others um were trying to work out how could they build a system that would actually aid the effort so this meant looking at nlp techniques on tweets and news to try to identify what’s going on particularly where things are happening where the words disaster and also trying to track people okay um because you want to know who’s safe who isn’t safe who’s looking and be ordered to be able to do that so the issues were word segmentation because in japanese that’s actually way harder and because there was a lot of local names it made even harder than what it would normally be named entity recognition and tweet classification okay um you really need pre-existing tools so this wasn’t in the language that they hadn’t worked in before so it was a language that the people in japan have been working on for years and therefore there’s relatively good uh resources for this okay passive people tracking is very hard so you’re just trying to find out whether this person’s mentioned or not while things like google’s and google and person finder which gets used in disasters there’s a human looking at the result going yeah that that’s my brother or no that’s not my brother um but the name’s very similar but not having a human look at it who’s actively trying to help actually makes it significantly harder um organizing helpers people go hey i’ll help so what are you going to do and how are you going to get them to be able to help they speak the language they can do things they can do labeling for you they can do checking of data how do you make sure that you use those efficiently and how do you do that in the first few hours when there isn’t an organizer and there’s no um uh infrastructure to be able to do that um a japanese word segmentation is not a three conclusions and they did successfully get build a useful system which actually did classify things and be able to tell you about where things were happening speed is everything gathering data labeling and creating a classifier being able to do this quickly as possible is really really important it saves lives and really and a much better an annotation framework would be helpful for what they were actually doing they probably didn’t use brac because it might not have been around at the time um and being able to use these human resources efficiently is something that you think about in your system in addition to having the latest uh um dark um a multi-lingual back system you should say well i’ve got 20 people here how can i use them to be able to improve my system Lorelei’s Legacy um legacy well we’ve got a whole bunch of data sets out of it um speech social media and news text for i can’t remember the number of languages but i think it’s 12 to 20 um the ldc and they’re quite good and we still use these today and you need to pre-train you can’t wait till the last minute that you’ve got a plan before multilingual should be hundreds of languages not three in fact if you look at the papers before 2015 lots of multilingual papers we’re talking about three languages well now we can talk about hundreds because that’s actually what we try to do zero shot q shot and active learning are really important when we’re actually doing these things integrating native informants into the task in an efficient way is part of the problem it’s not a sort of side thing it’s something that was really important and massively multilingual data sets came out of there that hadn’t really existed before massive bible alignments um unix manuals wikipedia and speech and the wilderness data set that we did which has got 700 languages in order to do that so i’d also like to point out one other thing which is probably this class also IR: Discussion Point um yes yeah one of one of the reasons why ellen and i were focusing so much on massively multilingual things was because you know we were working on this project and you know needed to scale educating people about caring about multiple languages and so this course is part of the results so here’s the discussion point consider a lot of life manager major earthquake happens in haiti um news reports tv radio broadcasts and social media and posts are coming from port-au-prince um you have access to the relief aid so you’ve got the aid okay um in terms of medical food shelter infrastructure rescue and you’re asked to use the messages that are coming into you uh to be able to distribute the resources in the best way to save people’s lives what do you do consider translation related languages native informants active learning and what current resources are available for you and as sort of as a footnote this actually happened in 2010 okay so in 2010 there was a major earthquake in haiti and people couldn’t understand haitian creole the languages spoken in haiti um and there weren’t any resources and the local people didn’t speak anything else some of them speak french and some speak english but how can we do it and so the nlp community came together and distributed um existing because there was an existing project at cmu in the 1990s and distributed data that was parallel data haitian creole um english and um microsoft i think was the one who actually built the translation system and put it on twitter so that you could get and translations as quickly as possible so this is the discussion point for today</p>
+</div>
+</div>
+</div>
+<section id="outline" class="level2">
+<h2 class="anchored" data-anchor-id="outline">Outline</h2>
+<ul>
+<li><strong>Introduction to LORELEI</strong>
+<ul>
+<li>LORELEI was a DARPA project from 2015-2020 focused on low-resource languages and information extraction.</li>
+<li>The project aimed to develop technologies for quickly understanding streams of information in languages with limited resources, addressing the challenge of providing aid and support in disaster scenarios where affected populations communicate in unfamiliar languages.</li>
+<li>The goal was to move from solving problems to proactively building pre-training and data resources.</li>
+</ul></li>
+<li><strong>Motivations and Funding for Low-Resource Languages</strong>
+<ul>
+<li>The economic incentives to develop language technology are typically focused on languages with large numbers of speakers, such as English.</li>
+<li>Funding for low-resource languages is often driven by factors other than economics, such as wars and religion.</li>
+<li>Governments, like that of the U.S., invest in language technology to interact with the world, regardless of the economic viability.</li>
+</ul></li>
+<li><strong>Scenario and Objectives</strong>
+<ul>
+<li>The project was based around a disaster scenario, such as an earthquake in an area where the local language is not widely spoken.</li>
+<li>The primary goal was to extract actionable information from communications in the local language to provide effective support.</li>
+<li>Key tasks included machine translation, named entity recognition (people, places), and extraction of situation frames (types of needs, location, status, urgency).</li>
+<li>The project had very short deadlines: initially 24 hours, then one week, and 30 days to provide support for a new language.</li>
+</ul></li>
+<li><strong>Project Execution and Languages</strong>
+<ul>
+<li>The project began with Mandarin Chinese as a test language because every team had Mandarin speakers.</li>
+<li>Followed by languages like Uyghur, Tigrinya, Oromo, Kinyarwanda, Sinhala, Albanian, Oriya, and Tok Pisin.</li>
+<li>The project evolved from fixed evaluations to real-world exercises, such as supporting disaster relief efforts in Albania and Papua New Guinea.</li>
+</ul></li>
+<li><strong>Team Collaboration and System Design</strong>
+<ul>
+<li>The project involved collaboration among multiple research teams across North America and Australia.</li>
+<li>Teams shared resources and tools, such as urgency and sentiment analysis from Columbia University and speech-based urgency detection from the University of Texas at El Paso.</li>
+<li>The CMU system, AERIAL, initially focused on working in the target language rather than translating to English due to the limitations of machine translation at the time.</li>
+<li>The CMU team emphasized projecting written forms into phonetic and romanized scripts to improve readability and cross-lingual understanding.</li>
+</ul></li>
+<li><strong>Techniques and Approaches</strong>
+<ul>
+<li>Building base keyword systems with the help of native informants was crucial, even with limited access to them.</li>
+<li>Cross-lingual word embeddings were used to leverage similarities between languages, especially when written in different scripts.</li>
+<li>Active learning techniques were employed to efficiently use the expertise of bilingual speakers.</li>
+<li>Pronunciation space was used to do cross-lingual recognition.</li>
+<li>Pre-preparation and building language-independent or multilingual models were essential for meeting the 24-hour deadline.</li>
+</ul></li>
+<li><strong>Challenges and Findings</strong>
+<ul>
+<li>Low resource languages often lack standard spelling, have poorly defined dialects, and exhibit code-mixing, increasing the difficulty of language processing.</li>
+<li>Evaluation showed that initial system performance was competitive with or better than human performance, especially in languages like Tigrinya and Oromo.</li>
+</ul></li>
+<li><strong>Key Outcomes and Lessons Learned</strong>
+<ul>
+<li>Pre-building models significantly improves performance, shifting research focus from building models on time zero to adapting pre-existing models.</li>
+<li>Working in the target language can be more effective than relying on initial machine translation.</li>
+<li>Efficiently integrating native informants into the task is crucial.</li>
+<li>Massively multilingual datasets and pre-training resources are essential for rapid adaptation to new languages.</li>
+</ul></li>
+<li><strong>Legacy and Impact</strong>
+<ul>
+<li>The project produced valuable datasets, including speech, social media, and news text in multiple languages, which are still used today.</li>
+<li>The focus on massively multilingual approaches has influenced research and education in NLP, as seen in the development of multilingual courses.</li>
+</ul></li>
+<li><strong>Discussion Point: Applying LORELEI Principles to the Haiti Earthquake (2010)</strong>
+<ul>
+<li>Consider how the principles and techniques developed in LORELEI could be applied to a real-world disaster scenario like the 2010 Haiti earthquake, where a lack of resources for Haitian Creole hindered relief efforts.</li>
+<li>Discuss the roles of translation, related languages, native informants, and active learning in such a situation.</li>
+</ul></li>
+</ul>
+</section>
+<section id="papers" class="level2">
+<h2 class="anchored" data-anchor-id="papers">Papers</h2>
+<p>The provided transcript focuses on the LORELEI project’s goals, execution, and outcomes rather than specific papers. However, it does mention some general areas and outcomes that could lead to research papers:</p>
+<ul>
+<li><strong>Techniques for Low-Resource Languages:</strong> The project explored various techniques, such as cross-lingual word embeddings and active learning, which could be detailed in research papers.</li>
+<li><strong>System Design:</strong> The CMU system, AERIAL, and its focus on phonetic and romanized scripts could be the subject of a paper.</li>
+<li><strong>Integration of Native Informants:</strong> Methods for efficiently integrating native informants, particularly in the initial stages of a project, could be described in a paper.</li>
+<li><strong>Pre-training and Adaptation:</strong> The benefits of pre-building models and adapting them to new languages could be explored in a paper.</li>
+<li><strong>Massively Multilingual Data Sets:</strong> The creation and use of massively multilingual data sets, including bible alignments, Unix manuals, Wikipedia data, and the Speech and the Wilderness data set, could be documented in a paper.</li>
+<li><strong>Analysis of performance across languages</strong>: Analysis of the factors that contribute to better or worse performance in different low-resource languages, such as the availability of bilingual lexicons.</li>
+<li><strong>Word Segmentation, NER, and Tweet Classification</strong>: Research focusing on these areas for specific languages with limited resources available.</li>
+</ul>
+<p>The teacher also suggests that many multilingual papers before 2015 involved only 3 languages, but research coming out of the LORELEI project aimed to scale to hundreds of languages. This shift could be a theme explored in papers related to the project.</p>
+<p>It is also noted in the discussion that the data sets from the project, including speech, social media, and news text for multiple languages, are available via the LDC (Linguistic Data Consortium) and are still in use.</p>
+</section>
+<section id="reflection" class="level2">
+<h2 class="anchored" data-anchor-id="reflection">Reflection</h2>
+<p>I was not particularly impressed with this DARPA Project. The low resource languages listed seem to be mostly drawn from the biggest languages in the world after English. Also the material seems to be release into the LDC, perhaps the consortium with the highest paywall in the world. Also the material collected seems in many cases to be religious texts or just scraping news sites and social media so I was thinking that the project was not very useful.</p>
+<p>However, professor Alan Black makes a good point. Research looked quite different before and after this project. So even if LORELEI like many Darpa initiatives is not very useful, it ended up shaking up the field a bit and people ended up doing better work after it!</p>
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2022,
+  author = {Bochman, Oren},
+  title = {The {LORELEI} {Project}},
+  date = {2022-04-12},
+  url = {https://orenbochman.github.io/notes-nlp/notes/cs11-737-w21-LORELEI/},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2022" class="csl-entry quarto-appendix-citeas" role="listitem">
+Bochman, Oren. 2022. <span>“The LORELEI Project.”</span> April 12, 2022.
+<a href="https://orenbochman.github.io/notes-nlp/notes/cs11-737-w21-LORELEI/">https://orenbochman.github.io/notes-nlp/notes/cs11-737-w21-LORELEI/</a>.
+</div></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("^(?:http:|https:)\/\/www\.quarto\.org\/custom");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+          // default icon
+          link.classList.add("external");
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© Copyright 2023-2025, Oren Bochman</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/cs11-737-w21-LORELEI/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This page is built with 💛 and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
