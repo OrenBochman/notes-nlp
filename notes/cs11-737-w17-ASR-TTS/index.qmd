@@ -1,6 +1,6 @@
 ---
 date: 2022-03-01
-title: "Models for multilingual ASR and TTS"
+title: "Multilingual ASR and TTS"
 subtitle: "CMU CS11-737: Multilingual NLP"
 description: ""
 categories: 
@@ -18,9 +18,10 @@ categories:
 Lesson Video
 :::
 
-::: {#sup-slide-deck .column-margin group="slides"}
+<!-- no slides are avaialable for this week - can make a deck via screenshots!? -->
+<!-- ::: {#sup-slide-deck .column-margin group="slides"}
 ![This week's slides](slides.pdf){width="420px" height="340px" style="@page {size: 16in 9in;  margin: 0;}" group="slides"}
-:::
+::: -->
 
 ::: {.callout-note}
 ## Learning Objectives  {.unnumbered}
@@ -36,7 +37,7 @@ Lesson Video
 ### Transcript {.unnumbered}
 <!-- Transcript here is machine generated no punctuation and I eddited it a but but it needs more work and I dont see the benefits unless I can run it through some tool. -->
 
-> Today's lecture uh it is about multilingual speech processing i will mainly uh explain about the speech recognition but it also covers most of the techniques that are quite similar in the tts of speech translation and so on.
+> Today's lecture uh it is about multilingual speech processing I will mainly uh explain about the speech recognition but it also covers most of the techniques that are quite similar in the tts of speech translation and so on.
 > First uh i will talk about n2 and base system because previous lectures we have run the end-to-end speech recognition so it may be better to start from that and then i will actually also uh explain
 our form-based system which is i call it the hm-based system and uh they actually are the
 multilingual processing there are some benefits of using phone based system so i will explain about it
@@ -489,9 +490,86 @@ what kind of effort we can do for the uh to improve the coverage and there
 are a lot of kind of dimensions that we can consider and let's try to discuss
 and let's try to kind of come up with a very cool ideas to improve the coverage
 of the monitoring of speech process okay
-let's start the discussion
 
 :::
 
 ## Outline
 
+*   **Introduction to Multilingual Speech Processing**
+    *   Overview of multilingual speech recognition, its relevance, and applications.
+    *   Comparison to TTS (Text-to-Speech) and speech translation, noting similar techniques.
+    *   Discussion of CMU's research contributions to the field.
+
+*   **End-to-End vs. HMM-Based Systems**
+    *   Limitations of HMM-based speech recognition, particularly regarding linguistic resources for various languages.
+    *   Advantages of end-to-end systems in requiring fewer linguistic resources.
+    *   Benefits of phone-based systems in multilingual processing.
+
+*   **Challenges in Multilingual ASR**
+    *   Specific challenges presented by languages like Japanese (lack of word boundaries, mixed scripts, pronunciation complexities).
+    *   The role of tokenizers/morphological analyzers in handling these challenges.
+    *   Issues arising from tokenizer inconsistencies across different software.
+
+*   **End-to-End ASR for Multilingual Processing**
+    *   The move towards end-to-end ASR to bypass the need for tokenizers.
+    *   Applying end-to-end speech recognition to Japanese and its performance.
+    *   Extending the end-to-end architecture to multilingual ASR.
+
+*   **Techniques for Multilingual End-to-End ASR**
+    *   Training a single neural network on multiple languages.
+    *   Using language IDs at the beginning of sentences for language detection.
+    *   Performance of multilingual ASR and the benefits of data sharing across languages.
+
+*   **Low Resource Languages**
+    *   Applying multilingual ASR to low-resource languages and the challenges involved.
+    *   Collecting data from projects like the available Babble project.
+    *   Trends in performance.
+
+*   **Code-Switching in ASR**
+    *   Simulating code-switching by concatenating sentences in different languages.
+    *   Detecting language boundaries and performing code-switching speech recognition.
+    *   The difficulty of acquiring real code-switching data and methods for creating realistic simulation data.
+
+*   **Endangered Languages and ASR**
+    *   Using end-to-end ASR for endangered languages, specifically the collaboration with linguists working on Ayutla Mixtec.
+    *   Challenges in transcribing endangered languages due to non-standard scripts and the need for linguistic knowledge.
+    *   The potential of ASR to mitigate transcriber shortages.
+
+*   **Transfer Learning and Fine-Tuning**
+    *   Building a seed model using high-resource languages and fine-tuning it for low-resource languages.
+    *   Strategies for fine-tuning different layers of a neural network.
+    *   Adapting to noisy speech.
+
+*   **Self-Supervised Learning**
+    *   Using self-supervised learning techniques when limited paired data is available.
+    *   Overview of methods like WebToVec 2.0, HuBERT, and Random Projection Quantizer.
+    *   The success of WebToVec 2.0 in breaking benchmark records.
+
+*   **Form-Based ASR Systems**
+    *   Building acoustic models based on language-independent phonemes.
+    *   Using phonetic dictionaries and grapheme-to-phoneme (G2P) techniques.
+    *   Building language models from text data without parallel data.
+    *   Advantages of form-based systems for low-resource languages.
+
+*   **Ongoing Projects and Improving Coverage**
+    *   Building speech recognition systems for as many languages as possible.
+    *   Developing phone-based ASR to cover thousands of languages.
+    *   CMU's efforts to create a multilingual speech database.
+    *   Discussion on improving the coverage of ASR and TTS technologies.
+
+
+## Papers
+
+The lecture mentions several papers and projects relevant to multilingual speech processing, although not all are explicitly named. Here's a summary:
+
+*   **End-to-end ASR paper:** The lecturer mentions a paper submitted to ASRU (Automatic Speech Recognition and Understanding Workshop) that was nominated for a best paper award. The paper described building a multilingual ASR system using data preparation techniques. The effort to produce the paper involved data scripting work, writing the paper, and additional experiments done with the help of other researchers.
+
+*   **Papers related to self-supervised learning:** The lecture refers to several papers in the context of self-supervised learning techniques for speech recognition.
+
+    *   **WebToVec 2.0:** A successful approach that broke records in various benchmarks by simplifying training strategies and using large amounts of speech-only data.
+    *   **HuBERT:** A simplified version of WebToVec 2.0, which is easier to train. It uses k-means clustering to create targets for pre-training the model, drawing on the masked language model approach.
+    *   **Random Projection Quantizer:** An approach that uses random projection to convert MFCCs (Mel-Frequency Cepstral Coefficients) into high-dimensional features for creating quantized targets.
+
+*   **S3PRL (Speech Self-Supervised Representation Learning):** While not a paper, S3PRL is a software toolkit developed for benchmarking self-supervised learning models in speech recognition. It provides a modular interface to use various pre-trained self-supervised language models for speech recognition and is integrated into ESPnet.
+
+It is important to note that the lecture references these papers and projects but does not provide full citations. If needing to locate these papers, information such as the authors, publication dates, or related keywords may be needed to conduct a search.

@@ -1,0 +1,720 @@
+---
+date: 2022-04-05
+title: "Active Learning"
+subtitle: "CMU CS11-737: Multilingual NLP"
+description: "This week we're delve into active learning, a tool that allows us to efficiently generate examples for low resource languages."
+categories: 
+    - Active learning
+    - Multilingual NLP
+    - NLP
+    - Notes
+    
+---
+
+![course banner](/images/tiling.png){.column-margin .nolightbox width="200px"}
+
+::: {#vid-01 .column-margin}
+{{< video https://www.youtube.com/watch?v=ed0aSU2mYZI&list=PL8PYTP1V4I8BhCpzfdKKdd1OnTfLcyZr7&index=4&ab_channel=GrahamNeubig >}}
+
+Lesson Video
+:::
+
+::: {#sup-slide-deck1 .column-margin group="slides"}
+![This week's slides](slides.pdf){width="420px" height="340px" style="@page {size: 16in 9in;  margin: 0;}" group="slides"}
+:::
+
+::: {#sup-slide-deck2 .column-margin group="slides"}
+![This week's slides](slides2.pdf){width="420px" height="340px" style="@page {size: 16in 9in;  margin: 0;}" group="slides"}
+:::
+
+
+::: {.callout-note}
+## Learning Obj·ectives  {.unnumbered}
+
+- Syntax, Major Word Order
+- Dependency Parsing and Models
+- Explanation and demo of AutoLex, a system for linguistic discovery
+:::
+
+
+::: {.callout-note collapse="true"}
+### Transcript {.unnumbered}
+<!-- Transcript here is machine generated no punctuation and I eddited it a but but it needs more work and I don't see the benefits unless I can run it through some tool. -->
+
+
+> This week I'm going to be talking about active learning and this is a follow-up to the data creation
+stuff that ellen talked about last time this is a very good tool
+uh because basically the thing that we're kind of perennially
+uh faced with when we're working with low resource languages is the lack of
+data and like ellen said having a little data is always better than having no data and
+but at the same time we really like to get it as efficiently as possible and active learning is a tool that allows us
+to do so so if we look at the different types of learning we have supervised learning
+where we basically have uh learning from input output pairs uh x and y
+we also have unsupervised learning where we learn uh from inputs only x uh
+or i guess you could also consider learning from outputs only like a like a language model or something like this
+semi-supervised learning we learn from both so that's that's great as well
+where active learning is querying a human annotator to efficiently generate
+examples usually generate xy examples from just uh
+inputs x and uh just to give an example if we're
+talking about machine translation we might want to be generating translated pairs between
+a low resource language in english given only examples in the low resource
+language or only examples in english but we don't want to be just randomly
+generating sentences we want to be re generating sentences that are most useful to create the translation system
+that we want so the way an active learning pipeline
+works basically we have labeled data um usually we start out with a little bit
+of labeled data like this this might be a very small amount of label data not enough to make a good
+system but enough to make a system that does you know something
+and based on this we do training we get our model and then we have a huge amount of
+unlabeled data we run this uh prediction system over all of this unlabeled data we do data selection of some variety we
+identify a set of examples that we would like to be annotating x prime
+we do annotation according to annotators and we generate more training data but we generate training data
+particularly of the variety that is uh useful uh most useful for creating the
+model and um
+the question about why we do active learning i can kind of be illustrated from this slide this is a very very
+simple uh two-dimensional classification problem uh where we have positive
+examples and negative examples uh and we would like to train a classifier that does well at separating
+the two um if we look at the example on the left the example on the
+left is our ideal situation of a high resource task where we have lots and lots of labeled data
+and uh based on this lots and lots of labeled data we train a classifier and the classifier achieves very high accuracy uh because it's able to draw an
+appropriate decision boundary between the two however on the right side we have two
+examples the first example we randomly selected
+six data points and uh six data points we selected we then train a classifier and you can see
+the classifier is not a very good one it makes mistakes on some of the examples that we didn't label which are
+shown in lighter in lighter colors however the one on the bottom right we
+selected particularly useful examples we only selected five so actually the
+amount of data that we labeled is smaller but nonetheless we're able to draw a very good decision boundary here
+and uh and get you know 100 accuracy on the examples that we have
+now uh why were we able to do this can anyone look at these examples and tell me what
+the difference is between the ones on the top and the ones on the bottom
+any ideas
+the ones on the bottom are chosen near the boundary lines yes so that that's a good example
+um maybe i could uh maybe i could do another
+okay this is not a particularly good um this is not a particularly good example
+uh to show this but let me show another another example where just choosing based on the
+boundary lines might not be sufficient so let's say we have something like this
+so if we have an example if we have an example like this
+is uh is choosing on the boundary line sufficient
+maybe not necessarily right because we have this this portion over here where we have a whole bunch of things
+that are really close to each other but if we just drew it based on these examples here we might
+have another portion of the space over here where it's not it's not sufficient
+so um in addition to building things uh in addition to finding things that are on
+the boundary lines we'd also like to have a good idea of kind of what the shape looks like uh overall uh so
+these are two principles important principles in active learning trying to find things that are kind of hard to
+handle and trying to find things that give you a good idea of the shape of the data distribution overall so i will um i
+will talk about this uh going forward so these are the two fundamental ideas
+the first one corresponds to being close to the boundary lines so um uncertainty we want uh data that
+are hard for our current models to handle and another idea is representativeness
+we want data that are similar to the data um
+actually sorry that the what's written on the slide is a little bit vague but basically we want data that are good
+representatives of the entire data distribution that we want to be handling
+um so i'd like to start out with the simple example of classification problems
+and within classification problems there's a couple common paradigms for how we characterize the uncertainty of a
+classifier or something like this um so the first one is uncertainty sampling
+um the name is uh the name is kind of repetitive i guess
+corresponding to my uncertainty criterion up here but uncertainty sampling is basically finding samples where a particular model is least
+certain about its predictions there's also something called query by committee which is also commonly used
+where query by committee basically uses different classification models and measures the agreement between them it's
+kind of like the ensembling version of of
+uncertainty sampling and um
+then i kind of defined uncertainty in a vague way initially but there's actually a lot of
+uh more rigorous mathematical criteria that allow you to do this um and here we're talking about let's
+say we're talking about text classification or image classification or whatever else
+and in this case the first example that we can use is entropy and um because we're talking about a
+classification task we have a small number of labels potential labels y and we can basically enumerate over all of
+them so we can directly calculate the sum uh p e of y given x uh times log of p of
+y given x so this is the kind of standard definition of entropy and the higher the entropy the more
+uncertain the model is about its predictions essentially
+another uh uncertainty sampling criterion that you can use is top one confidence
+and this is basically the log probability or the probability of the highest scoring
+output and basically you know even if you're you're not super certain about
+the distribution as a whole if you're pretty certain that there's a top one
+candidate that has like 75 accuracy and your model is reasonably well um
+calibrated so if you say 75 accuracy and actually the model gives you and
+actually then you get it right 75 percent of the time uh then this is also a pretty good criterion as well
+and then finally uh there's a margin based criterion where basically
+you measure the difference between the top scoring value and the second to top scoring value
+and try to decide um try to find the ones where the difference between the top scoring value and the second to top
+scoring value are larger all of these are reasonable um different
+people have compared them and found different uh levels of utility i have done a lot of work on active learning
+and personally i like the third criteria and the best uh it seems to work most consistently
+well however it's not probabilistic uh it's not a directly probabilistic criterion
+so if you want to do kind of a more probabilistic view of active learning than some of the other ones like entropy
+might be better are there any questions about this year
+so you're taking the arc max to find the top one scoring value first
+to find uh why that's a good question but where y hat is basically the top scoring value
+and then we're uh characterizing the confidence is top top one so the lower this value is
+uh the more uncertain you are for entropy the higher the higher the
+value is the more uncertain you are for margin the smaller the value is more uncertain you are
+okay um so there is also query by committee and basically
+[Music] does that mean that um if we want to do for instance not active
+learning but semi-supervised learning and we take those criteria in the contrary we will
+get rid of the like uh more uncertain values but then we say uh
+that all the values that are very certain are not useful to train the model
+yeah so semi-supervised learning is a tricky thing um for precisely this uh this reason and i
+think in particular you're talking about self training um where self training basically what
+you do is you make predictions and then you use the predictions to train the model um
+in that case uh taking the more certain predictions
+is will give you cleaner data but it will also give you less useful data because the model's already good at predicting
+them right so i think there's essentially a sweet spot where it's like you want to increase
+your threshold enough to get harder examples but not so much that the noise overwhelms the hard examples
+um the reason why the reason why self training works at
+all is because the
+model the models can essentially use some things to make predictions but then when
+you um when you update the parameters it's also updating other other parameters which were not exactly
+the parameters that were used to make the predictions so um you could also think of
+you could also think of a self-training method where you i don't know if actually anybody's done this but you can think of a
+self-training method where you make confidence confident predictions but then you remove the evidence that was used to make the confidence predictions
+and force the model to like use other evidence that was not the like
+easy to parse evidence or something like that so um i think that but basically the the
+problem with self-training is that you're um like you're
+updating if you update the parameters which are the same ones that you use to make the decision then you're going to
+always have this this issue any any other questions
+okay um so i'll move on to query by committee um query by committee is also maybe a
+similar uh idea which is uh that you run multiple models and you measure the disagreement between
+the models um and the
+so for example you might train three or five models maybe they're models with different architectures they're models
+with different views of the data or something like this and the places where they disagree
+are the places where you're less confident and you would thus like to
+label them to improve your accuracy this is similar to the uh
+to what i was talking about with the self-training question because uh they're
+you know if you're using here if you're using different varieties of information to make the predictions
+then um essentially if one model is better at capturing certain traits than the other
+it might be it might be right the other might be wrong um and that gives you a good idea of the
+like confidence the models essentially um
+yeah and uh this can also be combined with other standard ensembling methods i i didn't talk about those uh in this
+class so i'll just skip over that point um so now we have uncertainty methods uh
+whether you get the uncertainty from kind of a probabilistic method or a margin based method or query by
+committee so that handles uh identifying the examples that are hard for the model
+um the second uh core idea in active learning is representativeness
+and there's a reason why this is really important um and the reason why is because if you
+don't have any idea of representativeness um basically active learning will just go and find all of the outliers in your
+training set and ask you to go and label them uh ask a human annotator to go in and label
+them and this is a problem because like i've actually done active learning on text classification and other stuff
+like this and you're trying to classify between uh hockey and baseball for
+example hockey based social media posts and baseball based social media posts and it gives you like
+dollar sign dollar sign dollar sign dollar sign uh is the thing that you're supposed to be labeling and obviously that's not
+going to be very useful because it's an outlier it's not really belong to either of the classes it's just garbage
+so um in order to overcome this we want to find examples that are representative of
+our whole training set while being uncertain and then the question is how can we classify examples as being similar to
+many other examples and in
+simple feature vectors the easy way to do this is to find
+vectors that are similar to others in vector space and this is an example from a very
+famous uh early paper on active learning for neural network based image classification models
+where basically they um they took the vectors from a pre-trained uh image
+classifier and clustered them together uh and this this is just a visualization
+in two-dimensional space probably using like disney or another visualization
+method but what you can see is if you sorry this is red and green which are
+the two colors that you're not supposed to use if people are uh colorblind but um
+like the uh basically what you can see is the uh
+here the red is the data points that are sampled by an active learning model and
+you can see that an uncertainty based active learning model basically samples a lot of points from some part
+of the space but very few points from other parts of the space
+whereas if you consider representativeness and also sample
+from places that are similar to other vectors in the space you make sure that you get um you get
+them spread out all over the place um so this is a very simple way to do this in
+um nlp or something like this we have lots of methods to turn
+sentences into vectors for example like we have sentence for we have uh some cse or whatever else
+so these methods here are applicable uh to some extent uh to like representing
+sentences or maybe maybe words for example so this would be a first uh way to think about representatives
+um there are some other ways though uh that are applicable specifically to text and
+i'm going to be talking about those next um any questions about this
+okay so um if we think about prediction paradigms for language tasks uh there's
+lots of different ways we can do it um one is text classification uh you know
+we take in a sentence uh we output a label another one is something like tagging where we take in a sentence and output
+uh one label for each uh token in the input sentence and another one is sequence to sequence
+uh which is you know empty or speech recognition or whatever else and each of these requires a different
+uh strategy for active learning um there's some overlap but they can use
+different strategies so if we look at sequence or token level
+prediction problems um basically for sequence labeling in sequence to sequence
+we can do annotation at different levels so
+sequence labeling is what i call tagging here a sequence sequence so one way we can do it is we can do
+labeling at the sequence level so we can annotate the whole sequence
+and the other way we can do it is at the token level so we can annotate only a single ambiguous thing within the
+sequence and how many people here have done any sort of annotation for structured prediction
+tasks for nlp like um but let's say okay
+shinji raising his hand um okay uh and uh
+ner labeling would be an example an er labeling is actually an interesting example because um
+it's very sparse annotation but let's say you want to do labeling for part of speech tagging or a
+translation a translation i would also say counts as this it takes a long time to label a sentence
+uh accurately so translating a whole sentence um
+for me to translate a whole news sentence from japanese english probably takes two or
+three minutes however translating a single word from japanese to english probably takes me
+about 10 seconds so given that
+labeling a whole sequence you know does take a lot longer than individual tokens within a sequence yeah so given you use
+this in a practical scenario need to go through the same sentence if the same example is picked up
+for the token level option yeah so that's a good that's a good uh question so in a practical scenario wouldn't a
+annotator have to go through the same sentence again and again um if the same sentence is picked up for
+multiple labels the answer is um yes and no uh in most active learning scenarios you
+often assume you have far more input sentences than you're able to label in the first place um i'm also going to talk about another
+method that considers this a bit later so i'll get back to that um
+any any other uh questions or there are also some efforts on this unaligned labeling where you just give
+uh sequence level tags for even token level information and use the pointer networks to
+map them so oh sequence level tags for token level information you mean like basically you
+use the sequence sequence model to solve this problem or
+yeah mainly for cases like uh tax lot value cases like slot filling in
+er cases when it's very sparse so you're just giving information at the sequence level and you expect the network to
+learn the
+yeah um i i think that is uh that's reasonable i think i still
+would say that's something like token level annotation here uh in terms of the human effort required to do the annotation
+um cool so a token level makes it possible to just annotate difficult parts of the
+sentence which potentially could give you some time savings but it requires strategies to learn from
+individual uh like parts of the sentence
+um so first i'll talk about sequence level uncertainty measures um
+so when we unlike text classification we can't just take the entropy of a single label over
+uh the entire text um and somehow we need to combine a sequence of structured predictions
+into a single uncertainty measure to get which sequences you want to be labeling
+um so in terms of top one confidence this is a
+this is trivial to apply to sequence labeling tasks and the reason why
+the reason why is because
+even if we have a structured prediction task
+um we can still take the arc max of the output sequence using beam search or some other thing like this and calculate
+the log likelihood of this output so um in terms of top line confidence still
+the this log probability of the highest scoring output would be our top one um
+so this is not hard this is not hard to apply here um margin
+we can also do something similar so you can take the top one output the second output you can do a beam
+search with uh you know a beam size of at least two and get the top two scoring outputs and find the
+difference between them
+also you can do sequence level entropy this is non-trivial to enumerate all of
+the sequences obviously because you can't enumerate all of the possible translations for
+an output but you can enumerate the 10 that like the top and best and calculate your entropy
+over that as well and that will give you a better idea if you have uh like a non you know
+uh a lot of peakiness in the distribution um that you're outputting or uh or not very much
+um and also um i'd like to note that this reference down here has a very clear
+exposition of this uh it's a paper a paper from a long time ago in 2008 but
+it's very clearly described and you can read more details there um are there any questions for the time
+being though okay
+okay so now
+yeah sure so um basically what it would look like is um
+uh it would be it would look like this just like the entropy over labels but where y is a sequence and now you can't
+enumerate you can't enumerate over every possible sequence but you can get an invest from beam search or something and
+then enumerate over there
+um uh in terms of sequence level uncertainty measures i actually have worked more on token level active
+learning so i'm not as familiar with like which one works uh works the best overall but my
+impression is that they're pretty they're pretty similar but um like i've seen more people use
+top one confidence maybe just because it's a lot easier to it's like simpler conceptually
+cool um so now moving to training on the token level um the way this works is um
+uh we would like to train on partial data so basically we want to train on data that's been annotated for some part
+but not the whole thing um for uh
+if we're using an unstructured predictor for something like sequence labeling this is easy it's uh it's basically
+trivial to do so like let's say we are taking in bert and based on the representations we are
+doing independent predictions of part of speech tags for every word in the sequence what we do is we basically calculate the
+loss function over this verb annotation here and we don't calculate the loss function over the others
+so it's it's very very simple uh almost trivial to do so that's good news
+um for other more complicated things um we didn't really talk about uh
+conditional random fields or other things like this very much in this class here um but basically for any uh any method
+that we use to do analysis that requires some sort of a dynamic program over the output
+uh there are ways where you can do the dynamic program over only the uncertain parts of the output and uh and calculate
+the log likelihood uh based on that so that's a possibility too uh if this
+sounds interesting to you you can read uh this paper uh training conditional random fields from incomplete uh
+annotations so um
+actually i think i didn't mention this in the slides
+um but i think it's an important thing so i think a lot of people are also going to be interested in things like
+machine translation and machine translation
+it used to be that you would be able to do things like annotate a part of the
+sentence and use only that part of the sentence to extract a phrase table
+uh in phrase-based machine translation so in france-based machine translation people uh
+basically if you remember from the unsupervised translation class i talked about it there
+you would extract a phrase table that showed you how to translate individual phrases and then you'd reorder them using a language model and other things
+like that there it was relatively simple to uh learn from like individual annotations because you
+would just throw them into your phrase table and use that as additional phrases however for neural mt now it's much more
+difficult because we're learning over full sequences and we actually have
+a paper
+that we just published last year called phrase level active learning for neural machine
+translation i'm very creative title obviously um that shows you how you can do things
+like this and basically we tried a whole bunch of different things like one thing is you can just take
+the labeled partial phrases for machine translation and put them directly into your training data
+another thing you can do is you can like swap them into sentences and do data augmentation
+and other things like that so if you want to find the details we have a number of uh methods that we talk about uh that we
+talk about in this paper as well so um this is just an empirical paper where we try a lot of a lot of things so if
+you're interested in mt you can take a look there too
+cool um so any any questions about that
+okay great so then the next question is token level
+representativeness metrics um and actually um
+one of the issues with active learning especially using pre-trained representations is
+if you have a um a poor representation learning model because you don't have enough data to
+train it on like for example a low resource language the representations that you use to calculate your representativeness
+metrics might not be that great in the first place so one thing that we've actually found
+is just considering like token similarity uh is actually a pretty sorry token
+identity is a pretty reasonable proxy with respect to um
+like representativeness in the early stages of active learning so for example
+you could accumulate the uncertainty over all instances of a particular token
+and use that as how necessary it is to annotate that token so just to give an
+example um when you're accumulating
+when you're accumulating your uncertainty like let's say your entropy
+over x you might accumulate the entropy over all
+um
+all examples where x is uh corresponds to a token run
+and or uh in this example x corresponds to a token like
+so what that would say is in part of speech tagging i'm not very certain about the part of speech for the
+word like so i want you to annotate more examples of uh of the word like
+basically and um that's particularly good for things like part of speech tagging or
+machine translation or something like that where you might have some words that are really easy to guess the part of speech of
+um or the translation of and some words that are are quite difficult because they're polish on this or something like this so
+this would be um entropy um but it could be to make it more general i could make this uh uncertainty you know you have
+some sort of uncertainty metric and you accumulate that uncertainty metric over all words where the word
+identity is
+it could be the entropy it could be the top one um it could be the top one probability it could be the margin
+or something like that yeah and uh then after you do that you need
+to select a representative instance of that token um there's a number of different ways
+you could do this you could pick the example that's most uncertain out of all the examples of that token
+other things that we tried to do for part of speech taking for example is try to choose examples where one part of
+speech tag was predicted or the other and the idea being that that would give you examples of like
+like uh that would give you examples of um
+run as a noun and run is a verb because run can be both a noun and a verb uh especially if you live in
+pennsylvania where every small river is called a run um
+cool uh so the next thing is sequence sequence uncertainty metrics um
+uh there's a bunch of different things both on the sequence level and on the token level um an example of a
+bet a sequence level is back translation likelihood and uh one
+uh the way you would calculate this is you might get your one best uh translation on the output side
+and then you would calculate the probability of the input given that one best translation so it's basically
+uh you use your mt system to generate uh
+the output and then you calculate the score of the input given that
+and let's say you do a really really bad translation if you do a really bad translation you'll have a lot of trouble
+recovering the original sentence and because of that your back translation likelihood will be low so
+you can go in
+um another example which isn't even based on the model but is actually very very effective um
+and also very easy to apply i've used it a lot is finding the most frequent uncovered
+phrases in your training corpus so this is based solely on um
+representativeness and on a very like weak uh notion of uncertainty but
+the basic idea is um you you count up the frequency of all of
+the phrases in a big monolingual corpus that you don't have translated and then you also calculate the
+frequency of all of the um of all of the phrases in your translated
+corpus and you find the
+highest scoring um the highest scoring phrase
+x-bar in your monolingual corpus um
+where the frequency of x-bar in your
+bilingual purpose is equal to zero
+or you know below a threshold or something so the idea being that you've never seen it in your translated data
+but you see it a lot in your monolingual data and that will pick up things like names of famous politicians you know
+um brand names uh phrases from social media other things like this
+um and then you can take these you can add them to your data and your model will be able to uh translate them
+and this is an example of uh how i present these or how
+this is not my paper but this is how um they presented them and how i presented them when i i was doing active learning
+for translation uh basically you uh take the phrase and you present it in context so you
+highlight the uh highlight the phrases yellow and then you ask them to translate only that phrase but they get to see the
+surrounding context so they have an idea of like what the phrase means and if it's a very strange phrase like
+you know you get half of uh half of a grammatical constituent or something like that it will um
+uh they'll also be able to say i can't translate this on its own because i don't have the appropriate context
+highlighted or something cool
+um any questions about this part yeah for the back translation
+yeah you basically need two models for this um you need a for model and a backward model or you can train a single
+model that can go in both directions but um
+cool so cross-lingual learning plus active learning um
+so cross-lingual learning plus active learning i think is a really powerful combination because
+one of the big issues with active learning is when you don't have a good model in the first place but cross-lingual learning gets you a long
+way uh there like our zero shot methods you know are are really quite good
+uh out of the box but they're not anywhere near as good as supervised methods so we take a zero shot method
+and we adapt it using active learning and um this is an example from a paper
+by aditi who just uh presented two times ago um where basically we we showed that the
+combination of token level active learning and cross-lingual transfer is just like much better than any of the
+two in isolation um and you can start out with like the green line here is just active
+learning um the blue line here is active learning blue orange and some of the
+other lines are active learning plus cross-lingual transfer and you can see that like right at the very beginning uh cross-lingual
+transfer helps you start out at a at a good space and this is for named entity recognition
+cool um so one other thing that i'd like to talk
+about is active learning is very attractive you know it's like um uh
+for a very small number small amount of the data annotation you get a much better system
+um but one thing that you should remember is that uh you know when people are actually doing
+annotation uh things are not quite as simple as it may look in like a simulation
+so for example in simulation it's common to assess active learning based on the number of words or sentences annotated
+any ideas why this is uh maybe a little bit unrealistic let's start with sentences
+so um you in uh and actually one thing i
+should mention is when we do active learning it's very common to draw these graphs which is like amount of annotated
+data on the x-axis and the accuracy on the y-axis so let's say this x-axis was
+based on the number of annotated sentences from your purpose for machine translation or something like that
+yeah exactly so different sentences might be different lengths so let's say your active learning system decides to
+pick all of the 400 word sentences in your corpus to annotate of course it will do very
+well because you're getting you know the average sentence is 20 so if it picked the 400 length sentences
+then you'd be getting 20 times the training data for the same like quote-unquote price um
+what about words does that seem realistic
+better maybe but still you know some words are harder to translate than others like i can blow
+through a lot of translation of just kind of
+uh you know standard let's say conversational text
+um but if i start doing news i need to look up what uh the
+vice kernel of the third battalion of the ukrainian army is or how to transliterate all the russian and
+ukrainian names that i'm seeing in the news now um into japanese uh which is not easy
+right so uh those words will take me a lot more time than um like
+uh than something else and especially if it's the case where i'm uh not uh
+you know an expert in the field uh one interesting thing though is a lot of translators do charge you by the word
+so uh until they figure out uh that you're giving them really hard sentences
+it probably actually won't the cost will be the same across words so you know you might burn a lot of good
+will with your translator if you give them like adversarial essentially adversarial examples uh
+but um like at least uh some translation services it will be you know a fixed
+price so in that case it's actually reasonable to have words on your accent
+um another thing is there's a higher chance of human error for these hard things so
+um you know like even if the price is the same they might make more mistakes yeah
+so this is an interesting paper from your group last year about the models pay the right attention and you had
+human annotators as well annotate what parts of the corpus they are looking at
+attention and modern attention so how much time did that take for them to as well
+okay yeah so there was a question we um basically we had a paper last year where we annotated not only or where we
+basically asked people to choose between two translations and annotate their um
+annotate like their rationale for doing that um they didn't actually translate in
+that case that case they were just choosing between two words um so that's a much easier task like um
+it's a it's basically a word level disambiguation task instead of a translation task
+um so it's a little bit hard to say how much longer it would take to annotate rationales but i think
+um another really important thing that i don't know if i mentioned it here is uh
+ui is extremely important uh for annotation tasks um ellen pointed
+that out a little bit when we were talking about brat and other things and i think if you have the appropriate
+ui and you give like people are working with the appropriate kind of
+uh i don't know directions or interface it might actually not take that much longer to annotate a rationale
+um another thing is uh one one interesting thing is um
+actually for a lot of people when they're browsing the web where they move their mouse corresponds to where they're looking at
+so you might actually even be able to get these kind of things for free by watching where their mouse moves
+um another thing that people have done is they've strapped translators into eye
+trackers and asked them to do eye tracking while they were translating to see where they were paying attention to in things like
+this um the problem is uh that won't be super easy to do
+um you know not not for every translator maybe for some uh portion of particularly like nice translators or
+maybe maybe if you could get like one of the recent vr headsets like the oculus rift or something like that uh you could do
+uh something so i think um so the answer is it's complicated uh but
+with some creativity you might be able to get like extra annotations like rationales or other things like that
+with like less effort than you would if you had to do it like
+um uh in a different way so yeah i think that's like a very great idea
+for like a very long document translation so so they are translating also saying which part of the document
+they're focusing on have like a generalized ui framework for them to translate and also like highlight
+portions of what they're looking at i think this could be a generalized framework for uh sequence
+yeah that's a that's a really good point um so i don't immediately have the references
+here and it would take me a little time to look them up but there was somebody in holland or somewhere else that did
+like pretty extensive eye tracking experiments with uh translators so
+i think uh this is definitely an interesting topic and if you could use that to supervise attention or other
+things like that that'd be pretty cool like this was a single word and if you were to translate the whole sentence you
+would actually increase your human translation time so you have to be careful because if every word is like you have to look at the document and
+annotate particular rationale there's like a single word you would have to pay a lot of money for other players
+so this case it worked because it was a single word but it's unclear if this would be feasible if you were to do the whole
+translation just this is the point yeah but it so another another thing to note is you
+can actually do a pretty good job of uncovering
+rationales through alignment but it would be kind of cool to see if there was a way you could get like natural annotations to um
+to kind of like improve alignment or something else like that through eye tracking or whatever else and one thing
+i didn't cover at all here in active learning is there's the concept of like natural
+annotation or incidental annotation or things like this which is basically annotations that you get for free
+uh due to some other features so another example of that might be
+um websites where the websites are translated and
+then you have links where the link definitely goes around the words that mean the same thing and
+the two websites and you can use that to like extract alignments and other things like that so um that's a very interesting thing that
+i'm not covering in this class but yeah good ideas
+okay so um because uh the cost might not be the same in active learning uh there are
+methods to consider cost in active learning um so uh there's
+uh an older concept called proactive learning uh that basically considers
+different oracles that cost different amounts for each um
+and uh so for example um that might be something like hiring a professional translator versus hiring a crowd
+translator where we know the professional translator would do a better job but would cost more
+um another thing is cost sensitive annotation and um
+this is a uh this is an example of this uh this was a paper that i i did
+together with um matthias berber who's a phd student i was working with at the time
+and basically this is for speech recognition transcription and the idea is that you want to create
+better transcriptions and you have different modalities with which you can um
+with which you can annotate you can either re-speak so re-speaking is basically saying the
+thing again um in a clearer voice where the like asr system is more likely to get it right
+you can also skip so like not annotate it or you can type and typing takes the most time but it's the most the most
+certain and um so then uh you create a model of how much each one
+is going to cost and this model can be updated on the fly as you annotate more
+data and then you also create a model of how much this will improve your results which can also be updated on the fly
+where you have the data and then you take the two models you predict how much annotating each span would help and then
+you run a uh like optimization algorithm to find the set of things that would uh do the best
+and to get back to the question that we had before what if you had multiple tokens in the same sentence
+that uh required you to go like from one sentence go to a different sentence come
+back this model explicitly takes into account the cost of context switching so a span that's contiguous will cost
+less to annotate than annotating each of the individual words in uh
+together so this is another way you can model things like this
+another thing to think about is reusability of active learning annotations
+so when is the best study to start doing active learning annotations is it after every epoch or um
+so i think that's a good question and i think there's a number of things that go into this i think
+um theoretically there's some theory on active learning and theoretically the best thing to do is to annotate
+basically like recalculate every time so retrain the model every time you get
+a training example an update uh the problem with this is uh two-fold number one computational so it's hard to
+update the model that quickly between when an annotator is working number two actually annotators will
+that kind of gives the annotators whiplash where you show them like one example then immediately they have to
+like look at a different example that they weren't able to look at whereas normally when you're annotating you can like read
+you know several sentences or something like that mentally prepare yourself for doing the annotation um so in reality almost always you do
+some sort of batching strategy uh where it's like you you annotate ten sentences
+and update the model or a hundred sentences and update the model um but i think theoretically updating
+after every example is like supposedly the best from an ml perspective
+cool and i think this is the last thing um reusability of the active learning annotations
+so the annotations that you get from an active learning model uh depend on the model itself so
+especially if you're talking about uncertainty um the uncertainty for different models will be
+different so if active learning annotations are obtained with one model they may not transfer well to other models and this
+is just an example um from a model uh from a nice paper uh
+called practical obstacles to deploy active learning and basically the idea is if you
+sample um blue is random sampling and here
+this is a svm based active learning method and the red line is an svm based model
+and you can see the svm based active learning method is doing relatively well um
+so is the cnn based active learning method um if you look at a cnn based model on a
+movies on the same data set you can see that basically all of the active learning methods are are similar
+the cnn based active learning method is better but the active learning method based on
+other models is basically the same as random and then if you look at the lstm on the
+same data set the lstm based active learning method is like maybe marginally
+better than random sampling maybe about the same but the cnn and svm based active
+learning methods actually produce data that's worse for training the lsdm based model
+so because of the kind of mismatch between the models that were used to do active learning
+and the models that were used to train the active learning models uh this causes uh issues
+so one of the methods that i one of the methods that i introduced
+today might be able to remedy this particular problem uh does anyone want to remember back to
+the beginning of the class what's a good active learning method for
+leveraging multiple models query by committee yes so query by
+committee might be able to solve this because you would use all three of these models and find where they disagree
+and those would be the places that you would want to be sampling but nonetheless the fact that you're not sampling directly from the data
+distribution but sampling from some kind of bias distribution that's vaguely related to the data distribution means
+that it's not necessarily the case that you would train a model and it would do well uh in the future so
+it's something to be aware of and be careful of but nonetheless um there are also methods that are completely model
+agnostic like for example sampling the most frequent phrases for machine translation um and so i i don't think this is a
+reason to throw out active learning it's just something to be you know aware of
+yeah this is like across different types of models but now that it's just the
+competition of different language models uh you're probably going to have a less costly language model helping you with
+the active learning part so how much is the difference of impact across different language models yeah i think
+that's a good question it really boils down to whether the examples they find hard are similar or different um i don't
+have a good idea of whether that is more or less different with the language models that we have
+now my my intuition is that probably it won't
+change a huge amount but it may even be more different because now all the pre-trained language models are trained
+on different data whereas in this particular experiment all the models were trained on the same
+data so um also one thing this is just completely
+an aside but it's an important thing to know anyway which is um
+in pre-trained language model in pre-trained language model
+literature people often focus very much on the methods they use as opposed to the data they train on but the data they
+train on is actually probably more important so um i mentioned much earlier in the class that ember tends to be
+better on like knowledge based tasks whereas roberto tends to be better on kind of like analysis or identification tasks oh
+sorry xlmr tends to be better on analysis or identification tasks and this is
+my conjecture is that this is because ember is trained on wikipedia whereas roberta xlmr is trained on like a whole
+bunch of other data um and so i i think that will also carry
+over into you know reusability of active learning uh annotations as well
+i implemented active learning in my base company so we used like word and sentence word to help so sentence burt
+was helping with the uh samples and then the birth model with the
+classification had to do the actual downstream task and the other challenge was how do we do
+it across languages like when we have like cross-legal modular texts on robota for doing like cross-lingual internal
+classification when you're doing active learning with five annotators in five languages then
+it's i guess little more challenging so then we use like multilingual sentence embeddings across my languages
+so yeah so that's why i was like curious whether that method
+is right yeah and i i think like as i mentioned query by committee you know using
+different models uh finding places where all models are uncertain is probably you
+know a safer bet than finding places where one model is highly uncertain another model is uh not very certain
+other things like this so i don't know if there's like correct answers to any of these and there are some empirical questions
+in general how much newly annotated data do you need to make a difference
+how much newly annotated data do you need for it to make a difference to the model very small amount
+a very small amount um yeah so in this example it's 400 tokens
+to get a 10 percent gain in parts in ner accuracy
+um that's not very much that that would take you an hour or something um if
+you're doing random sampling those 400 tokens would get you a gain of about one one or two points
+it depends on how good the model is in the first place original data set size um other things like this but
+i think the the nice thing about active learning is the beginning of the curve is really steep um especially if you're
+using a good method uh that considers representativeness because um
+like for example zero shot zero shot transfer across languages will do like really really silly things like
+missing missing the name of the country that the language is from like it it
+will it will um in yoruba it will have nigeria be like
+an organization or something like that um or something and those are the things that you get in the first like 200
+tokens you annotate basically
+cool um
+so i think you had mentioned that uh you had you had a paper on language model calibration for question tasks
+where you you mentioned that the model it's high quality for a long answer as well so will that be a problem when we
+use rp learning for the uh uh maybe question answering tasks with a
+large language yeah so calibration um so did we i forget did we talk about
+calibration in this class advanced yeah we talked about it in
+advanced nlp maybe not here but basically to give an overview calibration is
+um how well the probability distributions predicted by your model associate with the probability of the
+answer actually being correct so in a well calibrated model if the probability if the
+confidence that the model says is 80 it will be correct about 80 of the time if the confidence it gives is 40 it will
+be correct about forty percent of the time um uh a poorly calibrated model will say
+it's uh eighty ninety percent confident and get it right twenty percent of the time or say
+it's twenty percent confident and get it right ninety percent of the time so that's a bad calibration
+calibration is actually pretty important in some cases for active learning um it'll be less important for things like
+margin based methods or other things that are not as clearly probabilistic but we do have a paper on um active learning
+for part of speech teching where we show that by improving calibration you can get like pretty significant gains and how
+well active learning works so yeah it's it's good yeah cool um so the final thing is the
+discussion question and um the discussion question is given the
+task in language or languages that you're tackling in your project how could you use active learning to
+improve um how would you calculate uncertainty how would you calculate
+representativeness and how would you ensure annotator productivity so
+uh we can split into do we have six yeah we have we have enough for six
+groups so cool
+
+:::
+
+## Outline
+
+Here is a lesson outline on active learning, based on the sources:
+
+*   **Introduction to Active Learning**
+    *   Active learning is a technique that strategically queries a human annotator to generate labeled examples from unlabeled data.
+    *   It is especially useful in low-resource scenarios where data is scarce.
+    *   Active learning aims to generate the most useful examples to efficiently train a model.
+*   **Types of Learning**
+    *   Supervised learning: Learning from input-output pairs (x, y).
+    *   Unsupervised learning: Learning from inputs only (x).
+    *   Semi-supervised learning: Learning from both labeled and unlabeled data.
+    *   Active learning: Efficiently generating labeled examples (x, y) from inputs (x) by querying a human annotator.
+*   **Active Learning Pipeline**
+    *   Start with a small amount of labeled data.
+    *   Train a model using the labeled data.
+    *   Apply the model to a large amount of unlabeled data.
+    *   Select the most informative examples from the unlabeled data.
+    *   Annotate the selected examples.
+    *   Incorporate the newly labeled data into the training set and retrain the model.
+*   **Why Active Learning?**
+    *   Active learning can achieve high accuracy with fewer labeled examples compared to random sampling.
+    *   By selecting the most useful examples, active learning can create a better decision boundary with less data.
+*   **Fundamental Ideas of Active Learning**
+    *   **Uncertainty**: Select data that the current model finds difficult to handle.
+    *   **Representativeness:** Choose data that are representative of the overall data distribution.
+*   **Uncertainty Sampling**
+    *   Uncertainty sampling involves selecting samples where the model is least certain about its predictions.
+    *   Common criteria for uncertainty sampling include:
+        *   **Entropy**: Higher entropy indicates more uncertainty.
+        *   **Top-1 Confidence**: Lower top-1 confidence indicates more uncertainty.
+        *   **Margin**: Smaller difference between the top two candidates indicates more uncertainty.
+*   **Query by Committee**
+    *   Query by committee involves using multiple models and measuring the disagreement between their predictions.
+    *   Train multiple models with different architectures or views of the data.
+    *   Areas where models disagree are considered less confident and are good candidates for labeling.
+    *   Query by committee can be combined with standard ensembling methods.
+*   **Representativeness**
+    *   Representativeness ensures that the selected examples are similar to the overall data distribution.
+    *   Without representativeness, active learning may focus on outliers, which are not helpful for training a generalizable model.
+    *   Methods to determine representativeness include finding vectors that are similar to others in vector space.
+    *   Techniques like sentence embeddings can be used to represent sentences as vectors.
+*   **Active Learning Strategies for Text Prediction Tasks**
+    *   Different prediction paradigms for language tasks include text classification, tagging, and sequence-to-sequence tasks.
+*   **Sequence/Token Level Annotation**
+    *   For sequence labeling and sequence-to-sequence tasks, annotation can be done at different levels: sequence-level or token-level.
+    *   Token-level annotation allows focusing on the most difficult parts of sentences, potentially saving time.
+    *   However, token-level annotation requires strategies to learn from individual parts of the sentence.
+*   **Sequence-level Uncertainty Measures**
+    *   Top-1 confidence: Straightforward to apply to sequence labeling tasks.
+    *   Margin: Calculate the difference between the top-1 and top-2 scoring outputs.
+    *   Sequence-level entropy: Enumerate over n-best candidates to approximate entropy.
+*   **Training on Token Level**
+    *   For unstructured predictors, each prediction can be treated as independent, and training can be done only on annotated labels.
+    *   For structured prediction methods, marginalization can be used to sum over all unlabeled tokens.
+*   **Token-level Representativeness Metrics**
+    *   Accumulate uncertainty across token instances to identify tokens that need more annotation.
+    *   Select a representative instance of that token for annotation.
+*   **Sequence-to-sequence Uncertainty Metrics**
+    *   Sequence-level: Back-translation likelihood can be used as an uncertainty measure.
+    *   Phrase level: The most frequent uncovered phrases in the training corpus can be selected.
+*   **Cross-lingual Learning + Active Learning**
+    *   Combining cross-lingual learning with active learning can improve performance compared to using either technique in isolation.
+    *   Cross-lingual transfer helps to start at a better initial state.
+*   **Active Learning and Human Effort**
+    *   In simulations, active learning is often assessed based on the number of words or sentences annotated.
+    *   However, in reality, active learning may select harder examples that take more time and have a higher chance of human error.
+    *   Simulations often overestimate the gain from active learning.
+*   **Considering Cost in Active Learning**
+    *   Proactive learning considers different oracles that cost different amounts for each annotation.
+    *   Cost-sensitive annotation creates a model of annotation cost and accuracy gain for each span in different modes.
+    *   The best spans and modes are chosen based on this model.
+*   **Reusability of Active Learning Annotations**
+    *   Active learning annotations obtained with one model may not transfer well to other models.
+    *   The bias in the data distribution due to active learning can cause issues when training different models.
+    *   Query by committee, which leverages multiple models, may help to mitigate this problem.
+
+## Papers
+
+The papers covered in the active learning lesson are:
+
+*   **"Support vector machine active learning with applications to text classification"** by Tong, Simon, and Daphne Koller. This paper discusses support vector machine active learning and its applications for text classification.
+*   **"An analysis of active learning strategies for sequence labeling tasks"** by Settles, Burr, and Mark Craven. This paper analyzes active learning strategies for sequence labeling tasks.
+*   **"Training conditional random fields using incomplete annotations"** by Tsuboi, Yuta, et al. This paper presents a method for training conditional random fields (CRFs) using incomplete annotations.
+*    **"Model transfer for tagging low-resource languages using a bilingual dictionary"** by Fang, Meng, and Trevor Cohn. The paper focuses on model transfer for tagging in low-resource languages using a bilingual dictionary.
+*   **"Empirical Evaluation of Active Learning Techniques for Neural MT"** by Zeng, Xiangkai, et al. This paper provides an empirical evaluation of active learning techniques for neural machine translation.
+*   **"A little annotation does a lot of good: A study in bootstrapping low-"** by Chaudhary, Aditi, et al.
+*   **"Proactive learning: cost-sensitive active learning with multiple imperfect oracles"** by Donmez, Pinar, and Jaime G. Carbonell. This paper discusses proactive learning, which is cost-sensitive active learning with multiple imperfect oracles.
+*   **"Segmentation for efficient supervised language annotation with an explicit cost-utility** by Sperber, Matthias, et al.
+*   **"Practical obstacles to deploying active learning"** by Lowell, David, Zachary C. Lipton, and Byron C. Wallace. This paper describes the practical obstacles to deploying active learning.
+*   **"Phrase level active learning for neural machine translation"**
+*   **"Pointwise prediction for robust, adaptable Japanese morphological"** by Neubig, Graham, Yosuke Nakata, and Shinsuke Mori.
