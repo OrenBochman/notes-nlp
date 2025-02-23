@@ -665,123 +665,53 @@ according to that schema okay great thanks a lot everyone we can answer other ot
 
 :::
 
-
 ## Outline
 
+*   **Introduction to Syntax and Linguistic Structure**
+    *   Syntax focuses on the structure of sentences and the relationships between words.
+    *   Two main types of linguistic structure:
+        *   **Dependency structure**: Focuses on the relations between words.
+        *   **Phrase structure**: Focuses on the structure of the sentence.
+    *   [Dependency structures are often more straightforward to express across various languages and are thus useful in multilingual applications.]{.mark}
+*   **Dependency Parsing**
+    *   Dependency parsing involves predicting linguistic structure from an input sentence.
+    *   **Different types of dependencies**:
+        *   **Syntactic dependencies**: Reflect the phrase structure of the sentence.
+        *   **Semantic dependencies**: Useful for applications like question answering by connecting semantically related words.
+*   **Universal Dependencies Treebank**
+    *   [A standard format for parse trees across many languages, facilitating the development of parsers that can be used for multiple languages.]{.mark}
+    *   Allows for a unified format that simplifies processing across different languages.
+    *   [To achieve universality, it sometimes requires sacrificing language-specific details.]{.mark}
 
-*   **Part 1: Data Augmentation for Machine Translation**
-
-    *   **Introduction to Low-Resource Machine Translation**
-
-       n *   Challenges in translating low-resource languages due to small parallel corpora.
-        *   Multilingual training approaches as a solution.
-        *   Limitations of multilingual training: suboptimal lexical/syntactic sharing and inability to leverage monolingual data.
-    *   **Data Augmentation Strategies**
-
-        *   Using available resources (parallel data, related high-resource languages, monolingual data) to create augmented data.
-        *   Naturally occurring low-resource language and target language data.
-        *   Pseudo-parallel data generation.
-    *   **Back Translation**
-
-        *   Training a target language to source language system using small parallel data.
-        *   Back-translating target language monolingual data into the source language.
-        *   Training a low-resource language to target language translation model using the generated pseudo-parallel data.
-        *   Permissible error in source data as long as target data is clean.
-    *   **Translation Generation Methods**
-
-        *   Beam search: highest quality but lower diversity and potential data bias.
-        *   Sampling: higher diversity and effectiveness.
-    *   **Iterative Back Translation**
-
-        *   Training a system in the desired translation direction.
-        *   Forward translating the low-resource language to the target language.
-        *   Training a target to low-resource language back translation system.
-        *   Back-translating from the target to the low-resource language to augment data in the backwards direction.
-    *   **Combining Multilingual Training with Data Augmentation**
-
-        *   English to high-resource language augmentation to improve low-quality back translation.
-        *   Back-translating into a high-resource language for more sentence pairs.
-        *   Vocabulary sharing if the high-resource and low-resource languages are related.
-        *   Syntactic similarity for bootstrapping.
-    *   **Monolingual Data Copying**
-
-        *   Using monolingual data as is on both the source and target side to prevent word dropping and improve translation of identical terms.
-        *   Combining with a poor back translation system to improve accuracy.
-    *   **Heuristic Augmentation Strategies**
-
-        *   Dictionary-based augmentation: using a language model to predict words and a translation dictionary to replace words in source and target sentences.
-        *   Word alignment to learn translation dictionaries.
-        *   Word-by-word data augmentation: translating each word one by one using a dictionary.
-        *   Word-by-word augmentation with reordering based on grammatical rules.
-
-*   **Part 2: Dependency Parsing**
-
-    *   **Introduction to Dependency Parsing**
-
-        *   Focus on the relationships between words.
-        *   Suitability for multilinguality, especially in languages with free word order.
-    *   **Universal Dependencies Treebank**
-
-        *   Standard format for parse trees in many languages.
-    *   **Semantic vs. Syntactic Dependencies**
-
-        *   Semantic (UD): Flatter, semantically related words closer, more content word heads.
-        *   Syntactic (SUD): Deeper, reflect phrase structure, more function word heads.
-    *   **Cross-Lingual Differences in Structure**
-
-        *   Examples: English (SVO), Hindi (Verb Final), Arabic (Verb Initial).
-    *   **Use Cases of Dependencies**
-
-        *   Feature engineering.
-        *   Human-facing applications.
-    *   **Dependency Parsing Methods**
-
-        *   Transition-based models: step through actions one-by-one.
-        *   Graph-based models: calculate probability of each edge and use dynamic programming.
-    *   **Shift-Reduce Parsing**
-
-        *   Processing words left-to-right using a queue and a stack.
-        *   Actions: shift, reduce left, reduce right.
-    *   **Graph-Based Dependency Parsing**
-
-        *   Expressing a sentence as a fully connected directed graph.
-        *   Scoring each edge independently and finding the maximal spanning tree.
-    *   **Chu-Liu-Edmonds Algorithm**
-
-        *   Greedily selecting the best incoming edge to each node.
-        *   Contracting cycles into single nodes and recursively calling the algorithm.
-    *   **Multilingual Dependency Parsing Challenges**
-
-        *   Syntactic analysis is a hard multilingual task.
-        *   Syntax varies widely across different languages.
-    *   **Improvements in Multilingual Dependency Parsing**
-
-        *   Order-insensitive encoders to avoid overfitting to the source language.
-        *   Generative model fine-tuning.
-        *   Linguistically informed constraints.
-
-*   **Part 3: Integrating Data Augmentation with Dependency Parsing for Linguistic Insight**
-
-    *   **Predicting Linguistic Insights**
-
-        *   Understanding complex linguistic phenomena (morphological agreement, word order, case marking, suffix usage).
-    *   **Morphological Agreement**
-
-        *   Agreement as a process where a word/morpheme changes form based on another word/morpheme's grammatical categories.
-        *   Task of predicting required-agreement vs. chance-agreement.
-    *   **General Framework for Extracting Linguistic Descriptions**
-
-        *   Extracting features (POS tagging, dependency parse, lexico-semantics).
-        *   Extracting rules for agreement, case marking, and word order.
-    *   **Applications**
-
-        *   Automatic grammar rule extraction.
-        *   Grammar error correction.
-        *   Natural language generation evaluation.
-        *   Language learning and documentation.
-
-*   **Conclusion**: Review of data augmentation techniques, dependency parsing, and their applications in multilingual NLP for extracting linguistic insights.
-
+*   **Cross-Lingual Differences in Structure**
+    *   Languages can vary significantly in word order (e.g., SVO, verb-final, verb-initial).
+    *   Dependency trees can visually highlight these structural differences, even without understanding the specific language.
+*   **Dependency Parsing Methods**
+    *   [**Transition-based models**: Step through actions to build a tree. They use a queue of unprocessed words and a stack of partially processed words, choosing actions like shift and reduce.]{.mark}
+    *   [**Graph-based models**: Calculate the probability of each edge and use dynamic programming to find the best tree. They express a sentence as a fully connected directed graph and find the maximal spanning tree.]{.mark}
+*   **Applications of Dependency Parsing**
+    *   **Human-facing applications**: Useful for analyzing corpora, understanding language structure, and other linguistic phenomena.
+    *   **Adding inductive bias to neural models**: Improving model robustness and encouraging models to be correct for the right reasons.
+    *   **Searching parsed corpora**: Finding examples based on syntactic relationships.
+    *   **Analysis of linguistic phenomena**: Examining power dynamics or other sociological questions in film scripts.
+    *   **Language learning and documentation**: Extracting morphological agreement rules and documenting salient grammar points.
+    *    **Evaluating machine output**: Assessing the grammatical correctness of machine translation outputs.
+*   **Multilingual Dependency Parsing**
+    *   [Syntactic analysis is a challenging multilingual task due to global-level considerations and wide syntax variations.]{.mark}
+    *   **Techniques to improve cross-lingual transfer**:
+        *   Removing bias on ordering in encoders.
+        *   Using generative models for unsupervised training.
+        *   Applying linguistically informed constraints.
+*   **Extracting Linguistic Insights Automatically**
+    *   **Goal**: To extract rules that explain linguistic phenomena in a human-readable and machine-readable format.
+    *   **Method**: Formulate linguistic questions as prediction tasks and extract rules from raw text using syntactic analysis.
+    *   **Example**: Extracting morphological agreement rules by predicting required agreement versus chance agreement.
+    *   **General Framework**: Extract features (POS tags, dependency parses) from raw text, then extract rules for agreement, case marking, word order, etc..
+*   **Practical uses of automatically extracted rules**
+    *   Language documentation and preservation.
+    *   Creating pedagogical resources and language technologies.
+    *   Aiding language learners and teachers by presenting grammar rules and common word usages.
+    *   Evaluating and correcting machine-generated text.
 
 ## Reflection
 
@@ -792,11 +722,6 @@ It seems that understanding agreement is central to 'second order' model that ne
 I belief that we can learn a probabilistic model of agreement between different cases but that they may be affected by all sorts of constraints like clause and phrase boundaries and the degree of morphological markings. So this is why attention seems so appropriate as it can learn what to focus on. And what we want is to make it interpretable so we can also extract the rules that it has learned!
 
 Aditi talks about **require agreement** v.s. **chance agreement** for verb-subject and verb-object. I think that we may want to have a theory that looks at agreement in winder context and create a model that can predict agreement in a wider context so that we can consider the entropy of a sentence once agreement has been accounted for. In fact my thinking is that we may want to go further and determine the functional load of the agreement and have a more redined metric that can be used to evaluate the entropy of a sentence accounting to agreement in a functional context. (Error correction ambiguity, Reducing cognitive load, Reducing ambiguity, Parsing)
-
-
-
-
-
 
 
 ## Navajo in 10
@@ -837,8 +762,7 @@ Aditi talks about **require agreement** v.s. **chance agreement** for verb-subje
     *   Four **vowel qualities**: /a/, /e/, /i/, and /o/.
     *   Each vowel exists in both **oral and nasalized** forms and can be either **short or long**.
     *   Distinguishes for **tone** between high and low.
-
-    
+   
     ![Navajo Consonants](navajo-consonants.png){width="400px"}
     ![Navajo Vowels](navajo-vowels.png){width="400px"}
 
@@ -863,24 +787,31 @@ Aditi talks about **require agreement** v.s. **chance agreement** for verb-subje
 ## Hard to parse in English
 
 > Alice drove down the street in her car
+>
 > -- prepositional phrase attachment ambiguity
 
 > time flies like an arrow. Fruit flies like bananas
-> -- polysemic ambiguity
+>
+> -- polysemic ambiguity & garden path sentences
 
 > I drove my car to the hospital in town on Saturday
+>
 > -- Projectives in English
 
 > You cannot add flavour to a bean that isn’t there
+>
 > -- Non Projectives in English
 
 > Alex went to Sam's house, where he told her that they would miss his show.
+>
 > -- Coreference resolution ambiguity
 
 > I saw an elephant yesterday in my pajamas
+>
 > -- Non Projectives in English
 
 > Bill loves and mary hates soccer
+>
 >-- Non Projectives in English
 
 ## Papers 
