@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Oren Bochman">
+<meta name="description" content="This week we will cover multilingual question answering.">
+
+<title>Multilingual Q&amp;A – NLP Course Notes &amp; Research</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-V0T6EFS8LY"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-V0T6EFS8LY', { 'anonymize_ip': true});
+</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<style>
+
+      .quarto-title-block .quarto-title-banner {
+        background: images/banner_deep.jpg;
+      }
+</style>
+
+
+<link rel="stylesheet" href="../../../styles.css">
+<meta property="og:title" content="Multilingual Q&amp;A – NLP Course Notes &amp; Research">
+<meta property="og:description" content="This week we will cover multilingual question answering.">
+<meta property="og:image" content="https://orenbochman.github.io/notes-nlp/images/nlp-brain-wordcloud.jpg">
+<meta property="og:site_name" content="NLP Course Notes &amp; Research">
+</head>
+
+<body class="nav-sidebar floating nav-fixed slimcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">NLP Course Notes &amp; Research</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../../index.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Multilingual Q&amp;A</li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Multilingual Q&amp;A</h1>
+            <p class="subtitle lead">CMU CS11-737: Multilingual NLP</p>
+                  <div>
+        <div class="description">
+          This week we will cover multilingual question answering.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Attention</div>
+                <div class="quarto-category">Multilingual NLP</div>
+                <div class="quarto-category">NLP</div>
+                <div class="quarto-category">Notes</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-body">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Oren Bochman </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">Tuesday, February 15, 2022</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Classification &amp; Vector Spaces</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Logistic Regression</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Frequencies</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w1/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Visualizing tweets</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Probability &amp; Bayes Rule</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Visualizing Naive Bayes</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Vector Space Models &amp; PCA</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Linear algebra with NumPy</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Manipulating word embeddings</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">MT &amp; Document Search via KNN</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vector manipulation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Hash functions and multiplanes</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Probabilistic Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">Autocorrect &amp; Dynamic Programming</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Building the vocabulary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Candidates from String Edits</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">POS tagging &amp; HMMS</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vocabulary with unknowns</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Working with tags and Numpy</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false">
+ <span class="menu-text">Autocomplete &amp; Language Models</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - N-grams Corpus preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Building the language model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w3/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Out of vocabulary words</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false">
+ <span class="menu-text">Word embeddings with neural networks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Data preparation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Intro to CBOW</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w4/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Training the CBOW</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true">
+ <span class="menu-text">Sequence Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false">
+ <span class="menu-text">Neural Networks for Sentiment Analysis</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Introduction to Trax</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Classes and Subclasses</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w1/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Data Generators</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false">
+ <span class="menu-text">RNN for Language Modeling</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Hidden State Activation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Calculating Perplexity</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w2/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Vanilla RNNs, GRUs and the scan function</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w2/lab04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L4 - Creating a GRU model using Trax</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="false">
+ <span class="menu-text">LSTMs and Named Entity Recognition</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vanishing Gradients</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false">
+ <span class="menu-text">Siamese Networks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Creating a Siamese Model using Trax</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Modified Triplet Loss</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w4/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Evaluate a Siamese Model</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="true">
+ <span class="menu-text">NLP with Attention Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false">
+ <span class="menu-text">Neural Machine Translation</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Stack Semantics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - BLEU Score</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="false">
+ <span class="menu-text">Text Summarization</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-18" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Attention</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - The Transformer Decoder</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" role="navigation" aria-expanded="false">
+ <span class="menu-text">Question Answering</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-19" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - SentencePiece and BPE</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - BERT Loss</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w3/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - T5</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" role="navigation" aria-expanded="false">
+ <span class="menu-text">Chat Bots</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-20" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Reformer LSH</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Revnet</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-21" role="navigation" aria-expanded="true">
+ <span class="menu-text">Papers</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-21" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-21" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2014-NMT-by-jointly-learning-to-align-and-translate/" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">NMT by Jointly Learning to Align and Translate</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2015-LSH/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Practical &amp; Optimal LSH for Angular Distance</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2015-effective-approaches-to-attention-based-NMT/" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Effective Approaches to Attention-based NMT</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2016-coverage-embedding-models-for-NMT/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Coverage Embedding Models for NMT</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2016-neural-morphological-segmentation/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Neural Morphological Analysis Encoding-Decoding Canonical Segments</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2017-attention-is-all-you-need/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Attention is all you need</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2017-data-augmentation-low-resource-NMT/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data augmentation for low-resource NMT</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2018-ELMo/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ELMO</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2018-BERT/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">BERT</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2018-PTWM-NMT/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PTWM NMT</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2019-morphological-embeddings/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Morphological embeddings</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2022-nakdimon/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nakdimon</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2023-exposing-glitches/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">exposing glitches</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2023-MBR-all-the-way-down/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MBR all the way down</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2024-MBR-decoding/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MBR decoding</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2025-xLSTM/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">xLSTM</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#outline" id="toc-outline" class="nav-link active" data-scroll-target="#outline">Outline</a></li>
+  <li><a href="#papers" id="toc-papers" class="nav-link" data-scroll-target="#papers">Papers</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/cs11-737/cs11-737-w12-qa/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
+
+
+
+
+
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../../images/tiling.png" class="nolightbox img-fluid figure-img" width="200"></p>
+<figcaption>course banner</figcaption>
+</figure>
+</div><div id="vid-01" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-vid figure">
+<div aria-describedby="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/P99vEVWZnfM" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Video&nbsp;1: Lesson Video
+</figcaption>
+</figure>
+</div><div id="sup-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides" style="@page {size: 16in 9in;  margin: 0;}">
+<figure class="quarto-float quarto-float-sup figure">
+<div aria-describedby="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="slides.pdf" class="lightbox" data-gallery="slides" title="This week’s slides"><embed src="slides.pdf" style="@page {size: 16in 9in;  margin: 0;}" width="420" height="340"></a></p>
+<figcaption>This week’s slides</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-sup quarto-uncaptioned" id="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Supplementary Figure&nbsp;1
+</figcaption>
+</figure>
+</div></div>
+
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Unsupervised MT</li>
+<li>Unsupervised Pre-training (LM, seq2seq)</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Transcript
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<!-- Transcript here is machine generated no punctuation and I eddited it a but but it needs more work and I dont see the benefits unless I can run it through some tool. -->
+<p>Today’s lecture is on multilingual question answering and this is the first time this lecture has been given so uh please stop me anytime during questions uh throughout this lecture and so question answering is a topic that has been really popular in the last few years so it really needs no motivation but um [Music] for the last 50 60 years there’s been a futuristic vision of humans asking computers questions and here’s an example from a fictional movie where humans try to ask computers like what’s the meaning of life and while we’re not there yet we are at a point today where people actually use question answering day-to-day i’m guessing most of you have used one or argues regularly as part of a daily life so for some examples of qa systems or tasks that you might actually be familiar with the first is lunar this one you might actually not know but uh it was one of the first three systems to actually be used it was developed for by nasa to answer questions about the moon in 2010 ibm watson or around that time ibm watson which was uh code developed by eric heiberg at cmu was introduced and this was like the first two-way system to really achieve human level performance on some domain and it beat some of the best jeopardy contestants in the world and then in 2016 the squad data set was released and this really spurred a huge amount of research into neural network methods for question answering so do you notice anything in common with all these different systems that i just described they’re all on english and this is really what we’re going to talk about today is how can we take these advances that have really been tremendous and apply them to languages that are not english so just i’m curious can you raise your hand if you’ve actually tried to use a digital assistant to answer a question in a language other than english or about a topic other than english like in the data it’s actually a lot of people and uh so uh in the purple uh how well did it work [Music] okay okay so it sounds like there’s an issue with the speech side of it and also with the question answering retrieval part of it and so um this is a paper that was just um uh recently released by graham and collaborators where they looked at they tried to index different nlp tasks based on uh two axes one is the number of speakers like how how much demand there is for the technology and then the y-axis is the quality of the technology in that language and you see the qa has like a huge drop-off after maybe the seventh or eighth most popular language you see like a dramatic drop in performance and this is actually a lot worse than most nlp technologies like something like parsing it’s actually a much smoother curve and so i think this is important because to me question answering is really about making information more easily accessible to people and when you don’t when you can’t access information other languages you’re restricting information access for a large portion of the world so there’s two kinds of qa that we’ll talk about in this lecture the first is open retrieval qa or open domain qa which is where you have a question like where did beyonce grew up and you have a corpus like wikipedia that is presumed to contain the answer and you search your question against the corpus get a document that might contain the answer and then extract an answer from that document houston being the answer here the next kind is knowledge graph question answering here you don’t assume that your answer is in a corpus but rather you have a knowledge graph that might be constructed by humans or it might be automatically generated using information extraction and here you convert your question into a graph query against the knowledge graph and then get the answer that way knowledge graph question answering is especially useful situations where you have structured data or you’re querying against some kind of automatically generated data so in this example what will tomorrow’s high temperature be it’s very unlikely that any corpus will actually have the answer to that question and so on the other hand a knowledge graph could be automatically generated using government data every day and then uh that’s where this can really be super valuable so um before i jump into open reboot qa are there any questions about the past i need to find it okay so we’ll focus on open repeatable qa which in the multilingual setting has seen a really large amount of activity in the last few years and then we’ll spend only about 10 minutes at the end talking about knowledge graph here so for open retrieval qa just uh drilling into this example uh we first want to extract the document here from wikipedia that contain that is likely to contain the answer and this task this subtask is known as passage approval and then after passage retrieval you now have a document that is likely to contain the answer to your question and then the next step is called reading comprehension which is given this evidence what is the actual succinct answer passage retrieval is a standard search engines or information agreeable problem where you’re given a query and a set of documents and you want to retrieve the most relevant document d for the query and when you frame it like this the the question is how do you define this score function that scores a document given a question and there’s been a a lot of work on how to define the score in some kind of optimal way the the most traditional approach which i’m guessing a lot of you are already familiar with it’s called pfidf and here um effectively what the motivation is is that you want to choose documents that contain a lot of the terms in your query but you might notice that not all the terms in the query are equally valuable so in where did beyonce grow up uh did or where are very common words but they’re going to occur in a lot of documents so the idf term the denominator here discounts terms that occur in a lot of documents and so ultimately you’re basically trying to find documents that contain a lot of terms that don’t occur in every document and tf idf was introduced about 50 years ago and it’s still um it’s still very popular but in the last 20 years there was a modification that’s become pretty much the standard baseline and fast to table and this is called bm25 it’s actually really conceptually the same thing as cfidf you have an idf term in the left you have the document frequency being effectively discounting the importance of that term and on the right side you have your term weight but the way that it really differs is that based on this observation that by tf idf it really uh values documents that are long because long documents are more likely to have term matches for any query and so here you uh divide the the document length by the average document length and use this to discount the term weight so if you have a document that’s much longer than average then you better have a much greater term weight in order to to recommend this document and uh with bm25 um you have two hyper parameters k and b where k controls how much weight you give tf versus idf and b controls how much you care about the document length normalization and so these are typically tuned against some kind of validation set for your language and one important note about bm25 that is really relevant to this class is that it doesn’t require learning any statistical model it’s effectively just a heuristic that you can run against your language and so this means that you don’t need any data you can run it against english or against tamil or whatever language you care about and just to um highlight how amazingly well bn25 performs uh you might have heard about openai embeddings which is this like flashy new um api from open ai that uh promises to do to be able to encode any kind of data or text and do like really effective search uh bm25 was listed as their baseline and they didn’t really talk about this too much in the paper but uh it’s surprising that their baseline model with the small model is actually worse than the m25 on most of the metrics even though it was trained with self-supervision on a huge unsupervised data set and bm25 requires very simple indexing probably costs a couple of dollars whereas um the openai model which is actually worse than the m25 would cost about 20 thousand dollars to index a few million articles and so bm25 is like a really great tool and even for comparative state-of-the-art it can be effective um i believe it was uh actually i don’t remember i’m comparing bm25 which is the top row with the smallest version of the openai api and on three of the four metrics um the opening item system provides worse when you get to a much larger uh cell supervised model it provides but no it absolutely is a problem and that that is a good point in that um if you have a language that maybe is uh very morphologically rich then your token overlaps are going to be are going to really depend on how well you tokenize or how well you break up the markings in that language the tokenization is uh is orthogonal to the input algorithm but dn25 is going to be very sensitive to how well you tokenize that branch okay so uh one problem with tf idf is that it will only recommend documents that contain a lot of the terms in the query and so let’s look at this example again where did beyonce grow up this document that which we know to contain the answer it does contain the word beyonce but it doesn’t contain grow on it rather contains rays which we know to be like the same but um there’s a vocabulary mismatch problem here and in order to solve this we can use your standard pre-trained language models and there was a paper a couple years ago called dense passage of people that’s become the standard baseline for passage of people using neural networks and in this method you encode the query and the document into vectors using the cls token and then you can just score the uh the match within the query in the document as the dot product of these two vectors so it’s very simple conceptually and you might be wondering um how this is practical because running bert against a huge corpus like all of your documents in wikipedia is really expensive and it might take hours or days and so how can you do this every time you want to search one query the reason the dpr is so effective is that you could index your search corpus using burke offline do it every night or just do it once and then you have these vectors that are static then when you get a new query in your search engine you can just encode the query using pert and it’s just one sentence so it can be hopefully quite fast and then you can now just compare that query vector against your offline document vectors and this comparison which is known as maximum inner product search there’s algorithms do it really efficiently so the major downside with dense fast retrieval is that if you don’t if you take these burp encoders as just pre-trained from the original dirt without any fine-tuning it often won’t work very well in order for it to work really effectively you want to train it or fine-tune it on a set of questions that have each been tagged with a set of known documents that are known to be relevant or non-load to the query and then you use this to fine-tune your encoders and uh for this to work well you actually need quite a large data set which does not exist in most of the world languages so this motivates um and uh so but despite this um just to show to illustrate about how popular dpr is today here is the papers with code leaderboard for natural questions which is a really a really popular qa data set right now and the top six methods for passage retrieval on this data set all use some variant of dpr and then the seventh one uses bm25 but it’s quite a bit worse here so uh before we move on to reading comprehension are there any questions about past detail okay so now once you’ve retrieved the passage that is likely to contain the answer the next task is how to extract a single answer from that passage and this is known as reading comprehension now sometimes given this question who is beyonce’s sister this question cannot be answered by this passage and in that situation you have to tell the user uh as such so now having framed this question um there’s two kinds of reading comprehension that we’ll cover in this lecture the first is extracted question answering where you assume that the answer is contained as a segment of the passage in this example houston being a subset of the capacities and then the next kind is a more challenging setting where the answer is freely generated using the passage as evidence and so in this example which is actually a harder question than before is beyonce from the southern united states we know that houston texas is in the southern united states and the answer is yes she is from the southern united states but yes is not contained in this passage so these are two problem settings that we’ll talk about we’ll first establish a baseline for each so for extractive qa there’s an approach using burke that’s become quite popular and it’s really simple but it seems to do the job most of the time and in this approach you you’re so just uh refreshed you have a question and you have a passage that has already been retrieved and you just concatenate those two together pass it into birth and then encode each token in your passage using burn and the key here is that because it’s contextual encoder each token in the passage has been able to self-attend to the question as well so you kind of have a question aware representation of each token now at each token in a passage you can take that encoding that vector and then pass it through uh a simple linear classifier that predicts how likely it is that this token is the start or end of the answer and um it’s important to note that uh one one downside of this method is that you assume that you can predict the start and the end of the answer independently which doesn’t actually make a lot of sense like really there’s some expectations you have that the start would definitely be before the end index or the end will be relatively close it’s not going to be a thousand characters away but somehow uh models just tend to learn this behavior most of the time and it’s not too much of a problem and then when it comes time to make a prediction you just choose the index that has the maximum probability of being the start the one has a maximum probability being the end and then what’s in between is the correct answer stand any questions uh that previous method assumes the answer is a span in your passage but what if you want to do free form answer generation and in this setting uh another very simple related baseline is to again concatenate the question in the passage and then use a sequence to sequence model like t5 being a very popular pre-trained one here you encode your question and passage together to get like a representation of them jointly and then you use this uh to pass to a decoder that then generates answer token by token and so this is like a classic encoder decoder model and so this way you’re directly generating an answer using a propane model so uh returning to the goal of this class which is multilinguality most data sets in open retrieval qa are only in english so here is the papers with code uh the set of most popular benchmarks the question answered on papers who code and if you look at these 15 benchmarks literally all of them are only in english there’s two questions we’re going to ask in the rest of this lecture firstly can we support questions in a language where we may not have data and then can we search against a corpus that may be different than the question the language that we’re asking the question in so um this introduces two related problem settings multilingual qa and cross things with qa so in multilingual qa your questions and your corpus that you’re searching against and your answers are all in some language but they may be in a language uh either that you don’t have data for or you want to leverage multilinguality in some way so maybe you want to answer you want to do chinese question answering but you only have access to an english language data set like squad and how can you do this that’s the first problem we’ll talk about and the second one which is actually just a more general version is what if you want to ask questions in one language search against documents in another language and maybe even return an answer in a third line and this is called cross-lingual qa usually the questions and answers are in the same language because that’s most practical use cases will be satisfied by that so in this example you have a question in tumble which is a beyonce valenta and beyonce is very popular in in south india but um there may be less information about her on wikipedia in that language than in english and so here we want to search against english wikipedia get a document that contains the answer and then return the answer to the user in health and this is called cross-lingual theory so now we’ll talk about three approaches to solving both these problems and uh the first is zero shot transfer where uh you might remember uh in patrick’s lecture uh three lectures ago he talked about different multilingual pre-k models like ember xlmr these models have been taught basically what a language what many different languages look like what their statistics are and their properties uh in terms of the pre-training tasks but they have not been taught to do questions specifically so the zero shot transfer approach is to take one of these pre-trained multilingual models fine-tune it against an english language qa data set like squad and then hope that by learning to do english qa and based on its knowledge of what tamil looks like it can also learn to do thermal qa without any explicit supervision and so we saw in patrick’s lecture that these models tend to perform well in things like classification using this exact approach so do they does the same apply to delay and uh the answer is that it actually performs perhaps a lot better than you might imagine so here a model based on ember achieves like 45 45 exact match accuracy on a multi-lingual qa data set which is actually uh perhaps serviceable for your application but simply by adding just a few target language examples like four or ten you can achieve like three to five percent improvement which suggests that there’s actually a lot of room for improvement beyond this naive strategy that’s right it was fine tuned on english 287 it means you take your multilingual model it’s been fine tuned on english qa and then you just use that and then give that a new language of input and have it search potentially against against documents from a new language as well right you’re never training it how to do double view it’s pretty amazing that it works actually you know but it basically relies on the embedding space being similar enough in this data set that’s the assumption they make but you don’t have to make that assumption in theory this this approach could actually support cross-lingual keywords the next approach which is actually um a lot older this has been around since 2000’s and taruko from lti has been working on this for uh she was working on this 15 years ago uh this is this approach is to use translation so um imagine you have a question in a language like a really obvious solution is to translate that question into english use an off-the-shelf english query system which we know works quite well get the answer in english and then translate it back into the language of your choice so this is known as a translate test and uh if you read the um the reuter reading uh which is one of the three readings for this class he taught about this method and its downsides and there’s a few issues with this method even though it’s really simple and actually quite simple to engineer firstly uh you’re relying heavily on an empty system to translate your question into from english and for a lot of languages your empty systems are just not that good and so you’re going to see pretty serious error propagation here and the second more nefarious issue with this is that you’re assuming that all your questions can be answered using knowledge in english and this is like a very anglo-centric view and uh a lot of the practical use cases in native countries are not going to be able to satisfy this and we’ll talk more about the second point at the end of the lecture i’ll just skip this actually and then um the final approach we’ll talk about is actually building off of the the first approach of using a multi-lingual model multi-level encoder and this is a method for doing cross-lingual qa without doing any translation to bypass some of the issues that we saw in the first approach and uh not only here do we want to do no translation required but we also want to be able to search for answers and accumulate answers across multiple different languages parkour so how can i combine chinese japanese and english wikipedia together to get one right answer in your target language and so in this this is the architecture here the first piece of this architecture is a multilingual variant of dense patches recruitable which is the neural pass retrieval method that we discussed earlier and this multilingual dpr simply uses a multi-level encoder to recreate passages from queries of any language to past discerning language next given a question here in spanish you can extract relevant passages from multiple languages so here there’s spanish and hebrew and then now given these multilingual evidence passages we want to now generate an answer in the target language which here could be english and in order to do this they leverage another multilingual protein model which is a multilingual generator mt5 that is conditioned on the evidence given and then generates an answer in the language of the choice uh yeah i believe it can really be any uh the trail number is this would be the one that you use off top of my head but uh any of those should be able to support this architecture that generates the answer is not assuming anything about where in the passage of the answers became now uh one so this is like a really nice clever approach when you look at it but if you just tried this using off-the-shelf multilingual encoders and generators it wouldn’t work and that’s because you actually do need training data to make these things work and uh this is actually super challenging because while there are data sets for multilingual passage retrieval there is almost no data that can support uh generating an answer from evidence from different languages that’s a task that doesn’t really have any data set right now and uh in theory that would be like a huge issue for this but they proposed a solution that uh that somehow works which is iterative self-training they start with a version of the dpr model that is not trained not fine-tuned and then they given a bunch of questions for which you may not know the answer you uh extract passages from wikipedia and then choose the ones that are that are likely to be correct using the generator and then consider those to be like pseudo answers so you’re effectively running your model to get like pseudo answers adding in your training set retraining your model and you do this multiple times until you reach subjective performance we had a question about like what model they use here so i i looked it up and they used multilingual um they said they tried xlmr and it didn’t improve results and this is actually uh it’s kind of interesting because it also matches a general trend that i’ve found like if you’re trying to use mbr or xlmr you probably want to know which one you want to use and it seems that embers is better at like content based modeling so like if it’s on modeling entities or modeling other things like this it seems that ember is better often whereas xlmr is better at things like identifying word types or something like this so like xlmr seems to be better at like part of speech tagging dependency parsing uh kind of like reading reading and identifying spans based question answering so for something like looking up the content within dpr it makes sense to me that ember like based on my previous experience it makes sense that ember is better of course there’s a whole lot of other models too but i think it’s worth remembering that some models are better at some things is yeah in the beginning i believe it’s not fine-tuned for any kind of sentence of coding tests and it’s iteratively fine fine-tuned okay so um before we jump into uh how effective this method is we need to define a few metrics and uh by the way there’s a class at cmu on question answering so uh if you really are interested in the nitty gritty here take that class with eric nyberg and taruko and but the um the three metrics they use which are all pretty popular the first is f1 score where given a generated answer and then an actual answer you can compute the precision and recall of the token overlap and then compute the f1 score with that exact match is is the generated answer exactly the same as the true answer which here it’s not and then blue score has been defined in the previous lecture so um i’m not going to go into that but it’s effectively just ngram overlap and um on xor qa which is a cross-single qa data set uh they they post quite strong performance here uh and i believe like the human level is around 70 uh and the fifth method here is exactly what we call translate tests earlier and so you can see how much better a neural method that’s been fine-tuned can be than this naive translation based approach like they’re using monolingual data that’s an interesting point so he he mentions that um in the iterative self training they have assumed access to wikipedia which they use to help refine the pseudo answer and is the access to the information kind of cheating against these other systems that don’t assume access to that kind of external knowledge i think you can make an argument for that but if you just view this as trying to solve the problem as effectively as possible it may be doesn’t matter and uh i want to highlight here that uh the state of the art on a very similar english data set natural question which is actually collected in almost the exact same way is 80 and so even though this is effective and state-of-the-art for this task it’s still a lot worse than english so there’s a lot of room for improvement the quora model yes it’s the model it’s the approach if there is with them but uh i think that’s a good question yeah so within within english we actually have a paper how can we know when language models know and basically the what the paper does is it measures the calibration of like generative uh or extract like language models that read and then generate the output um and the answer is the models aren’t super good but in calibration sorry calibration means like when they say there’s a 50 probability of the answer being correct is there actually a 50 probability of the answer being correct and if they are basically right about the probability of it being correct you can just choose what level of confidence you need before you output the answer um and the models aren’t necessarily extremely good at it out of the box like they can be like way over confidence or something like this but you can also adjust them relatively easily to be well calibrated if they are well calibrated that works i’m pretty sure there’s nothing on multilingual so with class project i don’t know so it might be something um i’m not sure of an x squad but i know that uh uh tidy qa which is one that i’ll mention later does have unanswered and so what you saw this is actually a great sideways question which is um some data sets for multilingual multiple qa and so i’ll just breeze through this but there’s these two data sets which are both extremely popular they both they do just machine reading comprehension no retrieval so you’re given a passage and a question and the answer is either contained or not contained by pathways and they both uh mlqa is larger but they both are based on taking an english language to create a data set and then translating it to the language of the choice mkqa is an open retrieval created a set based on natural questions which is an english language to a data set and they again translate all of the questions answers and corpora into the language of your choice tight eqa uh is um i think one of the most impressive ones here it’s another very large data set but here they collect questions naturally in each one so they have users and say tamil actually i don’t think one of the languages but in each language they have users generate natural questions in that language and then they search against the native wikipedia without language and here they do have unanswerable questions um and the reason that idq i think is so important is that every other data set translated english to a paris into a target language and uh there’s two really big issues with this the first is that the translated questions even using a human translator may not actually be natural in your target language so let’s say you’re translating an english question to russian which is like a mostly a free word order language it’s very likely that your translator will actually use english word order because that was the source language and that general that leads to like a version of russian that’s not actually that natural and the second is that the answers are assumed to be anglocentric you assume they can be found in english with the media and so here’s an example of a question which indian lawyer advocated the preservation of marina v in chennai this question can be answered using tamil wikipedia i i checked actually but uh it cannot be answered so any kind of translation based approach will simply not cover these kinds of buttons um and then there’s a version of tidy qa that also supports cross-lingual qa by whenever you have an unanswerable question looking it up in english if it exists and that that lets you test uh cross-lingual retrieval as well and uh several of these benchmarks are included in the extreme uh multilingual benchmark so now um i’ll just spend a couple of minutes almost out of time here but talking about knowledge graphql and so in knowledge graphqa the goal is to give in a question to convert it into a query against the structured knowledge there and this query often takes the form of a of a like query language like sparkle which is like a version of sequel for a graph query and this skull can be concisely called semantic parsing now in terms of multilingual knowledge graphqa very little work has been done in the space i would say i’ve only seen papers in the last year or two working on this and there’s two known methods both are very related to what we’ve already talked about open people qa the first is zero shot transfer where you take a multi-lingual encoder prank unit for english kg qa and then try to transfer it to another language and then the second method is translation based adaptation and in the paper uh by uh zooedal they use this approach but uh they make the observation that uh even if you don’t have access to a good translator for your language in knowledge graphqa you may be able to get away with using much more word level or local translations because in a knowledge graph or in the questions that query knowledge graph you don’t need as much paragraph level sentence global context so here they use unsupervised uh bilingual x-file induction to do word-level translation of an english data set into a target language data set and they find that this works actually uh pretty well and so there’s even though there hasn’t been a lot of work done in knowledge graphqa there have been a few data sets in the last couple years um you can uh the slides will be posted and you can look at these on your own time but this creates an opportunity actually the knowledge graphql where you haven’t got there hasn’t been a lot of methods developed but there are data sets that you can use and so i think there’s a lot of interesting questions that could be answered using this data that people haven’t really thought about and then some other interesting open problems that you can think about for your final project or for near future are um in cross-lingual qa we show that there’s a huge gap still between the state-of-the-art methods and either english language qa or human level performance in that language and so this suggests that we’re pretty far from having solved this problem in any kind of meaningful capacity and now um one other point is that with multilingual qa there’s a lot of information that is actually non-linguistic that you can use to make the task easier you can look at images in wikipedia or fact tables info boxes and not much work has tried to do this so i think that this is a really promising area after research and lastly building off of allen’s lecture on tuesday if you go to india and ask people to interface with the english with a hindi language to a system they’re very likely to ask questions in code next english and i don’t know much work that’s done that’s tried to actually solve this so these are all some uh some open problems in multilingual field so for the discussion today we had these three different readings the first two were papers from conferences and the third one was a kind of a summary blog post from an emlp tutorial and the question is to think about a practical qa application in a language or domain of your choice and given this application um think about uh at least two of these things which are who would actually find this application to be useful what methods do you think could actually work for this application and if you’re interested in kind of thinking like a researcher what resources or strategies might you use to either improve performance in the system or evaluate how well it works and uh any last questions before we go this question between mp5 and xlr um just because like cross-lingual qa is the thing it’s included in all the benchmarks yeah and extremes directly like is about uh zero shot monkey um you’re asking how can you score a different language passages from different languages um you can assume that you’re that you’re i guess you can assume that your your ranker can assign scores from different packages using some kind of language independent i think that would be the goal but uh that’s what it tries to do yeah i think it actually works it’s a good question there is um i think it was actually developed here by galway as i said and others so i think that’s actually the best way i think so yeah that was for so i’m familiar with that i said that was qa for that involved translated or transcribed text and so but the trend because it’s transcribed that’s they must also so yeah i think there’s i think there’s that i’ve worked a little bit on this but i don’t think there’s a whole lot i think um in terms of multi-lingual scope but it’d be super useful for this because a lot of people</p>
+</div>
+</div>
+</div>
+<section id="outline" class="level2">
+<h2 class="anchored" data-anchor-id="outline">Outline</h2>
+<ul>
+<li><strong>Introduction to Question Answering (QA)</strong>
+<ul>
+<li>Humans have long envisioned asking computers questions.</li>
+<li>QA is now part of daily life.</li>
+<li>Examples of QA systems:
+<ul>
+<li>LUNAR</li>
+<li>IBM Watson</li>
+<li>SQuAD</li>
+</ul></li>
+<li>Traditional QA systems are mostly English-language based.</li>
+</ul></li>
+<li><strong>The Importance of Multilingual QA</strong>
+<ul>
+<li>Multilingual QA helps people access information easily.</li>
+<li>There is a steep drop in QA technology quality after the top languages.</li>
+</ul></li>
+<li><strong>Types of Question Answering</strong>
+<ul>
+<li>Open-Retrieval QA (aka Open Domain QA)
+<ul>
+<li>Given a question, the system finds an answer from a text corpus.</li>
+</ul></li>
+<li>Knowledge Graph QA
+<ul>
+<li>Given a question, the system finds an answer from a knowledge graph.</li>
+</ul></li>
+</ul></li>
+<li><strong>Open-Retrieval QA in Detail</strong>
+<ul>
+<li>Steps:
+<ul>
+<li>Passage Retrieval: Extracting the document from a corpus that likely contains the answer.</li>
+<li>Reading Comprehension: Extracting the succinct answer from the retrieved document.</li>
+</ul></li>
+</ul></li>
+<li><strong>Passage Retrieval Techniques</strong>
+<ul>
+<li>TF-IDF
+<ul>
+<li>Selects documents containing many query terms, discounting terms that occur frequently in many documents.</li>
+</ul></li>
+<li>BM25
+<ul>
+<li>A modification of TF-IDF that discounts term weight based on document length.</li>
+<li>Does not require a statistical model.</li>
+</ul></li>
+<li>Dense Passage Retrieval (DPR)
+<ul>
+<li>Encodes queries and documents into vectors using models like BERT.</li>
+<li>Indexes the search corpus offline.</li>
+<li>Requires fine-tuning on a dataset of questions with relevant documents.</li>
+</ul></li>
+</ul></li>
+<li><strong>Reading Comprehension Techniques</strong>
+<ul>
+<li>Extractive QA
+<ul>
+<li>The answer is assumed to be a span in the passage.</li>
+<li>A common approach is to concatenate the question and passage, encode each token, and predict the start and end tokens of the answer.</li>
+</ul></li>
+<li>Generative QA
+<ul>
+<li>The answer is freely generated using the passage as evidence.</li>
+<li>A sequence-to-sequence model can be used to generate the answer token by token.</li>
+</ul></li>
+</ul></li>
+<li><strong>Multilingual QA Problem Settings</strong>
+<ul>
+<li>Multilingual QA
+<ul>
+<li>Questions, corpus, and answers are all in the same language.</li>
+</ul></li>
+<li>Cross-lingual QA
+<ul>
+<li>Questions, corpus, and answers can be in different languages.</li>
+</ul></li>
+</ul></li>
+<li><strong>Approaches to Multilingual QA</strong>
+<ul>
+<li>Zero-Shot Transfer
+<ul>
+<li>Finetune a multilingual model on an English QA dataset and transfer it to a new language.</li>
+<li>Adding a few target-language examples can improve performance.</li>
+</ul></li>
+<li>Translation-Based Adaptation
+<ul>
+<li>Translate the question to English, use an English QA system, and translate the answer back.</li>
+<li>“Translate-Train” involves translating the full training data to the target language.</li>
+</ul></li>
+<li>Multilingual Retriever-Generator
+<ul>
+<li>Uses a multilingual DPR to retrieve passages in any language and a multilingual generator to produce the answer.</li>
+<li>Requires iterative self-training due to lack of training data.</li>
+</ul></li>
+</ul></li>
+<li><strong>Evaluation Metrics for QA</strong>
+<ul>
+<li>F1 Score
+<ul>
+<li>Calculates precision and recall of token overlap between the generated and actual answers.</li>
+</ul></li>
+<li>Exact Match (EM)
+<ul>
+<li>Measures how often the generated answer exactly matches the true answer.</li>
+</ul></li>
+<li>BLEU Score
+<ul>
+<li>N-gram overlap between the generated and actual answers.</li>
+</ul></li>
+</ul></li>
+<li><strong>Multilingual QA Datasets</strong>
+<ul>
+<li>XQuAD and MLQA
+<ul>
+<li>Machine reading comprehension datasets based on translating English datasets.</li>
+</ul></li>
+<li>MKQA
+<ul>
+<li>Open-retrieval QA dataset based on translating Natural Questions.</li>
+</ul></li>
+<li>TyDi QA
+<ul>
+<li>QA pairs collected naturally in multiple languages.</li>
+</ul></li>
+<li>XOR-QA
+<ul>
+<li>Based on TyDi QA with added English translations for unanswerable questions.</li>
+</ul></li>
+</ul></li>
+<li><strong>Knowledge Graph QA</strong>
+<ul>
+<li>Involves converting a question into a query against a structured knowledge graph.</li>
+<li>Methods include zero-shot transfer and translation-based adaptation.</li>
+</ul></li>
+<li><strong>Open Problems in Multilingual QA</strong>
+<ul>
+<li>Cross-lingual QA performance is still far from English QA or human-level performance.</li>
+<li>Leveraging non-linguistic cues (images, fact tables).</li>
+<li>Answering code-mixed questions.</li>
+</ul></li>
+</ul>
+</section>
+<section id="papers" class="level2">
+<h2 class="anchored" data-anchor-id="papers">Papers</h2>
+<p>The papers mentioned in the context of multilingual question answering are: * <strong>One Question Answering Model for Many Languages with Cross-lingual Dense Passage Retrieval (Asai et al.&nbsp;2021)</strong> * <strong>Improving Zero-Shot Cross-lingual Transfer for Multilingual Question Answering over Knowledge Graph (Zhou et al.&nbsp;2021)</strong> * <strong>Dense Passage Retrieval for Open-Domain Question Answering (Karpukhin et al.&nbsp;2020)</strong> * <strong>TyDi QA: A Benchmark for Information-Seeking Question Answering in Typologically Diverse Languages (Clark et al.&nbsp;2020)</strong> * <strong>A BERT Baseline for the Natural Questions (Alberti, Lee, and Collins 2019)</strong> * <strong>Bootstrap Pattern Learning for Open-Domain CLQA (Shima and Mitamura 2010)</strong> * <strong>Natural Questions: A Benchmark for Question Answering Research (Kwiatkowski et al.&nbsp;2019)</strong> * <strong>On the Cross-lingual Transferability of Monolingual Representations (Artetxe et al.&nbsp;2019)</strong> * <strong>RuBQ 2.0: An innovated Russian question answering dataset (Rybin et al.&nbsp;2021)</strong> * <strong>QALD-9-plus: A Multilingual Dataset for Question Answering over DBpedia and Wikidata Translated by Native Speakers (Perevalov et al 2022)</strong> * <strong>Multi-domain Multilingual Question Answering (Ruder 2021 [blog post])</strong></p>
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2022,
+  author = {Bochman, Oren},
+  title = {Multilingual {Q\&amp;A}},
+  date = {2022-02-15},
+  url = {https://orenbochman.github.io/notes-nlp/notes/cs11-737/cs11-737-w12-qa/},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2022" class="csl-entry quarto-appendix-citeas" role="listitem">
+Bochman, Oren. 2022. <span>“Multilingual Q&amp;A.”</span> February 15,
+2022. <a href="https://orenbochman.github.io/notes-nlp/notes/cs11-737/cs11-737-w12-qa/">https://orenbochman.github.io/notes-nlp/notes/cs11-737/cs11-737-w12-qa/</a>.
+</div></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("^(?:http:|https:)\/\/www\.quarto\.org\/custom");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+          // default icon
+          link.classList.add("external");
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© Copyright 2023-2025, Oren Bochman</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/cs11-737/cs11-737-w12-qa/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This page is built with 💛 and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"fade","descPosition":"right","loop":true,"openEffect":"fade","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+<script src="../../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

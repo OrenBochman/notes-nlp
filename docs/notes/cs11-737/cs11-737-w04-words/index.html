@@ -1,0 +1,1865 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Oren Bochman">
+<meta name="description" content="This week we will cover text classification and sequence labeling. We will start with the basics of text classification, and then move on to more advanced topics like sequence labeling.">
+
+<title>Words, Parts of Speech, Morphology – NLP Course Notes &amp; Research</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-1372234da3246ce8e868649689ba5ed0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark-d99a2a2a191b5c7f2a9a83135e7f0803.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-V0T6EFS8LY"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-V0T6EFS8LY', { 'anonymize_ip': true});
+</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<style>
+
+      .quarto-title-block .quarto-title-banner {
+        background: images/banner_deep.jpg;
+      }
+</style>
+
+
+<link rel="stylesheet" href="../../../styles.css">
+<meta property="og:title" content="Words, Parts of Speech, Morphology – NLP Course Notes &amp; Research">
+<meta property="og:description" content="This week we will cover text classification and sequence labeling. We will start with the basics of text classification, and then move on to more advanced topics like sequence labeling.">
+<meta property="og:image" content="https://orenbochman.github.io/notes-nlp/images/nlp-brain-wordcloud.jpg">
+<meta property="og:site_name" content="NLP Course Notes &amp; Research">
+</head>
+
+<body class="nav-sidebar floating nav-fixed slimcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">NLP Course Notes &amp; Research</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../../index.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Words, Parts of Speech, Morphology</li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Words, Parts of Speech, Morphology</h1>
+            <p class="subtitle lead">CMU CS11-737: Multilingual NLP</p>
+                  <div>
+        <div class="description">
+          This week we will cover text classification and sequence labeling. We will start with the basics of text classification, and then move on to more advanced topics like sequence labeling.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Attention</div>
+                <div class="quarto-category">Multilingual NLP</div>
+                <div class="quarto-category">NLP</div>
+                <div class="quarto-category">Notes</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-body">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Oren Bochman </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">Monday, January 24, 2022</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Classification &amp; Vector Spaces</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Logistic Regression</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Frequencies</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w1/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Visualizing tweets</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Probability &amp; Bayes Rule</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Visualizing Naive Bayes</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Vector Space Models &amp; PCA</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Linear algebra with NumPy</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Manipulating word embeddings</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">MT &amp; Document Search via KNN</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vector manipulation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c1w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Hash functions and multiplanes</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Probabilistic Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">Autocorrect &amp; Dynamic Programming</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Building the vocabulary</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Candidates from String Edits</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">POS tagging &amp; HMMS</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vocabulary with unknowns</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Working with tags and Numpy</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false">
+ <span class="menu-text">Autocomplete &amp; Language Models</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - N-grams Corpus preprocessing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Building the language model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w3/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Out of vocabulary words</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false">
+ <span class="menu-text">Word embeddings with neural networks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Data preparation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Intro to CBOW</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c2w4/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Training the CBOW</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true">
+ <span class="menu-text">Sequence Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false">
+ <span class="menu-text">Neural Networks for Sentiment Analysis</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Introduction to Trax</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Classes and Subclasses</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w1/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Data Generators</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false">
+ <span class="menu-text">RNN for Language Modeling</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Hidden State Activation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Calculating Perplexity</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w2/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Vanilla RNNs, GRUs and the scan function</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w2/lab04.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L4 - Creating a GRU model using Trax</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="false">
+ <span class="menu-text">LSTMs and Named Entity Recognition</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-14" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-14" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Vanishing Gradients</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false">
+ <span class="menu-text">Siamese Networks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-15" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-15" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Creating a Siamese Model using Trax</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Modified Triplet Loss</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c3w4/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - Evaluate a Siamese Model</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="true">
+ <span class="menu-text">NLP with Attention Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-16" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-16" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false">
+ <span class="menu-text">Neural Machine Translation</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-17" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-17" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w1/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w1/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Stack Semantics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w1/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - BLEU Score</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="false">
+ <span class="menu-text">Text Summarization</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-18" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-18" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w2/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w2/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Attention</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w2/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - The Transformer Decoder</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" role="navigation" aria-expanded="false">
+ <span class="menu-text">Question Answering</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-19" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-19" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w3/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w3/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - SentencePiece and BPE</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w3/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - BERT Loss</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w3/lab03.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L3 - T5</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" role="navigation" aria-expanded="false">
+ <span class="menu-text">Chat Bots</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-20" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-20" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w4/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Notes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w4/lab01.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L1 - Reformer LSH</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../notes/c4w4/lab02.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">L2 - Revnet</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-21" role="navigation" aria-expanded="true">
+ <span class="menu-text">Papers</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-21" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-21" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2014-NMT-by-jointly-learning-to-align-and-translate/" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">NMT by Jointly Learning to Align and Translate</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2015-LSH/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Practical &amp; Optimal LSH for Angular Distance</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2015-effective-approaches-to-attention-based-NMT/" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Effective Approaches to Attention-based NMT</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2016-coverage-embedding-models-for-NMT/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Coverage Embedding Models for NMT</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2016-neural-morphological-segmentation/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Neural Morphological Analysis Encoding-Decoding Canonical Segments</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2017-attention-is-all-you-need/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Attention is all you need</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2017-data-augmentation-low-resource-NMT/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data augmentation for low-resource NMT</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2018-ELMo/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">ELMO</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2018-BERT/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">BERT</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2018-PTWM-NMT/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PTWM NMT</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2019-morphological-embeddings/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Morphological embeddings</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2022-nakdimon/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">nakdimon</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2023-exposing-glitches/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">exposing glitches</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2023-MBR-all-the-way-down/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MBR all the way down</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2024-MBR-decoding/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">MBR decoding</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../reviews/paper/2025-xLSTM/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">xLSTM</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#discussion-prompt" id="toc-discussion-prompt" class="nav-link active" data-scroll-target="#discussion-prompt">Discussion Prompt</a></li>
+  <li><a href="#outline" id="toc-outline" class="nav-link" data-scroll-target="#outline">Outline</a></li>
+  <li><a href="#papers" id="toc-papers" class="nav-link" data-scroll-target="#papers">Papers</a></li>
+  <li><a href="#kannada-in-10-minutes" id="toc-kannada-in-10-minutes" class="nav-link" data-scroll-target="#kannada-in-10-minutes">Kannada in 10 minutes</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/cs11-737/cs11-737-w04-words/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block page-columns page-full column-body" id="quarto-document-content">
+
+
+
+
+
+
+<div class="no-row-height column-margin column-container"><div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../../images/tiling.png" class="nolightbox img-fluid figure-img" width="200"></p>
+<figcaption>course banner</figcaption>
+</figure>
+</div><div id="vid-01" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-vid figure">
+<div aria-describedby="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/doZLYpTW_S0" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-vid" id="vid-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Video&nbsp;1: Lesson Video
+</figcaption>
+</figure>
+</div><div id="sup-slide-deck" class="quarto-float quarto-figure quarto-figure-center anchored" data-group="slides" style="@page {size: 16in 9in;  margin: 0;}">
+<figure class="quarto-float quarto-float-sup figure">
+<div aria-describedby="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="slides.pdf" class="lightbox" data-gallery="slides" title="This week’s slides"><embed src="slides.pdf" style="@page {size: 16in 9in;  margin: 0;}" width="420" height="340"></a></p>
+<figcaption>This week’s slides</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-sup quarto-uncaptioned" id="sup-slide-deck-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Supplementary Figure&nbsp;1
+</figcaption>
+</figure>
+</div></div>
+
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Learning Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>What is a Word, What is Morphology</li>
+<li>UD Treebank Morphology Annotations</li>
+<li>Morphological Analysis</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Transcript
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<!-- Transcript here is machine generated no punctuation and I eddited it a but but it needs more work and I dont see the benefits unless I can run it through some tool. -->
+<blockquote class="blockquote">
+<p>So now we’re going to move on to the main part where we’re going to talk about words which sort of seems really fairly appropriate for any any nlp class because words are pretty important okay and this is going to give you a little bit more definition of what we mean by words and how that’s not always as well defined as it might be in languages like English so let’s try and count the words in this sentence bob’s handyman is a do-it-yourself kind of guy isn’t he okay so that’s a fairly standard sentence although I have selected it to be particularly interesting for this case but the question is where are the words okay so what I’ve done is I’ve tried to highlight what people might think the words actually are now if you grew up in europe and maybe other places as well you probably think that white space separated tokens is a good approximation for words and it is a good approximation for words but from a linguistic point of view it’s actually a little bit more complex than that and that’s what we’re actually going to talk about and when we actually look at other languages that’s the thing we want to highlight that the notion of what a word boundary actually is might not be as trivial as what you hope it’s going to be okay</p>
+</blockquote>
+<section id="whitespace" class="level2">
+<h2 class="anchored" data-anchor-id="whitespace">Whitespace</h2>
+<blockquote class="blockquote">
+<p>Let’s have a look at the first word of the white speak white space identified token is Bob’s the apostrophe s is what’s called a clitic it’s not isolated word on its own it can’t stand on its own it only appears when it’s actually bound to some other word but in some sense it’s independent of the word that it’s bound to so what you can have is actually it can go into whole noun phrases rather than just single words so we talk about jack and jill’s bucket we’re not talking about Jack and Jill’s bucket we’re talking about Jack and Jill in the bucket belonging to Jack and Jill so that apostrophe s isn’t just going on the immediate token before but a bunch of tokens before that okay so be aware that that apostrophe s is a somewhat special thing in English and sometimes it’s a good idea to actually separate that apostrophe off and treat it as an independent token than actually just putting it together as bob’s let’s look at the next one handyman is really a now known compound okay we put a space in it because we’re not German but but some compounds in English, don’t get a space between them and it’s sort of really quite complex to know which ones are which and it’s really sort of up to the speaker and to decide how to do that but sorry the writer from the speaking point of view it’s even harder to distinguish between these but handyman really here is being used as a single word and it would be useful to keep them together even though they have a ascii white space between them is is a word as a word now let’s have a look at do it yourself it’s hyphenated and it really is a sort of set phrase it can be shortened to diy and we’d like to treat that as a single word but sometimes hyphenated forms should be separated and we have to make interesting decisions about that now we’ve got words like kinda and isn’t it that are fairly standard contractions in English we could write them out as kind space off and we could write isn’t it as is not but often when people are speaking they don’t do that and they actually do reduce form and sometimes when writing they may actually do that simplified form as well and do use these contractions and we have to make some decision about how these actually might appear and whether we want to separate them out many of these are sort of closed class they can only be applied to a number of words and they’re not general to anything but some of them are not apostrophe s can clearly go into anything and apostrophe ll can sort of go into any noun as well so that’s a hard it’s a decision that we actually have to make and it will affect all of our downstream tasks once we decide how to token these tokenize these into what we’re going to term words how we’re going to have word embeddings how we’re actually going to do parsing or whatever our next task is going to be.</p>
+</blockquote>
+</section>
+<section id="other-languages" class="level2">
+<h2 class="anchored" data-anchor-id="other-languages">Other Languages</h2>
+<blockquote class="blockquote">
+<p>In other languages it can be way more complex and sometimes way more simple. It could be that we actually have no spaces whatsoever and everything is joined together agglutinated and there has to be some process to try to separate these individual parts out if we don’t separate these things out what you’re going to have in a language is an awful lot of words so if you look at turkish for example which is an agglutinate language there’s an awful lot of compounding in it an awful lot of interesting morphology in it what you end up with is the number of words number of white space separated tokens and in the language is much bigger than English for because what we maybe think about as being phrases in English are actually whole single words with no white space between them there also can be ambiguity in those particular words about how we actually decompose them and on the right here we actually have a hebrew example where I’m sorry I can’t read that this where it can mean depending on how you separate that out into individual morphemes and her saturday and that in t and that her daughter all of those are potential meanings given the rest of the context but they’re all written as the same single word</p>
+</blockquote>
+</section>
+<section id="linguistics" class="level2">
+<h2 class="anchored" data-anchor-id="linguistics">Linguistics</h2>
+<blockquote class="blockquote">
+<p>Now let’s go back to our knowledge of linguistics and see how we might be able to use our knowledge of linguistics to be able to answer these questions about what words actually are.</p>
+<p>Because we’re going to look at each of those and see how they we might be able to use that as a definition of a useful way of splitting things into little bits words so there could be phonetics so there could be something about the way things are being said that could actually tell us something about that we could say it’s got to have a of every word has to have a vowel in it although I don’t know where apostle vs which sometimes is a violent and sometimes doesn’t sometimes and it’s sometimes just phonology and it could be something about there’s some structure that’s actually required in syllables and so everything has to be at least one syllable if it has to be a word it could be morphology if we’re looking at the actual atoms that are in the morphemes that are in the word we could talk about the individual morphemes in there and make some definition based on that we could talk about syntax we could talk about whether we could exchange that for another word in the same class and treat those as being words if they have classes over them we could talk about semantics of whether it changes meaning and we could talk about pragmatics about realistically new york is used as a single word even though we happen to put a space in it but it’s treated basically as a fundamental a word because although it maybe historically has some relationship to the word new and the word york it really has nothing to do with that anymore let’s have a look at the orthographic</p>
+</blockquote>
+</section>
+<section id="orthography" class="level2">
+<h2 class="anchored" data-anchor-id="orthography">Orthography</h2>
+<blockquote class="blockquote">
+<p>Definition so this is where white space comes into mind and be aware that even in English white space is quite complex So you know we’ve got spaces we’ve got tabs we’ve got new lines we’ve got carriage returns we’ve got vertical tabs are all within the standard ascii set but beyond that we actually have a lot more if we look at unicode and we want to make definitions of that and we also have things like non-breakable space and a non-breakable space can be used and may appear on on on the web in html and we may or may not want to decide that as being a word boundary or not depending on our definitions okay and remember we’re talking here about orthography we are pretending that the whole world writes everything down and that when they write everything down it’s the same as what speech is most languages are not written we write an awful lot and most people on the planet are actually literate but they may speak languages that they’re not literate in and when you speak you don’t put any spaces between words okay you don’t say a space between each word and we don’t do that at all okay and so when you’re wondering how chinese people can understand chinese text when there’s no species in it think about how well you can understand speech which has got no species in it and yet you can still deal with it and the notion of a word has been around for a lot longer than the notion of writing so in other words we’ve had that notion and we need a definition of words that are actually independent of the written form</p>
+</blockquote>
+</section>
+<section id="prosodic" class="level2">
+<h2 class="anchored" data-anchor-id="prosodic">Prosodic</h2>
+<blockquote class="blockquote">
+<p>There can be a prosodic definition a prosodic definition is something to do with international phrases they can be hard to define but they’ll still have some reasonable definition and things which are actually grouped together in the single international phrase are often written as a single word in other languages so for example in the park in English the way I just said it is as a single international phrase in the park and many other languages would have the same concepts of location and determiners and park all in the single word that would have no spaces between it so in the park could be treated as a single word depending on what your definitions are going to be</p>
+</blockquote>
+</section>
+<section id="semantic" class="level2">
+<h2 class="anchored" data-anchor-id="semantic">Semantic</h2>
+<blockquote class="blockquote">
+<p>Semantic definitions these are word units that got some something like the same idea and so it might be useful to be able to treat these in a reasonable way we can think about colors that might have multiple names we can think about navy blue is is a color and but when written it would have probably have a space in it but we may want to treat that as a color which is the same as blue or red or yellow or any other single word color because navy blue is still a color okay and although technically maybe has something to do with glue and something to do with navy it might not be a reasonable thing to actually separate it out we can have a syntactic definition where we’re looking at blocks in these sentences so again new york is a good example here where it really is being used in the same sense as the word pittsburgh is it’s referring to a particular city in north america and just because it’s got a space in it doesn’t mean that we want to treat it as two different cities a new city and a york city which is elsewhere in there’s almost certainly places called york in north america but I can’t. Well there’s a one just outside toronto now this comes to the notion of how can we identify classes of words and I’m currently really talking about syntactic classes of words rather than semantic classes so so colors are sort of a semantic class but I’m interested in what words have got the same class that I could exchange them without what it might change the meaning but you know they get used in the same way now we’ve all been talking talk about these standard open classes which appear in most languages not all languages but most languages nouns verbs and adjectives and adverbs there’s almost an infinite number of those new ones can come along that didn’t exist before but they all fall into these particular classes. This is in contrast with closed classes where there’s a finite set in the language they’re sometimes called function words. It might be a difficult class to list absolutely everything but you rarely very rarely find new things moving into that class so things like prepositions so in above behind there’s a sort of finite set of those determiners the and ah this and that and pronouns I are somewhat finite in English conjunctions and or but not an exclusive or if you’re a computer scientist and other auxiliary verbs like is was have etc and these are sort of closed class they’re very common in the language they’re often short in a language and in most languages have something like them they might be something to do with morphemes but they don’t have random new ones appearing every day so if we think about what happens with the open class think about words which you know exist today that didn’t exist five years ago and think about some can you type them in the chat words which we have today that we didn’t have five years ago and you’ll find out that they’re all nouns verbs adjectives and adverbs and not closed classes because can anybody think of any words which we have now that we didn’t have five years ago covid excellent example I’m sorry to disappoint you, but if you have a look at wikipedia in 2015 there’s an article on coveted okay but it was dull and boring and uninteresting and the covered self-help group decided that they wanted to do something and become more popular but you’re right that covert was incredibly rare okay and probably was only used in occasional circumstances doom scrolling excellent quarantine yeah wfh all of these things are very very common now and sort of didn’t exist at all before and language is like that but all of these words for the most part are coming in to be nouns and verbs okay occasionally they’re going to be adjectives and maybe adverbs but for the most part these do change over time so you can’t list them all but for the close class ones you can sort of do it I mean there’s some really rare conjunctions that people don’t use nowadays like not withstanding okay apart from used as examples of really rare conjunctions that’s about the only time I use that word</p>
+</blockquote>
+</section>
+<section id="tag-sets" class="level2">
+<h2 class="anchored" data-anchor-id="tag-sets">Tag Sets</h2>
+<blockquote class="blockquote">
+<p>There’s a bunch of classes that define what part of speech tag sets the tags that are actually there and in English and many other languages they’re often based on the tag set that was used in the pen tree bank which was one of the first large data sets that was labeled consistently with nouns verbs etc and there’s 43 in total I don’t know if there’s 43 there but I know from other things and there’s some that are relatively rare and maybe questionable and there’s some compound ones where sometimes things get joined together it does make distinctions between different types of nouns singular plural and and proper nouns and it it’s quite useful in many tag sets that are now used in in NLP are derived from this tag set because that was decided mostly by the group at U-pen at the time people were doing a part of speech tagging before that. I mean even before computers they were doing it but coming up with a finite computational tag set was something that really started in the 80s and depending on the language that you’re dealing with you may want to have different tags because there are some tags that are really only relevant in some languages and not in others okay importantly there actually is a definition of a small number of tags which is in some sense a reduction of the number of tags that were in the pen tree bank that has been used in the universal dependency m sets that originally came out of google and it’s now an independent project but it’s still quite google influenced because of the original data sets and this covers somebody’s going to tell me the number of languages but I think it’s about 40 or 50 languages where they’re all labeled with the same tag set and produces a universal dependency grammar which is also very use useful from a syntactic point of view that over a bunch of fairly major important languages okay so getting this tag set is useful and you might say why should I care about getting a tag set I can train from words and the answer is yes if you have lots of data but as usual in trying to do machine learning if you can give more information in a structured way or in a reduced standardized way you can typically get by with less data and try to train better and training should happen faster so often being able to get a part of speech for a language would be quite useful and of course this is going to be hard in the low resource language because you sort of need labeled data to start off with but there are unsupervised ways to try to find out what these tags actually are now I’m naively talking about words here and words having part of speech tag because I’m one of these English speakers where actually for the most part that’s pretty easy in English for the most part you know white space separated tokens or words and for the most part each token has got one a tag one proper tag and the context mostly defines what it is but in most languages most languages and we really have to introduce the notion of morpheme which is sort of the single smallest atomic part of a word</p>
+</blockquote>
+</section>
+<section id="morphology" class="level2">
+<h2 class="anchored" data-anchor-id="morphology">Morphology</h2>
+<blockquote class="blockquote">
+<p>Here for example in English we do have interesting morphology especially in what’s called <em>derivational morphology</em> which is not like the <em>ing</em> <em>eds</em> plurals where we’re changing some syntactic property the tense or the number of a language but we’re actually changing the meaning and we’re often changing the class the part of the speech class so if we take a verb like <em>establish</em> we can have another verb that’s <em>disestablished</em> we can then make that into a noun by say <em>disestablishment</em>.</p>
+<p>We can make it another noun putting <em>anti-</em> in front of it and saying <em>anti-disestablishment</em>. We can make it into an adjective by saying <em>anti-disestablishmentary</em>. We can make it a noun into <strong>anti-disestablishmentarian</strong>. We can then make that in a further noun by saying <strong>anti-disestablishmentarianism</strong> Now these things are a little bit extended, but actually we do this all the time. So it’s actually quite hard to really list all of the words that are in English because although some of these don’t appear very often. There will be new and novel words, and you’ll see a number per day of new words that you’ll understand. Where they’re actually morphologically variants of something that you can work out what the meaning actually is.</p>
+<p>Now so it would be useful if we could get these words and decompose them into their roots and morphemes so that we can actually work out what the important classes are. So we’d like to be able to get some notion of these decomposed forms in from a word if we can do it. Now some of these forms are what we call stems or roots they’re often words on their own. And we’ll have prefixes and suffixes.<br>
+In English we rarely have anything that inserts in the middle of a word we’re usually putting things at the beginning and end. In some languages you actually get sort of bracketed things that you have to put them at the beginning and the end some of the gaelics have got that. There are some things where you can actually put infixes and so there are some plural things that actually happen in interesting languages in southeast asia where they’re basically plural things where syllables or partial syllables will get duplicated and and therefore you have to deal with that.</p>
+<p>In English the only example of being able to do that is the infix form of putting swear words in the middle of a word so for example if you have the words pittsburgh and you want to put a swear word in the middle. I can only get away with this because I’m British. I’m going to use the word bloody as a swear word, although actually, usually in linguistics we use the f-word but we can use the word <em>bloody</em> and if I want to put the word <em>bloody</em> in Pittsburgh, it’s going to be <em>pit’s— bloody—berg</em> and I could do that and it could be compounded and possibly but it’s a little bit of a stretch and maybe you would put species in in there to do that in other languages. Infects will happen in some languages. You’ll actually even change things in Templatic morphology in things like Hebrew and Arabic, and Tagalog is an example.</p>
+<p>This is one of the examples from the Philippines where we’ve got interesting morphology going on and we’ve got much more interesting morphology going on than what’s in English and we’d like to be able to decompose these things so that we’ve got finite sets of morphemes when we’re doing processing so when we’re doing tokenization when before you give it to your word embedding system you’d like to have a standardized tokenizer that’s going to give you meaningful the most meaningful atomic parts when you actually do it.</p>
+</blockquote>
+</section>
+<section id="arabic" class="level2">
+<h2 class="anchored" data-anchor-id="arabic">Arabic</h2>
+<blockquote class="blockquote">
+<p>Arabic’s very interesting, because things actually are done within the consonants so you have a backbone of consonants and the vowels will change before and after after them. This changes meaning both semantically and inflectional so syntactic information about tense etc there’s a number of Semitic languages that actually do templatic morphology and it always breaks a lot of our systems from doing it but we are not allowed to define what natural language actually is we still need to be able to deal with it Chinese has a relatively small amount of morphology but it still has derivational morphology so you can take words and join them together in interesting compounds which are not necessarily directly to do with the meaning of the individual character that you’re joining together so a number of things of for example if you take fire and wheel and put it together it doesn’t mean a wheel that’s on fire it actually means a steam train and so or maybe that’s only in Japanese I always get that one wrong which varies between the different languages but there’s often a relationship but the compound might be different and so sometimes you want to be able to decompose it and sometimes you don’t so there’s two types of morphology which are identified as what’s called derivational morphology and derivational morphology you’re mostly changing the part of speech class when you’re doing things English is a rich derivational morphology and we can write it out and it’s mostly productive by productively means we’re allowed to construct new words without explaining to people what the meaning is inflectional morphology is usually syntactic class changes or some classic feature changing so this is things like changing the tense changing the plurality and the number and other languages it may do things like used in agreement used in tense and aspect and verbs and these are usually treated as different classes and they’re usually quite different they don’t overlap they’re sometimes maybe a little bit confusing and for the most part inflectional morphology happens after derivational morphology in almost all languages we can talk about morphosyntax about how these phonemes join together and which ones are allowed to join to each other and we can talk about a lower level thing that we call it morphofunnymix or morphographymix where things are changing at the boundaries when we join them together so an example of morphophony thin morphography mix because it happens in the graphene form but the pronunciation is affected as well when you take apostrophe s okay or the plural s when we add it onto things sometimes we insert an e when we add e d to the end of things if it already ends in an we don’t double the e and so this is I’ve got the e d and I’m going to join it on if the previous one is an e I’m just going to do it so move plus e d this is m-o-v-e-d okay while walked plus e-d is walk plus e-d joined together there’s different classes of</p>
+</blockquote>
+</section>
+<section id="types-of-morphology" class="level2">
+<h2 class="anchored" data-anchor-id="types-of-morphology">Types of Morphology</h2>
+<blockquote class="blockquote">
+<p>morphology and typography and typology of these so that we can put these into different groups and to be able to identify what they’re all about we have isolating or analytic m1s where there’s very little morphological changes in Vietnamese many of the Chinese dialects English are good examples of that we have synthetic ones where things are being created all the time they’re sometimes called fusional or flectional so german greek russian and templatic where we’ve got some form of often consonants and the vowels are changed and interspersed between those and we have a glutenatif where there’s lots of things joining together japanese finnish turkish are really good examples of that and we have polysynthetic which are really complexly joining things together where almost every phrase is actually ends up in a single word many of the north american native american languages are that the reason the word snow is there is because you can often have lots of variations of the word snow in inuit that’s actually not true well it is sort of true but it’s notable that in Scottish English we have lots of words for rain and for some reason I have no idea why that would be</p>
+</blockquote>
+</section>
+<section id="morphology-analyzers" class="level2">
+<h2 class="anchored" data-anchor-id="morphology-analyzers">Morphology Analyzers</h2>
+<blockquote class="blockquote">
+<p>People have worked on morphology for a long time so often when you’re working a new language there already is a morphological analyzer is there and if you look at the project unimorph and they’ve actually collected together these in a fairly standardized way so you might just be able to use it from python and all of a sudden you get morphological decomposition for your language or maybe you could use a nearby language and it would almost work and that might make your life a lot easier often when we’re doing novel languages especially when we’re caring about things under time we will look for one of those or we might even spend a couple of hours writing something because we’ll get something better than trying to do it fully automatically there are fully automatic ways but it might be better if there’s already something that allows us to do that okay there’s actually a competition</p>
+</blockquote>
+</section>
+<section id="morphology-competition" class="level2">
+<h2 class="anchored" data-anchor-id="morphology-competition">Morphology Competition</h2>
+<blockquote class="blockquote">
+<p>every year sigmar phone has been running for at least 10 years and it gets harder and harder every year as they find harder and harder tasks from both supervised and unsupervised m techniques so it’s worthwhile looking at these and using that as a resource</p>
+</blockquote>
+</section>
+<section id="shared-tasks" class="level2">
+<h2 class="anchored" data-anchor-id="shared-tasks">Shared Tasks</h2>
+<blockquote class="blockquote">
+<p>These shared tasks allow you to compete and people have done them from this class before actually and done interesting novel techniques to be able to work out to do it sharing information across language when you’ve got not enough data to train etc in order to be able to learn how to do that</p>
+</blockquote>
+</section>
+<section id="finite-state-morphology" class="level2">
+<h2 class="anchored" data-anchor-id="finite-state-morphology">Finite State Morphology</h2>
+<blockquote class="blockquote">
+<p>Finite state morphology is often used for morphemes actually morphology is never very complex there’s probably something to do with a human brain it can’t really deal with something as complex as say syntax within morphology and therefore it’s often quite localized and therefore finite state machines are quite good at being able to cover everything and there’s good toolkits out there that help you to be able to write these things there’s also completely unsupervised techniques there’s more fessor just a python thing you give it examples and it will try to find out the prefixes and suffixes that actually might allow you to be able to do analysis it does assume a certain segmental and view of phonology and therefore it can get confused sometimes and it might treat the different types of ed or just d in different forms in English and separate them out and maybe you want to join them together or maybe you don’t there’s a sort of related thing called stemming which is often quite useful especially when you’re doing things like information retrieval where you’d like to say look I i just I just want the root of the word and I don’t want all these other variations especially when you’re in a limited domain or when you’ve got limited amount of data and so maybe if you removed all of the morphological variants the plurals the eds it might be easier to do comparisons later especially if you don’t have good data in order to be able to do good word embedding there’s also purely completely automatic techniques and bpe is a good example of that byte pair encoding you can’t really work it out from the name where what we do is we look at the string of the actual letters that are there and try to find and optimize the sequence of letters together and the overall predictability of the group of letters that we actually find and this originally came out of work in machine translation to try and find the best segmentation for doing translation but we end up using it for lots of lots of things it’s often worth trying if you don’t have anything else because it does sort of work but you really want to know about for your particular language is it likely to work before you actually do all of your bpe you get a tokenization representation you build all your word embedding that you learn from it and then learn oh no you could have downloaded the morphological analyzer that would have given a better result and a more consistent result and therefore you would have been able to learn back</p>
+</blockquote>
+</section>
+<section id="tokenization" class="level2">
+<h2 class="anchored" data-anchor-id="tokenization">Tokenization</h2>
+<blockquote class="blockquote">
+<p>Tokenization is also something that we get this often gets called where you’re actually just trying to split these things into words and you’ve got to care about what the tokenization actually is because if you have a different tokenization that won’t be the same lemmetization or stemming is somewhat similar but limit hydration is really talking about the linguistic root of the word which may or may not be well well defined and it’s usually after morphological and decomposition you find the root of the word a we can also do this across languages you may want to care about characters rather than words and looking inside characters that can actually help and caring about things that are happening over long boundaries somewhat related to this is word segmentation in languages like japanese and chinese and in fact they end up using something similar to bpe to be able to segment things there’s a couple of related things</p>
+</blockquote>
+</section>
+<section id="text-normalization" class="level2">
+<h2 class="anchored" data-anchor-id="text-normalization">Text normalization</h2>
+<blockquote class="blockquote">
+<p>Text normalization where you actually are trying to replace everything as words we know that there’s an infinite number of numbers and would be nice if we could change them into words maybe or maybe just change them into the word number or maybe classes of numbers and this is something that’s been studied in a in text-to-speech and there’s various machine learning techniques to try to do well on this you might want to also care about spelling correction and do be aware that tokenization this mismatch can really break everything so if you’re using bert you sort of have to use their tokenization because they’ve assumed that and it can be quite hard if you do something else okay that’s everything about works and morphology we will be talking about morphology again later on in more detail but now we’re going to care about splitting out up out into groups and what we want you to do today is we want you to take one of these languages language families often morphology and or aspect of writing and orthography are similar within language families and I’d like you to identify something that you would need to care about if you were trying to do some form of tokenization</p>
+</blockquote>
+</section>
+</div>
+</div>
+</div>
+<section id="discussion-prompt" class="level2">
+<h2 class="anchored" data-anchor-id="discussion-prompt">Discussion Prompt</h2>
+<blockquote class="blockquote">
+<p>Pick a language in one of the following branches of language families: Bantu, Dravidian, Finno-Ugric, Japonic, Papuan, Semitic, Slavic, Turkic. Tell us about some interesting aspects of morphology of that language, following examples from the assigned reading. Cite your sources.</p>
+<p>If you would need to implement a tokenizer for that language, what language specific knowledge would need to be incorporated into the tokenizer?</p>
+</blockquote>
+</section>
+<section id="outline" class="level2">
+<h2 class="anchored" data-anchor-id="outline">Outline</h2>
+<ul>
+<li><strong>Introduction to Words in NLP</strong>
+<ul>
+<li>Words are fundamental in NLP, yet defining them can be non-trivial.</li>
+<li>The notion of a <strong>word boundary</strong> is not always straightforward, especially when moving beyond English.</li>
+<li><strong>White space</strong> separated tokens are a good approximation for words in some languages, <em>but this isn’t a universal rule</em>.</li>
+</ul></li>
+<li><strong>Challenges in Defining Words</strong>
+<ul>
+<li><strong>Clitics:</strong> Apostrophe-s (’s) is a clitic, not an isolated word, and it can attach to whole noun phrases.</li>
+<li><strong>Compounds:</strong> Some compounds (like “handyman”) are treated as single words, even with spaces, while others are hyphenated (“do-it-yourself”), and these distinctions are not always consistent.</li>
+<li><strong>Contractions:</strong> Contractions like “kinda” and “isn’t it” can be written in reduced forms and require decisions about tokenization.</li>
+<li><strong>Agglutination:</strong> Some languages (e.g., Turkish) join words together with no spaces, resulting in what might be considered phrases in English being single words.</li>
+<li><strong>Ambiguity:</strong> In some languages, a single written word can have multiple meanings depending on how it is separated into morphemes (e.g., Hebrew example given).</li>
+</ul></li>
+<li><strong>Linguistic Approaches to Defining Words</strong>
+<ul>
+<li><strong>Phonetics:</strong> Word definitions could be based on pronunciation, such as every word containing a vowel or having a certain syllable structure.</li>
+<li><strong>Morphology</strong>: Word definitions could be based on the individual morphemes within the word.</li>
+<li><strong>Syntax:</strong> Words can be defined by their class and interchangeability with other words of the same class.</li>
+<li><strong>Semantics:</strong> Word definitions could relate to the meaning they convey, including multi-word units with a single idea like “navy blue”.</li>
+<li><strong>Pragmatics:</strong> Some phrases like “New York” may be used as single words even though they have white space within them.</li>
+</ul></li>
+<li><strong>Orthographic Definitions</strong>
+<ul>
+<li><strong>White Space:</strong> Even in English, white space is complex (spaces, tabs, new lines, etc.) and includes non-breakable spaces which may or may not be considered word boundaries.</li>
+<li><strong>Written vs.&nbsp;Spoken:</strong> Most languages are not written, and in spoken language, there are no spaces between words. A definition of words is needed that is independent of the written form.</li>
+</ul></li>
+<li><strong>Prosodic Definitions</strong>
+<ul>
+<li><strong>Intonation:</strong> Phrases grouped together in a single intonational phrase (like “in the park”) can be treated as a single word in some languages.</li>
+</ul></li>
+<li><strong>Syntactic Definitions</strong>
+<ul>
+<li>Words can be grouped into syntactic classes; for example “New York” is a particular city in the same way that “Pittsburgh” is.</li>
+<li><strong>Open Classes</strong> (Nouns, verbs, adjectives, adverbs): These classes are vast and can easily accommodate new words.</li>
+<li><strong>Closed Classes</strong> (Prepositions, determiners, pronouns, conjunctions, auxiliary verbs): These classes have a finite set of words, and new words rarely enter these classes.</li>
+</ul></li>
+<li><strong>Part-of-Speech Tagging</strong>
+<ul>
+<li><strong>Tag Sets:</strong> Tag sets, like those based on the Penn Treebank (with 43 tags), are used to categorize words into parts of speech.</li>
+<li><strong>Universal Dependency Tag Sets:</strong> A smaller set of tags is used across many languages for universal dependency grammar.</li>
+<li><strong>Importance of Tagging:</strong> Tagging provides structured information, which can improve machine learning models, especially with limited data.</li>
+</ul></li>
+<li><strong>Morphology</strong>
+<ul>
+<li><strong>Morphemes:</strong> Morphemes are the smallest atomic parts of a word.</li>
+<li><strong>Derivational Morphology</strong>: This changes the meaning and part of speech class of a word. English is rich in derivational morphology.</li>
+<li><strong>Inflectional Morphology</strong>: This changes syntactic properties such as tense or number, and usually occurs after derivational morphology.</li>
+<li><strong>Morphosyntax:</strong> How stems and affixes combine.</li>
+<li><strong>Morphophonemics:</strong> Pronunciation and orthographic changes at morpheme boundaries. This can make morphology non-segmental.</li>
+</ul></li>
+<li><strong>Morphological Decomposition</strong>
+<ul>
+<li><strong>Stems/Roots, Prefixes, and Suffixes:</strong> Words can be broken into their root forms, prefixes, and suffixes. English usually adds prefixes and suffixes but some languages have infixes.</li>
+<li><strong>Infixes:</strong> Some languages have infixes (elements inserted within the word, with examples from Southeast Asia) and even change the consonants and vowels, as in templatic morphology in Semitic languages.</li>
+<li><strong>Need for Decomposition</strong>: Decomposing words into morphemes allows for a more finite set of meaningful units for processing and tokenization.</li>
+</ul></li>
+<li><strong>Types of Morphology</strong>
+<ul>
+<li><strong>Isolating/Analytic</strong>: Very little morphological change (e.g.&nbsp;Vietnamese, Chinese dialects, English).</li>
+<li><strong>Synthetic/Fusional/Flectional</strong>: Things are constantly being created (e.g.&nbsp;German, Greek, Russian).</li>
+<li><strong>Templatic</strong>: Often consonants are the basis, and the vowels change around them.</li>
+<li><strong>Agglutinative</strong>: Lots of things joining together (e.g.&nbsp;Japanese, Finnish, Turkish).</li>
+<li><strong>Polysynthetic</strong>: Complex joining of many parts, often with a whole phrase in one word (e.g.&nbsp;some Native American languages).</li>
+</ul></li>
+<li><strong>Tools for Morphological Analysis</strong>
+<ul>
+<li><strong>Morphological Analyzers</strong>: Existing tools, including those from the UniMorph project, can provide morphological decomposition for many languages.</li>
+<li><strong>Finite State Morphology:</strong> Finite state machines are useful for modeling morphology because of its localized nature.</li>
+<li><strong>Unsupervised Methods</strong>: Tools like Morfessor can identify prefixes and suffixes.</li>
+<li><strong>Stemming:</strong> Removing word endings to find the root, useful for information retrieval.</li>
+<li><strong>Byte Pair Encoding (BPE):</strong> Finds optimal letter sequences for segmentation, also helpful in tokenization.</li>
+</ul></li>
+<li><strong>Related Problems</strong>
+<ul>
+<li><strong>Tokenization:</strong> The process of splitting text into words or tokens.</li>
+<li><strong>Lemmatization</strong>: Finding the linguistic root of a word after morphological decomposition.</li>
+<li><strong>Text Normalization</strong>: Replacing numbers, symbols, and abbreviations with standard words.</li>
+<li><strong>Spelling Correction</strong>: Addressing spelling errors and social media language.</li>
+<li><strong>Tokenization Mismatch</strong>: Different tokenization methods can lead to issues, for example when using models like BERT.</li>
+<li><strong>Word Segmentation:</strong> In languages without spaces, segmenting words is necessary.</li>
+</ul></li>
+<li><strong>Practical Applications</strong>
+<ul>
+<li>The need to consider different language families when developing tokenization methods because morphology and orthography are often similar within a family.</li>
+<li>Tokenization decisions impact all downstream tasks, including word embeddings and parsing.</li>
+</ul></li>
+</ul>
+</section>
+<section id="papers" class="level2">
+<h2 class="anchored" data-anchor-id="papers">Papers</h2>
+<ul>
+<li><ol class="example" type="1">
+<li><a href="https://www.sciencedirect.com/science/article/abs/pii/S088523080190169X">Normalization of Non-standard Words</a></li>
+</ol>
+<ul>
+<li>is referenced in the context of <strong>text normalization</strong>. It deals with the expansion of non-standard words.</li>
+</ul></li>
+</ul>
+</section>
+<section id="kannada-in-10-minutes" class="level2">
+<h2 class="anchored" data-anchor-id="kannada-in-10-minutes">Kannada in 10 minutes</h2>
+<p>Okay, here is an overview of Kannada, drawing from the provided Wikipedia article.</p>
+<ul>
+<li><strong>Language Name and Classification</strong>:
+<ul>
+<li>Kannada (<strong>ಕನ್ನಡ</strong>) is a <strong>classical Dravidian language</strong>.</li>
+<li>It belongs to the <strong>South Dravidian</strong> language family.</li>
+<li>It evolved from <strong>Tamil-Kannada</strong>.</li>
+<li>It was formerly known as <strong>Canarese</strong>.</li>
+</ul></li>
+<li><strong>Speakers and Location</strong>:
+<ul>
+<li>Approximately <strong>44 million native speakers</strong>.</li>
+<li>Around <strong>15 million second-language speakers</strong>.</li>
+<li>Primarily spoken in the state of <strong>Karnataka</strong> in southwestern India.</li>
+<li>Spoken by minority populations in neighboring states, such as <strong>Tamil Nadu, Maharashtra, Andhra Pradesh, Telangana, Kerala, and Goa</strong>.</li>
+<li>Kannada speaking communities also exist in countries like the <strong>United States, Canada, Australia, Singapore, and Malaysia</strong>.</li>
+</ul></li>
+<li><strong>Official Status</strong>:
+<ul>
+<li>Official and administrative language of <strong>Karnataka</strong>.</li>
+<li>It has <strong>scheduled status in India</strong>.</li>
+<li>Recognized as one of India’s <strong>classical languages</strong>.</li>
+</ul></li>
+<li><strong>History and Development</strong>:
+<ul>
+<li>The language’s history is divided into: <strong>Old Kannada</strong> (450-1200 AD), <strong>Middle Kannada</strong> (1200-1700 AD), and <strong>Modern Kannada</strong> (1700-present).</li>
+<li>Influenced by <strong>Sanskrit and Prakrit</strong>.</li>
+<li>Some scholars suggest a spoken tradition existed as early as the <strong>3rd century BC</strong>.</li>
+<li>The earliest Kannada inscriptions date back to the <strong>5th century AD</strong>.</li>
+<li>The language has an unbroken <strong>literary history of approximately 1200 years</strong>.</li>
+</ul></li>
+<li><strong>Writing System</strong>:
+<ul>
+<li>Uses the <strong>Kannada script</strong>.</li>
+<li>The script evolved from the <strong>5th-century Kadamba script</strong>.</li>
+<li>It is a <strong>syllabic script</strong>.</li>
+<li>It contains <strong>49 phonemic letters</strong>.</li>
+</ul></li>
+<li><strong>Phonology</strong>:
+<ul>
+<li>Vowels include front, central, and back vowels, with variations in length.</li>
+<li><img src="kannada-vowels.png" class="img-fluid" style="clear: both;" width="400"></li>
+<li>Consonants include labial, dental, retroflex, palatal, velar, and glottal sounds.</li>
+<li>Most consonants can be geminated.</li>
+<li>Aspirated consonants are rare in native vocabulary.</li>
+<li><img src="kannada-consonants.png" class="img-fluid" style="clear: both;" width="450"></li>
+</ul></li>
+<li><strong>Grammar</strong>:
+<ul>
+<li>Word order is typically <strong>subject-object-verb (SOV)</strong>.</li>
+<li>It is a highly inflected language with <strong>three genders</strong> and <strong>two numbers</strong>.</li>
+<li><strong>Compound bases (<em>samāsa</em>)</strong> combine two or more words.</li>
+</ul></li>
+<li><strong>Dialects</strong>:
+<ul>
+<li>Approximately <strong>20 dialects</strong> of Kannada exist, including Kundagannada, Havigannada, and Are Bhashe.</li>
+<li>Dialects are influenced by regional and cultural backgrounds.</li>
+<li>Related languages include Badaga, Holiya, Kurumba, and Urali.</li>
+</ul></li>
+<li><strong>Significance to Modern Linguistics</strong>:
+<ul>
+<li>Kannada’s syntactic properties, particularly regarding causative morphemes and negation, have been significant in studies of language acquisition and innateness.</li>
+</ul></li>
+</ul>
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{bochman2022,
+  author = {Bochman, Oren},
+  title = {Words, {Parts} of {Speech,} {Morphology}},
+  date = {2022-01-24},
+  url = {https://orenbochman.github.io/notes-nlp/notes/cs11-737/cs11-737-w04-words/},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-bochman2022" class="csl-entry quarto-appendix-citeas" role="listitem">
+Bochman, Oren. 2022. <span>“Words, Parts of Speech, Morphology.”</span>
+January 24, 2022. <a href="https://orenbochman.github.io/notes-nlp/notes/cs11-737/cs11-737-w04-words/">https://orenbochman.github.io/notes-nlp/notes/cs11-737/cs11-737-w04-words/</a>.
+</div></div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("^(?:http:|https:)\/\/www\.quarto\.org\/custom");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+          // default icon
+          link.classList.add("external");
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© Copyright 2023-2025, Oren Bochman</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OrenBochman/notes-nlp/edit/main/notes/cs11-737/cs11-737-w04-words/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OrenBochman/notes-nlp/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This page is built with 💛 and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"fade","descPosition":"right","loop":true,"openEffect":"fade","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+<script src="../../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
